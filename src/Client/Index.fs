@@ -4,37 +4,21 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
-type Model = { Todos: Todo list; Input: string }
+type Model = {
+    Name: string
+}
 
 type Msg =
-    | GotTodos of Todo list
-    | SetInput of string
-    | AddTodo
-    | AddedTodo of Todo
-
-let todosApi =
-    Remoting.createApi ()
-    |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.buildProxy<ITodosApi>
+    | SetName of string
+    | Reset
 
 let init () : Model * Cmd<Msg> =
-    let model = { Todos = []; Input = "" }
-
-    let cmd = Cmd.OfAsync.perform todosApi.getTodos () GotTodos
-
-    model, cmd
+    { Name = "Name"}, Cmd.none
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
-    | GotTodos todos -> { model with Todos = todos }, Cmd.none
-    | SetInput value -> { model with Input = value }, Cmd.none
-    | AddTodo ->
-        let todo = Todo.create model.Input
-
-        let cmd = Cmd.OfAsync.perform todosApi.addTodo todo AddedTodo
-
-        { model with Input = "" }, cmd
-    | AddedTodo todo -> { model with Todos = model.Todos @ [ todo ] }, Cmd.none
+    | SetName name -> { model with Name = name}, Cmd.none
+    | Reset -> init()
 
 open Feliz
 open Feliz.Bulma
@@ -53,35 +37,59 @@ let navBrand =
         ]
     ]
 
-let containerBox (model: Model) (dispatch: Msg -> unit) =
-    Bulma.box [
-        Bulma.content [
-            Html.ol [
-                for todo in model.Todos do
-                    Html.li [ prop.text todo.Description ]
+let skillRow (skillName:string) (dice:string)  =
+    Bulma.columns [
+        Bulma.column [
+            prop.text skillName
+        ]
+        Bulma.column [
+            prop.text dice
+        ]
+        Bulma.column [
+            Html.input [
+                prop.type' "checkbox"
             ]
         ]
-        Bulma.field.div [
-            field.isGrouped
+        Bulma.column [
+            prop.text "-"
+        ]
+        Bulma.column [
+            Html.input [
+                prop.type' "checkbox"
+            ]
+        ]
+        Bulma.column [
+            Html.input [
+                prop.type' "checkbox"
+            ]
+        ]
+        Bulma.column [
+            Html.input [
+                prop.type' "checkbox"
+            ]
+        ]
+        Bulma.column [
+            Html.input [
+                prop.type' "checkbox"
+            ]
+        ]
+
+    ]
+
+let attributeTable (governingAttribute:string) (governingAttribute:int) (skillNames:list<string>) (skillLevels:list<int>) =
+    Bulma.column [
+        Bulma.notification [
+            prop.style [
+                
+            ]
+            color.isPrimary
             prop.children [
-                Bulma.control.p [
-                    control.isExpanded
-                    prop.children [
-                        Bulma.input.text [
-                            prop.value model.Input
-                            prop.placeholder "What needs to be done?"
-                            prop.onChange (fun x -> SetInput x |> dispatch)
-                        ]
-                    ]
-                ]
-                Bulma.control.p [
-                    Bulma.button.a [
-                        color.isPrimary
-                        prop.disabled (Todo.isValid model.Input |> not)
-                        prop.onClick (fun _ -> dispatch AddTodo)
-                        prop.text "Add"
-                    ]
-                ]
+                List.zip skillNames skillLevels
+                |> List.map ( 
+                    fun (skillName, skillLevel)-> 
+                        Html.li [ prop.children [ skillRow skillName "0" ] ]
+                )
+                |> Html.ul
             ]
         ]
     ]
@@ -89,32 +97,52 @@ let containerBox (model: Model) (dispatch: Msg -> unit) =
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.hero [
         hero.isFullHeight
-        color.isPrimary
+        color.isDanger
+
         prop.style [
             style.backgroundSize "cover"
-            style.backgroundImageUrl "https://unsplash.it/1200/900?random"
+            style.backgroundImageUrl "https://www.onlygfx.com/wp-content/uploads/2015/12/simple-old-paper-1-transparent.jpg"
             style.backgroundPosition "no-repeat center center fixed"
         ]
+
         prop.children [
+
             Bulma.heroHead [
                 Bulma.navbar [
-                    Bulma.container [ navBrand ]
-                ]
-            ]
-            Bulma.heroBody [
-                Bulma.container [
-                    Bulma.column [
-                        column.is6
-                        column.isOffset3
-                        prop.children [
-                            Bulma.title [
-                                text.hasTextCentered
-                                prop.text "FallenCharacterSheet"
+                    color.isPrimary
+                    prop.children [
+                        Bulma.navbarItem.div [
+                            Bulma.title.h3 [
+                                prop.text "Fallen"
+                                prop.style [
+                                    style.fontFamily "PT Serif Caption"
+                                ]
                             ]
-                            containerBox model dispatch
                         ]
                     ]
                 ]
             ]
+
+            Bulma.heroBody [
+                Bulma.container [
+                    Bulma.columns [
+                        
+                        attributeTable "" 0 ["Athletics"] [1]
+                        attributeTable "" 0 ["Athletics"] [1]
+                        attributeTable "" 0 ["Athletics"] [1]
+                        
+                    ]
+                    // Bulma.control.p [
+                    //     control.isExpanded
+                    //     prop.children [
+                    //         Bulma.input.text [
+                    //             prop.value model.Name
+                    //             prop.onChange (fun input -> SetName input |> dispatch)
+                    //         ]
+                    //     ]
+                    // ]
+                    //Bulma.title model.Name
+                ]
+            ]
         ]
-    ]
+    ] 
