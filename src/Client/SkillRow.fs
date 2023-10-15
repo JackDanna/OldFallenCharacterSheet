@@ -1,6 +1,5 @@
 module SkillRow
 
-open Elmish
 open FallenLib.SkillStat
 
 type Model = {
@@ -11,15 +10,12 @@ type Model = {
 type Msg =
     | Reset
 
-let init() : Model * Cmd<Msg> =
-    let model = {
-        skillStat = emptySkillStat
-        dicePool = ""
-    }
-    let cmd = Cmd.none
-    model, cmd
+let init() : Model = 
+    { skillStat = emptySkillStat
+      dicePool = "" }
 
-let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
+
+let update (msg: Msg) (model: Model) : Model =
     match msg with
     | Reset -> init()
 

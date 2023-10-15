@@ -399,6 +399,11 @@ module Attribute =
         lvl       : Neg1To4
     }
 
+    let emptyAttributeStat = {
+        attribute = ""
+        lvl = NegOne
+    }
+
     let tupleToAttributeStat (attributeMap:Map<string,Attribute>) (attribute, lvl) = {
         attribute = attributeMap.Item attribute
         lvl       = intToNeg1To4 lvl

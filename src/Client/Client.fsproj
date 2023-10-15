@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="SkillRow.fs" />
+    <Compile Include="SkillRowList.fs" />
     <None Include="index.html" />
     <Compile Include="Index.fs" />
     <None Include="paket.references" />
