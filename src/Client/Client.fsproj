@@ -5,7 +5,7 @@
     <DefineConstants>FABLE_COMPILER</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="StatCheckboxes.fs" />
+    <Compile Include="SummedCheckboxes.fs" />
     <Compile Include="SkillRow.fs" />
     <Compile Include="SkillRowList.fs" />
     <Compile Include="CoreSkillTable.fs" />

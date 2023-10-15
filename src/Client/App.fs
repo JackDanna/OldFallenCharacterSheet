@@ -8,7 +8,7 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-Program.mkSimple StatCheckboxes.init StatCheckboxes.update StatCheckboxes.view
+Program.mkSimple SummedCheckboxes.init SummedCheckboxes.update SummedCheckboxes.view
 #if DEBUG
 |> Program.withConsoleTrace
 #endif

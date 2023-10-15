@@ -1,4 +1,4 @@
-module StatCheckboxes
+module SummedCheckboxes
 
 type Model = {
     checkBoxes   : bool list
