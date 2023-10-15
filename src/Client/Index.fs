@@ -39,20 +39,14 @@ let navBrand =
 
 let skillRow (skillName:string) (dice:string)  =
     Bulma.columns [
-        Bulma.column [
-            prop.text skillName
-        ]
-        Bulma.column [
-            prop.text dice
-        ]
+        Bulma.column [ prop.text skillName ]
+        Bulma.column [ prop.text dice ]
         Bulma.column [
             Html.input [
                 prop.type' "checkbox"
             ]
         ]
-        Bulma.column [
-            prop.text "-"
-        ]
+        Bulma.column [ prop.text "-" ]
         Bulma.column [
             Html.input [
                 prop.type' "checkbox"
@@ -76,7 +70,7 @@ let skillRow (skillName:string) (dice:string)  =
 
     ]
 
-let attributeTable (governingAttribute:string) (governingAttribute:int) (skillNames:list<string>) (skillLevels:list<int>) =
+let attributeTable (governingAttribute:string) (governingAttributes:int) (skillNames:list<string>) (skillLevels:list<int>) =
     Bulma.column [
         Bulma.notification [
             prop.style [
@@ -130,7 +124,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         attributeTable "" 0 ["Athletics"] [1]
                         attributeTable "" 0 ["Athletics"] [1]
                         attributeTable "" 0 ["Athletics"] [1]
-                        
                     ]
                     // Bulma.control.p [
                     //     control.isExpanded
