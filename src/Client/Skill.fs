@@ -11,7 +11,7 @@ type Model = {
 type Msg =
     | Reset
 
-let init () : Model * Cmd<Msg> =
+let init() : Model * Cmd<Msg> =
     let model = {
         skillStat = emptySkillStat
         dicePool = ""
@@ -56,5 +56,4 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 prop.type' "checkbox"
             ]
         ]
-
     ]
