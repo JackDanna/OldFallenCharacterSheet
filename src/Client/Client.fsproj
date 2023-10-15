@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="SummedCheckboxes.fs" />
+    <Compile Include="Stat.fs" />
     <Compile Include="SkillRow.fs" />
     <Compile Include="SkillRowList.fs" />
     <Compile Include="CoreSkillTable.fs" />
