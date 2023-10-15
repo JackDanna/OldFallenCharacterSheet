@@ -888,6 +888,12 @@ module SkillStat =
         governingAttributes : Attribute array
     }
 
+    let initSkillStat = {
+        name = "NULL"
+        lvl = NegOne
+        governingAttributes = [||]
+    }
+
     let tupleToSkillStat (attributeMap:Map<string,Attribute>) (name, lvl, governingAttribute) = { 
         name               = name
         lvl                = intToNeg1To4  lvl
