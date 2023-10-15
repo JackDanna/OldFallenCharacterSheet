@@ -888,8 +888,8 @@ module SkillStat =
         governingAttributes : Attribute array
     }
 
-    let initSkillStat = {
-        name = "NULL"
+    let emptySkillStat = {
+        name = ""
         lvl = NegOne
         governingAttributes = [||]
     }
