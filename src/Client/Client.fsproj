@@ -5,7 +5,7 @@
     <DefineConstants>FABLE_COMPILER</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Skill.fs" />
+    <Compile Include="SkillRow.fs" />
     <None Include="index.html" />
     <Compile Include="Index.fs" />
     <None Include="paket.references" />
