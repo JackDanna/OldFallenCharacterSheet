@@ -1,41 +1,38 @@
 module CoreSkillTable
 
-open FallenLib.Attribute
-open Feliz
-open Feliz.Bulma
-
-
 type Model = {
-    attributeStat : AttributeStat
+    attributeRow : AttributeRow.Model
     skillRowList  : SkillRowList.Model
 }
 
 type Msg =
+    | AttributeRowMsg of AttributeRow.Msg
     | SkillRowListMsg of SkillRowList.Msg
     | Reset
 
 let init() : Model =
     {
-        attributeStat = emptyAttributeStat
-        skillRowList = [
-            { skillStat = FallenLib.SkillStat.emptySkillStat
-              dicePool = "3d6" }
-        ]
+        attributeRow = AttributeRow.init()
+        skillRowList = SkillRowList.init()
     }
 
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
+    | AttributeRowMsg attributeRowMsg ->
+        { model with attributeRow = AttributeRow.update attributeRowMsg model.attributeRow }
     | SkillRowListMsg skillRowListMsg ->
         { model with skillRowList = SkillRowList.update skillRowListMsg model.skillRowList }
     | Reset -> init()
 
+open Feliz
+open Feliz.Bulma
+
 let view (model: Model) (dispatch: Msg -> unit) =
-    Bulma.column [
-        Bulma.notification [
-            color.isPrimary
-            prop.children [
-                SkillRowList.view model.skillRowList (SkillRowListMsg >> dispatch)
-            ]
+    Bulma.notification [
+        color.isPrimary
+        prop.children [
+            AttributeRow.view model.attributeRow (AttributeRowMsg >> dispatch)
+            SkillRowList.view model.skillRowList (SkillRowListMsg >> dispatch)
         ]
     ]

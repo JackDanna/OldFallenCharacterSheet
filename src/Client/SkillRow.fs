@@ -10,8 +10,8 @@ type Msg =
     | StatMsg of Stat.Msg
 
 let init() : Model = 
-    { name = ""
-      dicePool = ""
+    { name = "Lift"
+      dicePool = "0d6"
       level =  Stat.init() }
 
 

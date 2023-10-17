@@ -11,6 +11,7 @@
     <None Include="index.html" />
     <Compile Include="SkillRowList.fs" />
     <Compile Include="AttributeRow.fs" />
+    <Compile Include="CoreSkillTable.fs" />
     <Compile Include="Index.fs" />
     <None Include="paket.references" />
     <Compile Include="OldIndex.fs" />
