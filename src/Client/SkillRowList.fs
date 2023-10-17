@@ -8,7 +8,7 @@ type Msg =
     | Modify of int * SkillRow.Msg
     | Reset
 
-let init() : Model = [SkillRow.init();SkillRow.init()]
+let init() : Model = [SkillRow.init()]
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with

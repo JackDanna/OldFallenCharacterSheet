@@ -1,55 +1,33 @@
 module SkillRow
 
-open FallenLib.SkillStat
-
 type Model = {
-    skillStat : SkillStat
+    name      : string
     dicePool  : string
+    level     : Stat.Model
 }
 
 type Msg =
-    | Reset
+    | StatMsg of Stat.Msg
 
 let init() : Model = 
-    { skillStat = emptySkillStat
-      dicePool = "" }
+    { name = ""
+      dicePool = ""
+      level =  Stat.init() }
 
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
-    | Reset -> init()
+    | StatMsg statMsg ->
+        { model with level = Stat.update statMsg model.level }
 
 open Feliz
 open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
-        Bulma.column [ prop.text model.skillStat.name ]
+        Bulma.column [ prop.text model.name ]
         Bulma.column [ prop.text model.dicePool ]
         Bulma.column [
-            Html.input [
-                prop.type' "checkbox"
-            ]
-        ]
-        Bulma.column [ prop.text "-" ]
-        Bulma.column [
-            Html.input [
-                prop.type' "checkbox"
-            ]
-        ]
-        Bulma.column [
-            Html.input [
-                prop.type' "checkbox"
-            ]
-        ]
-        Bulma.column [
-            Html.input [
-                prop.type' "checkbox"
-            ]
-        ]
-        Bulma.column [
-            Html.input [
-                prop.type' "checkbox"
-            ]
+            Stat.view model.level (StatMsg >> dispatch)
         ]
     ]
