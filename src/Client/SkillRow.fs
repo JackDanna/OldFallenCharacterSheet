@@ -1,35 +1,46 @@
 module SkillRow
 
+open FallenLib.SkillStat
+
 type Model = {
-    name      : string
     dicePool  : string
-    level     : Neg1To4Stat.Model
-    attributeLevel : Stat.Model
+    skillStat : SkillStat
 }
 
 type Msg =
-    | StatMsg of Stat.Msg
+    | Neg1To4StatMsg of Neg1To4Stat.Msg
 
 let init() : Model = 
-    { name = "Lift"
+    { 
+      skillStat = {
+        lvl = Neg1To4Stat.init()
+        name = "Lift"
+        governingAttributes = [||]
+      }
       dicePool = "0d6"
-      level =  Stat.init()
-      attributeLevel = Stat.init() }
+    }
 
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
-    | StatMsg statMsg ->
-        { model with level = Stat.update statMsg model.level }
+    | Neg1To4StatMsg neg1ToStatMsg ->
 
+        let newSkillStat = {
+            name = model.skillStat.name
+            governingAttributes = model.skillStat.governingAttributes
+            lvl = Neg1To4Stat.update neg1ToStatMsg model.skillStat.lvl
+        }
+        { model with skillStat = newSkillStat }
+            
+        
 open Feliz
 open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
-        Bulma.column [ prop.text model.name ]
+        Bulma.column [ prop.text model.skillStat.name ]
         Bulma.column [ prop.text model.dicePool ]
         Bulma.column [
-            Stat.view model.level (StatMsg >> dispatch)
+            Neg1To4Stat.view model.skillStat.lvl (Neg1To4StatMsg >> dispatch)
         ]
     ]
