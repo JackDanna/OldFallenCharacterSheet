@@ -1,4 +1,4 @@
-module skillRows
+module SkillRowList
 
 type Model = {
     governingAttributeLevel : Neg1To4Stat.Model
@@ -8,6 +8,7 @@ type Model = {
 type Msg =
     //| Insert
     //| Remove
+    | SetGoverningAttributeLevel of Neg1To4Stat.Model
     | Modify of int * SkillRow.Msg
     | Reset
 
@@ -18,6 +19,8 @@ let init() : Model = {
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
+    | SetGoverningAttributeLevel attrbuteNeg1To4Stat ->
+        
     | Modify (position, skillRowMsg) ->
         
         let newskillRows =

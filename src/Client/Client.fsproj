@@ -7,11 +7,8 @@
   <ItemGroup>
     <Compile Include="Neg1To4Stat.fs" />
     <Compile Include="SkillHeaderRow.fs" />
-    <Compile Include="SkillRow.fs" />
+    <Compile Include="Skill.fs" />
     <None Include="index.html" />
-    <Compile Include="SkillRowList.fs" />
-    <Compile Include="CoreSkillTable.fs" />
-    <Compile Include="CoreSkillTables.fs" />
     <Compile Include="Index.fs" />
     <None Include="paket.references" />
     <Compile Include="OldIndex.fs" />

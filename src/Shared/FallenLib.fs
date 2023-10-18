@@ -1,4 +1,4 @@
-namespace FallenLib
+namespace OldFallenLib
 
 // Util
 module StringUtils =

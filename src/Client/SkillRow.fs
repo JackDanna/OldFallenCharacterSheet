@@ -1,14 +1,16 @@
-module SkillRow
-
-open FallenLib.SkillStat
+module Skill
 
 type Model = {
-    dicePool  : string
-    skillStat : SkillStat
+    name : string
+    skillLevel : Neg1To4Stat.Model
+    attributeLevel : Neg1To4Stat.Model
+    dicePool : Dice
+
 }
 
 type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
+    | SetAttributeNeg1To4Stat
 
 let init() : Model = 
     { 
