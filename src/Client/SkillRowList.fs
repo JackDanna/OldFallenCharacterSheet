@@ -1,6 +1,9 @@
 module SkillRowList
 
-type Model = SkillRow.Model List
+type Model = {
+    governingAttributeLevel : Neg1To4Stat.Model
+    skillRowList : SkillRow.Model list
+}
 
 type Msg =
     //| Insert
@@ -8,18 +11,25 @@ type Msg =
     | Modify of int * SkillRow.Msg
     | Reset
 
-let init() : Model = [SkillRow.init()]
+let init() : Model = { 
+    governingAttributeLevel = Neg1To4Stat.init()
+    skillRowList = [SkillRow.init();SkillRow.init();]
+}
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | Modify (position, skillRowMsg) ->
-        model
-        |> List.mapi (fun i skillRowModel ->
-            if i = position then
-                SkillRow.update skillRowMsg skillRowModel
-            else
-                skillRowModel
-        )      
+        
+        let newSkillRowList =
+            List.mapi ( fun i skillRowModel ->
+                if position = i then
+                    SkillRow.update skillRowMsg skillRowModel
+                else 
+                    skillRowModel
+            ) model.skillRowList
+
+        { model with skillRowList = newSkillRowList}
+             
     | Reset -> init()
 
 open Feliz
@@ -27,7 +37,7 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
 
-    model
+    model.skillRowList
     |> List.mapi ( 
         fun position skillRow -> 
             SkillRow.view 

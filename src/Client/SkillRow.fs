@@ -14,7 +14,7 @@ let init() : Model =
     { 
       skillStat = {
         lvl = Neg1To4Stat.init()
-        name = ""
+        name = "Lift"
         governingAttributes = [||]
       }
       dicePool = "3d6"
