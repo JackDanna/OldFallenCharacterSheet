@@ -8,7 +8,7 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-Program.mkSimple CoreSkillTable.init CoreSkillTable.update CoreSkillTable.view
+Program.mkSimple CoreSkillTables.init CoreSkillTables.update CoreSkillTables.view
 #if DEBUG
 |> Program.withConsoleTrace
 #endif
