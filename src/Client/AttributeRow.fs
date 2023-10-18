@@ -2,21 +2,21 @@ module AttributeRow
 
 type Model = {
     name : string
-    level : Stat.Model
+    neg1To4Stat : Neg1To4Stat.Model
 }
 
 type Msg =
-    | StatMsg of Stat.Msg
+    | Neg1To4StatMsg of Neg1To4Stat.Msg
 
 let init() = {
     name = "STR"
-    level = Stat.init()
+    neg1To4Stat = Neg1To4Stat.init()
 }
     
 let update (msg: Msg) (model: Model) : Model =
     match msg with
-    | StatMsg statMsg ->
-        { model with level = Stat.update statMsg model.level }
+    | Neg1To4StatMsg neg1To4Stat ->
+        { model with neg1To4Stat = Neg1To4Stat.update neg1To4Stat model.neg1To4Stat }
 
 open Feliz
 open Feliz.Bulma
@@ -25,6 +25,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [ prop.text model.name ]
         Bulma.column [
-            Stat.view model.level (StatMsg >> dispatch)
+            Neg1To4Stat.view model.neg1To4Stat (Neg1To4StatMsg >> dispatch)
         ]
     ]
