@@ -22,14 +22,8 @@ module Dice =
 
     type DicePoolPenalty = uint    // always should deduct the dice with the fewest faces first (i.e. d4, then d6, then d8...)
 
-    type DicePoolModification =
-    | AddDice    of DicePool
-    | RemoveDice of DicePoolPenalty
-
     let emptyDicePool    = { d4=0u; d6=0u; d8=0u; d10=0u; d12=0u; d20=0u}
     let baseDicePool     = { d4=0u; d6=3u; d8=0u; d10=0u; d12=0u; d20=0u}
-
-    let createD6DicePoolMod (numDice:uint) = AddDice { d4=0u; d6=numDice; d8=0u; d10=0u; d12=0u; d20=0u }
 
     let diceToString numDice diceTypeString =
         if numDice <> 0u then string numDice + diceTypeString else ""
@@ -80,46 +74,11 @@ module Dice =
         let d20, _      = removeDice dicePool.d20 d20Neg
         { d4=d4; d6=d6; d8=d8; d10=d10; d12=d12; d20=d20 }
 
-    let modifyDicePool (dicePool:DicePool) (dicePoolModification:DicePoolModification)  : DicePool =
-        match dicePoolModification with
-        | AddDice diceToAdd ->
-            combineDicePools [|dicePool; diceToAdd|]
-        | RemoveDice diceToRemove ->
-            removeDiceFromDicePool dicePool diceToRemove
-    
     let sumDicePool (dicePool: DicePool) =
         let { d4 = d4; d6 = d6; d8 = d8; d10 = d10; d12 = d12; d20 = d20 } = dicePool
         d4 + d6 + d8 + d10 + d12 + d20
 
-    let modifyDicePoolByModList (dicePool:DicePool) (dicePoolModifications:DicePoolModification array) : DicePool =
-
-        let acc : DicePoolPenalty = 0u
-        let combinedDicePoolPenalty = 
-            Array.fold (fun acc diceMod ->
-                match diceMod with
-                | RemoveDice dicePoolPenalty -> acc + dicePoolPenalty
-                | _ -> acc
-            ) acc dicePoolModifications |> RemoveDice
-
-        let combinedPositiveDicePool = 
-            Array.fold (fun acc diceMod ->
-                match diceMod with
-                | AddDice dicePool -> combineDicePools [| acc; dicePool |] 
-                | _ -> acc
-            ) dicePool dicePoolModifications
-
-        // Does the subtractions only at the end after combining
-        modifyDicePool combinedPositiveDicePool combinedDicePoolPenalty
-
-    let dicePoolModToInt (dicePoolMod: DicePoolModification) : int =
-        match dicePoolMod with
-        | AddDice data -> sumDicePool data |> int
-        | RemoveDice data -> (int data) * -1
-
-    let intToDicePoolModification (num : int) =
-        if num < 0 then RemoveDice (uint (abs num)) else AddDice { d4=0u; d6=(uint num); d8=0u; d10=0u; d12=0u; d20=0u }
-
-    let createDicePoolModification (numDiceStr:string) (diceType:string) =
+    let createDicePool (numDiceStr:string) (diceType:string) =
         let numDice = uint numDiceStr
         match diceType with
         | "4"  -> {d4=numDice;d6=0u;d8=0u;d10=0u;d12=0u;d20=0u}
@@ -134,29 +93,54 @@ module Dice =
         str.Split ", "
         |> Array.map( fun (diceStr) ->
             let diceNumAndDiceType = diceStr.Split "d"
-            createDicePoolModification diceNumAndDiceType[0] diceNumAndDiceType[1]
+            createDicePool diceNumAndDiceType[0] diceNumAndDiceType[1]
         )
         |> combineDicePools
 
-    let stringToDicePoolModification (dicePoolJSONString:string) : DicePoolModification =
-        if dicePoolJSONString.Contains("+") then
-            let str = dicePoolJSONString.Replace("+", "")
-            AddDice <| stringToDicePool str
-        elif dicePoolJSONString.Contains("-") then
-            let removeDiceString = dicePoolJSONString.Replace("-", "")
+    type DicePoolCalculation = {
+        dicePool        : DicePool
+        dicePoolPenalty : DicePoolPenalty
+    }
 
-            match System.UInt32.TryParse(removeDiceString) with
-            | (true, result) ->
-                RemoveDice result
-            | _ ->
-                RemoveDice 0u
-        else
-            RemoveDice 0u
+    let emptyDicePoolCalculation = {
+        dicePool = emptyDicePool
+        dicePoolPenalty = 0u
+    }
 
-    let stringToDicePoolModificationOption (dicePoolJSONString:string) : DicePoolModification option=
-        match dicePoolJSONString with
-        | "None" -> None
-        | modString -> Some <| stringToDicePoolModification modString
+    let baseDicePoolCalculation = {
+        dicePool = baseDicePool
+        dicePoolPenalty = 0u
+    }
+
+    let createD6DicePoolCalc numDice = 
+        {
+            dicePool = {d4=0u;d6=numDice;d8=0u;d10=0u;d12=0u;d20=0u}
+            dicePoolPenalty = 0u
+        }
+
+    let createPenaltyDicePoolCalc num = 
+        {
+            dicePool = {d4=0u;d6=0u;d8=0u;d10=0u;d12=0u;d20=0u}
+            dicePoolPenalty = num
+        }
+
+    let combineDicePoolCalculations dicePoolCalculations =
+        List.fold (fun acc next ->
+            {
+                dicePool = {
+                    d4  = acc.dicePool.d4  + next.dicePool.d4
+                    d6  = acc.dicePool.d6  + next.dicePool.d6
+                    d8  = acc.dicePool.d8  + next.dicePool.d8
+                    d10 = acc.dicePool.d10 + next.dicePool.d10
+                    d12 = acc.dicePool.d12 + next.dicePool.d12
+                    d20 = acc.dicePool.d20 + next.dicePool.d20
+                }
+                dicePoolPenalty = acc.dicePoolPenalty + next.dicePoolPenalty
+            }
+        ) emptyDicePoolCalculation dicePoolCalculations
+
+    let calcDicePoolCalculation dicePoolCalculation =
+        removeDiceFromDicePool dicePoolCalculation.dicePool dicePoolCalculation.dicePoolPenalty
 
 
 
@@ -165,27 +149,21 @@ module SkillUtils =
     open Neg1To4
     open Dice
 
-    type Skill = {
-        name                 : string
-        skillLevel           : Neg1To4
-        attributeDiceMod     : DicePoolModification
-        baseDice             : DicePool
-    }
-
     let neg1To4_To_d6_DiceMod neg1To4 =
         match neg1To4 with
-        | NegOne -> RemoveDice 1u
-        | Zero -> AddDice emptyDicePool
-        | One -> AddDice { d4=0u; d6=1u; d8=0u; d10=0u; d12=0u; d20=0u }
-        | Two -> AddDice { d4=0u; d6=2u; d8=0u; d10=0u; d12=0u; d20=0u }
-        | Three-> AddDice { d4=0u; d6=3u; d8=0u; d10=0u; d12=0u; d20=0u }
-        | Four -> AddDice { d4=0u; d6=4u; d8=0u; d10=0u; d12=0u; d20=0u }
+        | NegOne -> createPenaltyDicePoolCalc 1u
+        | Zero -> createD6DicePoolCalc 0u
+        | One -> createD6DicePoolCalc 1u
+        | Two -> createD6DicePoolCalc 2u
+        | Three-> createD6DicePoolCalc 3u
+        | Four -> createD6DicePoolCalc 4u
 
     let skillToDicePoolString baseDice skillLevel attributeDiceMod =
-        modifyDicePoolByModList
-            baseDice 
-            [|
+        combineDicePoolCalculations
+            [
+                baseDice
                 skillLevel |> neg1To4_To_d6_DiceMod
                 attributeDiceMod
-            |]
+            ]
+        |> calcDicePoolCalculation
         |> dicePoolToString

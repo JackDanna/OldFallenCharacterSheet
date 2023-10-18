@@ -1,14 +1,13 @@
 module SkillRowList
 
-type Model = {
-    governingAttributeLevel : Neg1To4Stat.Model
-    skillRows : SkillRow.Model list
-}
+open FallenLib.Dice
+
+type Model = Skill.Model list
 
 type Msg =
     //| Insert
     //| Remove
-    | SetGoverningAttributeLevel of Neg1To4Stat.Model
+    | SetAttributeDiceMod of DicePoolModification
     | Modify of int * SkillRow.Msg
     | Reset
 
@@ -20,7 +19,7 @@ let init() : Model = {
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | SetGoverningAttributeLevel attrbuteNeg1To4Stat ->
-        
+
     | Modify (position, skillRowMsg) ->
         
         let newskillRows =
