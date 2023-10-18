@@ -6,10 +6,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Neg1To4Stat.fs" />
+    <Compile Include="SkillHeaderRow.fs" />
     <Compile Include="SkillRow.fs" />
     <None Include="index.html" />
     <Compile Include="SkillRowList.fs" />
-    <Compile Include="AttributeRow.fs" />
     <Compile Include="CoreSkillTable.fs" />
     <Compile Include="CoreSkillTables.fs" />
     <Compile Include="Index.fs" />
