@@ -9,6 +9,7 @@
     <Compile Include="SkillHeaderRow.fs" />
     <Compile Include="SkillRow.fs" />
     <Compile Include="SkillRowList.fs" />
+    <Compile Include="CoreSkillTable.fs" />
     <None Include="index.html" />
     <Compile Include="Index.fs" />
     <None Include="paket.references" />

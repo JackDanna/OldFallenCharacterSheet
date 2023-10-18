@@ -149,7 +149,7 @@ module SkillUtils =
     open Neg1To4
     open Dice
 
-    let neg1To4_To_d6_DiceMod neg1To4 =
+    let neg1To4_To_d6_DicePoolCalc neg1To4 =
         match neg1To4 with
         | NegOne -> createPenaltyDicePoolCalc 1u
         | Zero -> createD6DicePoolCalc 0u
@@ -162,7 +162,7 @@ module SkillUtils =
         combineDicePoolCalculations
             [
                 baseDice
-                skillLevel |> neg1To4_To_d6_DiceMod
+                skillLevel |> neg1To4_To_d6_DicePoolCalc
                 attributeDiceMod
             ]
         |> calcDicePoolCalculation

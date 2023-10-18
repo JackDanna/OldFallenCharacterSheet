@@ -1,5 +1,7 @@
 module CoreSkillTable
 
+open FallenLib.SkillUtils
+
 type Model = {
     attributeRow  : SkillHeaderRow.Model
     skillRowList  : SkillRowList.Model
@@ -18,18 +20,16 @@ let init() : Model = {
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | AttributeRowMsg attributeRowMsg ->
-        { model with attributeRow = SkillHeaderRow.update attributeRowMsg model.attributeRow }
+        let newSkillHeaderRow = SkillHeaderRow.update attributeRowMsg model.attributeRow
+        let attributeDicePoolCalc = neg1To4_To_d6_DicePoolCalc newSkillHeaderRow.neg1To4Stat
+        let newSkillList = SkillRowList.update (SkillRowList.Msg.SetAttributeDiceCalc attributeDicePoolCalc) model.skillRowList
+        { model with 
+            attributeRow = newSkillHeaderRow
+            skillRowList = newSkillList }
 
     | SkillRowListMsg skillRowListMsg ->
 
-        // let skillRowListWithAttribute = 
-        //     List.map ( fun (skillRow:SkillRow.Model) ->
-        //         {skillRow with attributeLevel = model.attributeRow.level}
-        //     ) model.skillRowList
-
-        
-
-        { model with skillRowList = SkillRowList.update skillRowListMsg skillRowListWithAttribute }
+        { model with skillRowList = SkillRowList.update skillRowListMsg model.skillRowList }
     | Reset -> init()
 
 open Feliz
@@ -39,7 +39,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.notification [
         color.isPrimary
         prop.children [
-            AttributeRow.view model.attributeRow (AttributeRowMsg >> dispatch)
+            SkillHeaderRow.view model.attributeRow (AttributeRowMsg >> dispatch)
             SkillRowList.view model.skillRowList (SkillRowListMsg >> dispatch)
         ]
     ]
