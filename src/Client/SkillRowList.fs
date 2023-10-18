@@ -7,30 +7,29 @@ type Model = Skill.Model list
 type Msg =
     //| Insert
     //| Remove
-    | SetAttributeDiceMod of DicePoolModification
-    | Modify of int * SkillRow.Msg
+    | SetAttributeDiceCalc of DicePoolCalculation
+    | Modify of int * Skill.Msg
     | Reset
 
-let init() : Model = { 
-    governingAttributeLevel = Neg1To4Stat.init()
-    skillRows = [SkillRow.init();SkillRow.init();]
-}
+let init() : Model = [Skill.init();Skill.init();]
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
-    | SetGoverningAttributeLevel attrbuteNeg1To4Stat ->
+    | SetAttributeDiceCalc attrbuteNeg1To4Stat ->
+
+        List.map (fun skill -> 
+            Skill.update (Skill.Msg.SetAttributeDiceCalc attrbuteNeg1To4Stat) skill
+        ) model
 
     | Modify (position, skillRowMsg) ->
         
-        let newskillRows =
-            List.mapi ( fun i skillRowModel ->
-                if position = i then
-                    SkillRow.update skillRowMsg skillRowModel
-                else 
-                    skillRowModel
-            ) model.skillRows
+        List.mapi ( fun i skillRowModel ->
+            if position = i then
+                Skill.update skillRowMsg skillRowModel
+            else 
+                skillRowModel
+        ) model
 
-        { model with skillRows = newskillRows}
              
     | Reset -> init()
 
@@ -39,10 +38,10 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
 
-    model.skillRows
+    model
     |> List.mapi ( 
         fun position skillRow -> 
-            SkillRow.view 
+            Skill.view 
                 skillRow 
                 (fun msg -> dispatch (Modify (position, msg)) )
     )
