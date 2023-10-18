@@ -1,38 +1,34 @@
-module Skill
+module SkillRow
+
+open FallenLib.Dice
+open FallenLib.SkillUtils
 
 type Model = {
-    name : string
-    skillLevel : Neg1To4Stat.Model
-    attributeLevel : Neg1To4Stat.Model
-    dicePool : Dice
-
+    name                 : string
+    skillLevel           : Neg1To4Stat.Model
+    attributeDiceCalc    : DicePoolCalculation
+    baseDice             : DicePoolCalculation
 }
 
 type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
-    | SetAttributeNeg1To4Stat
+    | SetAttributeDiceCalc of DicePoolCalculation
 
 let init() : Model = 
-    { 
-      skillStat = {
-        lvl = Neg1To4Stat.init()
-        name = "Lift"
-        governingAttributes = [||]
-      }
-      dicePool = "3d6"
+    {
+      name = "Lift"
+      skillLevel = Neg1To4Stat.init()
+      attributeDiceCalc = emptyDicePoolCalculation
+      baseDice = baseDicePoolCalculation
     }
 
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | Neg1To4StatMsg neg1ToStatMsg ->
-
-        let newSkillStat = {
-            name = model.skillStat.name
-            governingAttributes = model.skillStat.governingAttributes
-            lvl = Neg1To4Stat.update neg1ToStatMsg model.skillStat.lvl
-        }
-        { model with skillStat = newSkillStat }
+        { model with skillLevel = Neg1To4Stat.update neg1ToStatMsg model.skillLevel }
+    | SetAttributeDiceCalc attributeDicePoolCalc ->
+        { model with attributeDiceCalc = attributeDicePoolCalc }
             
         
 open Feliz
@@ -40,9 +36,13 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
-        Bulma.column [ prop.text model.skillStat.name ]
-        Bulma.column [ prop.text model.dicePool ]
+        Bulma.column [ prop.text model.name ]
         Bulma.column [
-            Neg1To4Stat.view model.skillStat.lvl (Neg1To4StatMsg >> dispatch)
+            skillToDicePoolString 
+                model.baseDice model.skillLevel model.attributeDiceCalc
+            |> prop.text
+        ]
+        Bulma.column [
+            Neg1To4Stat.view model.skillLevel (Neg1To4StatMsg >> dispatch)
         ]
     ]
