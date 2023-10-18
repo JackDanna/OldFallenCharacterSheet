@@ -3,7 +3,7 @@ module SkillRow
 type Model = {
     name      : string
     dicePool  : string
-    level     : Stat.Model
+    level     : Neg1To4Stat.Model
     attributeLevel : Stat.Model
 }
 
