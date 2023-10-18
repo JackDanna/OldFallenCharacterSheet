@@ -4,6 +4,7 @@ type Model = {
     name      : string
     dicePool  : string
     level     : Stat.Model
+    attributeLevel : Stat.Model
 }
 
 type Msg =
@@ -12,7 +13,8 @@ type Msg =
 let init() : Model = 
     { name = "Lift"
       dicePool = "0d6"
-      level =  Stat.init() }
+      level =  Stat.init()
+      attributeLevel = Stat.init() }
 
 
 let update (msg: Msg) (model: Model) : Model =

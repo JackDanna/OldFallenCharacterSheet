@@ -16,13 +16,18 @@ let init() : Model =
         skillRowList = SkillRowList.init()
     }
 
-
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | AttributeRowMsg attributeRowMsg ->
         { model with attributeRow = AttributeRow.update attributeRowMsg model.attributeRow }
     | SkillRowListMsg skillRowListMsg ->
-        { model with skillRowList = SkillRowList.update skillRowListMsg model.skillRowList }
+
+        let skillRowListWithAttribute = 
+            List.map ( fun (skillRow:SkillRow.Model) ->
+                {skillRow with attributeLevel = model.attributeRow.level}
+            ) model.skillRowList
+
+        { model with skillRowList = SkillRowList.update skillRowListMsg skillRowListWithAttribute }
     | Reset -> init()
 
 open Feliz
