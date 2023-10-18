@@ -8,7 +8,7 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-Program.mkSimple NewStat.init NewStat.update NewStat.view
+Program.mkSimple Neg1To4Stat.init Neg1To4Stat.update Neg1To4Stat.view
 #if DEBUG
 |> Program.withConsoleTrace
 #endif
