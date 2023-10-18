@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CheckboxRow.fs" />
+    <Compile Include="NewStat.fs" />
     <Compile Include="Stat.fs" />
     <Compile Include="SkillRow.fs" />
     <None Include="index.html" />
