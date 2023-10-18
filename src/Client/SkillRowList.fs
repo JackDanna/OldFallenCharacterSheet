@@ -1,8 +1,8 @@
-module SkillRowList
+module skillRows
 
 type Model = {
     governingAttributeLevel : Neg1To4Stat.Model
-    skillRowList : SkillRow.Model list
+    skillRows : SkillRow.Model list
 }
 
 type Msg =
@@ -13,22 +13,22 @@ type Msg =
 
 let init() : Model = { 
     governingAttributeLevel = Neg1To4Stat.init()
-    skillRowList = [SkillRow.init();SkillRow.init();]
+    skillRows = [SkillRow.init();SkillRow.init();]
 }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | Modify (position, skillRowMsg) ->
         
-        let newSkillRowList =
+        let newskillRows =
             List.mapi ( fun i skillRowModel ->
                 if position = i then
                     SkillRow.update skillRowMsg skillRowModel
                 else 
                     skillRowModel
-            ) model.skillRowList
+            ) model.skillRows
 
-        { model with skillRowList = newSkillRowList}
+        { model with skillRows = newskillRows}
              
     | Reset -> init()
 
@@ -37,7 +37,7 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
 
-    model.skillRowList
+    model.skillRows
     |> List.mapi ( 
         fun position skillRow -> 
             SkillRow.view 
