@@ -45,7 +45,7 @@ type Msg =
     | Reset
 
 let init () : Model =
-    { name = "Name"; coreSkillTables = defaultCoreSkillTables }
+    { name = "Javk Wick"; coreSkillTables = defaultCoreSkillTables }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
@@ -72,6 +72,7 @@ let navBrand =
     ]
 
 let view (model: Model) (dispatch: Msg -> unit) =
+    
     Bulma.hero [
         hero.isFullHeight
         color.isDanger
@@ -101,20 +102,21 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
 
             Bulma.heroBody [
+
                 Bulma.container [
-                    Bulma.columns [
-                        CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
+                    Html.form [
+                        Bulma.title [ 
+                            prop.text model.name
+                            prop.classes ["is-1"; "has-text-centered"]
+                        ]
+                        Bulma.fieldBody [
+                            prop.children [
+                                Bulma.columns [
+                                    CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
+                                ]
+                            ]
+                        ]
                     ]
-                    // Bulma.control.p [
-                    //     control.isExpanded
-                    //     prop.children [
-                    //         Bulma.input.text [
-                    //             prop.value model.Name
-                    //             prop.onChange (fun input -> SetName input |> dispatch)
-                    //         ]
-                    //     ]
-                    // ]
-                    //Bulma.title model.Name
                 ]
             ]
         ]
