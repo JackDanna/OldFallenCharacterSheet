@@ -113,9 +113,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         ]
                     ]
                     Bulma.container [
-                        Bulma.columns [
-                            CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
-                        ]
+                        CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
                     ]
                 ]
             ]

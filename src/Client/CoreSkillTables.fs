@@ -23,14 +23,20 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
 
-    model
-    |> List.mapi ( 
-        fun position coreSkillTable -> 
-            Bulma.column [
-                CoreSkillTable.view 
-                    coreSkillTable
-                    (fun msg -> dispatch (Modify (position, msg)) )
-            ]
-    )
-    |> Bulma.columns
+    Bulma.columns [
+        columns.isCentered
+        prop.children [
+            model
+            |> List.mapi ( 
+                fun position coreSkillTable -> 
+                    Bulma.column [
+                        CoreSkillTable.view 
+                            coreSkillTable
+                            (fun msg -> dispatch (Modify (position, msg)) )
+                    ]
+            )
+            |> Bulma.columns
+        ]
+    ]
+    
 
