@@ -104,17 +104,17 @@ let view (model: Model) (dispatch: Msg -> unit) =
             Bulma.heroBody [
 
                 Bulma.container [
-                    Html.form [
-                        Bulma.title [ 
-                            prop.text model.name
-                            prop.classes ["is-1"; "has-text-centered"]
+                    Bulma.content [
+                        Bulma.input.text [
+                            prop.value model.name
+                            prop.placeholder "Character Name"
+                            prop.onChange (fun newName -> SetName newName |> dispatch)
+                            prop.classes ["is-large"; "has-text-centered"]
                         ]
-                        Bulma.fieldBody [
-                            prop.children [
-                                Bulma.columns [
-                                    CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
-                                ]
-                            ]
+                    ]
+                    Bulma.container [
+                        Bulma.columns [
+                            CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
                         ]
                     ]
                 ]
