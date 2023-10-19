@@ -38,5 +38,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
             |> Bulma.columns
         ]
     ]
+    |> Bulma.box
     
 

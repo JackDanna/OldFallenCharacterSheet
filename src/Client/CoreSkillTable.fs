@@ -37,8 +37,6 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
-        prop.children [
-            SkillHeaderRow.view model.attributeRow (AttributeRowMsg >> dispatch)
-            SkillRowList.view model.skillRowList (SkillRowListMsg >> dispatch)
-        ]
+        SkillHeaderRow.view model.attributeRow (AttributeRowMsg >> dispatch)
+        SkillRowList.view model.skillRowList (SkillRowListMsg >> dispatch)
     ]
