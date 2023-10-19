@@ -78,49 +78,42 @@ open Feliz.Bulma
 let view (model : Model) (dispatch : Msg -> unit) =
     
     Bulma.columns [
-        prop.children [
-            Bulma.column [
-                Html.input [
-                    prop.type' "checkbox"
-                    prop.disabled (isNegOneDisabled model)
-                    prop.isChecked (NegOneLogic model)
-                    prop.onCheckedChange ( fun isChecked -> dispatch (ToggleNegOne isChecked) )
-                ]
+        Bulma.column [
+            Bulma.input.checkbox [
+                prop.disabled (isNegOneDisabled model)
+                prop.isChecked (NegOneLogic model)
+                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleNegOne isChecked) )
             ]
-            Bulma.column [
-                Html.div [ prop.text "-" ]
+        ]
+        Bulma.column [
+            Html.div [ prop.text "-" ]
+        ]
+        Bulma.column [
+            Bulma.input.checkbox [
+                prop.disabled (isOneDisabled model)
+                prop.isChecked (OneLogic model)
+                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleOne isChecked) )
             ]
-            Bulma.column [
-                Html.input [
-                    prop.type' "checkbox"
-                    prop.disabled (isOneDisabled model)
-                    prop.isChecked (OneLogic model)
-                    prop.onCheckedChange ( fun isChecked -> dispatch (ToggleOne isChecked) )
-                ]
+        ]
+        Bulma.column [
+            Bulma.input.checkbox [
+                prop.disabled (isTwoDisabled model)
+                prop.isChecked (TwoLogic model)
+                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleTwo isChecked) )
             ]
-            Bulma.column [
-                Html.input [
-                    prop.type' "checkbox"
-                    prop.disabled (isTwoDisabled model)
-                    prop.isChecked (TwoLogic model)
-                    prop.onCheckedChange ( fun isChecked -> dispatch (ToggleTwo isChecked) )
-                ]
+        ]
+        Bulma.column [
+            Bulma.input.checkbox [
+                prop.disabled (isThreeDisabled model)
+                prop.isChecked (ThreeLogic model)
+                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleThree isChecked) )
             ]
-            Bulma.column [
-                Html.input [
-                    prop.type' "checkbox"
-                    prop.disabled (isThreeDisabled model)
-                    prop.isChecked (ThreeLogic model)
-                    prop.onCheckedChange ( fun isChecked -> dispatch (ToggleThree isChecked) )
-                ]
-            ]
-            Bulma.column [
-                Html.input [
-                    prop.type' "checkbox"
-                    prop.disabled (isFourDisabled model)
-                    prop.isChecked (FourLogic model)
-                    prop.onCheckedChange ( fun isChecked -> dispatch (ToggleFour isChecked) )
-                ]
+        ]
+        Bulma.column [
+            Bulma.input.checkbox [
+                prop.disabled (isFourDisabled model)
+                prop.isChecked (FourLogic model)
+                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleFour isChecked) )
             ]
         ]
     ]
