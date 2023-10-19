@@ -32,7 +32,7 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
         attributeRow = { SkillHeaderRow.init() with name = "INT"}
         skillRowList = [
             { SkillRow.init() with name = "Communication" }
-            { SkillRow.init() with name = "General KNowledge" }
+            { SkillRow.init() with name = "General Knowledge" }
             { SkillRow.init() with name = "Survival" }
             { SkillRow.init() with name = "Willpower" }
         ]
