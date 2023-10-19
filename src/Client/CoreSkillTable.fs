@@ -36,8 +36,7 @@ open Feliz
 open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
-    Bulma.notification [
-        color.isPrimary
+    Bulma.box [
         prop.children [
             SkillHeaderRow.view model.attributeRow (AttributeRowMsg >> dispatch)
             SkillRowList.view model.skillRowList (SkillRowListMsg >> dispatch)
