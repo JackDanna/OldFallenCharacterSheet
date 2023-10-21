@@ -41,33 +41,13 @@ let update (msg: Msg) (model: Model) : Model =
     | ToggleThree isChecked -> toggleLogic model.levelCap isChecked Three Two
     | ToggleFour isChecked -> toggleLogic model.levelCap isChecked Four Three
 
-//let isCheckedLogic checkboxRepresented newNeg1To4 =
-//    match
-
-let NegOneLogic neg1To4 =
-    match neg1To4 with
-    | NegOne -> true
-    | _ -> false
-
-let OneLogic neg1To4 =
-    match neg1To4 with
-    | NegOne | Zero -> false
-    | _ -> true
-
-let TwoLogic neg1To4 =
-    match neg1To4 with
-    | NegOne | Zero | One -> false
-    | _ -> true
-
-let ThreeLogic neg1To4 =
-    match neg1To4 with
-    | NegOne | Zero | One | Two -> false
-    | _ -> true
-
-let FourLogic neg1To4 =
-    match neg1To4 with
-    | NegOne | Zero | One | Two | Three -> false
-    | _ -> true
+let isCheckedLogic currentLevel checkboxRepresented =
+    match checkboxRepresented = NegOne with
+    | true ->
+        match currentLevel = NegOne with
+        | true -> true
+        | _ -> false
+    | _ -> neg1To4ToInt checkboxRepresented <= neg1To4ToInt currentLevel
 
 let isNegOneDisabled neg1To4 =
     match neg1To4 with
@@ -104,7 +84,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isNegOneDisabled model.level)
-                prop.isChecked (NegOneLogic model.level)
+                prop.isChecked (isCheckedLogic model.level NegOne)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleNegOne isChecked) )
             ]
         ]
@@ -114,28 +94,28 @@ let view (model : Model) (dispatch : Msg -> unit) =
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isOneDisabled model.level)
-                prop.isChecked (OneLogic model.level)
+                prop.isChecked (isCheckedLogic model.level One)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleOne isChecked) )
             ]
         ]
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isTwoDisabled model.level)
-                prop.isChecked (TwoLogic model.level)
+                prop.isChecked (isCheckedLogic model.level Two)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleTwo isChecked) )
             ]
         ]
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isThreeDisabled model.level)
-                prop.isChecked (ThreeLogic model.level)
+                prop.isChecked (isCheckedLogic model.level Three)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleThree isChecked) )
             ]
         ]
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isFourDisabled model.level)
-                prop.isChecked (FourLogic model.level)
+                prop.isChecked (isCheckedLogic model.level Four)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleFour isChecked) )
             ]
         ]
