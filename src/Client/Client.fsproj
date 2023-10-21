@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Neg1To4Stat.fs" />
-    <Compile Include="SkillHeaderRow.fs" />
+    <Compile Include="AttributeRow.fs" />
     <Compile Include="SkillRow.fs" />
     <Compile Include="SkillRowList.fs" />
     <Compile Include="CoreSkillTable.fs" />
@@ -14,7 +14,6 @@
     <None Include="index.html" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
-    <Compile Include="OldIndex.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

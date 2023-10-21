@@ -23,7 +23,7 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
 
-    Bulma.box [
+    Bulma.container [
         Bulma.label [
             prop.text "Attributes and Core Skills:"
         ]
