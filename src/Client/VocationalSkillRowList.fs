@@ -5,7 +5,7 @@ open FallenLib.Dice
 type Model = VocationalSkillRow.Model list
 
 type Msg =
-    //| Insert
+    | Insert
     //| Remove
     | SetAttributeDiceCalc of DicePoolCalculation
     | Modify of int * VocationalSkillRow.Msg
@@ -20,6 +20,13 @@ let update (msg: Msg) (model: Model) : Model =
         List.map (fun skill -> 
             VocationalSkillRow.update (VocationalSkillRow.Msg.SetAttributeDiceCalc attrbuteNeg1To4Stat) skill
         ) model
+
+    // Set Vocation Skill
+    | Insert ->
+        VocationalSkillRow.init() :: model
+
+    // Remove
+
 
     | Modify (position, skillRowMsg) ->
         
@@ -37,13 +44,22 @@ open Feliz
 open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
+    
+    let vocationalSkillList = 
+        List.mapi ( 
+            fun position skillRow -> 
+                VocationalSkillRow.view 
+                    skillRow 
+                    (fun msg -> dispatch (Modify (position, msg)) )
+        ) model
 
-    model
-    |> List.mapi ( 
-        fun position skillRow -> 
-            VocationalSkillRow.view 
-                skillRow 
-                (fun msg -> dispatch (Modify (position, msg)) )
-    )
-    |> Html.ul
+    let fullList = 
+        List.append vocationalSkillList [
+            Html.button [
+                prop.onClick (fun _ -> dispatch Insert)
+                prop.text "+"
+            ]
+        ]
+
+    Html.ul fullList
 

@@ -38,7 +38,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [ prop.text model.name ]
         Bulma.column [
-            skillToDicePoolString 
+            skillToDicePoolString
                 model.baseDice model.VocationalSkillStat.level model.attributeDiceCalc
             |> prop.text
         ]
