@@ -16,12 +16,15 @@ type Msg =
 
 let init() : Model = {
     level = Zero
-    levelCap = Zero
+    levelCap = Three
 }
+
+let determineIfCapped levelCap level =
+    (neg1To4ToInt level) > (neg1To4ToInt levelCap)
 
 let determineIfCappedAndReturnModel levelCap level =
     
-    match (neg1To4ToInt level) > (neg1To4ToInt levelCap) with
+    match determineIfCapped levelCap level with
     | true  -> { level = levelCap; levelCap = levelCap }
     | false -> { level = level; levelCap = levelCap }
 
@@ -56,6 +59,11 @@ let isCheckboxDisabled currentLevel checkboxRepresented =
         let checkboxRepresentedInt = neg1To4ToInt checkboxRepresented
         checkboxRepresentedInt <> currentLevelInt && checkboxRepresentedInt <> currentLevelInt + 1
 
+let isVocationalCheckboxDisabled model checkboxRepresented =
+    match determineIfCapped model.levelCap checkboxRepresented with
+    | true -> true
+    | _ -> isCheckboxDisabled model.level checkboxRepresented
+
 open Feliz
 open Feliz.Bulma
 
@@ -65,7 +73,7 @@ let view (model : Model) (dispatch : Msg -> unit) =
     Bulma.columns [
         Bulma.column [
             Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model.level NegOne)
+                prop.disabled (isVocationalCheckboxDisabled model NegOne)
                 prop.isChecked (isCheckedLogic model.level NegOne)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleNegOne isChecked) )
             ]
@@ -75,28 +83,28 @@ let view (model : Model) (dispatch : Msg -> unit) =
         ]
         Bulma.column [
             Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model.level One)
+                prop.disabled (isVocationalCheckboxDisabled model One)
                 prop.isChecked (isCheckedLogic model.level One)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleOne isChecked) )
             ]
         ]
         Bulma.column [
             Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model.level Two)
+                prop.disabled (isVocationalCheckboxDisabled model Two)
                 prop.isChecked (isCheckedLogic model.level Two)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleTwo isChecked) )
             ]
         ]
         Bulma.column [
             Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model.level Three)
+                prop.disabled (isVocationalCheckboxDisabled model Three)
                 prop.isChecked (isCheckedLogic model.level Three)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleThree isChecked) )
             ]
         ]
         Bulma.column [
             Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model.level Four)
+                prop.disabled (isVocationalCheckboxDisabled model Four)
                 prop.isChecked (isCheckedLogic model.level Four)
                 prop.onCheckedChange ( fun isChecked -> dispatch (ToggleFour isChecked) )
             ]
