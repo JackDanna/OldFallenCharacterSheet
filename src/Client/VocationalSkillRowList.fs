@@ -6,7 +6,7 @@ type Model = VocationalSkillRow.Model list
 
 type Msg =
     | Insert
-    //| Remove
+    | Remove
     | SetAttributeDiceCalc of DicePoolCalculation
     | Modify of int * VocationalSkillRow.Msg
     | Reset
@@ -23,9 +23,11 @@ let update (msg: Msg) (model: Model) : Model =
 
     // Set Vocation Skill
     | Insert ->
-        VocationalSkillRow.init() :: model
+        List.append model [VocationalSkillRow.init()]
 
-    // Remove
+    | Remove ->
+        model |> List.rev |> List.tail |> List.rev
+
 
 
     | Modify (position, skillRowMsg) ->
@@ -58,6 +60,10 @@ let view (model: Model) (dispatch: Msg -> unit) =
             Html.button [
                 prop.onClick (fun _ -> dispatch Insert)
                 prop.text "+"
+            ]
+            Html.button [
+                prop.onClick (fun _ -> dispatch Remove)
+                prop.text "-"
             ]
         ]
 
