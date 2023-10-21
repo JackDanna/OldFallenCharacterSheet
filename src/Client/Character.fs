@@ -11,7 +11,7 @@ type Model = {
 
 let defaultCoreSkillTables : CoreSkillTables.Model = [
     {
-        attributeRow = { SkillHeaderRow.init() with name = "STR"}
+        attributeRow = { AttributeRow.init() with name = "STR"}
         skillRowList = [
             { SkillRow.init() with name = "Athletics" }
             { SkillRow.init() with name = "Climb" }
@@ -20,7 +20,7 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
         ]
     }
     {
-        attributeRow = { SkillHeaderRow.init() with name = "RFX"}
+        attributeRow = { AttributeRow.init() with name = "RFX"}
         skillRowList = [
             { SkillRow.init() with name = "Acrobatics" }
             { SkillRow.init() with name = "Perception" }
@@ -29,7 +29,7 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
         ]
     }
     {
-        attributeRow = { SkillHeaderRow.init() with name = "INT"}
+        attributeRow = { AttributeRow.init() with name = "INT"}
         skillRowList = [
             { SkillRow.init() with name = "Communication" }
             { SkillRow.init() with name = "General Knowledge" }

@@ -1,4 +1,4 @@
-module SkillHeaderRow
+module AttributeRow
 
 type Model = {
     name : string
