@@ -13,6 +13,7 @@
     <Compile Include="CoreSkillTables.fs" />
     <None Include="index.html" />
     <Compile Include="VocationalSkillStat.fs" />
+    <Compile Include="VocationalSkillRow.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
     <Compile Include="App.fs" />
