@@ -16,7 +16,7 @@ type Msg =
 
 let init() : Model = {
     level = Zero
-    levelCap = Two
+    levelCap = Zero
 }
 
 let determineIfCappedAndReturnModel levelCap level =
@@ -50,11 +50,11 @@ let isCheckedLogic currentLevel checkboxRepresented =
 let isCheckboxDisabled currentLevel checkboxRepresented =
 
     match checkboxRepresented = NegOne with
-    | true -> not (currentLevel = NegOne || currentLevel = Zero)
+    | true -> currentLevel <> NegOne && currentLevel <> Zero
     | _ ->
         let currentLevelInt = neg1To4ToInt currentLevel
         let checkboxRepresentedInt = neg1To4ToInt checkboxRepresented
-        not ( (checkboxRepresentedInt = currentLevelInt) || (checkboxRepresentedInt = currentLevelInt + 1) )
+        checkboxRepresentedInt <> currentLevelInt && checkboxRepresentedInt <> currentLevelInt + 1
 
 open Feliz
 open Feliz.Bulma
