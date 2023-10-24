@@ -23,7 +23,10 @@ let init() : Model =
     {
       name = "Fellkin"
       vocationLevel = Neg1To4Stat.init()
-      governingAttributes = [ { isGoverning=true;attributeStat=AttributeRow.init() } ]
+      governingAttributes = [
+            { isGoverning=false;attributeStat=AttributeRow.init() }
+            { isGoverning=false;attributeStat= {AttributeRow.init() with name = "RFX"} }
+        ]
       baseDice = baseDicePoolCalculation
     }
 
@@ -68,7 +71,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
                                     Bulma.columns [
                                         Bulma.column [
                                             Bulma.input.checkbox [
-                                                //prop.text governingAttribute.attributeStat.name
                                                 prop.isChecked governingAttribute.isGoverning
                                             ]
                                         ]
