@@ -1,11 +1,25 @@
 module VocationRow
 
 open FallenLib.Dice
+open FallenLib.SkillUtils
 
 type GoverningAttribute = {
     isGoverning : bool
     attributeStat : AttributeRow.Model
 }
+
+let vocationToDicePoolString baseDice vocationLevel governingAttributes =
+        governingAttributes
+        |> List.map ( fun governingAttribute ->
+            neg1To4_To_d6_DicePoolCalc governingAttribute.attributeStat.neg1To4Stat
+        )
+        |> List.append [
+            baseDice
+            vocationLevel |> neg1To4_To_d6_DicePoolCalc
+        ]
+        |> combineDicePoolCalculations
+        |> calcDicePoolCalculation
+        |> dicePoolToString
 
 type Model = {
     name                 : string
@@ -25,8 +39,8 @@ let init() : Model =
       name = "Fellkin"
       vocationLevel = Neg1To4Stat.init()
       governingAttributes = [
-            { isGoverning=false;attributeStat=AttributeRow.init() }
-            { isGoverning=false;attributeStat= {AttributeRow.init() with name = "RFX"} }
+            { isGoverning=false;attributeStat= AttributeRow.init() }
+            { isGoverning=false;attributeStat= {AttributeRow.init() with name = "RFX" } }
         ]
       baseDice = baseDicePoolCalculation
     }
@@ -99,7 +113,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            prop.text "3d6"
+            prop.text (vocationToDicePoolString model.baseDice model.vocationLevel model.governingAttributes)
         ]
         Bulma.column [
             Neg1To4Stat.view model.vocationLevel (Neg1To4StatMsg >> dispatch)

@@ -151,8 +151,6 @@ module Dice =
     let calcDicePoolCalculation dicePoolCalculation =
         removeDiceFromDicePool dicePoolCalculation.dicePool dicePoolCalculation.dicePoolPenalty
 
-
-
 module SkillUtils =
 
     open Neg1To4
