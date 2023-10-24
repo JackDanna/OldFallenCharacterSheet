@@ -8,7 +8,7 @@ type Model = {
     vocationLevel        : Neg1To4Stat.Model
     governingAttributes  : GoverningAttribute list
     baseDice             : DicePoolCalculation
-    skillRowList         : VocationalSkillRowList.Model
+    vocationalSkillRowList         : VocationalSkillRowList.Model
 }
 
 type Msg =
@@ -27,7 +27,7 @@ let init() : Model = {
         { isGoverning=false;attributeStat= {AttributeRow.init() with name = "RFX" } }
     ]
     baseDice = baseDicePoolCalculation
-    skillRowList = VocationalSkillRowList.init()
+    vocationalSkillRowList = VocationalSkillRowList.init()
 }
 
 let update (msg: Msg) (model: Model) : Model =
@@ -39,21 +39,30 @@ let update (msg: Msg) (model: Model) : Model =
         { model with governingAttributes = governingAttributes }
 
     | ToggleGoverningAttribute index ->
-        { model with 
-            governingAttributes =
-                List.mapi ( fun i governingAttribute ->
+
+        let newGoverningAttributes =
+            List.mapi ( fun i governingAttribute ->
                     if index = i then
                         { governingAttribute with isGoverning = not governingAttribute.isGoverning }
                     else 
                         governingAttribute
                 ) model.governingAttributes
+
+        let newVocationalSkillRowList = 
+            VocationalSkillRowList.update 
+                (VocationalSkillRowList.Msg.SetAttributeDiceCalc (governingAttributesToDiceCalc newGoverningAttributes))
+                model.vocationalSkillRowList
+
+        { model with 
+            governingAttributes = newGoverningAttributes
+            vocationalSkillRowList = newVocationalSkillRowList    
         }
 
-    | SetName name ->
-        { model with name = name }
+    | SetName name -> { model with name = name }
 
     | SkillRowListMsg skillRowListMsg ->
-        { model with skillRowList = VocationalSkillRowList.update skillRowListMsg model.skillRowList }
+        
+        { model with vocationalSkillRowList = VocationalSkillRowList.update skillRowListMsg model.vocationalSkillRowList }
         
     | Reset -> init()
 
@@ -117,5 +126,5 @@ let vocationRow (model: Model) (dispatch: Msg -> unit) =
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
         vocationRow model dispatch
-        VocationalSkillRowList.view model.skillRowList (SkillRowListMsg >> dispatch)
+        VocationalSkillRowList.view model.vocationalSkillRowList (SkillRowListMsg >> dispatch)
     ]

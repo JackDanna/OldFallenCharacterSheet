@@ -28,8 +28,6 @@ let update (msg: Msg) (model: Model) : Model =
     | Remove ->
         model |> List.rev |> List.tail |> List.rev
 
-
-
     | Modify (position, skillRowMsg) ->
         
         List.mapi ( fun i skillRowModel ->

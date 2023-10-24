@@ -189,12 +189,19 @@ module SkillUtils =
         attributeStat : Attribute
     }
 
+    let governingAttributesToDiceCalc governingAttributes =
+        governingAttributes
+        |> List.filter ( fun governingAttribute -> governingAttribute.isGoverning )
+        |> List.map ( fun governingAttribute ->
+            neg1To4_To_d6_DicePoolCalc governingAttribute.attributeStat.neg1To4Stat
+        )
+        |> combineDicePoolCalculations
+
+
     let vocationToDicePoolString baseDice vocationLevel governingAttributes =
             governingAttributes
-            |> List.filter ( fun governingAttribute -> governingAttribute.isGoverning )
-            |> List.map ( fun governingAttribute ->
-                neg1To4_To_d6_DicePoolCalc governingAttribute.attributeStat.neg1To4Stat
-            )
+            |> governingAttributesToDiceCalc
+            |> List.singleton
             |> List.append [
                 baseDice
                 vocationLevel |> neg1To4_To_d6_DicePoolCalc
