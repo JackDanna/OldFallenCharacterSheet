@@ -4,11 +4,11 @@ open FallenLib.Dice
 open FallenLib.SkillUtils
 
 type Model = {
-    name                 : string
-    vocationLevel        : Neg1To4Stat.Model
-    governingAttributes  : GoverningAttribute list
-    baseDice             : DicePoolCalculation
-    vocationalSkillRowList         : VocationalSkillRowList.Model
+    name                   : string
+    vocationLevel          : Neg1To4Stat.Model
+    governingAttributes    : GoverningAttribute list
+    baseDice               : DicePoolCalculation
+    vocationalSkillRowList : VocationalSkillRowList.Model
 }
 
 type Msg =
