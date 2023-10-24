@@ -1,6 +1,7 @@
 module VocationalSkillStat
 
 open FallenLib.Neg1To4
+open Neg1To4Stat
 
 type Model = {
     level : Neg1To4
@@ -41,23 +42,6 @@ let update (msg: Msg) (model: Model) : Model =
     | ToggleTwo isChecked -> toggleLogic model.levelCap isChecked Two One
     | ToggleThree isChecked -> toggleLogic model.levelCap isChecked Three Two
     | ToggleFour isChecked -> toggleLogic model.levelCap isChecked Four Three
-
-let isCheckedLogic currentLevel checkboxRepresented =
-    match checkboxRepresented = NegOne with
-    | true ->
-        match currentLevel = NegOne with
-        | true -> true
-        | _ -> false
-    | _ -> neg1To4ToInt checkboxRepresented <= neg1To4ToInt currentLevel
-
-let isCheckboxDisabled currentLevel checkboxRepresented =
-
-    match checkboxRepresented = NegOne with
-    | true -> currentLevel <> NegOne && currentLevel <> Zero
-    | _ ->
-        let currentLevelInt = neg1To4ToInt currentLevel
-        let checkboxRepresentedInt = neg1To4ToInt checkboxRepresented
-        checkboxRepresentedInt <> currentLevelInt && checkboxRepresentedInt <> currentLevelInt + 1
 
 let isVocationalCheckboxDisabled model checkboxRepresented =
     match determineIfCapped model.levelCap checkboxRepresented with
