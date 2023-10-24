@@ -4,6 +4,8 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
+open FallenLib.Dice
+
 type Model = {
     name: string
     coreSkillTables : CoreSkillTables.Model
@@ -40,6 +42,29 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
     }
 ]
 
+let defaultVocationTables : VocationTables.Model = [
+    {
+        name = ""
+        vocationLevel = Neg1To4Stat.init()
+        governingAttributes = [
+            { 
+                isGoverning = false
+                attributeStat = { AttributeRow.init() with name = "STR"}
+            }
+            { 
+                isGoverning = false
+                attributeStat = { AttributeRow.init() with name = "RFX"}
+            }
+            { 
+                isGoverning = false
+                attributeStat = { AttributeRow.init() with name = "INT"}
+            }
+        ]
+        baseDice = baseDicePoolCalculation
+        vocationalSkillRowList = [VocationalSkillRow.init()]
+    }
+]
+
 type Msg =
     | CoreSkillTablesMsg of CoreSkillTables.Msg
     | VocationTableMsg of VocationTables.Msg
@@ -50,7 +75,7 @@ let init () : Model =
     {
         name = "Javk Wick"
         coreSkillTables = defaultCoreSkillTables
-        vocationTables = [VocationTable.init(); VocationTable.init()]
+        vocationTables = defaultVocationTables
     }
 
 let update (msg: Msg) (model: Model) : Model =
