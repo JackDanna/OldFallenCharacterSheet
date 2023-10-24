@@ -11,7 +11,7 @@ type Msg =
     | ToggleThree of bool
     | ToggleFour of bool
 
-let init() : Model = Zero
+let init() : Model = Two
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with

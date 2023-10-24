@@ -10,6 +10,7 @@ type GoverningAttribute = {
 
 let vocationToDicePoolString baseDice vocationLevel governingAttributes =
         governingAttributes
+        |> List.filter ( fun governingAttribute -> governingAttribute.isGoverning )
         |> List.map ( fun governingAttribute ->
             neg1To4_To_d6_DicePoolCalc governingAttribute.attributeStat.neg1To4Stat
         )
@@ -113,7 +114,8 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            prop.text (vocationToDicePoolString model.baseDice model.vocationLevel model.governingAttributes)
+            vocationToDicePoolString model.baseDice model.vocationLevel model.governingAttributes
+            |> prop.text
         ]
         Bulma.column [
             Neg1To4Stat.view model.vocationLevel (Neg1To4StatMsg >> dispatch)
