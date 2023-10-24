@@ -17,6 +17,7 @@ type Model = {
 type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
     | SetGoverningAttributes of GoverningAttribute list
+    | ToggleGoverningAttribute of int
 
 let init() : Model = 
     {
@@ -32,6 +33,16 @@ let update (msg: Msg) (model: Model) : Model =
         { model with vocationLevel = Neg1To4Stat.update neg1ToStatMsg model.vocationLevel }
     | SetGoverningAttributes governingAttributes ->
         { model with governingAttributes = governingAttributes }
+    | ToggleGoverningAttribute index ->
+        { model with 
+            governingAttributes =
+                List.mapi ( fun i governingAttribute ->
+                    if index = i then
+                        { governingAttribute with isGoverning = not governingAttribute.isGoverning }
+                    else 
+                        governingAttribute
+                ) model.governingAttributes
+        }
         
 open Feliz
 open Feliz.Bulma
@@ -52,12 +63,12 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     Bulma.dropdownContent (
                         List.mapi ( fun i governingAttribute ->
                             Bulma.dropdownItem.a [
+                                prop.onClick (fun _ -> dispatch (ToggleGoverningAttribute i))
                                 prop.children [
                                     Bulma.columns [
                                         Bulma.column [
                                             Bulma.input.checkbox [
                                                 //prop.text governingAttribute.attributeStat.name
-                                                prop.onClick ( fun _ -> () )
                                                 prop.isChecked governingAttribute.isGoverning
                                             ]
                                         ]
