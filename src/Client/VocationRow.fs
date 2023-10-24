@@ -50,7 +50,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ) governingAttributes
 
-    let temp2 (governingAttributes:GoverningAttribute list) =
+    let attributeDropdown (governingAttributes:GoverningAttribute list) =
 
         Bulma.dropdown [
             dropdown.isHoverable
@@ -64,8 +64,9 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     Bulma.dropdownContent (
                         List.map ( fun governingAttribute ->
                             Bulma.dropdownItem.a [
+                                //if governingAttribute.isGoverning then color.isPrimary else color.isDanger
                                 prop.text governingAttribute.attributeStat.name
-                                prop.onClick( fun _ -> ())
+                                prop.onClick( fun _ -> () )
                             ]
                         ) governingAttributes
                     )
@@ -76,7 +77,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [ prop.text model.name ]
         Bulma.column [
-            (temp2 model.governingAttributes) //(temp model.governingAttributes)
+            (attributeDropdown model.governingAttributes) //(temp model.governingAttributes)
         ]
         Bulma.column [
             // skillToDicePoolString 
