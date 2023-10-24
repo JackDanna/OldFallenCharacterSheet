@@ -63,6 +63,26 @@ let defaultVocationTables : VocationTables.Model = [
         baseDice = baseDicePoolCalculation
         vocationalSkillRowList = [VocationalSkillRow.init()]
     }
+    {
+        name = ""
+        vocationLevel = Neg1To4Stat.init()
+        governingAttributes = [
+            { 
+                isGoverning = false
+                attributeStat = { AttributeRow.init() with name = "STR"}
+            }
+            { 
+                isGoverning = false
+                attributeStat = { AttributeRow.init() with name = "RFX"}
+            }
+            { 
+                isGoverning = false
+                attributeStat = { AttributeRow.init() with name = "INT"}
+            }
+        ]
+        baseDice = baseDicePoolCalculation
+        vocationalSkillRowList = [VocationalSkillRow.init()]
+    }
 ]
 
 type Msg =
