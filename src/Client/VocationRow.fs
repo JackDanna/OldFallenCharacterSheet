@@ -1,7 +1,6 @@
 module VocationRow
 
 open FallenLib.Dice
-open FallenLib.SkillUtils
 
 type GoverningAttribute = {
     isGoverning : bool
@@ -23,7 +22,7 @@ let init() : Model =
     {
       name = "Fellkin"
       vocationLevel = Neg1To4Stat.init()
-      governingAttributes = [ {isGoverning=true;attributeStat=AttributeRow.init()} ]
+      governingAttributes = [ { isGoverning=true;attributeStat=AttributeRow.init() } ]
       baseDice = baseDicePoolCalculation
     }
 
@@ -39,17 +38,6 @@ open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
 
-    let temp (governingAttributes:GoverningAttribute list) =
-        List.map ( fun governingAttribute ->
-            Html.option [
-                //prop.text governingAttribute.attributeStat.name
-                //prop.isChecked governingAttribute.isGoverning
-                prop.children [
-                    Bulma.input.checkbox []
-                ]
-            ]
-        ) governingAttributes
-
     let attributeDropdown (governingAttributes:GoverningAttribute list) =
 
         Bulma.dropdown [
@@ -62,7 +50,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 ]
                 Bulma.dropdownMenu [
                     Bulma.dropdownContent (
-                        List.map ( fun governingAttribute ->
+                        List.mapi ( fun i governingAttribute ->
                             Bulma.dropdownItem.a [
                                 prop.children [
                                     Bulma.columns [
@@ -91,10 +79,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
             (attributeDropdown model.governingAttributes) //(temp model.governingAttributes)
         ]
         Bulma.column [
-            // skillToDicePoolString 
-            //     model.baseDice model.vocationLevel model.attributeDiceCalc
-            // |> prop.text
-
             prop.text "3d6"
         ]
         Bulma.column [
