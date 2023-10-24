@@ -18,6 +18,7 @@ type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
     | SetGoverningAttributes of GoverningAttribute list
     | ToggleGoverningAttribute of int
+    | SetName of string
 
 let init() : Model = 
     {
@@ -46,6 +47,8 @@ let update (msg: Msg) (model: Model) : Model =
                         governingAttribute
                 ) model.governingAttributes
         }
+    | SetName name ->
+        { model with name = name }
         
 open Feliz
 open Feliz.Bulma
@@ -73,7 +76,12 @@ let governingAttributeItems (model: Model) (dispatch: Msg -> unit) =
 let view (model: Model) (dispatch: Msg -> unit) =
 
     Bulma.columns [
-        Bulma.column [ prop.text model.name ]
+        Bulma.column [
+            Bulma.input.text [ 
+                prop.defaultValue model.name
+                prop.onTextChange (fun value -> dispatch (SetName value) )
+            ]
+        ]
         Bulma.column [
             Bulma.dropdown [
                 dropdown.isHoverable
