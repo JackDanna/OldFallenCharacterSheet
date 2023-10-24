@@ -5,6 +5,7 @@ open Fable.Remoting.Client
 open Shared
 
 open FallenLib.Dice
+open FallenLib.SkillUtils
 
 type Model = {
     name: string
@@ -91,6 +92,24 @@ type Msg =
     | SetName of string
     | Reset
 
+let attributesToGoverningAttributes attributes governingAttributes =
+    attributes
+    |> List.map ( fun (attribute:AttributeRow.Model) ->
+        {
+            attributeStat = attribute
+            isGoverning =
+                governingAttributes
+                |> List.collect ( fun currentGoverningAttribute ->
+                    if (currentGoverningAttribute.attributeStat.name = attribute.name) && currentGoverningAttribute.isGoverning then
+                        [currentGoverningAttribute.isGoverning]
+                    else
+                        []
+                )
+                |> List.isEmpty
+                |> not
+        }
+    )
+
 let init () : Model =
     {
         name = "Javk Wick"
@@ -111,7 +130,10 @@ let update (msg: Msg) (model: Model) : Model =
         {
             model with 
                 coreSkillTables = newCoreSkillTables
-                vocationTables = VocationTables.update (VocationTables.Msg.SetGoverningAttributes newAttributes) model.vocationTables
+                vocationTables =
+                    List.map ( fun (vocationTable:VocationTable.Model) ->
+                        { vocationTable with governingAttributes = attributesToGoverningAttributes newAttributes vocationTable.governingAttributes }
+                    ) model.vocationTables
         }
 
     | VocationTableMsg vocationTableMsg ->

@@ -7,7 +7,6 @@ type Model = VocationalSkillRow.Model list
 type Msg =
     | Insert
     | Remove
-    | SetAttributeDiceCalc of DicePoolCalculation
     | Modify of int * VocationalSkillRow.Msg
     | Reset
 
@@ -15,13 +14,6 @@ let init() : Model = []
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
-    | SetAttributeDiceCalc attrbuteNeg1To4Stat ->
-
-        List.map (fun skill -> 
-            VocationalSkillRow.update (VocationalSkillRow.Msg.SetAttributeDiceCalc attrbuteNeg1To4Stat) skill
-        ) model
-
-    // Set Vocation Skill
     | Insert ->
         List.append model [VocationalSkillRow.init()]
 

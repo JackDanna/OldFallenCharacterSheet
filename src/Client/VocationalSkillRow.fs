@@ -12,7 +12,6 @@ type Model = {
 
 type Msg =
     | VocationalSkillStatMsg of VocationalSkillStat.Msg
-    | SetAttributeDiceCalc of DicePoolCalculation
     | SetName of string
 
 let init() : Model = 
@@ -28,8 +27,6 @@ let update (msg: Msg) (model: Model) : Model =
     match msg with
     | VocationalSkillStatMsg vocationalSkillStatMsg ->
         { model with VocationalSkillStat = VocationalSkillStat.update vocationalSkillStatMsg model.VocationalSkillStat }
-    | SetAttributeDiceCalc attributeDicePoolCalc ->
-        { model with attributeDiceCalc = attributeDicePoolCalc }
     | SetName name -> { model with name = name }
             
         

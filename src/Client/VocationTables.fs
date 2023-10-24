@@ -4,7 +4,6 @@ type Model = VocationTable.Model list
 
 type Msg =
     | Modify of int * VocationTable.Msg
-    | SetGoverningAttributes of AttributeRow.Model list
 
 let init() : Model = [VocationTable.init();VocationTable.init();VocationTable.init();]
 
@@ -18,9 +17,6 @@ let update (msg: Msg) (model: Model) : Model =
             else
                 vocationTableModel
         )
-    | SetGoverningAttributes attributes ->
-        model
-        |> List.map ( fun vocationTable -> VocationTable.update (VocationTable.Msg.SetGoverningAttributes attributes) vocationTable )
 
 open Feliz
 open Feliz.Bulma
