@@ -64,9 +64,20 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     Bulma.dropdownContent (
                         List.map ( fun governingAttribute ->
                             Bulma.dropdownItem.a [
-                                //if governingAttribute.isGoverning then color.isPrimary else color.isDanger
-                                prop.text governingAttribute.attributeStat.name
-                                prop.onClick( fun _ -> () )
+                                prop.children [
+                                    Bulma.columns [
+                                        Bulma.column [
+                                            Bulma.input.checkbox [
+                                                //prop.text governingAttribute.attributeStat.name
+                                                prop.onClick ( fun _ -> () )
+                                                prop.isChecked governingAttribute.isGoverning
+                                            ]
+                                        ]
+                                        Bulma.column [
+                                            prop.text governingAttribute.attributeStat.name
+                                        ]
+                                    ]
+                                ]
                             ]
                         ) governingAttributes
                     )
