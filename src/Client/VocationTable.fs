@@ -16,7 +16,7 @@ type Msg =
     | SetGoverningAttributes of GoverningAttribute list
     | ToggleGoverningAttribute of int
     | SetName of string
-    | SkillRowListMsg of VocationalSkillRowList.Msg
+    | VocationalSkillRowListMsg of VocationalSkillRowList.Msg
     | Reset
 
 let init() : Model = {
@@ -55,14 +55,12 @@ let update (msg: Msg) (model: Model) : Model =
 
         { model with 
             governingAttributes = newGoverningAttributes
-            vocationalSkillRowList = newVocationalSkillRowList    
-        }
+            vocationalSkillRowList = newVocationalSkillRowList }
 
     | SetName name -> { model with name = name }
 
-    | SkillRowListMsg skillRowListMsg ->
-        
-        { model with vocationalSkillRowList = VocationalSkillRowList.update skillRowListMsg model.vocationalSkillRowList }
+    | VocationalSkillRowListMsg vocationalSkillRowListMsg ->
+        { model with vocationalSkillRowList = VocationalSkillRowList.update vocationalSkillRowListMsg model.vocationalSkillRowList }
         
     | Reset -> init()
 
@@ -126,5 +124,5 @@ let vocationRow (model: Model) (dispatch: Msg -> unit) =
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
         vocationRow model dispatch
-        VocationalSkillRowList.view model.vocationalSkillRowList (SkillRowListMsg >> dispatch)
+        VocationalSkillRowList.view model.vocationalSkillRowList (VocationalSkillRowListMsg >> dispatch)
     ]
