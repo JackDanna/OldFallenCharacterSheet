@@ -3,25 +3,6 @@ module VocationRow
 open FallenLib.Dice
 open FallenLib.SkillUtils
 
-type GoverningAttribute = {
-    isGoverning : bool
-    attributeStat : AttributeRow.Model
-}
-
-let vocationToDicePoolString baseDice vocationLevel governingAttributes =
-        governingAttributes
-        |> List.filter ( fun governingAttribute -> governingAttribute.isGoverning )
-        |> List.map ( fun governingAttribute ->
-            neg1To4_To_d6_DicePoolCalc governingAttribute.attributeStat.neg1To4Stat
-        )
-        |> List.append [
-            baseDice
-            vocationLevel |> neg1To4_To_d6_DicePoolCalc
-        ]
-        |> combineDicePoolCalculations
-        |> calcDicePoolCalculation
-        |> dicePoolToString
-
 type Model = {
     name                 : string
     vocationLevel        : Neg1To4Stat.Model

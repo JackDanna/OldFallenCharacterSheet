@@ -151,10 +151,19 @@ module Dice =
     let calcDicePoolCalculation dicePoolCalculation =
         removeDiceFromDicePool dicePoolCalculation.dicePool dicePoolCalculation.dicePoolPenalty
 
+module Attribute =
+    open Neg1To4
+    
+    type Attribute = {
+        name : string
+        neg1To4Stat : Neg1To4
+    }
+
 module SkillUtils =
 
     open Neg1To4
     open Dice
+    open Attribute
 
     let neg1To4_To_d6_DicePoolCalc neg1To4 =
         match neg1To4 with
@@ -174,3 +183,22 @@ module SkillUtils =
             ]
         |> calcDicePoolCalculation
         |> dicePoolToString
+    
+    type GoverningAttribute = {
+        isGoverning : bool
+        attributeStat : Attribute
+    }
+
+    let vocationToDicePoolString baseDice vocationLevel governingAttributes =
+            governingAttributes
+            |> List.filter ( fun governingAttribute -> governingAttribute.isGoverning )
+            |> List.map ( fun governingAttribute ->
+                neg1To4_To_d6_DicePoolCalc governingAttribute.attributeStat.neg1To4Stat
+            )
+            |> List.append [
+                baseDice
+                vocationLevel |> neg1To4_To_d6_DicePoolCalc
+            ]
+            |> combineDicePoolCalculations
+            |> calcDicePoolCalculation
+            |> dicePoolToString
