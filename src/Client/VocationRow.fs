@@ -50,46 +50,45 @@ let update (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
-
-    let attributeDropdown (governingAttributes:GoverningAttribute list) =
-
-        Bulma.dropdown [
-            dropdown.isHoverable
+let governingAttributeItems (model: Model) (dispatch: Msg -> unit) =
+    List.mapi ( fun i governingAttribute ->
+        Bulma.dropdownItem.a [
+            prop.onClick (fun _ -> dispatch (ToggleGoverningAttribute i))
             prop.children [
-                Bulma.dropdownTrigger [
-                    Bulma.button.button [
-                        Html.span "Gov. Att."
+                Bulma.columns [
+                    Bulma.column [
+                        Bulma.input.checkbox [
+                            prop.isChecked governingAttribute.isGoverning
+                        ]
                     ]
-                ]
-                Bulma.dropdownMenu [
-                    Bulma.dropdownContent (
-                        List.mapi ( fun i governingAttribute ->
-                            Bulma.dropdownItem.a [
-                                prop.onClick (fun _ -> dispatch (ToggleGoverningAttribute i))
-                                prop.children [
-                                    Bulma.columns [
-                                        Bulma.column [
-                                            Bulma.input.checkbox [
-                                                prop.isChecked governingAttribute.isGoverning
-                                            ]
-                                        ]
-                                        Bulma.column [
-                                            prop.text governingAttribute.attributeStat.name
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ) governingAttributes
-                    )
+                    Bulma.column [
+                        prop.text governingAttribute.attributeStat.name
+                    ]
                 ]
             ]
         ]
+    ) model.governingAttributes
+
+    
+let view (model: Model) (dispatch: Msg -> unit) =
 
     Bulma.columns [
         Bulma.column [ prop.text model.name ]
         Bulma.column [
-            (attributeDropdown model.governingAttributes) //(temp model.governingAttributes)
+            Bulma.dropdown [
+                dropdown.isHoverable
+                prop.children [
+                    Bulma.dropdownTrigger [
+                        Bulma.button.button [
+                            Html.span "Gov. Att."
+                        ]
+                    ]
+                    Bulma.dropdownMenu [
+                        governingAttributeItems model dispatch 
+                        |> Bulma.dropdownContent
+                    ]
+                ]
+            ]
         ]
         Bulma.column [
             prop.text "3d6"
