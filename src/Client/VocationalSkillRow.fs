@@ -17,7 +17,7 @@ type Msg =
 
 let init() : Model = 
     {
-      name = "Med. Hafted Blade"
+      name = ""
       VocationalSkillStat = VocationalSkillStat.init()
       attributeDiceCalc = emptyDicePoolCalculation
       baseDice = baseDicePoolCalculation

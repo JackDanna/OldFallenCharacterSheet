@@ -5,7 +5,7 @@ type Model = CoreSkillTable.Model list
 type Msg =
     | Modify of int * CoreSkillTable.Msg
 
-let init() : Model = [CoreSkillTable.init();CoreSkillTable.init();CoreSkillTable.init();]
+let init() : Model = []
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with

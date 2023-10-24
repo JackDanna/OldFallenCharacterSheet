@@ -5,13 +5,11 @@ open FallenLib.Dice
 type Model = SkillRow.Model list
 
 type Msg =
-    //| Insert
-    //| Remove
     | SetAttributeDiceCalc of DicePoolCalculation
     | Modify of int * SkillRow.Msg
     | Reset
 
-let init() : Model = [SkillRow.init();SkillRow.init();]
+let init() : Model = []
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with

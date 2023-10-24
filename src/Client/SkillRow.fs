@@ -16,7 +16,7 @@ type Msg =
 
 let init() : Model = 
     {
-      name = "Lift"
+      name = ""
       skillLevel = Neg1To4Stat.init()
       attributeDiceCalc = emptyDicePoolCalculation
       baseDice = baseDicePoolCalculation

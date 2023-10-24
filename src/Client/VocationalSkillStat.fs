@@ -17,7 +17,7 @@ type Msg =
 
 let init() : Model = {
     level = Zero
-    levelCap = Three
+    levelCap = Zero
 }
 
 let determineIfCapped levelCap level =

@@ -21,12 +21,9 @@ type Msg =
     | Reset
 
 let init() : Model = {
-    name = "Fellkin"
+    name = ""
     vocationLevel = Neg1To4Stat.init()
-    governingAttributes = [
-        { isGoverning=false;attributeStat= AttributeRow.init() }
-        { isGoverning=false;attributeStat= {AttributeRow.init() with name = "RFX" } }
-    ]
+    governingAttributes = []
     baseDice = baseDicePoolCalculation
     vocationalSkillRowList = VocationalSkillRowList.init()
 }

@@ -8,7 +8,7 @@ type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
 
 let init() = {
-    name = "STR"
+    name = ""
     neg1To4Stat = Neg1To4Stat.init()
 }
     

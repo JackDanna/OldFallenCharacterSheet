@@ -11,7 +11,7 @@ type Msg =
     | Modify of int * VocationalSkillRow.Msg
     | Reset
 
-let init() : Model = [VocationalSkillRow.init();VocationalSkillRow.init();]
+let init() : Model = []
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
