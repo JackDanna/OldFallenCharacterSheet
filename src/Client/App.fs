@@ -8,7 +8,7 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-Program.mkSimple VocationalSkillRowList.init VocationalSkillRowList.update VocationalSkillRowList.view
+Program.mkSimple VocationRow.init VocationRow.update VocationRow.view
 #if DEBUG
 |> Program.withConsoleTrace
 #endif
