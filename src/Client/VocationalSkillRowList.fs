@@ -8,7 +8,6 @@ type Msg =
     | Insert
     | Remove
     | Modify of int * VocationalSkillRow.Msg
-    | Reset
 
 let init() : Model = []
 
@@ -29,8 +28,6 @@ let update (msg: Msg) (model: Model) : Model =
                 skillRowModel
         ) model
 
-             
-    | Reset -> init()
 
 open Feliz
 open Feliz.Bulma
