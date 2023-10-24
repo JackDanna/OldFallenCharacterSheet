@@ -25,7 +25,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.label [
-            prop.text "Vocations and Vocational Skills"
+            prop.text "Vocations and Vocational Skills:"
         ]
         |> Bulma.content
         Bulma.columns [
