@@ -70,7 +70,7 @@ let update (msg: Msg) (model: Model) : Model =
                 ) model.vocationalSkillRowList
         }
 
-    | SetName name -> { model with name = name }
+    | SetName newName -> { model with name = newName }
 
     | VocationalSkillRowListMsg vocationalSkillRowListMsg ->
         { model with vocationalSkillRowList = VocationalSkillRowList.update vocationalSkillRowListMsg model.vocationalSkillRowList }
