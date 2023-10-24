@@ -56,10 +56,24 @@ let init () : Model =
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | CoreSkillTablesMsg coreSkillTableMsg ->
-        { model with coreSkillTables = CoreSkillTables.update coreSkillTableMsg model.coreSkillTables }
+        let newCoreSkillTables = CoreSkillTables.update coreSkillTableMsg model.coreSkillTables
+
+        let newAttributes = 
+            List.map(fun (coreSkillTable: CoreSkillTable.Model) ->
+                coreSkillTable.attributeRow
+            ) newCoreSkillTables
+
+        {
+            model with 
+                coreSkillTables = newCoreSkillTables
+                vocationTables = VocationTables.update (VocationTables.Msg.SetGoverningAttributes newAttributes) model.vocationTables
+        }
+
     | VocationTableMsg vocationTableMsg ->
         { model with vocationTables = VocationTables.update vocationTableMsg model.vocationTables }
+
     | SetName name -> { model with name = name}
+    
     | Reset -> init()
 
 open Feliz

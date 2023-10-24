@@ -2,6 +2,7 @@ module VocationTable
 
 open FallenLib.Dice
 open FallenLib.SkillUtils
+open FallenLib.Attribute
 
 type Model = {
     name                   : string
@@ -13,7 +14,7 @@ type Model = {
 
 type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
-    | SetGoverningAttributes of GoverningAttribute list
+    | SetGoverningAttributes of Attribute list
     | ToggleGoverningAttribute of int
     | SetName of string
     | VocationalSkillRowListMsg of VocationalSkillRowList.Msg
@@ -30,13 +31,32 @@ let init() : Model = {
     vocationalSkillRowList = VocationalSkillRowList.init()
 }
 
+let attributesToGoverningAttributes attributes governingAttributes =
+    attributes
+    |> List.map ( fun (attribute:Attribute) ->
+        {
+            attributeStat = attribute
+            isGoverning =
+                governingAttributes
+                |> List.collect ( fun currentGoverningAttribute ->
+                    if (currentGoverningAttribute.attributeStat.name = attribute.name) && currentGoverningAttribute.isGoverning then
+                        [currentGoverningAttribute.isGoverning]
+                    else
+                        []
+                )
+                |> List.isEmpty
+                |> not
+        }
+    )
+
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | Neg1To4StatMsg neg1ToStatMsg ->
         { model with vocationLevel = Neg1To4Stat.update neg1ToStatMsg model.vocationLevel }
 
-    | SetGoverningAttributes governingAttributes ->
-        { model with governingAttributes = governingAttributes }
+    | SetGoverningAttributes attributes ->
+        { model with
+            governingAttributes = attributesToGoverningAttributes attributes model.governingAttributes }
 
     | ToggleGoverningAttribute index ->
 
