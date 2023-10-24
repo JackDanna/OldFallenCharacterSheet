@@ -7,6 +7,7 @@ open Shared
 type Model = {
     name: string
     coreSkillTables : CoreSkillTables.Model
+    vocationTables : VocationTables.Model
 }
 
 let defaultCoreSkillTables : CoreSkillTables.Model = [
@@ -41,16 +42,23 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
 
 type Msg =
     | CoreSkillTablesMsg of CoreSkillTables.Msg
+    | VocationTableMsg of VocationTables.Msg
     | SetName of string
     | Reset
 
 let init () : Model =
-    { name = "Javk Wick"; coreSkillTables = defaultCoreSkillTables }
+    {
+        name = "Javk Wick"
+        coreSkillTables = defaultCoreSkillTables
+        vocationTables = [VocationTable.init(); VocationTable.init()]
+    }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | CoreSkillTablesMsg coreSkillTableMsg ->
         { model with coreSkillTables = CoreSkillTables.update coreSkillTableMsg model.coreSkillTables }
+    | VocationTableMsg vocationTableMsg ->
+        { model with vocationTables = VocationTables.update vocationTableMsg model.vocationTables }
     | SetName name -> { model with name = name}
     | Reset -> init()
 
@@ -114,6 +122,9 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     ]
                     Bulma.container [
                         CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
+                    ]
+                    Bulma.container [
+                        VocationTables.view model.vocationTables ( VocationTableMsg >> dispatch )
                     ]
                 ]
             ]
