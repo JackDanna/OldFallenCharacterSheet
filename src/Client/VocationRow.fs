@@ -78,7 +78,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [
             Bulma.input.text [ 
-                prop.defaultValue model.name
+                prop.value model.name
                 prop.onTextChange (fun value -> dispatch (SetName value) )
             ]
         ]
