@@ -58,15 +58,13 @@ let skillRow (skill:Skill) (preloadedSkillToDicePoolString: Neg1To4Stat.Model ->
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
         AttributeRow.view model.attributeRow (AttributeRowMsg >> dispatch)
-
         Html.ul (
-            model.skillRowList
-            |> List.mapi ( 
+            List.mapi ( 
                 fun position skill ->
                     skillRow
                         skill
                         (coreSkillToDicePoolString baseDicePoolCalculation model.attributeRow.neg1To4Stat)
                         (fun msg -> dispatch (ModifyCoreSkillLevel (position, msg)) )
-            ) 
+            ) model.skillRowList
         )
     ]
