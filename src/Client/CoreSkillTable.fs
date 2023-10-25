@@ -4,12 +4,12 @@ open FallenLib.SkillUtils
 open FallenLib.Dice
 
 type Skill = {
-    name : string
+    name  : string
     level : Neg1To4Stat.Model
 }
 
 type Model = {
-    attributeRow  : AttributeRow.Model
+    attributeRow   : AttributeRow.Model
     coreSkillList  : Skill list
 }
 
