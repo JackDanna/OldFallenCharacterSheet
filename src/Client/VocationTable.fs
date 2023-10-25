@@ -13,9 +13,9 @@ type Model = {
 }
 
 type Msg =
+    | SetName of string
     | Neg1To4StatMsg of Neg1To4Stat.Msg
     | ToggleGoverningAttribute of int
-    | SetName of string
     | VocationalSkillRowListMsg of VocationalSkillRowList.Msg
 
 let init() : Model = {
@@ -46,6 +46,7 @@ let attributesToGoverningAttributes attributes governingAttributes =
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
+    | SetName newName -> { model with name = newName }
     | Neg1To4StatMsg neg1ToStatMsg ->
         { model with vocationLevel = Neg1To4Stat.update neg1ToStatMsg model.vocationLevel }
 
@@ -68,8 +69,6 @@ let update (msg: Msg) (model: Model) : Model =
                     { vocationalSkillRow with attributeDiceCalc = newGoverningAttributeDiceCalc }
                 ) model.vocationalSkillRowList
         }
-
-    | SetName newName -> { model with name = newName }
 
     | VocationalSkillRowListMsg vocationalSkillRowListMsg ->
         { model with vocationalSkillRowList = VocationalSkillRowList.update vocationalSkillRowListMsg model.vocationalSkillRowList }
