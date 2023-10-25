@@ -45,43 +45,45 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
 
 let defaultVocationTables : VocationTables.Model = [
     {
-        name = ""
-        vocationLevel = Neg1To4Stat.init()
-        governingAttributes = [
-            { 
-                isGoverning = false
-                attributeStat = { AttributeRow.init() with name = "STR"}
-            }
-            { 
-                isGoverning = false
-                attributeStat = { AttributeRow.init() with name = "RFX"}
-            }
-            { 
-                isGoverning = false
-                attributeStat = { AttributeRow.init() with name = "INT"}
-            }
-        ]
-        baseDice = baseDicePoolCalculation
+        vocationRow = {
+            name = ""
+            level = Neg1To4Stat.init()
+            governingAttributes = [
+                { 
+                    isGoverning = false
+                    attributeStat = { AttributeRow.init() with name = "STR"}
+                }
+                { 
+                    isGoverning = false
+                    attributeStat = { AttributeRow.init() with name = "RFX"}
+                }
+                { 
+                    isGoverning = false
+                    attributeStat = { AttributeRow.init() with name = "INT"}
+                }
+            ]
+        }
         vocationalSkillRowList = [VocationalSkillRow.init()]
     }
     {
-        name = ""
-        vocationLevel = Neg1To4Stat.init()
-        governingAttributes = [
-            { 
-                isGoverning = false
-                attributeStat = { AttributeRow.init() with name = "STR"}
-            }
-            { 
-                isGoverning = false
-                attributeStat = { AttributeRow.init() with name = "RFX"}
-            }
-            { 
-                isGoverning = false
-                attributeStat = { AttributeRow.init() with name = "INT"}
-            }
-        ]
-        baseDice = baseDicePoolCalculation
+        vocationRow = {
+            name = ""
+            level = Neg1To4Stat.init()
+            governingAttributes = [
+                { 
+                    isGoverning = false
+                    attributeStat = { AttributeRow.init() with name = "STR"}
+                }
+                { 
+                    isGoverning = false
+                    attributeStat = { AttributeRow.init() with name = "RFX"}
+                }
+                { 
+                    isGoverning = false
+                    attributeStat = { AttributeRow.init() with name = "INT"}
+                }
+            ]
+        }
         vocationalSkillRowList = [VocationalSkillRow.init()]
     }
 ]
