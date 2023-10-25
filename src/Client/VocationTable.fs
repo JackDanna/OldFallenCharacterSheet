@@ -1,5 +1,8 @@
 module VocationTable
 
+open FallenLib.SkillUtils
+open FallenLib.Dice
+
 type Model = {
     vocationRow : VocationRow.Model
     vocationalSkillRowList : VocationalSkillRow.Model List
@@ -53,8 +56,9 @@ let view (model: Model) (dispatch: Msg -> unit) =
         Html.ul (
             List.append (
                 List.mapi ( 
-                    fun position skillRow -> 
-                        VocationalSkillRow.view 
+                    fun position skillRow ->
+                        VocationalSkillRow.view
+                            (vocationToDicePoolString baseDicePoolCalculation model.vocationRow.governingAttributes)
                             skillRow 
                             (fun msg -> dispatch (Modify (position, msg)) )
                 ) model.vocationalSkillRowList

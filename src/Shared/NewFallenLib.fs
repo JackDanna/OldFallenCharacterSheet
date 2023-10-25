@@ -215,7 +215,7 @@ module SkillUtils =
         |> combineDicePoolCalculations
 
 
-    let vocationToDicePoolString baseDice vocationLevel governingAttributes =
+    let vocationToDicePoolString baseDice governingAttributes vocationLevel =
             governingAttributes
             |> governingAttributesToDiceCalc
             |> List.singleton

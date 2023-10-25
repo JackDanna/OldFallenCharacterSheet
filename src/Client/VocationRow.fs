@@ -87,7 +87,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            vocationToDicePoolString baseDicePoolCalculation model.level model.governingAttributes
+            vocationToDicePoolString baseDicePoolCalculation model.governingAttributes model.level
             |> prop.text
         ]
         Bulma.column [

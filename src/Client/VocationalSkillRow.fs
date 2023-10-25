@@ -1,13 +1,8 @@
 module VocationalSkillRow
 
-open FallenLib.Dice
-open FallenLib.SkillUtils
-
 type Model = {
     name                 : string
     VocationalSkillStat  : VocationalSkillStat.Model
-    attributeDiceCalc    : DicePoolCalculation
-    baseDice             : DicePoolCalculation
 }
 
 type Msg =
@@ -18,8 +13,6 @@ let init() : Model =
     {
       name = ""
       VocationalSkillStat = VocationalSkillStat.init()
-      attributeDiceCalc = emptyDicePoolCalculation
-      baseDice = baseDicePoolCalculation
     }
 
 
@@ -33,7 +26,7 @@ let update (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (preloadedLevelToDicePoolString: Neg1To4Stat.Model -> string) (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [
             Bulma.dropdown [
@@ -55,8 +48,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            skillToDicePoolString
-                model.baseDice model.VocationalSkillStat.level model.attributeDiceCalc
+            preloadedLevelToDicePoolString model.VocationalSkillStat.level
             |> prop.text
         ]
         Bulma.column [
