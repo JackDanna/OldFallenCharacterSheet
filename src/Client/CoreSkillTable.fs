@@ -10,7 +10,6 @@ type Model = {
 type Msg =
     | AttributeRowMsg of AttributeRow.Msg
     | SkillRowListMsg of SkillRowList.Msg
-    | Reset
 
 let init() : Model = {
     attributeRow = AttributeRow.init()
@@ -30,7 +29,6 @@ let update (msg: Msg) (model: Model) : Model =
     | SkillRowListMsg skillRowListMsg ->
 
         { model with skillRowList = SkillRowList.update skillRowListMsg model.skillRowList }
-    | Reset -> init()
 
 open Feliz
 open Feliz.Bulma
