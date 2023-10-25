@@ -92,7 +92,6 @@ type Msg =
     | CoreSkillTablesMsg of CoreSkillTables.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
-    | Reset
 
 let attributesToGoverningAttributes attributes governingAttributes =
     attributes
@@ -145,8 +144,6 @@ let update (msg: Msg) (model: Model) : Model =
         { model with vocationTables = VocationTables.update vocationTableMsg model.vocationTables }
 
     | SetName name -> { model with name = name}
-    
-    | Reset -> init()
 
 open Feliz
 open Feliz.Bulma
