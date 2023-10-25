@@ -16,7 +16,7 @@ type Model = {
 let defaultCoreSkillTables : CoreSkillTables.Model = [
     {
         attributeRow = { AttributeRow.init() with name = "STR"}
-        skillRowList = [
+        coreSkillList = [
             { name = "Athletics"; level = Neg1To4Stat.init() }
             { name = "Climb"; level = Neg1To4Stat.init() }
             { name = "Endurance"; level = Neg1To4Stat.init() }
@@ -25,7 +25,7 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
     }
     {
         attributeRow = { AttributeRow.init() with name = "RFX"}
-        skillRowList = [
+        coreSkillList = [
             { name = "Athletics"; level = Neg1To4Stat.init() }
             { name = "Climb"; level = Neg1To4Stat.init() }
             { name = "Endurance"; level = Neg1To4Stat.init() }
@@ -34,7 +34,7 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
     }
     {
         attributeRow = { AttributeRow.init() with name = "INT"}
-        skillRowList = [
+        coreSkillList = [
             { name = "Athletics"; level = Neg1To4Stat.init() }
             { name = "Climb"; level = Neg1To4Stat.init() }
             { name = "Endurance"; level = Neg1To4Stat.init() }

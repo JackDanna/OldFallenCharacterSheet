@@ -10,7 +10,7 @@ type Skill = {
 
 type Model = {
     attributeRow  : AttributeRow.Model
-    skillRowList  : Skill list
+    coreSkillList  : Skill list
 }
 
 type Msg =
@@ -19,7 +19,7 @@ type Msg =
 
 let init() : Model = {
     attributeRow = AttributeRow.init()
-    skillRowList = []
+    coreSkillList = []
 }
 
 let update (msg: Msg) (model: Model) : Model =
@@ -31,13 +31,13 @@ let update (msg: Msg) (model: Model) : Model =
     | ModifyCoreSkillLevel (position, skillRowMsg) ->
         
         { model with 
-            skillRowList =
+            coreSkillList =
                 List.mapi ( fun i skillRowModel ->
                     if position = i then
                         { skillRowModel with level = Neg1To4Stat.update skillRowMsg skillRowModel.level}
                     else 
                         skillRowModel
-                ) model.skillRowList
+                ) model.coreSkillList
         }
     
 open Feliz
@@ -65,6 +65,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         skill
                         (coreSkillToDicePoolString baseDicePoolCalculation model.attributeRow.neg1To4Stat)
                         (fun msg -> dispatch (ModifyCoreSkillLevel (position, msg)) )
-            ) model.skillRowList
+            ) model.coreSkillList
         )
     ]
