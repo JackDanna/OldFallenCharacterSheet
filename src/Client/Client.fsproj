@@ -7,7 +7,6 @@
   <ItemGroup>
     <Compile Include="Neg1To4Stat.fs" />
     <Compile Include="AttributeRow.fs" />
-    <Compile Include="SkillRow.fs" />
     <Compile Include="CoreSkillTable.fs" />
     <Compile Include="CoreSkillTables.fs" />
     <None Include="index.html" />

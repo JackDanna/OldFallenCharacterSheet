@@ -17,28 +17,28 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
     {
         attributeRow = { AttributeRow.init() with name = "STR"}
         skillRowList = [
-            { SkillRow.init() with name = "Athletics" }
-            { SkillRow.init() with name = "Climb" }
-            { SkillRow.init() with name = "Endurance" }
-            { SkillRow.init() with name = "Lift" }
+            { name = "Athletics"; level = Neg1To4Stat.init() }
+            { name = "Climb"; level = Neg1To4Stat.init() }
+            { name = "Endurance"; level = Neg1To4Stat.init() }
+            { name = "Lift"; level = Neg1To4Stat.init() }
         ]
     }
     {
         attributeRow = { AttributeRow.init() with name = "RFX"}
         skillRowList = [
-            { SkillRow.init() with name = "Acrobatics" }
-            { SkillRow.init() with name = "Perception" }
-            { SkillRow.init() with name = "Sleight of Hand" }
-            { SkillRow.init() with name = "Stealth" }
+            { name = "Athletics"; level = Neg1To4Stat.init() }
+            { name = "Climb"; level = Neg1To4Stat.init() }
+            { name = "Endurance"; level = Neg1To4Stat.init() }
+            { name = "Lift"; level = Neg1To4Stat.init() }
         ]
     }
     {
         attributeRow = { AttributeRow.init() with name = "INT"}
         skillRowList = [
-            { SkillRow.init() with name = "Communication" }
-            { SkillRow.init() with name = "General Knowledge" }
-            { SkillRow.init() with name = "Survival" }
-            { SkillRow.init() with name = "Willpower" }
+            { name = "Athletics"; level = Neg1To4Stat.init() }
+            { name = "Climb"; level = Neg1To4Stat.init() }
+            { name = "Endurance"; level = Neg1To4Stat.init() }
+            { name = "Lift"; level = Neg1To4Stat.init() }
         ]
     }
 ]

@@ -1,15 +1,21 @@
 module CoreSkillTable
 
 open FallenLib.SkillUtils
+open FallenLib.Dice
+
+type Skill = {
+    name : string
+    level : Neg1To4Stat.Model
+}
 
 type Model = {
     attributeRow  : AttributeRow.Model
-    skillRowList  : SkillRow.Model list
+    skillRowList  : Skill list
 }
 
 type Msg =
     | AttributeRowMsg of AttributeRow.Msg
-    | Modify of int * SkillRow.Msg
+    | ModifyCoreSkillLevel of int * Neg1To4Stat.Msg
 
 let init() : Model = {
     attributeRow = AttributeRow.init()
@@ -19,28 +25,16 @@ let init() : Model = {
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | AttributeRowMsg attributeRowMsg ->
-
-        let newAttributeRow = AttributeRow.update attributeRowMsg model.attributeRow
-
-        let attributeRowDiceCalc = neg1To4_To_d6_DicePoolCalc newAttributeRow.neg1To4Stat
-
         { model with 
-            attributeRow = newAttributeRow
-            skillRowList =
-                List.map (fun skill -> 
-                    SkillRow.update 
-                        (SkillRow.Msg.SetAttributeDiceCalc attributeRowDiceCalc) 
-                        skill
-                ) model.skillRowList
-        }
+            attributeRow = AttributeRow.update attributeRowMsg model.attributeRow }
 
-    | Modify (position, skillRowMsg) ->
+    | ModifyCoreSkillLevel (position, skillRowMsg) ->
         
         { model with 
             skillRowList =
                 List.mapi ( fun i skillRowModel ->
                     if position = i then
-                        SkillRow.update skillRowMsg skillRowModel
+                        { skillRowModel with level = Neg1To4Stat.update skillRowMsg skillRowModel.level}
                     else 
                         skillRowModel
                 ) model.skillRowList
@@ -49,19 +43,30 @@ let update (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let skillRowList (model: SkillRow.Model list) (dispatch: Msg -> unit) =
-    
-    model
-    |> List.mapi ( 
-        fun position skillRow -> 
-            SkillRow.view 
-                skillRow 
-                (fun msg -> dispatch (Modify (position, msg)) )
-    )
-    |> Html.ul
+let skillRow (skill:Skill) (preloadedSkillToDicePoolString: Neg1To4Stat.Model -> string) (dispatch: Neg1To4Stat.Msg-> unit) =
+    Bulma.columns [
+        Bulma.column [ prop.text skill.name ]
+        Bulma.column [
+            preloadedSkillToDicePoolString skill.level
+            |> prop.text
+        ]
+        Bulma.column [
+            Neg1To4Stat.view skill.level dispatch
+        ]
+    ]
 
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
         AttributeRow.view model.attributeRow (AttributeRowMsg >> dispatch)
-        skillRowList model.skillRowList dispatch
+
+        Html.ul (
+            model.skillRowList
+            |> List.mapi ( 
+                fun position skill ->
+                    skillRow
+                        skill
+                        (coreSkillToDicePoolString baseDicePoolCalculation model.attributeRow.neg1To4Stat)
+                        (fun msg -> dispatch (ModifyCoreSkillLevel (position, msg)) )
+            ) 
+        )
     ]

@@ -174,6 +174,16 @@ module SkillUtils =
         | Three-> createD6DicePoolCalc 3u
         | Four -> createD6DicePoolCalc 4u
 
+    let coreSkillToDicePoolString baseDice skillLevel attributelevel =
+        combineDicePoolCalculations
+            [
+                baseDice
+                skillLevel |> neg1To4_To_d6_DicePoolCalc
+                attributelevel |> neg1To4_To_d6_DicePoolCalc
+            ]
+        |> calcDicePoolCalculation
+        |> dicePoolToString
+
     let skillToDicePoolString baseDice skillLevel attributeDiceMod =
         combineDicePoolCalculations
             [
