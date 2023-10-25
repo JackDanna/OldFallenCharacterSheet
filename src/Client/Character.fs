@@ -4,7 +4,6 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
-open FallenLib.Dice
 open FallenLib.SkillUtils
 
 type Model = {
