@@ -13,7 +13,6 @@
     <Compile Include="VocationRow.fs" />
     <Compile Include="VocationalSkillStat.fs" />
     <Compile Include="VocationalSkillRow.fs" />
-    <Compile Include="VocationalSkillRowList.fs" />
     <Compile Include="VocationTable.fs" />
     <Compile Include="VocationTables.fs" />
     <Compile Include="Character.fs" />
