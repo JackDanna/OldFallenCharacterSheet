@@ -26,24 +26,6 @@ let init() : Model = {
     vocationalSkillRowList = VocationalSkillRowList.init()
 }
 
-let attributesToGoverningAttributes attributes governingAttributes =
-    attributes
-    |> List.map ( fun (attribute:Attribute) ->
-        {
-            attributeStat = attribute
-            isGoverning =
-                governingAttributes
-                |> List.collect ( fun currentGoverningAttribute ->
-                    if (currentGoverningAttribute.attributeStat.name = attribute.name) && currentGoverningAttribute.isGoverning then
-                        [currentGoverningAttribute.isGoverning]
-                    else
-                        []
-                )
-                |> List.isEmpty
-                |> not
-        }
-    )
-
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | SetName newName -> { model with name = newName }
