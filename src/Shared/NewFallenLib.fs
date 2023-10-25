@@ -165,6 +165,13 @@ module SkillUtils =
     open Dice
     open Attribute
 
+    type Skill = {
+        name  : string
+        level : Neg1To4
+    }
+
+    let skillInit() = { name = ""; level = Zero }
+
     let neg1To4_To_d6_DicePoolCalc neg1To4 =
         match neg1To4 with
         | NegOne -> createPenaltyDicePoolCalc 1u
