@@ -134,7 +134,10 @@ let update (msg: Msg) (model: Model) : Model =
                 coreSkillTables = newCoreSkillTables
                 vocationTables =
                     List.map ( fun (vocationTable:VocationTable.Model) ->
-                        { vocationTable with governingAttributes = attributesToGoverningAttributes newAttributes vocationTable.governingAttributes }
+                        let newVocationRow = attributesToGoverningAttributes newAttributes vocationTable.vocationRow.governingAttributes
+                        { vocationTable with 
+                            vocationRow = { vocationTable.vocationRow with governingAttributes = newVocationRow }
+                        }
                     ) model.vocationTables
         }
 
