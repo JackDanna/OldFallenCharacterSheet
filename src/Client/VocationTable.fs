@@ -17,7 +17,6 @@ type Msg =
     | ToggleGoverningAttribute of int
     | SetName of string
     | VocationalSkillRowListMsg of VocationalSkillRowList.Msg
-    | Reset
 
 let init() : Model = {
     name = ""
@@ -74,8 +73,6 @@ let update (msg: Msg) (model: Model) : Model =
 
     | VocationalSkillRowListMsg vocationalSkillRowListMsg ->
         { model with vocationalSkillRowList = VocationalSkillRowList.update vocationalSkillRowListMsg model.vocationalSkillRowList }
-        
-    | Reset -> init()
 
 open Feliz
 open Feliz.Bulma
