@@ -1,30 +1,19 @@
 module VocationTable
 
-open FallenLib.SkillUtils
-open FallenLib.Dice
-
-type VocationalSkill = {
-    name : string
-    vocationalSkillStat : VocationalSkillStat.Model
-}
-
-let vocationalSkillInit() = { name = ""; vocationalSkillStat = VocationalSkillStat.init() }
-
 type Model = {
     vocationRow : VocationRow.Model
-    vocationalSkillRowList : VocationalSkill List
+    vocationalSkillRowList : VocationalSkillRow.Model List
 }
 
 type Msg =
     | VocationRowMsg of VocationRow.Msg
     | Insert
     | Remove
-    | ModifyName of int * string
-    | ModifyVocationalSkillStat of int * VocationalSkillStat.Msg
+    | Modify of int * VocationalSkillRow.Msg
 
 let init() : Model = {
     vocationRow = VocationRow.init()
-    vocationalSkillRowList = [vocationalSkillInit()]
+    vocationalSkillRowList = [VocationalSkillRow.init()]
 }
 
 let update (msg: Msg) (model: Model) : Model =
@@ -35,7 +24,7 @@ let update (msg: Msg) (model: Model) : Model =
     | Insert ->
         { model with 
             vocationalSkillRowList = 
-                List.append model.vocationalSkillRowList [vocationalSkillInit()]
+                List.append model.vocationalSkillRowList [VocationalSkillRow.init()]
         }
 
     | Remove ->
@@ -44,28 +33,12 @@ let update (msg: Msg) (model: Model) : Model =
                 model.vocationalSkillRowList |> List.rev |> List.tail |> List.rev
         }
 
-    | ModifyName (position, newName) ->
+    | Modify (position, msg) ->
         { model with 
             vocationalSkillRowList = 
-                List.mapi ( fun i skillRow ->
+                List.mapi ( fun i (skillRow:VocationalSkillRow.Model) ->
                     if position = i then
-                        { skillRow with name =  newName }
-                    else 
-                        skillRow
-                ) model.vocationalSkillRowList
-        }
-
-    | ModifyVocationalSkillStat (position, newVocationalSkillStat) ->
-        { model with 
-            vocationalSkillRowList = 
-                List.mapi ( fun i (skillRow:VocationalSkill) ->
-                    if position = i then
-                        { skillRow with 
-                            vocationalSkillStat = 
-                                VocationalSkillStat.update 
-                                    model.vocationRow.level 
-                                    newVocationalSkillStat 
-                                    skillRow.vocationalSkillStat }
+                        VocationalSkillRow.update model.vocationRow.level msg skillRow
                     else 
                         skillRow
                 ) model.vocationalSkillRowList
@@ -83,40 +56,11 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 List.mapi ( 
                     fun position skillRow ->
 
-                        Bulma.columns [
-                            Bulma.column [
-                                Bulma.dropdown [
-                                    Bulma.dropdownTrigger [
-                                        Bulma.input.text [ 
-                                            prop.defaultValue skillRow.name
-                                            prop.onTextChange (fun value -> dispatch (ModifyName (position,value)) )
-                                        ]
-                                    ]
-                                    Bulma.dropdownMenu [
-                                        Bulma.dropdownContent [
-                                            Bulma.dropdownItem.a [
-                                                prop.children [
-                                                    Html.span "Single Sequence"
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                            Bulma.column [
-                                vocationToDicePoolString
-                                    baseDicePoolCalculation
-                                    model.vocationRow.governingAttributes
-                                    skillRow.vocationalSkillStat
-                                |> prop.text
-                            ]
-                            Bulma.column [
-                                VocationalSkillStat.view
-                                    model.vocationRow.level
-                                    skillRow.vocationalSkillStat 
-                                    (fun msg -> dispatch (ModifyVocationalSkillStat (position, msg)) )
-                            ]
-                        ]
+                        VocationalSkillRow.view
+                            model.vocationRow.governingAttributes
+                            model.vocationRow.level
+                            skillRow
+                            ( fun msg -> dispatch ( Modify (position,msg) ) )
 
                 ) model.vocationalSkillRowList
             ) [
