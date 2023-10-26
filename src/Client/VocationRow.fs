@@ -1,22 +1,22 @@
 module VocationRow
 
-open FallenLib.SkillUtils
+open FallenLib.Vocation
 open FallenLib.Dice
 
 type Model = {
     name : string
-    level : Neg1To4Stat.Model
+    level : VocationStat.Model
     governingAttributes : GoverningAttribute list
 }
 
 type Msg =
     | SetName of string
-    | Neg1To4StatMsg of Neg1To4Stat.Msg
+    | VocationStatMsg of VocationStat.Msg
     | ToggleGoverningAttribute of int
 
 let init() : Model = {
     name = ""
-    level = Neg1To4Stat.init()
+    level = VocationStat.init()
     governingAttributes = []
 }
 
@@ -24,8 +24,8 @@ let update (msg: Msg) (model: Model) : Model =
     match msg with
     | SetName newName -> { model with name = newName }
 
-    | Neg1To4StatMsg neg1ToStatMsg ->
-        { model with level = Neg1To4Stat.update neg1ToStatMsg model.level }
+    | VocationStatMsg neg1ToStatMsg ->
+        { model with level = VocationStat.update neg1ToStatMsg model.level }
 
     | ToggleGoverningAttribute index ->
 
@@ -91,6 +91,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
             |> prop.text
         ]
         Bulma.column [
-            Neg1To4Stat.view model.level (Neg1To4StatMsg >> dispatch)
+            VocationStat.view model.level (VocationStatMsg >> dispatch)
         ]
     ]

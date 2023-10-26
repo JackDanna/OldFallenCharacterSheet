@@ -10,6 +10,7 @@
     <Compile Include="CoreSkillTable.fs" />
     <Compile Include="CoreSkillTables.fs" />
     <None Include="index.html" />
+    <Compile Include="VocationStat.fs" />
     <Compile Include="VocationRow.fs" />
     <Compile Include="VocationalSkillStat.fs" />
     <Compile Include="VocationalSkillRow.fs" />

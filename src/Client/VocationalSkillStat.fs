@@ -2,6 +2,7 @@ module VocationalSkillStat
 
 open FallenLib.Neg1To4
 open Neg1To4Stat
+open FallenLib.VocationalSkill
 
 type Model = Neg1To4
 
@@ -15,15 +16,15 @@ type Msg =
 let init() : Model = Zero
 
 let determineIfCapped levelCap level =
-    (neg1To4ToInt level) > (neg1To4ToInt levelCap)
+    (neg1To4ToInt level) > neg1To4ToInt (zeroToFourToNegOneToFour levelCap)
 
 let determineIfCappedAndReturnModel levelCap level =
     
     match determineIfCapped levelCap level with
-    | true  -> levelCap
+    | true  -> zeroToFourToNegOneToFour levelCap
     | false -> level
 
-let update (levelCap:Neg1To4Stat.Model) (msg: Msg) (model: Model) : Model =
+let update (levelCap: VocationStat.Model) (msg: Msg) (model: Model) : Model =
 
     let toggleLogic levelCap isChecked levelIfTrue levelIfFalse =
         match isChecked with
@@ -45,7 +46,7 @@ let isVocationalCheckboxDisabled levelCap level checkboxRepresented =
         | true -> true
         | _ -> isCheckboxDisabled level checkboxRepresented
 
-let view (levelCap:Neg1To4Stat.Model) (model : Model) (dispatch : Msg -> unit) =
+let view (levelCap:VocationStat.Model) (model : Model) (dispatch : Msg -> unit) =
     
     Bulma.columns [
         Bulma.column [

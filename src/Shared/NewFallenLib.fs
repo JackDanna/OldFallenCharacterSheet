@@ -200,11 +200,38 @@ module SkillUtils =
             ]
         |> calcDicePoolCalculation
         |> dicePoolToString
-    
+
+module Vocation =
+
+    open SkillUtils
+    open Dice
+    open Attribute
+
+    type ZeroToFour =
+    | Zero
+    | One
+    | Two
+    | Three
+    | Four
+
     type GoverningAttribute = {
         isGoverning : bool
         attributeStat : Attribute
     }
+
+    let zeroToFourToUint zeroToFour =
+        match zeroToFour with
+        | Zero -> 0u
+        | One -> 1u
+        | Two -> 2u
+        | Three -> 3u
+        | Four -> 4u
+    
+    let zeroToFourToDiceCalc zeroToFour =
+        zeroToFour
+        |> zeroToFourToUint
+        |> createD6DicePoolCalc
+    
 
     let governingAttributesToDiceCalc governingAttributes =
         governingAttributes
@@ -214,14 +241,40 @@ module SkillUtils =
         )
         |> combineDicePoolCalculations
 
-
-    let vocationToDicePoolString baseDice governingAttributes vocationLevel =
+    let vocationToDicePoolString baseDice governingAttributes (vocationLevel:ZeroToFour) =
             governingAttributes
             |> governingAttributesToDiceCalc
             |> List.singleton
             |> List.append [
                 baseDice
-                vocationLevel |> neg1To4_To_d6_DicePoolCalc
+                vocationLevel |> zeroToFourToDiceCalc
+            ]
+            |> combineDicePoolCalculations
+            |> calcDicePoolCalculation
+            |> dicePoolToString
+
+module VocationalSkill =
+    open SkillUtils
+    open Neg1To4
+    open Dice
+    open Vocation
+
+    let zeroToFourToNegOneToFour zeroToFour =
+        match zeroToFour with
+        | Zero -> Neg1To4.Zero
+        | One -> Neg1To4.One
+        | Two -> Neg1To4.Two
+        | Three -> Neg1To4.Three
+        | Four -> Neg1To4.Four
+
+    let vocationalToDicePoolString baseDice governingAttributes (vocationalSkillLevel:Neg1To4) =
+            governingAttributes
+            |> governingAttributesToDiceCalc
+            |> List.singleton
+            |> List.append [
+                baseDice
+                vocationalSkillLevel |> neg1To4_To_d6_DicePoolCalc
+
             ]
             |> combineDicePoolCalculations
             |> calcDicePoolCalculation

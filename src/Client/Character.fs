@@ -4,7 +4,7 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
-open FallenLib.SkillUtils
+open FallenLib.Vocation
 
 type Model = {
     name: string
@@ -46,7 +46,7 @@ let defaultVocationTables : VocationTables.Model = [
     {
         vocationRow = {
             name = ""
-            level = Neg1To4Stat.init()
+            level = VocationStat.init()
             governingAttributes = [
                 { 
                     isGoverning = false
@@ -67,7 +67,7 @@ let defaultVocationTables : VocationTables.Model = [
     {
         vocationRow = {
             name = ""
-            level = Neg1To4Stat.init()
+            level = VocationStat.init()
             governingAttributes = [
                 { 
                     isGoverning = false
