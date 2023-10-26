@@ -62,7 +62,7 @@ let defaultVocationTables : VocationTables.Model = [
                 }
             ]
         }
-        vocationalSkillRowList = [VocationalSkillRow.init()]
+        vocationalSkillRowList = [VocationTable.vocationalSkillInit()]
     }
     {
         vocationRow = {
@@ -83,7 +83,7 @@ let defaultVocationTables : VocationTables.Model = [
                 }
             ]
         }
-        vocationalSkillRowList = [VocationalSkillRow.init()]
+        vocationalSkillRowList = [VocationTable.vocationalSkillInit()]
     }
 ]
 

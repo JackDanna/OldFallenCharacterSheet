@@ -60,7 +60,12 @@ let update (msg: Msg) (model: Model) : Model =
             vocationalSkillRowList = 
                 List.mapi ( fun i (skillRow:VocationalSkill) ->
                     if position = i then
-                        { skillRow with vocationalSkillStat = VocationalSkillStat.update newVocationalSkillStat skillRow.vocationalSkillStat }
+                        { skillRow with 
+                            vocationalSkillStat = 
+                                VocationalSkillStat.update 
+                                    model.vocationRow.level 
+                                    newVocationalSkillStat 
+                                    skillRow.vocationalSkillStat }
                     else 
                         skillRow
                 ) model.vocationalSkillRowList
@@ -99,11 +104,17 @@ let view (model: Model) (dispatch: Msg -> unit) =
                                 ]
                             ]
                             Bulma.column [
-                                vocationToDicePoolString baseDicePoolCalculation model.vocationRow.governingAttributes skillRow.vocationalSkillStat.level
+                                vocationToDicePoolString
+                                    baseDicePoolCalculation
+                                    model.vocationRow.governingAttributes
+                                    skillRow.vocationalSkillStat
                                 |> prop.text
                             ]
                             Bulma.column [
-                                VocationalSkillStat.view skillRow.vocationalSkillStat (fun msg -> dispatch (ModifyVocationalSkillStat (position, msg)) )
+                                VocationalSkillStat.view
+                                    model.vocationRow.level
+                                    skillRow.vocationalSkillStat 
+                                    (fun msg -> dispatch (ModifyVocationalSkillStat (position, msg)) )
                             ]
                         ]
 
