@@ -14,10 +14,10 @@ type Msg =
     | VocationStatMsg of VocationStat.Msg
     | ToggleGoverningAttribute of int
 
-let init() : Model = {
+let init (governingAttributes:GoverningAttribute list) : Model = {
     name = ""
     level = VocationStat.init()
-    governingAttributes = []
+    governingAttributes = governingAttributes
 }
 
 let update (msg: Msg) (model: Model) : Model =

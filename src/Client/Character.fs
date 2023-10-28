@@ -42,56 +42,6 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
     }
 ]
 
-let defaultVocationTables : VocationTables.Model = [
-    {
-        vocationRow = {
-            name = ""
-            level = VocationStat.init()
-            governingAttributes = [
-                { 
-                    isGoverning = false
-                    attributeStat = { AttributeRow.init() with name = "STR"}
-                }
-                { 
-                    isGoverning = false
-                    attributeStat = { AttributeRow.init() with name = "RFX"}
-                }
-                { 
-                    isGoverning = false
-                    attributeStat = { AttributeRow.init() with name = "INT"}
-                }
-            ]
-        }
-        vocationalSkillRowList = [VocationalSkillRow.init()]
-    }
-    {
-        vocationRow = {
-            name = ""
-            level = VocationStat.init()
-            governingAttributes = [
-                { 
-                    isGoverning = false
-                    attributeStat = { AttributeRow.init() with name = "STR"}
-                }
-                { 
-                    isGoverning = false
-                    attributeStat = { AttributeRow.init() with name = "RFX"}
-                }
-                { 
-                    isGoverning = false
-                    attributeStat = { AttributeRow.init() with name = "INT"}
-                }
-            ]
-        }
-        vocationalSkillRowList = [VocationalSkillRow.init()]
-    }
-]
-
-type Msg =
-    | CoreSkillTablesMsg of CoreSkillTables.Msg
-    | VocationTableMsg of VocationTables.Msg
-    | SetName of string
-
 let attributesToGoverningAttributes attributes governingAttributes =
     attributes
     |> List.map ( fun (attribute:AttributeRow.Model) ->
@@ -110,11 +60,35 @@ let attributesToGoverningAttributes attributes governingAttributes =
         }
     )
 
+let attributesToGoverningAttributesInit attributes =
+    List.map ( fun (attribute:AttributeRow.Model) ->
+        {
+            attributeStat = attribute
+            isGoverning = false
+        }
+    ) attributes
+
+let coreSkillTablesToAttributes (coreSkillTables:CoreSkillTables.Model) =
+    List.map ( fun (table: CoreSkillTable.Model) ->
+        table.attributeRow
+    ) coreSkillTables
+
+let defaultGoverningAttribute =
+    defaultCoreSkillTables 
+    |> coreSkillTablesToAttributes 
+    |> attributesToGoverningAttributesInit
+
+
+type Msg =
+    | CoreSkillTablesMsg of CoreSkillTables.Msg
+    | VocationTableMsg of VocationTables.Msg
+    | SetName of string
+
 let init () : Model =
     {
         name = "Javk Wick"
         coreSkillTables = defaultCoreSkillTables
-        vocationTables = defaultVocationTables
+        vocationTables = VocationTables.init (defaultGoverningAttribute)
     }
 
 let update (msg: Msg) (model: Model) : Model =

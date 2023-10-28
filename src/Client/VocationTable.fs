@@ -1,5 +1,7 @@
 module VocationTable
 
+open FallenLib.Vocation
+
 type Model = {
     vocationRow : VocationRow.Model
     vocationalSkillRowList : VocationalSkillRow.Model List
@@ -11,20 +13,30 @@ type Msg =
     | Remove
     | Modify of int * VocationalSkillRow.Msg
 
-let init() : Model = {
-    vocationRow = VocationRow.init()
-    vocationalSkillRowList = [VocationalSkillRow.init()]
-}
+let init (governingAttributes:GoverningAttribute list) : Model =
+    let vocationRow = VocationRow.init(governingAttributes)
+    {
+        vocationRow = vocationRow
+        vocationalSkillRowList = [VocationalSkillRow.init (vocationRow) ]
+    }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | VocationRowMsg vocationRowMsg ->
-        { model with vocationRow = VocationRow.update vocationRowMsg model.vocationRow }
+
+        let newVocationRow = VocationRow.update vocationRowMsg model.vocationRow
+        { model with
+            vocationRow = newVocationRow
+            vocationalSkillRowList =
+                List.map ( fun vocationalSkillRow ->
+                    VocationalSkillRow.update (VocationalSkillRow.Msg.SetVocationRow (newVocationRow)) vocationalSkillRow
+                ) model.vocationalSkillRowList
+        }
 
     | Insert ->
         { model with 
             vocationalSkillRowList = 
-                List.append model.vocationalSkillRowList [VocationalSkillRow.init()]
+                List.append model.vocationalSkillRowList [VocationalSkillRow.init(model.vocationRow)]
         }
 
     | Remove ->
@@ -38,7 +50,7 @@ let update (msg: Msg) (model: Model) : Model =
             vocationalSkillRowList = 
                 List.mapi ( fun i (skillRow:VocationalSkillRow.Model) ->
                     if position = i then
-                        VocationalSkillRow.update model.vocationRow.level msg skillRow
+                        VocationalSkillRow.update msg skillRow
                     else 
                         skillRow
                 ) model.vocationalSkillRowList
@@ -57,8 +69,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     fun position skillRow ->
 
                         VocationalSkillRow.view
-                            model.vocationRow.governingAttributes
-                            model.vocationRow.level
                             skillRow
                             ( fun msg -> dispatch ( Modify (position,msg) ) )
 
