@@ -64,7 +64,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
             vocationalToDicePoolString
                 baseDicePoolCalculation
                 model.vocationRow.governingAttributes
-                (model.vocationRow.level |> zeroToFourToNegOneToFour)
+                model.vocationalSkillStat.level
             |> prop.text
         ]
         Bulma.column [
