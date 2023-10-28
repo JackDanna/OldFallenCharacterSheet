@@ -10,13 +10,13 @@ let init() : Model = []
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | Modify (position, coreSkillTableMsg) ->
-        model
-        |> List.mapi (fun i coreSkilTableModel ->
+
+        List.mapi ( fun i coreSkilTableModel ->
             if i = position then
                 CoreSkillTable.update coreSkillTableMsg coreSkilTableModel
             else
                 coreSkilTableModel
-        )      
+        ) model
 
 open Feliz
 open Feliz.Bulma
