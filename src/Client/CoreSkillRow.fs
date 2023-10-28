@@ -10,6 +10,7 @@ type Model = {
 
 type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
+    | SetGoveringAttribute of AttributeRow.Model
 
 let init (governingAttribute:AttributeRow.Model) = {
     name = ""
@@ -21,6 +22,8 @@ let update (msg:Msg) (model: Model) : Model =
     match msg with
     | Neg1To4StatMsg neg1To4StatMsg ->
         { model with level = Neg1To4Stat.update neg1To4StatMsg model.level}
+    | SetGoveringAttribute newGoverningAttribute ->
+        { model with governingAttribute = newGoverningAttribute}
 
 open Feliz
 open Feliz.Bulma

@@ -22,11 +22,15 @@ let update (msg: Msg) (model: Model) : Model =
 
         let newAttributeRow = AttributeRow.update attributeRowMsg model.attributeRow
 
+        // When Attribute Row updates, set the new governing attributes for the CoreSkills
         { model with 
             attributeRow = newAttributeRow
-            // When Attribute Row updates, set the new governing attributes for the CoreSkills
-            coreSkillList =
-                List.map (fun (coreSkill:CoreSkillRow.Model) -> { coreSkill with governingAttribute = newAttributeRow }) model.coreSkillList
+            coreSkillList = 
+                List.map (fun coreSkill ->
+                    CoreSkillRow.update
+                        (CoreSkillRow.Msg.SetGoveringAttribute (newAttributeRow))
+                        coreSkill
+                ) model.coreSkillList
         }
 
     | ModifyCoreSkill (position, skillRowMsg) ->
@@ -35,8 +39,9 @@ let update (msg: Msg) (model: Model) : Model =
             coreSkillList =
                 List.mapi ( fun i skillRowModel ->
                     if position = i then
-
-                        CoreSkillRow.update skillRowMsg {skillRowModel with governingAttribute = model.attributeRow}
+                        CoreSkillRow.update
+                            skillRowMsg
+                            {skillRowModel with governingAttribute = model.attributeRow}
                     else 
                         skillRowModel
                 ) model.coreSkillList
