@@ -12,7 +12,7 @@ type Msg =
 let init() : Model = {
     attributeRow = AttributeRow.init()
     coreSkillList = [
-        CoreSkillRow.init (AttributeRow.init())
+        CoreSkillRow.init (Neg1To4Stat.init())
     ]
 }
 
@@ -27,7 +27,7 @@ let update (msg: Msg) (model: Model) : Model =
             coreSkillList = 
                 List.map (fun coreSkill ->
                     CoreSkillRow.update
-                        (CoreSkillRow.Msg.SetGoveringAttribute (newAttributeRow))
+                        (CoreSkillRow.Msg.SetGoveringAttribute (newAttributeRow.neg1To4Stat))
                         coreSkill
                 ) model.coreSkillList
         }
@@ -40,7 +40,7 @@ let update (msg: Msg) (model: Model) : Model =
                     if position = i then
                         CoreSkillRow.update
                             skillRowMsg
-                            {skillRowModel with governingAttribute = model.attributeRow}
+                            {skillRowModel with governingAttributeLevel = model.attributeRow.neg1To4Stat}
                     else 
                         skillRowModel
                 ) model.coreSkillList
