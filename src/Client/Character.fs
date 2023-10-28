@@ -16,28 +16,28 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
     {
         attributeRow = { AttributeRow.init() with name = "STR"}
         coreSkillList = [
-            { name = "Athletics"; level = Neg1To4Stat.init() }
-            { name = "Climb"; level = Neg1To4Stat.init() }
-            { name = "Endurance"; level = Neg1To4Stat.init() }
-            { name = "Lift"; level = Neg1To4Stat.init() }
+            { name = "Athletics"; level = Neg1To4Stat.init(); governingAttribute = AttributeRow.init()}
+            { name = "Climb"; level = Neg1To4Stat.init(); governingAttribute = AttributeRow.init()}
+            { name = "Endurance"; level = Neg1To4Stat.init(); governingAttribute = AttributeRow.init()}
+            { name = "Lift"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init()}
         ]
     }
     {
         attributeRow = { AttributeRow.init() with name = "RFX"}
         coreSkillList = [
-            { name = "Athletics"; level = Neg1To4Stat.init() }
-            { name = "Climb"; level = Neg1To4Stat.init() }
-            { name = "Endurance"; level = Neg1To4Stat.init() }
-            { name = "Lift"; level = Neg1To4Stat.init() }
+            { name = "Athletics"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init()}
+            { name = "Climb"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init() }
+            { name = "Endurance"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init() }
+            { name = "Lift"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init() }
         ]
     }
     {
         attributeRow = { AttributeRow.init() with name = "INT"}
         coreSkillList = [
-            { name = "Athletics"; level = Neg1To4Stat.init() }
-            { name = "Climb"; level = Neg1To4Stat.init() }
-            { name = "Endurance"; level = Neg1To4Stat.init() }
-            { name = "Lift"; level = Neg1To4Stat.init() }
+            { name = "Athletics"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init() }
+            { name = "Climb"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init() }
+            { name = "Endurance"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init() }
+            { name = "Lift"; level = Neg1To4Stat.init();governingAttribute = AttributeRow.init() }
         ]
     }
 ]

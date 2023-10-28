@@ -48,7 +48,7 @@ let view (governingAttributes:GoverningAttribute list) (vocationLevel: VocationS
             vocationalToDicePoolString
                 baseDicePoolCalculation
                 governingAttributes
-                model.level
+                (vocationLevel |> zeroToFourToNegOneToFour)
             |> prop.text
         ]
         Bulma.column [

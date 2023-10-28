@@ -191,6 +191,9 @@ module SkillUtils =
         |> calcDicePoolCalculation
         |> dicePoolToString
 
+    let coreSkillToDicePoolStringLoadedBaseDice skillLevel attributeLevel =
+        coreSkillToDicePoolString baseDicePoolCalculation skillLevel attributeLevel
+
     let skillToDicePoolString baseDice skillLevel attributeDiceMod =
         combineDicePoolCalculations
             [

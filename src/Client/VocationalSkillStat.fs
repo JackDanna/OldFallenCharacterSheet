@@ -4,6 +4,7 @@ open FallenLib.Neg1To4
 open Neg1To4Stat
 open FallenLib.VocationalSkill
 
+
 type Model = Neg1To4
 
 type Msg =
