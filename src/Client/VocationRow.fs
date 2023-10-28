@@ -2,6 +2,7 @@ module VocationRow
 
 open FallenLib.Vocation
 open FallenLib.Dice
+open FallenLib.Attribute
 
 type Model = {
     name : string
@@ -11,6 +12,7 @@ type Model = {
 
 type Msg =
     | SetName of string
+    | SetGoverningAttributes of Attribute list
     | VocationStatMsg of VocationStat.Msg
     | ToggleGoverningAttribute of int
 
@@ -20,9 +22,30 @@ let init (governingAttributes:GoverningAttribute list) : Model = {
     governingAttributes = governingAttributes
 }
 
+let attributesToGoverningAttributes attributes governingAttributes =
+    attributes
+    |> List.map ( fun (attribute:AttributeRow.Model) ->
+        {
+            attributeStat = attribute
+            isGoverning =
+                governingAttributes
+                |> List.collect ( fun currentGoverningAttribute ->
+                    if (currentGoverningAttribute.attributeStat.name = attribute.name) && currentGoverningAttribute.isGoverning then
+                        [currentGoverningAttribute.isGoverning]
+                    else
+                        []
+                )
+                |> List.isEmpty
+                |> not
+        }
+    )
+
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | SetName newName -> { model with name = newName }
+
+    | SetGoverningAttributes attributes ->
+        { model with governingAttributes = attributesToGoverningAttributes attributes model.governingAttributes }
 
     | VocationStatMsg neg1ToStatMsg ->
         { model with level = VocationStat.update neg1ToStatMsg model.level }

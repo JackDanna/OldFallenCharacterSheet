@@ -42,24 +42,6 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
     }
 ]
 
-let attributesToGoverningAttributes attributes governingAttributes =
-    attributes
-    |> List.map ( fun (attribute:AttributeRow.Model) ->
-        {
-            attributeStat = attribute
-            isGoverning =
-                governingAttributes
-                |> List.collect ( fun currentGoverningAttribute ->
-                    if (currentGoverningAttribute.attributeStat.name = attribute.name) && currentGoverningAttribute.isGoverning then
-                        [currentGoverningAttribute.isGoverning]
-                    else
-                        []
-                )
-                |> List.isEmpty
-                |> not
-        }
-    )
-
 let attributesToGoverningAttributesInit attributes =
     List.map ( fun (attribute:AttributeRow.Model) ->
         {
@@ -96,20 +78,14 @@ let update (msg: Msg) (model: Model) : Model =
     | CoreSkillTablesMsg coreSkillTableMsg ->
         let newCoreSkillTables = CoreSkillTables.update coreSkillTableMsg model.coreSkillTables
 
-        let newAttributes = 
-            List.map(fun (coreSkillTable: CoreSkillTable.Model) ->
-                coreSkillTable.attributeRow
-            ) newCoreSkillTables
-
         {
             model with 
                 coreSkillTables = newCoreSkillTables
                 vocationTables =
-                    List.map ( fun (vocationTable:VocationTable.Model) ->
-                        let newVocationRow = attributesToGoverningAttributes newAttributes vocationTable.vocationRow.governingAttributes
-                        { vocationTable with 
-                            vocationRow = { vocationTable.vocationRow with governingAttributes = newVocationRow }
-                        }
+                    List.map ( fun vocationTable ->
+                        VocationTable.update
+                            (VocationTable.Msg.SetGoverningAttributes (coreSkillTablesToAttributes newCoreSkillTables))
+                            vocationTable
                     ) model.vocationTables
         }
 

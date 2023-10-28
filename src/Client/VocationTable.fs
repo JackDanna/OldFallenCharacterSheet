@@ -12,6 +12,7 @@ type Msg =
     | Insert
     | Remove
     | Modify of int * VocationalSkillRow.Msg
+    | SetGoverningAttributes of AttributeRow.Model list
 
 let init (governingAttributes:GoverningAttribute list) : Model =
     let vocationRow = VocationRow.init(governingAttributes)
@@ -55,6 +56,14 @@ let update (msg: Msg) (model: Model) : Model =
                         skillRow
                 ) model.vocationalSkillRowList
         }
+    | SetGoverningAttributes attributes ->
+        let newVocationRow = VocationRow.update (VocationRow.Msg.SetGoverningAttributes (attributes)) model.vocationRow
+        { model with
+            vocationRow = newVocationRow 
+            vocationalSkillRowList =
+                List.map ( fun vocationalSkill ->
+                    VocationalSkillRow.update (VocationalSkillRow.Msg.SetVocationRow (newVocationRow)) vocationalSkill 
+                ) model.vocationalSkillRowList}
     
 
 open Feliz

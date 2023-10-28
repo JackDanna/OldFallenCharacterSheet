@@ -27,6 +27,7 @@ let update(msg: Msg) (model: Model) : Model =
     | SetName name -> { model with name = name }
     | SetVocationRow newVocationRow ->
         { model with
+            vocationRow = newVocationRow
             vocationalSkillStat = 
                 VocationalSkillStat.update (VocationalSkillStat.Msg.SetLevelCap (newVocationRow.level)) model.vocationalSkillStat
         }
