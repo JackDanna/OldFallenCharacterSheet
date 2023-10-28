@@ -22,7 +22,6 @@ let update (msg: Msg) (model: Model) : Model =
 
         let newAttributeRow = AttributeRow.update attributeRowMsg model.attributeRow
 
-        // When Attribute Row updates, set the new governing attributes for the CoreSkills
         { model with 
             attributeRow = newAttributeRow
             coreSkillList = 
