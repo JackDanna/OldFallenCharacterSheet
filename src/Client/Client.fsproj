@@ -17,6 +17,8 @@
     <Compile Include="VocationalSkillRow.fs" />
     <Compile Include="VocationTable.fs" />
     <Compile Include="VocationTables.fs" />
+    <Compile Include="Item.fs" />
+    <Compile Include="ItemList.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
     <Compile Include="App.fs" />
