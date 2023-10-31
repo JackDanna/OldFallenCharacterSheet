@@ -730,6 +730,16 @@ module Item =
         weight      : float
     }
 
+    let itemClassesToString itemClasses =
+        Array.map ( fun itemClass ->
+            match itemClass with
+            | WeaponClass weaponClass -> weaponClass.desc
+            | ConduitClass conduitClass -> conduitClass.desc
+            | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
+            | DefenseClass defenseClass -> defenseClass.name
+        ) itemClasses
+        |> String.concat ", "
+ 
     let collectWeaponItemClasses item =
         item.itemClasses
         |> Array.collect( fun itemClass->
