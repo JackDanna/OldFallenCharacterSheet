@@ -1,0 +1,5 @@
+name,bottomPercent,topPercent,percentOfMovementSpeed
+"Light Weight, 100% speed",0,0.25,1
+"Med. Weight -1d STR/RFX, 80% speed",0.25,0.5,0.8
+"Heavy Weight -2d STR/RFX, 50% speed",0.5,1,0.5
+"Overencumberd -4d STR/RFX, 0% speed",1,9999,0

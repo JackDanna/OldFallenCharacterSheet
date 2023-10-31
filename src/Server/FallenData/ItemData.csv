@@ -1,0 +1,584 @@
+desc,itemClasses,itemTier,durability,weight,value,quantity
+Copper Coin,Misc,Mundane,,0.02," 1 cc",1
+Bronze Coin,Misc,Mundane,,0.02," 1 bc",1
+Gold Coin,Misc,Mundane,,0.02," 1 gc",1
+Platinum Coin,Misc,Mundane,,0.02," 1 pc",1
+,,,,,,
+Unarmed,Unarmed,Mundane,12/12,0,0 bc,1
+Unarmed Disarming,Disarming Unarmed,Mundane,12/12,0,0 bc,1
+Dagger,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Mundane,12/12,1,2 bc,1
+Shortsword,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Mundane,12/12,1.5,10 bc,1
+Handaxe,Small Hafted Blade,Mundane,12/12,2,10 bc,1
+Sickle,Small Hafted Blade,Mundane,12/12,2,5 bc,1
+Light Hammer,Small Hafted Blunt,Mundane,12/12,2,1 bc,1
+Arming Sword,"Med. Thrusting Sword, Med. Slashing Sword",Mundane,12/12,2,2 bc,1
+Rapier,Med. Thrusting Sword,Mundane,12/12,2,12 bc,1
+Scimitar,Med. Slashing Sword,Mundane,12/12,2,25 bc,1
+Shoddy Scimitar,Med. Slashing Sword,Shoddy,9/9,2,15 bc,1
+Battleaxe,Med. Hafted Axe,Mundane,12/12,4,10 bc,1
+Flail,Med. Hafted Blunt,Mundane,12/12,3,10 bc,1
+Morning Star,Med. Hafted Blunt,Mundane,12/12,4,15 bc,1
+Mace,Med. Hafted Blunt,Mundane,12/12,3,5 bc,1
+Warhammer/pick,"Med. Hafted Blunt, Med. Hafted Point",Mundane,12/12,4,9 bc,1
+Longsword,Large Sword,Mundane,12/12,3,15 bc,1
+Glaive,Large Hafted Blade,Mundane,12/12,6,20 bc,1
+Greataxe,Large Hafted Blade,Mundane,12/12,7,30 bc,1
+Maul,Large Hafted Blunt,Mundane,12/12,7,10 bc,1
+Short Spear,"Short Spear, Thrown Short Spear",Mundane,12/12,3,1 bc,1
+Trident,"Short Spear, Thrown Short Spear",Mundane,12/12,3,5 bc,1
+Poleaxe,"Large Hafted Blunt, Large Hafted Blade, Large Hafted Point",Mundane,12/12,6,40 bc,1
+Javelin,"Short Spear, Thrown Short Spear",Mundane,12/12,3,5 bc,1
+Greatsword,Greatsword,Mundane,12/12,6,50 bc,1
+Swordstaff,"Reach Hafted Blade, Longspear",Mundane,12/12,6,50 bc,1
+Halberd,"Reach Hafted Blade, Reach Hafted Point",Mundane,12/12,7,20 bc,1
+Long Poleaxe,"Reach Hafted Blunt, Reach Hafted Blade, Reach Hafted Point",Mundane,12/12,7,41 bc,1
+Lance,Reach Hafted Point,Mundane,12/12,11,10 bc,1
+Long Spear,Longspear,Mundane,12/12,5,2 bc,1
+Pike,Longspear,Mundane,12/12,5,5 bc,1
+Man Catcher,Man Catcher,Mundane,12/12,8,5 bc,1
+Swordbreaker,Small Slashing Blade,Mundane,12/12,1,25 bc,1
+Crowbar,Small Hafted Blunt,Mundane,12/12,5,2 bc,1
+Hammer,Small Hafted Blunt,Mundane,12/12,3,1 bc,1
+"Hammer, Sledge",Large Hafted Blunt,Mundane,12/12,10,2 bc,1
+"Pick, Miner's",Large Hafted Point,Mundane,12/12,10,2 bc,1
+Light Crossbow,Light Crossbow,Mundane,12/12,5,25 bc,1
+Shortbow,Light Bow,Mundane,12/12,2,25 bc,1
+Shoddy Shortbow,Light Bow,Shoddy,9/9,2,15 bc,1
+Hand Crossbow,Hand Crossbow,Mundane,12/12,3,75 bc,1
+Heavy Crossbow,Heavy Crossbow,Mundane,12/12,11,50 bc,1
+Longbow,Heavy Bow,Mundane,12/12,4,50 bc,1
+Sling,Sling,Mundane,12/12,0.5,20 cc,1
+Quarterstaff,Large Hafted Blunt,Mundane,12/12,4,20 cc,1
+Club,Med. Hafted Blunt,Mundane,12/12,2,10 cc,1
+Great Club,Large Hafted Blunt,Mundane,12/12,10,20 cc,1
+Whip,Whip,Mundane,12/12,3,2 bc,1
+Plumbata/Dart,Thrown Small Point,Mundane,12/12,5,5 cc,1
+Blowgun,Blowgun,Mundane,12/12,1,10 bc,1
+Asher’s Arms Swordbreaker,"Small Thrusting Point, Small Slashing Blade, Thrown Small Blade",Fine,18/18,1,?,1
+Talon - Practice,"Small Thrusting Point, Small Slashing Blade, Thrown Small Blade",Quality,15/15,1.5,?,1
+Fang - Practice,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Quality,15/15,1,?,1
+Sirius’s Sword,"Med. Thrusting Sword, Med. Slashing Sword",Fine,18/18,2,?,1
+Monkey Staff,Med. Hafted Blunt,Excellent,21/21,4,?,1
+Hew,Med. Hafted Axe,Excellent,21/21,4,?,1
+Char,Greatsword,Mundane,12/12,6,?,1
+Epilogue,"Med. Thrusting Sword, Med. Slashing Sword",Excellent,21/21,2,?,1
+Echo,"Med. Thrusting Sword, Med. Slashing Sword",Superior,24/24,2,?,1
+Asclepius,"Short Spear, Whip",Mastercraft,33/33,3,?,1
+Soot and Ash,"Med. Thrusting Sword, Med. Slashing Sword, Small Thrusting Point, Small Slashing Blade",Epic,39/39,0.2,?,1
+The Spear of Destiny,"Reach Hafted Blade, Longspear",Artifact,48/48,14,?,1
+Dancing Moonlight,"Large Sword, Greatsword, Default Conduit",Mythic,45/45,3,?,1
+Adversary - Damaged,Radiance Conduit,Fine,18/18,1,?,1
+Sharp Cap,Small Slashing Blade,Shoddy,9/9,0.5,2 bc,1
+Fine Arming Sword,"Med. Thrusting Sword, Med. Slashing Sword",Fine,18/18,2,?,1
+Net,Medium Sword,Mundane,12/12,3,1 bc,1
+Bodkin Knife,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Mundane,12/12,1,2 bc,1
+Quality Warhammer/pick,"Med. Hafted Blunt, Med. Hafted Point",Quality,15/15,4,?,1
+Quality War Axe,Large Hafted Blade,Quality,15/15,5,5 bc,1
+War Axe,Large Hafted Blade,Mundane,12/12,5,5 bc,1
+Asher’s Arms Bollock Dagger,"Small Bladed, Thrown Small Point",Superior,24/24,1,10 bc,1
+Spencer's Arms Arming Sword,"Med. Thrusting Sword, Med. Slashing Sword",Superior,24/24,2,20 bc,1
+Dragon Torch,"Med. Torch, Blazecraft Conduit",Artifact,48/48,3,9999 bc,1
+Shovel,Med. Hafted Blunt,Shoddy,9/9,5,2 bc,1
+Excellent Shortbow,Light Bow,Excellent,21/21,2,25 bc,1
+Quality Rapier,Med. Thrusting Sword,Mundane,12/12,2,14 bc,1
+Quality Swordbreaker,Small Slashing Blade,Mundane,12/12,1,28 bc,1
+Torch,Torch,Shoddy,9/9,1,1 cc,1
+Shiv,"Small Thrusting Point, Thrown Small Point",Shoddy,9/9,1,70 cc,1
+Shoddy Club,Med. Hafted Blunt,Shoddy,9/9,2,10 cc,1
+,,,,,,
+Claws (Large),Claws (Large),Mundane,,0,None,1
+Claws,Claws,Mundane,,0,None,1
+Bite (Large),Claws (Large),Mundane,,0,None,1
+Bite,Bite (Large),Mundane,,0,None,1
+Stomp (Large),Stomp (Large),Mundane,,0,None,1
+Stomp (Medium),Stomp (Medium),Mundane,,0,None,1
+Horns (Medium),Horns (Medium),Mundane,,0,None,1
+,,,,,,
+Natural Armor Level 2,Phy. Def. 2,Mundane,,0,None,1
+,,,,,,
+Gambeson Coat,Phy. Def. 1,Mundane,12/12,5,2 bc,1
+Gambeson Leggings,Phy. Def. 0.5,Mundane,12/12,3,1 bc,1
+Superior Gambeson Coat,Phy. Def. 1,Superior,24/24,5,2 bc,1
+Supior Gambeson Leggings,Phy. Def. 0.5,Superior,24/24,3,1 bc,1
+Shoddy Leather Helmet,Phy. Def. 0.5,Shoddy,9/9,2,0.5 bc,1
+Shoddy Leather Cuirass and Pauldrons,Phy. Def. 0.5,Shoddy,9/9,4,3 bc,1
+Shoddy Leather Cuisses and Greaves,Phy. Def. 0.5,Shoddy,9/9,3,2 bc,1
+Shoddy Leather Vambrace,Phy. Def. 0.5,Shoddy,9/9,2,1.5 bc,1
+Leather Helmet,Phy. Def. 0.5,Mundane,12/12,2,0.5 bc,1
+Leather Cuirass and Pauldrons,Phy. Def. 0.5,Mundane,12/12,4,3 bc,1
+Leather Cuisses and Greaves,Phy. Def. 0.5,Mundane,12/12,3,2 bc,1
+Leather Vambrace,Phy. Def. 0.5,Mundane,12/12,2,1.5 bc,1
+Superior Leather Helmet,Phy. Def. 0.5,Superior,24/24,2,0.5 bc,1
+Superior Leather Cuirass and Pauldrons,Phy. Def. 0.5,Superior,24/24,4,3 bc,1
+Superior Leather Cuisses and Greaves,Phy. Def. 0.5,Superior,24/24,3,2 bc,1
+Superior Leather Vambrace,Phy. Def. 0.5,Superior,24/24,2,1.5 bc,1
+Chainmail Coif,Phy. Def. 0.75,Superior,24/24,4,11.2 bc,1
+Chainmail Shirt,Phy. Def. 1,Mundane,12/12,24,22.4 bc,1
+Chainmail Leggings,Phy. Def. 0.75,Mundane,12/12,15,11.2 bc,1
+Chainmail Sleeves,Phy. Def. 0.75,Mundane,12/12,12,11.2 bc,1
+Half Helm,Phy. Def. 1,Mundane,12/12,5,22.5 bc,1
+Brigandine Cuirass and Pauldrons,Phy. Def. 1,Mundane,12/12,25,60 bc,1
+Brigandine Cuisses and Greaves,Phy. Def. 1,Mundane,12/12,17,40.5 bc,1
+Brigandine Vambrace and Gauntlets,"Phy. Def. 1, Hand Protection Unarmed",Mundane,12/12,13,27.75 bc,1
+Plate Full Helm,Phy. Def. 1.25,Mundane,12/12,6,225 bc,1
+Plate Cuirass and Pauldrons,Phy. Def. 1.5,Mundane,12/12,27,450 bc,1
+Plate Cuisses and Greaves,Phy. Def. 1.25,Mundane,12/12,18,300 bc,1
+Plate Vambrace and Gauntlets,"Phy. Def. 1.25, Hand Protection Unarmed",Mundane,12/12,14,150 bc,1
+"Small Shield (Buckler, Targe, Parma)",Phy. Def. 1,Mundane,12/12,4,2 bc,1
+Kite Shield,Phy. Def. 2,Mundane,12/12,8,7 bc,1
+Hoplon Shield,Phy. Def. 2,Mundane,12/12,8,7 bc,1
+Pavise Shield,Phy. Def. 2,Mundane,12/12,8,7 bc,1
+Heater Shield,Phy. Def. 2,Mundane,12/12,8,7 bc,1
+Kite Shield (Dawn Emp. Crest),Phy. Def. 2,Superior,24/24,8,30 bc,1
+Heavy Shield (Tower),Phy. Def. 3,Mundane,12/12,25,150 bc,1
+Mantlet,Phy. Def. 4,Mundane,12/12,90,17 bc,1
+Fire Dragon Scale Talisman,,Fine,18/18,0.4,?,1
+Amulet Of Reflection,,Flawless,30/30,0.1,?,1
+Blessed Dew Talisman,,Superior,24/24,0.2,?,1
+Cracked Brightstone Ring,,Excellent,21/21,0,?,1
+Dragonguard,,Superior,24/24,27,?,1
+,,,,,,
+Broadhead Arrow,Standard Arrow,Mundane,-,0.05,1 bc,20
+Barbed Broadhead Arrow,Wounding Arrow,Mundane,-,0.05,1.4 bc,20
+Bodkin Arrow,Anti-armor Arrow,Mundane,-,0.05,2 bc,20
+Wood Tipped Arrow,Shoddy Arrow,Mundane,-,0.05,50 cc,20
+Broadhead Bolt,Standard Bolt,Mundane,-,0.075,1 bc,20
+Barbed Broadhead Bolt,Wounding Bolt,Mundane,-,0.075,1.4 bc,20
+Bodkin Bolt,Anti-armor Bolt,Mundane,-,0.075,2 bc,20
+Wood Tipped Bolt,Shoddy Bolt,Mundane,-,0.075,50 cc,20
+Sling Bullets,Standard Sling Bullets,Mundane,-,0.075,4 cc,50
+Blowguns Needles Plain,Plain Needles,Mundane,-,0.05,50 cc,20
+,,,,,,
+30 lb of gold and gems,Misc,Exquisite,-,30,?,1
+"Guard's Uniform, Traveler's",Misc,Mundane,,4,2 bc,1
+Mother's Necklace,Misc,Mundane,,0.1,?,1
+Mother's Jeweled Braclet,Misc,Mundane,,0.1,?,1
+Bag of Ball Bearings,Misc,Mundane,,2,70 cc,1000
+Bell,Misc,Mundane,,0.1,70 cc,1
+Block and Tackle,Misc,Mundane,,5,70 cc,1
+Chain (10 feet),Misc,Mundane,,10,3 bc,1
+Grappling Hook,Misc,Mundane,,4,2 bc,1
+Hunting Trap,Misc,Mundane,,25,5 bc,1
+Lamp,Misc,Mundane,,1,50 cc,1
+"Lantern, Bullseye",Misc,Mundane,,2,10 bc,1
+"Lantern, Hooded",Misc,Mundane,,2,5 bc,1
+Lock,Misc,Mundane,,1,10 bc,1
+Manacles,Misc,Mundane,,6,2 bc,1
+"Mirror, Steel",Misc,Mundane,,0.5,5 bc,1
+Piton,Misc,Mundane,,0.25,3 cc,1
+"Pot, Iron",Misc,Mundane,,10,1 bc,1
+"Spikes, Iron",Misc,Mundane,,5,70 cc,1
+Whetstone,Misc,Mundane,,1,1 cc,1
+Carpenter's Tools,Misc,Mundane,,6,6 bc,1
+Mason's Tools,Misc,Mundane,,8,7 bc,1
+Smith's Tools,Misc,Mundane,,8,15 bc,1
+Tinker's Tools,Misc,Mundane,,10,38 bc,1
+Shortbow Bowstring,Misc,Mundane,,0.05,8 cc,1
+Longbow Bowstring,Misc,Mundane,,0.05,10 cc,1
+Hand Crossbow Bowstring,Misc,Mundane,,0.05,10 cc,1
+Light Crossbow Bowstring,Misc,Mundane,,0.05,8 cc,1
+Heavy Crossbow Bowstring,Misc,Mundane,,0.05,20 cc,1
+"Case, Crossbow Bolts (capacity: 20)",Misc,Mundane,,1,1 bc,1
+Quiver (capacity: 20),Misc,Mundane,,1,1 bc,1
+Waterskin (0/4),Misc,Mundane,,1,20 cc,1
+Waterskin (4/4),Misc,Mundane,,5,20 cc,1
+Cobbler's Tools,Misc,Mundane,,5,5 bc,1
+Leatherworker's Tools,Misc,Mundane,,10,5 bc,1
+Bagpipes,Misc,Mundane,,6,30 bc,1
+Drum,Misc,Mundane,,3,6 bc,1
+Alms Box,Misc,Mundane,,1,5 bc,1
+Bell,Misc,Mundane,,1,1 bc,1
+Blanket,Misc,Mundane,,3,50 cc,1
+"Book, Scripture",Misc,Mundane,,0.5,25 bc,1
+Candle,Misc,Mundane,,0.1,1 cc,1
+"Case, Map or Scroll",Misc,Mundane,,1,1 bc,1
+Censer,Misc,Mundane,,1,5 bc,1
+Chalk (1 piece),Misc,Mundane,,0.1,1 cc,1
+Flask,Misc,Mundane,,1,2 cc,1
+Healer's Kit,Misc,Mundane,,3,5 bc,1
+Amulet - Holy Symbol,Misc,Mundane,,1,5 bc,1
+Emblem,Misc,Mundane,,0.1,5 bc,1
+Reliquary,Misc,Mundane,,2,5 bc,1
+Blessed Water (flask),Misc,Mundane,,1,25 bc,1
+Incense (1 block),Misc,Mundane,,0.1,1 cc,1
+Ink (1 ounce bottle),Misc,Mundane,,0.1,10 bc,1
+Ink Pen (Fountain),Misc,Mundane,,0.05,3 bc,1
+Oil (flask),Misc,Mundane,,1,10 cc,1
+Paper (one sheet),Misc,Mundane,,0,20 cc,1
+Parchment (one sheet),Misc,Mundane,,0,10 cc,1
+Perfume (vial),Misc,Mundane,,0.1,5 bc,1
+Vial of Gradual Healing Blood,Misc,Mundane,,0.25,40 bc,1
+Vial of Minor Healing Blood,Misc,Mundane,,0.25,50 bc,1
+Vial of Medium Healing Blood,Misc,Mundane,,0.25,100 bc,1
+Vial of Serious Healing Blood,Misc,Mundane,,0.25,500 bc,1
+Vial of Fatal Healing Blood,Misc,Mundane,,0.25,1350 bc,1
+Vial of Revival Healing Blood,Misc,Mundane,,0.25,500 bc,1
+Rations (1 day),Misc,Mundane,,2,50 cc,1
+Vial,Misc,Mundane,,0.1,1 bc,1
+Calligrapher's Supplies,Misc,Mundane,,5,10 bc,1
+Herbalism Kit,Misc,Mundane,,3,5 bc,1
+Flute,Misc,Mundane,,2,2 bc,1
+Lyre,Misc,Mundane,,2,30 bc,1
+Horn,Misc,Mundane,,2,3 bc,1
+Sealing Wax,Misc,Mundane,,0,10 bc,1
+"Common Book, Soft Bound",Misc,Mundane,,1,5 bc,1
+"Common Book, Hard Bound",Misc,Mundane,,1,2 bc,1
+"Uncommon Book, Soft Bound",Misc,Mundane,,1,30 bc,1
+"Uncommon Book, Hard Bound",Misc,Mundane,,1,3 bc,1
+"Rare Book, Soft Bound",Misc,Mundane,,1,10 bc,1
+"Rare Book, Hard Bound",Misc,Mundane,,1,5 bc,1
+Abacus,Misc,Mundane,,2,2 bc,1
+Barrel,Misc,Mundane,,70,2 bc,1
+Blanket,Misc,Mundane,,2,50 cc,1
+"Bottle, glass",Misc,Mundane,,2,2 bc,1
+Bucket,Misc,Mundane,,2,5 bc,1
+"Chest (12 ft^3, 300 lb capacity)",Misc,Mundane,,25,5 bc,1
+"Clothes, Common",Misc,Mundane,,3,5 bc,1
+"Clothes, Fine",Misc,Mundane,,6,15 bc,1
+Royal Morraki Attire/Cloak,Misc,Mundane,,6,15 bc,1
+Shoddy Morraki Attire/Cloak,Misc,Mundane,,6,15 bc,1
+Flask or Tankard,Misc,Mundane,,1,2 cc,1
+"Journal, Soft Bound, 25 Sheets",Misc,Mundane,,1,7 bc,1
+Jug or PitcherJug or Pitcher,Misc,Mundane,,4,2 cc,1
+Ladder (10-foot),Misc,Mundane,,25,10 cc,1
+String (10 feet),Misc,Mundane,,0,1 cc,1
+Mess Kit,Misc,Mundane,,1,20 cc,1
+"Pot, Iron",Misc,Mundane,,10,2 bc,1
+"Pouch ( 1/5 ft^3, 6 lb capacity)",Misc,Mundane,,1,50 cc,1
+"Rope, Hempen (50 feet)",Misc,Mundane,,10,1 bc,1
+"Rope, Silk (50 feet)",Misc,Mundane,,5,10 bc,1
+Sack,Misc,Mundane,,0.5,1 cc,1
+"Scale, Merchant's",Misc,Mundane,,3,5 bc,1
+,,,,,,
+Soap,Misc,Mundane,,0.5,2 cc,1
+Vial,Misc,Mundane,,0.2,1 bc,1
+Carpenter's Tools,Misc,Mundane,,6,8 bc,1
+Cook's Utensils,Misc,Mundane,,8,1 bc,1
+Glassblower's Tools,Misc,Mundane,,7,30 bc,1
+Mason's Tools,Misc,Mundane,,8,10 bc,1
+Potter's Tools,Misc,Mundane,,3,10 bc,1
+Smith's Tools,Misc,Mundane,,8,20 bc,1
+Weaver's Tools,Misc,Mundane,,5,1 bc,1
+Woodcarver's Tools,Misc,Mundane,,5,1 bc,1
+"Backpack (1 ft^3, 30 lb capacity)",Misc,Mundane,,5,2 bc,1
+Bedroll,Misc,Mundane,,7,1 bc,1
+Block and Tackle,Misc,Mundane,,5,1 bc,1
+"Case, Crossbow Bolts (capacity: 20 bolts)",Misc,Mundane,,1,1 bc,1
+Chain (10 feet),Misc,Mundane,,10,5 bc,1
+Climber's Kit,Misc,Mundane,,12,25 bc,1
+"Clothes, Traveler's",Misc,Mundane,,4,2 bc,1
+Hourglass,Misc,Mundane,,1,25 bc,1
+Piton,Misc,Mundane,,0.25,5 cc,1
+Pole (10-foot),Misc,Mundane,,7,5 cc,1
+Signal Whistle,Misc,Mundane,,0.1,5 bc,1
+Spy Glass,Misc,Mundane,,0,1000 bc,1
+"Tent, Two-person",Misc,Mundane,,20,2 bc,1
+Tinderbox,Misc,Mundane,,1,50 cc,1
+,,,,,,
+Cartographer's Tools,Misc,Mundane,,6,15 bc,1
+Jeweler's Tools,Misc,Mundane,,2,25 bc,1
+Tinker's Tools,Misc,Mundane,,10,50 bc,1
+Herbalism's Kit,Misc,Mundane,,3,5 bc,1
+Navigator's Kit,Misc,Mundane,,2,25 bc,1
+Acid (vial),Misc,Mundane,,0.5,25 bc,1
+Antitoxin (vial),Misc,Mundane,,0.5,50 bc,1
+Bag of Caltrops,Misc,Mundane,,2,1 bc,20
+"Clothes, Costume",Misc,Mundane,,4,5 bc,1
+"Poison, Basic (vial)",Misc,Mundane,,0.5,100 bc,1
+"Ram, Portable",Misc,Mundane,,35,4 bc,1
+"Spikes, Iron",Misc,Mundane,,5,1 bc,10
+Disguise Kit,Misc,Mundane,,3,25 bc,1
+Forgery Kit,Misc,Mundane,,5,15 bc,1
+Dice Set,Misc,Mundane,,0.2,10 cc,1
+Playing Card Set,Misc,Mundane,,0.2,50 cc,1
+Poisoner's Kit,Misc,Mundane,,2,50 bc,1
+Thieves' Tools,Misc,Mundane,,1,25 bc,1
+Arcane Focus - Crystal,Misc,Mundane,,1,10 bc,1
+Arcane Focus - Orb,Misc,Mundane,,3,20 bc,1
+Arcane Focus - Rod,Misc,Mundane,,2,10 bc,1
+Arcane Focus - Staff,Misc,Mundane,,4,5 bc,1
+Arcane Focus - Wand,Misc,Mundane,,1,10 bc,1
+"Satchel ( 2/5 ft^3, 12 lb capacity)",Misc,Mundane,,2,1 bc,1
+"Component Pouch ( 2/5 ft^3, 12 lb capacity)",Misc,Mundane,,2,25 bc,1
+Spellbook,Misc,Mundane,,3,50 bc,1
+Fishing Tackle,Misc,Mundane,,4,1 bc,1
+1lb of Fishing Bait,Misc,Mundane,,1,5 cc,1
+Painter's Supplies,Misc,Mundane,,3,10 bc,1
+Dragonchess Set,Misc,Mundane,,0.5,1 bc,1
+Three-Dragon Ante Set,Misc,Mundane,,0.2,50 cc,1
+Dulcimer,Misc,Mundane,,10,1 bc,1
+Lute,Misc,Mundane,,2,35 bc,1
+Pan Flute,Misc,Mundane,,2,9 bc,1
+Shawm,Misc,Mundane,,1,1 bc,1
+Viol,Misc,Mundane,,1,22 bc,1
+Basket,Misc,Mundane,,2,40 cc,1
+"Cloak, Canvas",Misc,Mundane,,5,70 cc,1
+"Cloak, Leather",Misc,Mundane,,5,2 bc,1
+"Cloak, Leather, Lined",Misc,Mundane,,5,4 bc,1
+Robes,Misc,Mundane,,4,1 bc,1
+Bone Needle,Misc,Mundane,,0,3 cc,5
+Steel Needle,Misc,Mundane,,0,10 cc,1
+Cotton Thread (30 feet),Misc,Mundane,,0.1,50 cc,1
+Leather Cord (15 feet),Misc,Mundane,,0.2,1 bc,1
+Bit & Bridle,Misc,Mundane,,1,2 bc,1
+Feed (per day),Misc,Mundane,,10,5 cc,1
+Saddle - Exotic,Misc,Mundane,,40,60 bc,1
+Saddle - Military,Misc,Mundane,,30,20 bc,1
+Saddle - Pack,Misc,Mundane,,15,5 bc,1
+Saddle - Riding,Misc,Mundane,,25,10 bc,1
+Saddlebags,Misc,Mundane,,8,4 bc,1
+"Amulet/Necklace, Exquisite",Misc,Mundane,,0.2,5 bc,1
+"Amulet/Necklace, Mundane",Misc,Mundane,,0.2,50 cc,1
+"Earrings, Exquisite",Misc,Mundane,,0.1,4 bc,1
+"Earrings, Mundane",Misc,Mundane,,0.1,40 cc,1
+Jewelry (+ Gem value),Misc,Mundane,,0.2,50 bc,1
+"Ring, Exquisite",Misc,Mundane,,0.2,3 bc,1
+"Ring, Mundane",Misc,Mundane,,0.2,30 cc,1
+Signet Ring,Misc,Mundane,,0.2,5 bc,1
+Azurite (Deep blue),Misc,Mundane,,0.1,10 bc,1
+Banded agate (Brown / Blue),Misc,Mundane,,0.1,10 bc,1
+Blue quartz (Pale blue),Misc,Mundane,,0.1,10 bc,1
+"Eye agate (Circles, gray / blue)",Misc,Mundane,,0.1,10 bc,1
+Hematite (Opaque gray-black),Misc,Mundane,,0.1,10 bc,1
+Lapis lazuli (Blue with yellow),Misc,Mundane,,0.1,10 bc,1
+Malachite (Striated greens),Misc,Mundane,,0.1,10 bc,1
+"Moss agate (Pale, moss marks)",Misc,Mundane,,0.1,10 bc,1
+Obsidian (Opaque black),Misc,Mundane,,0.1,10 bc,1
+Rhodochrosite (Light pink),Misc,Mundane,,0.1,10 bc,1
+"Tiger eye (Brown, gold center)",Misc,Mundane,,0.1,10 bc,1
+Turquoise (Light blue-green),Misc,Mundane,,0.1,10 bc,1
+Bloodstone (Gray with red),Misc,Mundane,,0.1,50 bc,1
+Carnelian (Opaque oranges),Misc,Mundane,,0.1,50 bc,1
+Chalcedony (Opaque white),Misc,Mundane,,0.1,50 bc,1
+Chrysoprase (Clear green),Misc,Mundane,,0.1,50 bc,1
+Citrine (Pale yellow-brown),Misc,Mundane,,0.1,50 bc,1
+"Jasper (Blue, black, or brown)",Misc,Mundane,,0.1,50 bc,1
+Moonstone (White + glow),Misc,Mundane,,0.1,50 bc,1
+"Onyx (Black, white, or both)",Misc,Mundane,,0.1,50 bc,1
+Quartz (Transparent range),Misc,Mundane,,0.1,50 bc,1
+Sardonyx (Red & white),Misc,Mundane,,0.1,50 bc,1
+Star rose quartz (White star),Misc,Mundane,,0.1,50 bc,1
+Zircon (Pale blue-green),Misc,Mundane,,0.1,50 bc,1
+Amber (Watery gold),Misc,Mundane,,0.1,100 bc,1
+Amethyst (Deep purple),Misc,Mundane,,0.1,100 bc,1
+Chrysoberyl (Yellow-green),Misc,Mundane,,0.1,100 bc,1
+Coral (Opaque crimson),Misc,Mundane,,0.1,100 bc,1
+"Garnet (Red, or violet)",Misc,Mundane,,0.1,100 bc,1
+Jade (Green to white),Misc,Mundane,,0.1,100 bc,1
+Jet (Opaque deep black),Misc,Mundane,,0.1,100 bc,1
+Pearl (Lustrous white to pink),Misc,Mundane,,0.1,100 bc,1
+Spinel (Clear red to green),Misc,Mundane,,0.1,100 bc,1
+Tourmaline (Pale Red / Brown),Misc,Mundane,,0.1,100 bc,1
+Alexandrite (Dark green),Misc,Mundane,,0.1,500 bc,1
+Aquamarine (Pale green-blue),Misc,Mundane,,0.1,500 bc,1
+Black pearl (Pure black),Misc,Mundane,,0.1,500 bc,1
+Bluespinel (Deep blue),Misc,Mundane,,0.1,500 bc,1
+Peridot (Rich olive green),Misc,Mundane,,0.1,500 bc,1
+Topaz (Golden yellow),Misc,Mundane,,0.1,500 bc,1
+Black Opal (Translucent green),Misc,Mundane,,0.1,1000 bc,1
+Blue sapphire (Shades of blue),Misc,Mundane,,0.1,1000 bc,1
+Emerald (Deep bright green),Misc,Mundane,,0.1,1000 bc,1
+Fire opal (Fiery red),Misc,Mundane,,0.1,1000 bc,1
+Opal (Pale blue with green),Misc,Mundane,,0.1,1000 bc,1
+Star ruby (Ruby with star),Misc,Mundane,,0.1,1000 bc,1
+Star sapphire (Blue with star),Misc,Mundane,,0.1,1000 bc,1
+Yellow Sapphire (Fiery yellow),Misc,Mundane,,0.1,1000 bc,1
+Black Sapphire (Lustrous black),Misc,Mundane,,0.1,5000 bc,1
+Diamond (Transparent),Misc,Mundane,,0.1,5000 bc,1
+Jacinth (Fiery orange),Misc,Mundane,,0.1,5000 bc,1
+Ruby (Shades of red),Misc,Mundane,,0.1,5000 bc,1
+10 bc Gemstones,Misc,Mundane,,0.1,10 bc,1
+50 bc Gemstones,Misc,Mundane,,0.1,50 bc,1
+100 bc Gemstones,Misc,Mundane,,0.1,100 bc,1
+500 bc Gemstones,Misc,Mundane,,0.1,500 bc,1
+1000 bc Gemstones,Misc,Mundane,,0.1,1000 bc,1
+5000 bc Gemstones,Misc,Mundane,,0.1,5000 bc,1
+Alchemist's Fire (flask),Misc,Mundane,,1,50 bc,1
+Antitoxin (vial),Misc,Mundane,,0.25,50 bc,1
+Alchemy Ingredient - Uncommon,Misc,Mundane,,0.5,1 bc,1
+Alchemy Ingredient - Rare,Misc,Mundane,,0.5,10 bc,1
+Alchemy Ingredient - Very Rare,Misc,Mundane,,0.5,30 bc,1
+Alchemist's Supplies,Misc,Mundane,,8,50 bc,1
+Brewer's Supplies,Misc,Mundane,,9,20 bc,1
+Potion - Common,Misc,Mundane,,0.25,50 bc,1
+Potion - Uncommon,Misc,Mundane,,0.25,250 bc,1
+Potion - Rare,Misc,Mundane,,0.25,2500 bc,1
+Potion - Very Rare,Misc,Mundane,,0.25,12500 bc,1
+Potion - Legendary,Misc,Mundane,,0.25,62500 bc,1
+Spell Components,Misc,Mundane,,0.5,??,1
+Druidic Focus - Sprig of Mistletoe,Misc,Mundane,,0.5,1 bc,1
+Druidic Focus - Totem,Misc,Mundane,,1,1 bc,1
+Druidic Focus - Wooden Staff,Misc,Mundane,,4,5 bc,1
+Druidic Focus - Yew Wand,Misc,Mundane,,1,10 bc,1
+“Meat” Stick,Misc,Mundane,,0.25,3 cc,1
+Roasted Locusts,Misc,Mundane,,0.25,3 cc,1
+Cheese Omelet,Misc,Mundane,,0.25,4 cc,1
+Ham & Cheese on Rye,Misc,Mundane,,0.25,5 cc,1
+Bacon & Egg Sandwich,Misc,Mundane,,0.25,30 cc,1
+Omelet “your’ Way,Misc,Mundane,,0.25,30 cc,1
+Bloodhawk Eggs,Misc,Mundane,,0.25,40 cc,1
+Bacon Stuffed Bread,Misc,Mundane,,0.25,50 cc,1
+Frittata & Herbs,Misc,Mundane,,0.25,1 bc,1
+Bacon & Owlbear Eggs,Misc,Mundane,,0.25,2 bc,1
+Boar Ham Steak & Eggs,Misc,Mundane,,0.25,2 bc,1
+Truffle Omelet,Misc,Mundane,,0.25,3 bc,1
+Stockpot Stew/ Soup,Misc,Mundane,,0.25,4 cc,1
+“Adventurer’s” Steak,Misc,Mundane,,0.25,4 cc,1
+Minced Pork,Misc,Mundane,,0.25,5 cc,1
+Roast Goat & Cheese,Misc,Mundane,,0.25,6 cc,1
+Roast Lamb & Cheese,Misc,Mundane,,0.25,40 cc,1
+Boar Tenderloin,Misc,Mundane,,0.25,50 cc,1
+Baked Goose Breast,Misc,Mundane,,0.25,50 cc,1
+Grilled Salmon,Misc,Mundane,,0.25,60 cc,1
+Rack of Lamb,Misc,Mundane,,0.25,2 bc,1
+Shellfish Platter,Misc,Mundane,,0.25,3 bc,1
+Dragon Turtle Soup,Misc,Mundane,,0.25,4 bc,1
+Roc Meat Portion,Misc,Mundane,,0.25,5 bc,1
+Grave of Small Birds,Misc,Mundane,,0.25,5 cc,1
+‘Tasha’s Hideous’ Stew,Misc,Mundane,,0.25,5 cc,1
+Rabbit & Potato Plate,Misc,Mundane,,0.25,6 cc,1
+Hunter’s Pie,Misc,Mundane,,0.25,40 cc,1
+Bloodhawk Breast,Misc,Mundane,,0.25,50 cc,1
+Crocodile Steak,Misc,Mundane,,0.25,50 cc,1
+Roasted Bullywug Legs,Misc,Mundane,,0.25,60 cc,1
+Buffalo Ribeye,Misc,Mundane,,0.25,2 bc,1
+Sahuagin Caviar,Misc,Mundane,,0.25,3 bc,1
+Owlbear Steak & Eggs,Misc,Mundane,,0.25,4 bc,1
+[color] Dragon Steak,Misc,Mundane,,0.25,5 bc,1
+Coffee - Cup,Misc,Mundane,,0.25,5 cc,1
+Goodberry “Wine” - Cup,Misc,Mundane,,0.25,10 cc,1
+Fruit Juice (Varies) - Cup,Misc,Mundane,,0.25,5 cc,1
+Milk (Local Variety) - Cup,Misc,Mundane,,0.25,3 cc,1
+Fruit - In Season - A Piece,Misc,Mundane,,0.25,1 cc,1
+Fruit - Out of Season - A Piece,Misc,Mundane,,0.25,5 cc,1
+Amaranth Leaf/ Greens - Bushel,Misc,Mundane,,0.25,5 cc,1
+Broccoli/ Cauliflower - Bushel,Misc,Mundane,,0.25,3 cc,1
+Cabbage/ Lettuce - Bushel,Misc,Mundane,,0.25,2 cc,1
+Fruit “Vegetable” - Each,Misc,Mundane,,0.25,5 cc,1
+Legumes - Bushel,Misc,Mundane,,0.25,4 cc,1
+Root Vegetable/ Tuber - Bushel,Misc,Mundane,,0.25,1 cc,1
+Amaranth,Misc,Mundane,,0.25,2 bc,1
+Barley/ Rye,Misc,Mundane,,0.25,2 cc,1
+Oats,Misc,Mundane,,0.25,50 cc,1
+Quinoa,Misc,Mundane,,0.25,1 bc,1
+Rice,Misc,Mundane,,0.25,5 cc,1
+Wheat,Misc,Mundane,,0.25,10 cc,1
+Almond/ Sweet Roll (S),Misc,Mundane,,0.25,10 cc,1
+Seed Cake,Misc,Mundane,,0.25,5 cc,1
+Cheat/ Wheaten Loaf,Misc,Mundane,,0.25,20 cc,1
+Cheese Danish,Misc,Mundane,,0.25,10 cc,1
+Fruit Tart (S),Misc,Mundane,,0.25,20 cc,1
+Manchet Loaf,Misc,Mundane,,0.25,1 bc,1
+Quince Bread Slice (S),Misc,Mundane,,0.25,20 cc,1
+Rye Loaf,Misc,Mundane,,0.25,2 cc,1
+Beef/ Buffalo/ Deer,Misc,Mundane,,1,30 cc,1
+Boar/ Chicken/ Pork,Misc,Mundane,,1,8 cc,1
+Dried/ Salted Meat,Misc,Mundane,,1,50 cc,1
+Egg (for 6),Misc,Mundane,,1,3 cc,1
+Fish,Misc,Mundane,,1,60 cc,1
+Insects/ Small Game,Misc,Mundane,,1,4 cc,1
+Goat,Misc,Mundane,,1,10 cc,1
+Lamb,Misc,Mundane,,1,1 bc,1
+Shellfish (Oceanic),Misc,Mundane,,1,2 bc,1
+Brie Cheese (½.),Misc,Mundane,,0.5,20 cc,1
+Cheddar Cheese (½.),Misc,Mundane,,0.5,1 bc,1
+Cottage Cheese (½.),Misc,Mundane,,0.5,4 cc,1
+Parmesan Cheese (½.),Misc,Mundane,,0.5,50 cc,1
+Specialty Cheese (½.),Misc,Mundane,,0.5,2 bc,1
+Cinnamon (½ Ounce),Misc,Mundane,,0.03,10 cc,1
+Coriander (½ Ounce),Misc,Mundane,,0.03,3 cc,1
+Cumin (½ Ounce),Misc,Mundane,,0.03,7 cc,1
+Garlic (½ Ounce),Misc,Mundane,,0.03,2 cc,1
+Mustard (½ Ounce),Misc,Mundane,,0.03,10 cc,1
+Nutmeg (½ Ounce),Misc,Mundane,,0.03,8 cc,1
+Pepper (½ Ounce),Misc,Mundane,,0.03,5 cc,1
+Salt (½ Ounce),Misc,Mundane,,0.03,6 cc,1
+Specialty Spice (½ Ounce),Misc,Mundane,,0.03,20 cc,1
+Bandolier,Misc,Mundane,,0.5,8 bc,1
+Belt,Misc,Mundane,,0.5,2 bc,1
+"“Better” Backpack (1.2 ft^3, 35 lb capacity)",Misc,Mundane,,5,4 bc,1
+Blouse,Misc,Mundane,,0.5,1 bc,1
+Breeches,Misc,Mundane,,1,1 bc,1
+Boots,Misc,Mundane,,1,4 bc,1
+Bow Tie,Misc,Mundane,,0.2,50 cc,1
+"Cloak/ (Mantle, -1 bc)",Misc,Mundane,,2,4 bc,1
+Coat,Misc,Mundane,,5,5 bc,1
+Coin Purse,Misc,Mundane,,0.06,1 bc,1
+Corset,Misc,Mundane,,3,3 bc,1
+Dress,Misc,Mundane,,4,7 bc,1
+Dress Pants,Misc,Mundane,,1,2 bc,1
+Dress Shirt,Misc,Mundane,,1,1 bc,1
+Dress Shoes,Misc,Mundane,,1,3 bc,1
+Ghillies (Dance Shoes),Misc,Mundane,,1,2 bc,1
+Gloves,Misc,Mundane,,0.5,1 bc,1
+Hat,Misc,Mundane,,0.5,2 bc,1
+Jacket,Misc,Mundane,,3,4 bc,1
+"Jerkin/ (Tabard, +1 bc)",Misc,Mundane,,5,2 bc,1
+Robe,Misc,Mundane,,4,5 bc,1
+Sandals,Misc,Mundane,,1,3 bc,1
+Scarf,Misc,Mundane,,0.5,50 cc,1
+Skirt/ (Kilt +1 bc),Misc,Mundane,,2,3 bc,1
+Swimwear,Misc,Mundane,,1,1 bc,1
+Tie,Misc,Mundane,,0.25,50 cc,1
+Tunic,Misc,Mundane,,2,50 cc,1
+Undergarments,Misc,Mundane,,0.5,50 cc,1
+Vests,Misc,Mundane,,1,3 bc,1
+Closure Devices (Options): Buckles,Misc,Mundane,,0.2,10 cc,1
+Closure Devices (Options): Snaps,Misc,Mundane,,0.2,50 cc,1
+Cosmetic: Embroidery (per foot),Misc,Mundane,,0,2 bc,1
+Cosmetic: Linen Cloth Construction,Misc,Mundane,,0,(+)1 bc,1
+Cosmetic: Lining (Material Options): Fur,Misc,Mundane,,0,3 bc,1
+Cosmetic: Lining (Material Options): Leather (Basic),Misc,Mundane,,0,4 bc,1
+Cosmetic: Lining (Material Options): Leather (Specialty),Misc,Mundane,,0,(+)CR% N.,1
+Cosmetic: Lining (Material Options): Silk,Misc,Mundane,,0,3 bc,1
+Cosmetic: Pockets,Misc,Mundane,,0,20 cc,1
+Cosmetic: Bracers,Misc,Mundane,,0,50 cc,1
+Cosmetic: Breastplate,Misc,Mundane,,0,3 bc,1
+Cosmetic: Cuisse (Thigh Armor),Misc,Mundane,,0,1 bc,1
+Cosmetic: Full Arm Armor (Pair),Misc,Mundane,,0,1 bc,1
+Cosmetic: Full Leg Armor (Pair),Misc,Mundane,,0,2 bc,1
+Cosmetic: Gauntlets,Misc,Mundane,,0,1 bc,1
+Cosmetic: Gorget (Neck),Misc,Mundane,,0,50 cc,1
+Cosmetic: Greaves (Lower Leg),Misc,Mundane,,0,1 bc,1
+"Cosmetic: Harness (Chest & Back), Extra",Misc,Mundane,,0,7 bc,1
+Cosmetic: Helmet,Misc,Mundane,,0,2 bc,1
+Cosmetic: Pauldrons (Shoulders),Misc,Mundane,,0,1 bc,1
+Cosmetic: Sabatons (Feet),Misc,Mundane,,0,50 cc,1
+Cosmetic: Buckler (1 Unit),Misc,Mundane,,0,8 bc,1
+Cosmetic: Sheathe (See Unit Note),Misc,Mundane,,0,80 cc,1
+Adamantite,Misc,Mundane,,1,200 bc,1
+Aero Crystal,Misc,Mundane,,1,400 bc,1
+Asmoroch Wood,Misc,Mundane,,1,400 bc,1
+Beast Feathers (CR Values),Misc,Mundane,,1,CR% N.,1
+Bone (CR Values),Misc,Mundane,,1,CR% N.,1
+Chitin (CR Values),Misc,Mundane,,1,CR% N.,1
+Cold Iron,Misc,Mundane,,1,100 bc,1
+Coral,Misc,Mundane,,1,100 bc,1
+Creature Hide (CR Values),Misc,Mundane,,1,CR% N.,1
+Creature Scales (CR Values),Misc,Mundane,,1,CR% N.,1
+Darksteel,Misc,Mundane,,1,200 bc,1
+Darkwood,Misc,Mundane,,1,100 bc,1
+Dwarven Stone,Misc,Mundane,,1,400 bc,1
+Eternal Ice,Misc,Mundane,,1,400 bc,1
+Ignum,Misc,Mundane,,1,400 bc,1
+Infernal Leather,Misc,Mundane,,1,800 bc,1
+Infernal Steel,Misc,Mundane,,1,800 bc,1
+Leafweave,Misc,Mundane,,1,100 bc,1
+Mithril,Misc,Mundane,,1,200 bc,1
+Obsidian,Misc,Mundane,,1,200 bc,1
+Orichalum,Misc,Mundane,,1,400 bc,1
+Plague Wood,Misc,Mundane,,1,200 bc,1
+Shadowsilk (CR Values),Misc,Mundane,,1,CR% N.,1
+Shadowfell Linen,Misc,Mundane,,1,800 bc,1
+Spiritual Wood,Misc,Mundane,,1,200 bc,1
+Stellar Iron,Misc,Mundane,,1,800 bc,1
+Magic Scroll: Common,Misc,Mundane,,1,?,1
+Magic Scroll: Uncommon,Misc,Excellent,,1,?,1
+Magic Scroll: Rare,Misc,Flawless,,1,?,1
+Magic Scroll: Very Rare,Misc,Epic,,1,?,1
+Magic Scroll: Legendary,Misc,Legendary,,1,?,1
+Scroll of Alert - CL 1,Misc,Excellent,,1,50-100,1
+Scroll of Slow Fall - CL 1,Misc,Excellent,,1,50-100,1
+Scroll of Oil Spill - CL 1,Misc,Excellent,,1,50-100,1
+Scroll of Noiseless Picture - CL 1,Misc,Excellent,,1,50-100,1
+"Drug, Mirage",Misc,Mundane,,0.1,5 bc,1
