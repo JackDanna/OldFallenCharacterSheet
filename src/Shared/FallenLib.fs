@@ -24,12 +24,9 @@ module MathUtils =
 
 module TypeUtils =
 
-    let stringArrayToTypeMap (stringTypeArray: string array) =
-        Array.map ( fun (stringType:string) ->
-            stringType
-        ) stringTypeArray
-        |> Array.zip stringTypeArray
-        |> Map.ofArray
+    let stringListToTypeMap (stringTypeArray: string list) =
+        List.zip stringTypeArray stringTypeArray
+        |> Map.ofList
 
 module MapUtils =
     let createMapFromTuple2List (createObjectFromTupleFunc) (list) =
@@ -440,7 +437,6 @@ module Attribute =
 module Range =
 
     open System
-    open MapUtils
 
     type CalculatedRange = {
         desc           : string
@@ -487,30 +483,19 @@ module Range =
                 calculatedSecondaryRange
         | None -> rangeToCalculatedRange numDice primaryRange
 
-    let createPenerationFromCalculatedRange tuple = 
-        match tuple with
-        | (desc, effectiveRange, maxRange) -> CalculatedRange { desc = desc; effectiveRange = effectiveRange; maxRange = maxRange }
+    let calculatedRangeListToRangeMap calculatedRangeList =
+        List.map ( fun (calculatedRange:CalculatedRange) -> calculatedRange.desc, CalculatedRange calculatedRange) calculatedRangeList
+        |> Map.ofList
 
-    let createPenerationFromRangeCalculation tuple = 
-        match tuple with
-        | (desc,numDicePerEffectiveRangeUnit,ftPerEffectiveRangeUnit, roundEffectiveRangeUp, maxRange) -> 
-        { 
-            desc                         = desc
-            numDicePerEffectiveRangeUnit = numDicePerEffectiveRangeUnit
-            ftPerEffectiveRangeUnit      = ftPerEffectiveRangeUnit
-            roundEffectiveRangeUp        = roundEffectiveRangeUp
-            maxRange                     = maxRange
-        } |> RangeCalculation
+    let rangeCalculationListToRangeMap rangeCalculationList =
+        List.map ( fun (rangeCalculation:RangeCalculation) -> rangeCalculation.desc, RangeCalculation rangeCalculation) rangeCalculationList
+        |> Map.ofList
 
-    let createCalculatedRangeMap   = createMapFromTuple3List createPenerationFromCalculatedRange
-    let createRangeCalculationMap  = createMapFromTuple5List createPenerationFromRangeCalculation
-
-    let createRangeMap calculatedRangeData rangeCalculationData : Map<string,Range>=
-
-        let map1  = createCalculatedRangeMap calculatedRangeData
-        let map2 = createRangeCalculationMap rangeCalculationData
-
-        Map.fold (fun acc key value -> Map.add key value acc) map1 map2
+    let createRangeMap (calculatedRanges:CalculatedRange list) rangeCalculations : Map<string,Range>=
+        Map.fold 
+            (fun acc key value -> Map.add key value acc) 
+            (calculatedRangeListToRangeMap calculatedRanges)
+            (rangeCalculationListToRangeMap rangeCalculations)
 
 module AreaOfEffect =
     type AreaOfEffect =
