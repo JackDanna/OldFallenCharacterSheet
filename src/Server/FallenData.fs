@@ -3,8 +3,32 @@ namespace FallenData
 module Data =
     open FSharp.Data
 
+    open OldFallenLib.MapUtils
     open OldFallenLib.Damage
+    open OldFallenLib.Penetration
     open OldFallenLib.EngageableOpponents
+    open OldFallenLib.Range
+    open OldFallenLib.ResourceClass
+    open OldFallenLib.Attribute
+    open OldFallenLib.MagicSkill
+    open OldFallenLib.MagicCombat
+    open OldFallenLib.Dice
+    open OldFallenLib.WeaponClass
+    open OldFallenLib.ConduitClass
+    open OldFallenLib.WeaponResourceClass    
+    open OldFallenLib.ItemTier
+    open OldFallenLib.Item
+    open OldFallenLib.Equipment
+    open OldFallenLib.Neg1To4
+    open OldFallenLib.SkillStat
+    open OldFallenLib.VocationStat
+    open OldFallenLib.Character
+    open OldFallenLib.TypeUtils
+    open OldFallenLib.MovementSpeedCalculation
+    open OldFallenLib.Effects
+    open OldFallenLib.AreaOfEffect
+    open OldFallenLib.DefenseClass
+    open OldFallenLib.CarryWeightCalculation
 
 
     let makeFallenDataPath fileName =
@@ -21,11 +45,17 @@ module Data =
         | "FALSE" -> false
         | _-> failwith("Error: returns " + boolString)
 
+    // DamageTypeData
     let damageTypeData = 
         makeFallenData
             "DamageTypeData.csv"
             (fun row -> (DamageType row.["desc"]))
+    let stringToDamageTypeArray =
+        damageTypeData
+        |> stringListToTypeMap 
+        |> stringAndMapToDamageTypeArray 
 
+    // PenetrationData
     let calculatedEngageableOpponentsData = 
         makeFallenData 
             "CalculatedEngageableOpponentsData.csv"
@@ -34,55 +64,83 @@ module Data =
                 uint   row.["engageableOpponents"]
             ))
 
-    let engageableOpponentsCalculationData  = 
-        makeFallenData 
-            "EngageableOpponentsCalculationData.csv"
-            (fun row -> {
-                combatRollDivisor = uint row.["combatRollDivisor"]
-                desc = string row.["desc"]
-                maxEO = mapMaxEO row.["maxEO"]
-            })
+    let calculatedEngageableOpponentsMap =
+        createCalculatedEOMap calculatedEngageableOpponentsData
 
+    // Range
     let calculatedRangeData = 
         makeFallenData
             "CalculatedRangeData.csv"
-            (fun row -> (
-                string row.["desc"],
-                uint   row.["effectiveRange"],
-                uint   row.["maxRange"]
-            ))
-    
+            (fun row -> {
+                desc = string row.["desc"]
+                effectiveRange = uint row.["effectiveRange"]
+                maxRange =  uint row.["maxRange"]
+            })
+
     let rangeCalculationData = 
         makeFallenData
             "RangeCalculationData.csv"
-            (fun row -> (
-                string     row.["desc"],
-                uint       row.["numDicePerEffectiveRangeUnit"],
-                uint       row.["ftPerEffectiveRangeUnit"],
-                Bool       row.["roundEffectiveRangeUp"],
-                uint       row.["maxRange"]
-            ))
+            (fun row -> {
+                desc = string row.["desc"]
+                numDicePerEffectiveRangeUnit = uint row.["numDicePerEffectiveRangeUnit"]
+                ftPerEffectiveRangeUnit = uint row.["ftPerEffectiveRangeUnit"]
+                roundEffectiveRangeUp = Bool row.["roundEffectiveRangeUp"]
+                maxRange = uint row.["maxRange"]
+            })
+
+    let rangeMap = createRangeMap calculatedRangeData rangeCalculationData
     
+    // ResourceClass
     let resourceClassData =
         makeFallenData
             "ResourceClassData.csv"
-            (fun row -> (string row.["desc"]))
-    
+            (fun row -> (ResourceClass row.["desc"]))
+
+    let resourceClassMap = stringListToTypeMap resourceClassData
+
+    // Attribute
     let attributeData =
         makeFallenData
             "AttributeData.csv"
-            (fun row -> (string row.["desc"]))
+            (fun row -> Attribute row.["desc"])
+        
+    let attributeMap = stringListToTypeMap attributeData
 
+    let mapAndStringToAttributes (attributeMap:Map<string,Attribute>) (input) = 
+            String.filter ((<>)' ') input
+            |> (fun s -> s.Split(',', System.StringSplitOptions.RemoveEmptyEntries))
+            |> List.ofArray
+            |> List.map (fun attributeString -> attributeMap.Item attributeString)
+
+    let stringToAttributes = mapAndStringToAttributes attributeMap
+
+    // MagicSkill
     let magicSkillData = 
         makeFallenData
             "MagicSkillData.csv"
-            (fun row -> (
-                string     row.["desc"],
-                string     row.["damageTypes"],
-                int        row.["rangeAdjustment"],
-                Bool       row.["meleeCapable"],
-                string     row.["magicResourceClass"]
-            ))
+            (fun row -> {
+                desc = string row.["desc"]
+                damageTypes = stringToDamageTypeArray (string row.["damageTypes"])
+                rangeAdjustment = int row.["rangeAdjustment"]
+                meleeCapable = Bool row.["meleeCapable"]
+                magicResourceClass = string     row.["magicResourceClass"]
+            })
+
+    // MagicCombat
+    let magicCombatData = 
+        makeFallenData
+            "MagicCombatData.csv"
+            (fun row -> {
+                desc                  = string     row.["Description"]
+                lvlRequirment         = int row.["Lvl Requirment"] |> intToNeg1To4
+                diceModification      = string row.["Dice Modification"] |> 
+                penetration           = string row.["Penetration"]
+                range                 = string row.["Range"]
+                engageableOpponents   = string row.["Engageable Opponents"]
+                minResourceRequirment = uint row.["Resource Requirment"]
+                canVocationAssist     = Bool row.["Vocation Assistable"]
+                areaOfEffect          = string row.["Area Of Effect"]
+            })
 
     let magicCombatData = 
         makeFallenData
