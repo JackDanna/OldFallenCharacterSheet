@@ -25,7 +25,9 @@ module Dice =
     open FParsec  
 
     type DicePoolPenalty = private DicePoolPenalty of uint with
-        static member (+) (DicePoolPenalty a, DicePoolPenalty b) = DicePoolPenalty (a - b)  // always should deduct the dice with the fewest faces first (i.e. d4, then d6, then d8...)
+        static member (+) (DicePoolPenalty a, DicePoolPenalty b) = DicePoolPenalty (a - b)
+        
+    let pDicePoolPenalty : Parser<DicePoolPenalty, unit> = pchar '-' >>. puint32 |>> DicePoolPenalty
     
     type D4 = private D4 of uint with
         static member (+) (D4 a, D4 b) = D4 (a + b)
