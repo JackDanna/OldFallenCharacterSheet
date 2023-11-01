@@ -50,16 +50,16 @@ let update (msg: Msg) (model: Model) : Model =
     | VocationStatMsg neg1ToStatMsg ->
         { model with level = VocationStat.update neg1ToStatMsg model.level }
 
-    | ToggleGoverningAttribute index ->
+    | ToggleGoverningAttribute position ->
 
         { model with 
             governingAttributes =
-                List.mapi ( fun i governingAttribute ->
-                    if index = i then
+                List.mapi ( fun index governingAttribute ->
+                    if position = index then
                         { governingAttribute with isGoverning = not governingAttribute.isGoverning }
                     else 
                         governingAttribute
-                ) model.governingAttributes 
+                ) model.governingAttributes
         }
 
 open Feliz
