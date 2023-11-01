@@ -26,12 +26,12 @@
             ms-dotnettools.csharp
             ionide.ionide-fsharp
           ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-            #{
-            #  name = "vscode-edit-csv";
-            #  publisher = "janisdd";
-            #  version = "0.8.2";
-            #  sha256 = "sha256-DbAGQnizAzvpITtPwG4BHflUwBUrmOWCO7hRDOr/YWQ=";
-            #}
+            {
+              name = "vscode-edit-csv";
+              publisher = "janisdd";
+              version = "0.8.2";
+              sha256 = "sha256-DbAGQnizAzvpITtPwG4BHflUwBUrmOWCO7hRDOr/YWQ=";
+            }
           ];
         })
       ];
