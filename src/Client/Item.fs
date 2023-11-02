@@ -1,6 +1,6 @@
 module ItemRow
 
-open OldFallenLib.Item
+open FallenLib.Item
 
 type Model =
     | Item of Item

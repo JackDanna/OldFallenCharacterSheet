@@ -691,7 +691,7 @@ module Item =
     }
 
     let itemClassesToString itemClasses =
-        Array.map ( fun itemClass ->
+        List.map ( fun itemClass ->
             match itemClass with
             | WeaponClass weaponClass -> weaponClass.name
             | ConduitClass conduitClass -> conduitClass.name
