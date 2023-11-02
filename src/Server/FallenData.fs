@@ -179,9 +179,7 @@ module Data =
     let conduitClassData =
         makeFallenData
             "ConduitClassData.csv"
-            (fun row ->
-            let temp = row.["governingAttributes"]
-            {
+            (fun row -> {
                 name = string row.["desc"]
                 oneHandedDice = stringToDicePoolModificationOption row.["oneHandedDice"]
                 twoHandedDice = stringToDicePoolModification row.["twoHandedDice"]
@@ -194,7 +192,7 @@ module Data =
                 resourceClass = weaponResourceClassOptionMap row.["resourceClass"]
                 governingAttributes = stringToAttributes row.["governingAttributes"]
                 effectedMagicSkills =
-                    temp.Split ", "
+                    row.["governingAttributes"].Split ", "
                     |> List.ofArray
                     |> List.map ( fun magicSkillStr -> magicSkillMap.Item magicSkillStr )
             })
