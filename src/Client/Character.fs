@@ -14,30 +14,30 @@ type Model = {
 
 let defaultCoreSkillTables : CoreSkillGroups.Model = [
     {
-        attributeRow = { AttributeRow.init() with name = "STR"}
+        attributeStat = { AttributeStat.init() with attribute = "STR"}
         coreSkillList = [
-            { name = "Athletics"; level = Neg1To4Stat.init(); governingAttributeLevel = Neg1To4Stat.init()}
-            { name = "Climb"; level = Neg1To4Stat.init(); governingAttributeLevel = Neg1To4Stat.init()}
-            { name = "Endurance"; level = Neg1To4Stat.init(); governingAttributeLevel = Neg1To4Stat.init()}
-            { name = "Lift"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init()}
+            { name = "Athletics"; lvl = Neg1To4Stat.init()}
+            { name = "Climb"; lvl = Neg1To4Stat.init()}
+            { name = "Endurance"; lvl = Neg1To4Stat.init()}
+            { name = "Lift"; lvl = Neg1To4Stat.init()}
         ]
     }
     {
-        attributeRow = { AttributeRow.init() with name = "RFX"}
+        attributeStat = { AttributeStat.init() with attribute = "RFX"}
         coreSkillList = [
-            { name = "Athletics"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init()}
-            { name = "Climb"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init() }
-            { name = "Endurance"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init() }
-            { name = "Lift"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init() }
+            { name = "Athletics"; lvl = Neg1To4Stat.init()}
+            { name = "Climb"; lvl = Neg1To4Stat.init() }
+            { name = "Endurance"; lvl = Neg1To4Stat.init() }
+            { name = "Lift"; lvl = Neg1To4Stat.init() }
         ]
     }
     {
-        attributeRow = { AttributeRow.init() with name = "INT"}
+        attributeStat = { AttributeStat.init() with attribute = "INT"}
         coreSkillList = [
-            { name = "Athletics"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init() }
-            { name = "Climb"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init() }
-            { name = "Endurance"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init() }
-            { name = "Lift"; level = Neg1To4Stat.init();governingAttributeLevel = Neg1To4Stat.init() }
+            { name = "Athletics"; lvl = Neg1To4Stat.init() }
+            { name = "Climb"; lvl = Neg1To4Stat.init() }
+            { name = "Endurance"; lvl = Neg1To4Stat.init() }
+            { name = "Lift"; lvl = Neg1To4Stat.init() }
         ]
     }
 ]
@@ -52,7 +52,7 @@ let attributesToGoverningAttributesInit attributes =
 
 let coreSkillTablesToAttributes (coreSkillTables:CoreSkillGroups.Model) =
     List.map ( fun (table: CoreSkillGroup.Model) ->
-        table.attributeRow
+        table.attributeStat
     ) coreSkillTables
 
 let defaultGoverningAttribute =
@@ -70,7 +70,7 @@ let init () : Model =
     {
         name = "Javk Wick"
         coreSkillTables = defaultCoreSkillTables
-        vocationTables = VocationTables.init (defaultGoverningAttribute)
+        vocationTables = VocationTables.init ()
     }
 
 let update (msg: Msg) (model: Model) : Model =
