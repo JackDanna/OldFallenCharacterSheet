@@ -534,7 +534,6 @@ module WeaponClass =
     open AreaOfEffect
     open Penetration
     open ResourceClass
-    open Attribute
 
     type WeaponClass = {
         desc                : string
@@ -547,7 +546,6 @@ module WeaponClass =
         dualWieldableBonus  : DicePoolModification option
         areaOfEffect        : AreaOfEffect option
         resourceClass       : ResourceClass option
-        governingAttributes : Attribute List
     }
 
 module ItemTier =
@@ -629,10 +627,6 @@ module ConduitClass =
     }
 
 module MagicCombat =
-
-
-
-
     open Range
     open EngageableOpponents
     open AreaOfEffect
@@ -756,13 +750,6 @@ module Equipment =
         |> List.filter ( fun equipmentItem  -> equipmentItem.isEquipped && equipmentItem.quantity > 0u )
         |> List.map ( fun equipmentItem -> equipmentItem.item )
 
-    let getEquipedWeaponClassItems equipmentList =
-        equipmentList
-        |> getEquipedItems
-        |> List.filter ( fun item ->
-            match item.
-        )
-
     let doesConduitEffectMagicSkill conduitClass skillName =
         conduitClass.effectedMagicSkills
         |> List.exists ( fun magicSkill -> magicSkill.desc = skillName )
@@ -786,7 +773,7 @@ module SkillStat =
         lvl                 : Neg1To4
     }
 
-    // let skillStatLvlToInt skillStat = neg1To4ToInt skillStat.lvl
+    let skillStatLvlToInt skillStat = neg1To4ToInt skillStat.lvl
 
 // module SkillRoll = 
 //     open Attribute
@@ -860,7 +847,7 @@ module VocationGroup =
     type VocationGroup = {
         vocationStat : VocationStat
         governingAttributes : GoverningAttribute list
-        vocationalSkills  : SkillStat
+        vocationalSkills  : SkillStat list
     }
 
     let findVocationalSkillStat skillName skillStatList =
@@ -873,9 +860,10 @@ module VocationGroup =
                 List.maxBy (fun skill -> skill.lvl) list
         )
     
-    let findVocationalSkill (vocationGroupList: VocationGroup list) (vocationalSkillName:string) =
+    let findVocationalSkill (vocationGroupList: VocationGroup list) (vocationalSkillName:string) : SkillStat =
         vocationGroupList
         |> List.map (fun vocation -> vocation.vocationalSkills)
+        |> List.collect ( fun x -> x)
         |> findVocationalSkillStat vocationalSkillName
 
 // module Vocation =
@@ -970,15 +958,26 @@ module WeaponCombatRoll =
     open Item
     open WeaponClass
 
-    let createCombatRoll desc weaponClass weaponTierBaseDice attributeDeterminedDiceModArray attributeStats skillStatLvl resource descSuffix wieldingDiceMods =
+    let createCombatRoll
+        desc 
+        (weaponClass: WeaponClass)
+        weaponTierBaseDice 
+        attributeDeterminedDiceModArray 
+        attributeStats 
+        skillStatLvl
+        (combatRollGoverningAttributes:Attribute list)
+        resource 
+        descSuffix 
+        wieldingDiceMods
+        : CombatRoll =
 
         let (resourceDesc, resourceDice, resourcePenetration, resourceRange, resourceDamageTypes, resourceAreaOfEffect) = prepareWeaponResourceClassOptionForUse resource
 
         let dicePool =
-            determineAttributeDeterminedDiceMod weaponClass.governingAttributes attributeDeterminedDiceModArray // These are injuries, weight penalties, ect...
+            determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray // These are injuries, weight penalties, ect...
             |> List.append wieldingDiceMods
             |> List.append [
-                attributeStats |> determineAttributeDiceMod weaponClass.governingAttributes
+                attributeStats |> determineAttributeDiceMod combatRollGoverningAttributes
                 skillStatLvl   |> neg1To4ToInt |> intToDicePoolModification
                 resourceDice
             ]
@@ -1000,7 +999,8 @@ module WeaponCombatRoll =
         (twoHandedWeaponDice: DicePoolModification) 
         (oneHandedWeaponDiceOption: DicePoolModification Option) 
         (dualWieldableBonusOption: DicePoolModification Option) 
-        preloadedCreateCombatRoll : CombatRoll list =
+        preloadedCreateCombatRoll 
+        : CombatRoll list =
 
         let twoHandedCombat = preloadedCreateCombatRoll " (Two-handed)" [twoHandedWeaponDice]
         
@@ -1020,7 +1020,14 @@ module WeaponCombatRoll =
                 |> List.singleton
                 |> List.append handedVariations
 
-    let createWeaponCombatRollWithEquipmentList equipmentList (attributeStats:AttributeStat list) (vocationGroupList:VocationGroup list) attributeDeterminedDiceModArray =
+    let createWeaponCombatRollWithEquipmentList
+        equipmentList
+        (attributeStats:AttributeStat list)
+        (vocationGroupList:VocationGroup list)
+        attributeDeterminedDiceModArray
+        (combatRollGoverningAttributes:Attribute list)
+        : list<CombatRoll> =
+
         equipmentList
         |> getEquipedItems
         |> List.collect (fun weaponItem ->
@@ -1031,10 +1038,19 @@ module WeaponCombatRoll =
                 let skillStat = findVocationalSkill vocationGroupList weaponClass.desc
 
                 let preloadedCreateCombatRoll = 
-                    createCombatRoll weaponItem.name weaponClass weaponItem.itemTier.baseDice attributeDeterminedDiceModArray attributeStats skillStat.lvl
+                    createCombatRoll
+                        weaponItem.name 
+                        weaponClass
+                        weaponItem.itemTier.baseDice
+                        attributeDeterminedDiceModArray
+                        attributeStats skillStat.lvl
+                        combatRollGoverningAttributes
 
                 let preloadedCreateHandVariationsCombatRolls =
-                    createHandedVariationsCombatRolls weaponClass.twoHandedWeaponDice weaponClass.oneHandedWeaponDice weaponClass.dualWieldableBonus
+                    createHandedVariationsCombatRolls
+                        weaponClass.twoHandedWeaponDice
+                        weaponClass.oneHandedWeaponDice
+                        weaponClass.dualWieldableBonus
 
                 match weaponClass.resourceClass with
                 | Some resourceClass ->
@@ -1060,7 +1076,7 @@ module MagicCombatRoll =
     open EngageableOpponents
 
     open Equipment
-    open VocationStat
+    open VocationGroup
     open SkillStat
     open CombatRoll
 
@@ -1097,6 +1113,7 @@ module MagicCombatRoll =
         (magicCombatType:MagicCombat)
         (rangeMap:Map<string,Range>)
         (attributeDeterminedDiceModArray:list<AttributeDeterminedDiceMod>)
+        (combatRollGoverningAttributes:Attribute list)
         : CombatRoll =
 
         let (resourceDesc, resourceDice) = determineMagicResource magicResource
@@ -1104,9 +1121,9 @@ module MagicCombatRoll =
         let range = determineMagicRange rangeMap magicCombatType.desc (neg1To4ToInt skillStat.lvl)
 
         let diceMods =
-            determineAttributeDeterminedDiceMod skillStat.governingAttributes attributeDeterminedDiceModArray
+            determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
             |> List.append [
-                determineAttributeDiceMod skillStat.governingAttributes attributeStats
+                determineAttributeDiceMod combatRollGoverningAttributes attributeStats
                 neg1To4ToInt skillStat.lvl |> intToDicePoolModification
                 magicCombatType.diceModification
                 resourceDice
@@ -1126,27 +1143,40 @@ module MagicCombatRoll =
             engageableOpponents = determineEngageableOpponents numDice magicCombatType.engageableOpponents
         }
 
-    let createMagicCombatRollWithConduit rangeMap magicResource attributeStats skillStatLvl (magicSkill:MagicSkill) (magicCombatType:MagicCombat) (conduit:ConduitClass)
-        conduitItemDesc conduitTierBaseDice attributeDeterminedDiceModArray descSuffix wieldingDiceMods : CombatRoll =
+    let createMagicCombatRollWithConduit
+        rangeMap
+        magicResource
+        attributeStats
+        skillStatLvl
+        (magicSkill:MagicSkill)
+        (magicCombatType:MagicCombat)
+        (conduit:ConduitClass)
+        conduitItemDesc
+        conduitTierBaseDice
+        attributeDeterminedDiceModArray
+        (combatRollGoverningAttributes:Attribute list)
+        descSuffix 
+        wieldingDiceMods
+        : CombatRoll =
 
         let (resourceDesc, resourceDice) = determineMagicResource magicResource
 
         let skillStatLvlAsInt = neg1To4ToInt skillStatLvl
 
         let range = determineMagicRange rangeMap magicCombatType.desc (skillStatLvlAsInt + conduit.rangeAdjustment)
-        let damageTypes = Array.append magicSkill.damageTypes conduit.damageTypes
+        let damageTypes = List.append magicSkill.damageTypes conduit.damageTypes
 
         let engageableOpponents = match conduit.engageableOpponents with | Some EO -> EO | None -> magicCombatType.engageableOpponents
 
         let dicePool = 
-            determineAttributeDeterminedDiceMod conduit.governingAttributes attributeDeterminedDiceModArray
-            |> Array.append wieldingDiceMods
-            |> Array.append [|
-                attributeStats |> determineAttributeDiceMod conduit.governingAttributes
+            determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
+            |> List.append wieldingDiceMods
+            |> List.append [
+                attributeStats |> determineAttributeDiceMod combatRollGoverningAttributes
                 skillStatLvlAsInt |> intToDicePoolModification
                 magicCombatType.diceModification
                 resourceDice
-            |]
+            ]
             |> modifyDicePoolByModList conduitTierBaseDice
 
         let numDice = sumDicePool dicePool
@@ -1155,66 +1185,102 @@ module MagicCombatRoll =
             desc                = sprintf "%s %s with %s %s %s" magicSkill.desc magicCombatType.desc conduitItemDesc resourceDesc descSuffix
             combatRoll          = dicePool
             calculatedRange     = rangeToCalculatedRange numDice range
-            penetration         = determinePenetration numDice magicCombatType.penetration conduit.penetration
+            penetration         = magicCombatType.penetration + conduit.penetration
             damageTypes         = damageTypes
             areaOfEffectShape   = compareAndDetermineAOE numDice magicCombatType.areaOfEffect conduit.areaOfEffect
             engageableOpponents = determineEngageableOpponents numDice engageableOpponents
         }
 
 
-    let createMagicCombatRollWithConduitHandVariations (conduit:ConduitClass) preloadedCreatMagicCombatRollWithConduit : CombatRoll array =
+    let createMagicCombatRollWithConduitHandVariations
+        (conduit:ConduitClass)
+        preloadedCreatMagicCombatRollWithConduit
+        : CombatRoll list =
         
-        let twoHandedCombatRoll = preloadedCreatMagicCombatRollWithConduit  " (Two-handed)" [|conduit.twoHandedDice|]
+        let twoHandedCombatRoll = preloadedCreatMagicCombatRollWithConduit  " (Two-handed)" [conduit.twoHandedDice]
 
         match conduit.oneHandedDice with
-        | None -> [|twoHandedCombatRoll|]
+        | None -> [twoHandedCombatRoll]
         | Some oneHandedDice ->
 
-            let oneHandedCombatRoll = preloadedCreatMagicCombatRollWithConduit " (One-handed)" [|oneHandedDice|]
-            let handedVariations = if conduit.twoHandedDice = oneHandedDice then [|oneHandedCombatRoll|] else [|twoHandedCombatRoll;oneHandedCombatRoll|]
+            let oneHandedCombatRoll = preloadedCreatMagicCombatRollWithConduit " (One-handed)" [oneHandedDice]
+            let handedVariations = 
+                if conduit.twoHandedDice = oneHandedDice then 
+                    [oneHandedCombatRoll]
+                else 
+                    [twoHandedCombatRoll;oneHandedCombatRoll]
 
 
             match conduit.dualWieldableBonus with
             | None -> handedVariations
             | Some dualWieldableBonus ->
                
-                preloadedCreatMagicCombatRollWithConduit " (Dual-wielded)" [|oneHandedDice;dualWieldableBonus|]
-                |> Array.singleton
-                |> Array.append handedVariations
+                preloadedCreatMagicCombatRollWithConduit " (Dual-wielded)" [oneHandedDice;dualWieldableBonus]
+                |> List.singleton
+                |> List.append handedVariations
 
-    let createMagicCombatRolls (attributeStats:AttributeStat array) (vocationStats:VocationStat array) (magicSkillMap: Map<string,MagicSkill>)
-                               (magicCombatMap:Map<string,MagicCombat>) (equipment:Equipment []) rangeMap attributeDeterminedDiceModArray =
+    let createMagicCombatRolls
+        (attributeStats:AttributeStat list)
+        (vocationGroups:VocationGroup list)
+        (magicSkillMap: Map<string,MagicSkill>)
+        (magicCombatMap:Map<string,MagicCombat>)
+        (equipment:Equipment list)
+        rangeMap
+        attributeDeterminedDiceModArray
+        (combatRollGoverningAttributes:Attribute list)
+        : list<CombatRoll> =
 
-        let magicMapKeys  = magicSkillMap.Keys |> Array.ofSeq
-        vocationStats
-        |>Array.collect ( fun (vocationStat:VocationStat) -> 
-            Array.filter ( fun (skillStat:SkillStat) -> Array.contains skillStat.name magicMapKeys ) vocationStat.vocationalSkills
-            |>Array.collect ( fun skillStat -> 
+        let magicMapKeys  = magicSkillMap.Keys |> List.ofSeq
+
+        vocationGroups
+        |> List.collect ( fun vocationGroup ->
+            vocationGroup.vocationalSkills
+            |> List.filter ( fun skillStat -> List.contains skillStat.name magicMapKeys )
+            |> List.collect ( fun skillStat -> 
                 // Indexes into tho the magicMap for the type of Magic
-                let magicSkill        = magicSkillMap.Item skillStat.name
-                // Determines what types of MagicCombat can be preformed for the Magic
+                let magicSkill = magicSkillMap.Item skillStat.name
 
                 // Maps across the magicCombat types that the magic is capable of
                 determineMagicCombatTypes magicSkill.isMeleeCapable skillStat.lvl (Seq.toList magicCombatMap.Values)
-                |> Array.collect ( fun magicCombatType -> 
+                |> List.collect ( fun magicCombatType -> 
 
                     let equipedConduits = getEquipedConduitItemsWithSkillName equipment skillStat.name
 
                     let magicResource : MagicResource = { magicResouceClass = magicSkill.magicResourceClass; numMagicResourceDice = magicCombatType.minResourceRequirment}
 
                     if equipedConduits.Length > 0 then
-                        Array.collect ( fun (conduitItem:Item) -> 
+                        List.collect ( fun (conduitItem:Item) -> 
                             collectConduitClasses conduitItem
-                            |> Array.collect ( fun conduitClass ->
+                            |> List.collect ( fun conduitClass ->
                                 let preloadedCreatMagicCombatRollWithConduit = 
-                                    createMagicCombatRollWithConduit rangeMap magicResource attributeStats skillStat.lvl magicSkill magicCombatType conduitClass conduitItem.name
-                                        conduitItem.itemTier.baseDice attributeDeterminedDiceModArray
-                                createMagicCombatRollWithConduitHandVariations conduitClass preloadedCreatMagicCombatRollWithConduit
-
-                                                            )
+                                    createMagicCombatRollWithConduit
+                                        rangeMap
+                                        magicResource
+                                        attributeStats
+                                        skillStat.lvl
+                                        magicSkill
+                                        magicCombatType
+                                        conduitClass
+                                        conduitItem.name
+                                        conduitItem.itemTier.baseDice 
+                                        attributeDeterminedDiceModArray
+                                        combatRollGoverningAttributes
+                                createMagicCombatRollWithConduitHandVariations
+                                    conduitClass
+                                    preloadedCreatMagicCombatRollWithConduit
+                            )
                         ) equipedConduits
                     else 
-                        createMagicCombatRoll magicResource attributeStats skillStat magicSkill magicCombatType rangeMap attributeDeterminedDiceModArray |> Array.singleton
+                        createMagicCombatRoll
+                            magicResource
+                            attributeStats
+                            skillStat
+                            magicSkill
+                            magicCombatType
+                            rangeMap
+                            attributeDeterminedDiceModArray
+                            combatRollGoverningAttributes
+                        |> List.singleton
                 )
             )
         )
@@ -1222,6 +1288,7 @@ module MagicCombatRoll =
 module CarryWeightCalculation =
     open Attribute
     open SkillStat
+    open VocationGroup
 
     type CarryWeightCalculation = {
         name                        : string
@@ -1232,15 +1299,6 @@ module CarryWeightCalculation =
         weightIncreasePerSkill      : uint
     }
 
-    let createCarryWeightCalculation (name, baseWeight, governingAttribute, weightIncreasePerAttribute, governingSkill, weightIncreasePerSkill) = {   
-        name                       = name
-        baseWeight                 = baseWeight 
-        governingAttribute         = governingAttribute
-        weightIncreasePerAttribute = weightIncreasePerAttribute
-        governingSkill             = governingSkill
-        weightIncreasePerSkill     = weightIncreasePerSkill
-    }
-
     type WeightClass = {
         name                   : string
         bottomPercent          : float
@@ -1248,16 +1306,15 @@ module CarryWeightCalculation =
         percentOfMovementSpeed : float
     }
 
-    let tupleToWeightClass (name, bottomPercent, topPercent, percentOfMovementSpeed) : WeightClass = {
-        name                   = name
-        bottomPercent          = bottomPercent
-        topPercent             = topPercent
-        percentOfMovementSpeed = percentOfMovementSpeed
-    }
+    let calculateMaxCarryWeight
+        (maxCarryWeightCalculation:CarryWeightCalculation)
+        (attributeStatList:AttributeStat list)
+        (coreSkillList:SkillStat list) =
 
-    let calculateMaxCarryWeight (maxCarryWeightCalculation:CarryWeightCalculation) (attributeStatArray:AttributeStat array) (skillStatArray:SkillStat array) =
-        let attributeLevel = determineAttributeLvl [| maxCarryWeightCalculation.governingAttribute |] attributeStatArray
-        let skillLevel     = findSkillStat maxCarryWeightCalculation.governingSkill skillStatArray |> skillStatLvlToInt
+        let attributeLevel = determineAttributeLvl [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
+        let skillLevel =
+            findVocationalSkillStat maxCarryWeightCalculation.governingSkill coreSkillList 
+            |> skillStatLvlToInt
 
         int maxCarryWeightCalculation.baseWeight
         |> (+) (attributeLevel * int maxCarryWeightCalculation.weightIncreasePerAttribute)
@@ -1278,10 +1335,10 @@ module MovementSpeedCalculation =
     }
 
     let calculateMovementSpeed movementSpeedCalculation (attributeLvl:int) (skillLvl:int) =
-        let rfxMod = attributeLvl *  int movementSpeedCalculation.feetPerAttributeLvl
-        let athleticsMod = skillLvl * int movementSpeedCalculation.feetPerSkillLvl
+        let attributeMod = attributeLvl *  int movementSpeedCalculation.feetPerAttributeLvl
+        let skillMod = skillLvl * int movementSpeedCalculation.feetPerSkillLvl
 
-        match (int movementSpeedCalculation.baseMovementSpeed + rfxMod + athleticsMod) with
+        match (int movementSpeedCalculation.baseMovementSpeed + attributeMod + skillMod) with
         | n when n >= 0 -> uint n
         | _ -> 0u
 
@@ -1299,8 +1356,9 @@ module Effects =
     open Item
     open DefenseClass
     open CarryWeightCalculation
+    open VocationGroup
 
-    type EffectTable = (string * string * string) array
+    type EffectTable = (string * string * string) list
 
     type Effect =
     | MovementSpeedCalculation  of MovementSpeedCalculation
@@ -1315,16 +1373,21 @@ module Effects =
         match effect with
         | MovementSpeedCalculation calculation ->
             let attributeLvl = determineAttributeLvl calculation.governingAttributes attributeStatArray
-            let athleticsLvl = findSkillStat calculation.governingSkill skillStatArray |> skillStatLvlToInt
+            let athleticsLvl = findVocationalSkillStat calculation.governingSkill skillStatArray |> skillStatLvlToInt
             createMovementSpeedString calculation attributeLvl athleticsLvl weightClass.percentOfMovementSpeed
         | CarryWeightCalculation maxCarryWeightCalculation ->
 
             "Wrong path, fix this" // Remove this path
 
-    let createCalculatedEffectTableArray effectArray attributeStatArray skillStats equipment (weightInfoTuple:(WeightClass * float * float)) : EffectTable =
+    let createCalculatedEffectTableArray
+        effectArray
+        attributeStatArray
+        skillStats equipment
+        (weightInfoTuple:(WeightClass * float * float))
+        : EffectTable =
 
         let (weightClass, totalWeight, maxWeight) = weightInfoTuple
-        Array.map ( fun tuple ->
+        List.map ( fun tuple ->
             match tuple with
             | (effectOption, desc, effectString, time) -> 
                 match effectOption with
@@ -1334,13 +1397,13 @@ module Effects =
                 | None ->
                     match desc with
                     | "Defense Level" -> 
-                        let temp = Array.collect ( fun item -> collectDefenseClasses item ) (getEquipedItems equipment)
-                        let temp2 : ( float * float * float) array = 
-                            Array.collect ( fun  defenseClass ->
-                                [| (defenseClass.physicalDefense, defenseClass.mentalDefense, defenseClass.spiritualDefense) |]
+                        let temp = List.collect ( fun item -> collectDefenseClasses item ) (getEquipedItems equipment)
+                        let temp2 : ( float * float * float) list = 
+                            List.collect ( fun  defenseClass ->
+                                [ (defenseClass.physicalDefense, defenseClass.mentalDefense, defenseClass.spiritualDefense) ]
                             ) temp
                         let temp3 = 
-                            Array.fold ( fun acc tuple ->
+                            List.fold ( fun acc tuple ->
                                 match ( acc, tuple ) with
                                 | (accPhysical, accMental, accSpiritual), (physical, mental, spiritual) ->
                                     (accPhysical + physical, accMental + mental, accSpiritual + spiritual)
@@ -1366,27 +1429,38 @@ module Effects =
 
 module Character =
 
-    open Dice
     open MagicCombatRoll
     open WeaponCombatRoll
-    open SkillRoll
     open MagicCombat
     open CombatRoll
-    open VocationRoll
     open Effects
     open Attribute
     open CarryWeightCalculation
     open Equipment
+    open VocationGroup
+    open CoreSkillGroup
 
     type Character = {
-        vocationRolls              : VocationRoll array
-        coreSkillRolls             : SkillRoll array
-        combatRolls                : CombatRoll array
+        vocationRolls              : VocationGroup list
+        coreSkillRolls             : CoreSkillGroup list
+        combatRolls                : CombatRoll list
         calculatedEffectTable      : EffectTable
     }
 
-    let createCharacter skillStats attributeStats equipment  vocationData magicSkillMap (magicCombatMap:Map<string,MagicCombat>) rangeMap effectOptionTupleArray 
-        (attributeDeterminedDicePoolModMap:Map<string,AttributeDeterminedDiceMod>) (carryWeightCalculation:CarryWeightCalculation) (weightClassData:WeightClass array) =
+    let createCharacter
+        skillStats
+        attributeStats
+        equipment
+        vocationData
+        magicSkillMap
+        (magicCombatMap:Map<string,MagicCombat>)
+        rangeMap
+        effectOptionTupleArray 
+        (attributeDeterminedDicePoolModMap:Map<string,AttributeDeterminedDiceMod>)
+        (carryWeightCalculation:CarryWeightCalculation)
+        (weightClassData:WeightClass list)
+        (combatRollGoverningAttributes:Attribute list)
+        =
 
         let totalWeight = calculateEquipmentListWeight equipment
         let maxWeight   = calculateMaxCarryWeight carryWeightCalculation attributeStats skillStats
@@ -1394,36 +1468,54 @@ module Character =
 
         let weightClass =
             if maxWeight > 0 then
-                Array.collect ( fun (weightClass:WeightClass) -> 
+                List.collect ( fun (weightClass:WeightClass) -> 
                     match weightClass with
-                    | n when n.bottomPercent <= percentOfMaxWeight && percentOfMaxWeight < n.topPercent -> n |> Array.singleton
-                    | _ -> [||]
-                ) weightClassData |> Array.head
+                    | n when n.bottomPercent <= percentOfMaxWeight && percentOfMaxWeight < n.topPercent -> n |> List.singleton
+                    | _ -> []
+                ) weightClassData |> List.head
             else
-                Array.last weightClassData // If 0 max weight, default to hightest weight catagory
+                List.last weightClassData // If 0 max weight, default to hightest weight catagory
 
         let attributeDeterminedDiceModArray = 
             effectOptionTupleArray
-            |> Array.collect ( fun tuple ->
+            |> List.collect ( fun tuple ->
                 let (_,name,_,_) = tuple
                 if attributeDeterminedDicePoolModMap.ContainsKey name then
-                    attributeDeterminedDicePoolModMap.Item name |> Array.singleton
+                    attributeDeterminedDicePoolModMap.Item name |> List.singleton
                 elif name = "Inventory Weight" then
-                    attributeDeterminedDicePoolModMap.Item weightClass.name |> Array.singleton
+                    attributeDeterminedDicePoolModMap.Item weightClass.name |> List.singleton
                 else
-                    [||]
+                    []
             ) 
 
-        let weaponCombatRolls = createWeaponCombatRollWithEquipmentList equipment attributeStats vocationData attributeDeterminedDiceModArray
+        let weaponCombatRolls = 
+            createWeaponCombatRollWithEquipmentList
+                equipment
+                attributeStats
+                vocationData
+                attributeDeterminedDiceModArray
+                combatRollGoverningAttributes
 
-        let magicCombatRolls = createMagicCombatRolls attributeStats vocationData magicSkillMap magicCombatMap equipment rangeMap attributeDeterminedDiceModArray
+        let magicCombatRolls =
+            createMagicCombatRolls
+                attributeStats
+                vocationData
+                magicSkillMap
+                magicCombatMap
+                equipment
+                rangeMap
+                attributeDeterminedDiceModArray
+                combatRollGoverningAttributes
 
         let calculatedEffectTable  = createCalculatedEffectTableArray effectOptionTupleArray attributeStats skillStats equipment (weightClass, totalWeight, maxWeight)
 
         {
-            vocationRolls         = Array.map ( fun vocationStat -> vocationStatToVocationRoll vocationStat attributeStats (stringToDicePool "3d6") attributeDeterminedDiceModArray ) vocationData
-            coreSkillRolls        = skillStatsToSkillRolls skillStats attributeStats (stringToDicePool "3d6") attributeDeterminedDiceModArray
-            combatRolls           = Array.append weaponCombatRolls magicCombatRolls
+            vocationRolls = []
+                // List.map ( fun vocationStat ->
+                //     vocationStatToVocationRoll vocationStat attributeStats (stringToDicePool "3d6") attributeDeterminedDiceModArray
+                // ) vocationData
+            coreSkillRolls = [] //skillStatsToSkillRolls skillStats attributeStats (stringToDicePool "3d6") attributeDeterminedDiceModArray
+            combatRolls = List.append weaponCombatRolls magicCombatRolls
             calculatedEffectTable = calculatedEffectTable
         }
 
