@@ -3,31 +3,31 @@ namespace FallenData
 module Data =
     open FSharp.Data
 
-    open OldFallenLib.Damage
-    open OldFallenLib.Penetration
-    open OldFallenLib.EngageableOpponents
-    open OldFallenLib.Range
-    open OldFallenLib.ResourceClass
-    open OldFallenLib.Attribute
-    open OldFallenLib.MagicSkill
-    open OldFallenLib.MagicCombat
-    open OldFallenLib.Dice
-    open OldFallenLib.WeaponClass
-    open OldFallenLib.ConduitClass
-    open OldFallenLib.WeaponResourceClass    
-    open OldFallenLib.ItemTier
-    open OldFallenLib.Item
-    open OldFallenLib.Equipment
-    open OldFallenLib.Neg1To4
-    open OldFallenLib.SkillStat
-    open OldFallenLib.VocationStat
-    open OldFallenLib.Character
-    open OldFallenLib.TypeUtils
-    open OldFallenLib.MovementSpeedCalculation
-    open OldFallenLib.Effects
-    open OldFallenLib.AreaOfEffect
-    open OldFallenLib.DefenseClass
-    open OldFallenLib.CarryWeightCalculation
+    open FallenLib.Damage
+    open FallenLib.Penetration
+    open FallenLib.EngageableOpponents
+    open FallenLib.Range
+    open FallenLib.ResourceClass
+    open FallenLib.Attribute
+    open FallenLib.MagicSkill
+    open FallenLib.MagicCombat
+    open FallenLib.Dice
+    open FallenLib.WeaponClass
+    open FallenLib.ConduitClass
+    open FallenLib.WeaponResourceClass    
+    open FallenLib.ItemTier
+    open FallenLib.Item
+    open FallenLib.Equipment
+    open FallenLib.Neg1To4
+    open FallenLib.SkillStat
+    open FallenLib.Vocation
+    open FallenLib.Character
+    open FallenLib.TypeUtils
+    open FallenLib.MovementSpeedCalculation
+    open FallenLib.Effects
+    open FallenLib.AreaOfEffect
+    open FallenLib.DefenseClass
+    open FallenLib.CarryWeightCalculation
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -134,6 +134,10 @@ module Data =
                 isMeleeCapable = Bool row.["meleeCapable"]
                 magicResourceClass = string     row.["magicResourceClass"]
             })
+    
+    let magicSkillMap =
+        List.map (fun (magicSkill:MagicSkill) -> magicSkill.name, magicSkill ) magicSkillData
+        |> Map.ofList
 
     // MagicCombat
     let magicCombatData = 
@@ -165,7 +169,6 @@ module Data =
                 dualWieldableBonus  = stringToDicePoolModificationOption row.["dualWieldableBonus"]
                 areaOfEffect        = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
                 resourceClass       = weaponResourceClassOptionMap row.["resourceClass"]
-                governingAttributes = stringToAttributes row.["governingAttributes"]
             })
     
     let weaponClassMap =
@@ -176,7 +179,9 @@ module Data =
     let conduitClassData =
         makeFallenData
             "ConduitClassData.csv"
-            (fun row -> {
+            (fun row ->
+            let temp = row.["governingAttributes"]
+            {
                 name = string row.["desc"]
                 oneHandedDice = stringToDicePoolModificationOption row.["oneHandedDice"]
                 twoHandedDice = stringToDicePoolModification row.["twoHandedDice"]
@@ -188,7 +193,10 @@ module Data =
                 areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
                 resourceClass = weaponResourceClassOptionMap row.["resourceClass"]
                 governingAttributes = stringToAttributes row.["governingAttributes"]
-                effectedMagicSkills = 
+                effectedMagicSkills =
+                    temp.Split ", "
+                    |> List.ofArray
+                    |> List.map ( fun magicSkillStr -> magicSkillMap.Item magicSkillStr )
             })
 
     let conduitClassMap =
