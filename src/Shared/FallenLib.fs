@@ -28,107 +28,9 @@ module TypeUtils =
         List.zip stringTypeArray stringTypeArray
         |> Map.ofList
 
-module MapUtils =
-    let createMapFromTuple2List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            Map.add (fst tuple) (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
-    let createMapFromTuple3List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            let (desc,_,_) = tuple
-            Map.add desc (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
-    let createMapFromTuple4List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            let (desc,_,_,_) = tuple
-            Map.add desc (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
-    let createMapFromTuple5List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            let (desc,_,_,_,_) = tuple
-            Map.add desc (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
-    let createMapFromTuple6List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            let (desc,_,_,_,_,_) = tuple
-            Map.add desc (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
-    let createMapFromTuple7List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            let (desc,_,_,_,_,_,_) = tuple
-            Map.add desc (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
-    let createMapFromTuple9List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            let (desc,_,_,_,_,_,_,_,_) = tuple
-            Map.add desc (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
-    let createMapFromTuple11List (createObjectFromTupleFunc) (list) =
-        list
-        |> Array.fold (fun map tuple ->
-            let (desc,_,_,_,_,_,_,_,_,_,_) = tuple
-            Map.add desc (createObjectFromTupleFunc tuple) map
-        ) Map.empty
-
 module Penetration =
-    open MathUtils
-    open StringUtils
 
-    type PenetrationCalculation = {
-        desc               : string
-        penetrationDivisor : uint
-    }
-
-    let tupleToPenetrationCalculation (desc, penetrationDivisor) = { 
-        desc               = desc
-        penetrationDivisor = penetrationDivisor
-    }
-
-    type CalculatedPenetration = uint
-
-    type Penetration =
-    | PenetrationCalculation of PenetrationCalculation
-    | CalculatedPenetration  of CalculatedPenetration
-
-    let calculatePenetration numDice penetration = 
-        match penetration with
-        | PenetrationCalculation calcuation -> 
-            divideUintByUintThenRound numDice calcuation.penetrationDivisor true
-        | CalculatedPenetration calculated  -> 
-            calculated
-
-    let determinePenetration (numDice:uint) (primaryPenetration:Penetration) (secondaryPenetration:Penetration) =
-        match secondaryPenetration with
-        | PenetrationCalculation secondaryCalculation -> 
-            calculatePenetration numDice (PenetrationCalculation secondaryCalculation)
-        | CalculatedPenetration calculatedSecondaryPenetration ->
-            calculatePenetration numDice primaryPenetration
-            |> (+) calculatedSecondaryPenetration
-
-    let createPenetrationMap (penetrationCalculationMap:Map<string,PenetrationCalculation>) (str:string) =
-        if isNumeric str then
-            uint str
-            |> CalculatedPenetration
-            
-        elif Map.containsKey str penetrationCalculationMap then
-            penetrationCalculationMap.Item str
-            |> PenetrationCalculation
-        else
-            CalculatedPenetration 0u
+    type Penetration = uint
 
 module Damage =
 
@@ -142,17 +44,17 @@ module Damage =
 
     let stringAndMapToDamageTypeArray (damageTypeMap:Map<string,DamageType>) (damageTypesString:string) =
         if damageTypesString.Length = 0 then 
-            [||]
+            []
         else 
             damageTypesString.Split ", "
-            |> Array.map ( fun (damageTypeString) -> 
+            |> List.ofArray
+            |> List.map ( fun (damageTypeString) -> 
                 damageTypeMap.Item damageTypeString
             )
 
 module EngageableOpponents = 
 
     open MathUtils
-    open MapUtils
     open StringUtils
 
     type EngageableOpponentsCalculation = {
@@ -161,43 +63,33 @@ module EngageableOpponents =
         maxEO             : uint option
     }
 
+    let eoCalculationListToMap calculatedRangeList =
+        List.map ( fun (eoCalculation) -> eoCalculation.desc, eoCalculation) calculatedRangeList
+        |> Map.ofList
+
     type CalculatedEngageableOpponents = uint
 
     type EngageableOpponents = 
     | Calculation of EngageableOpponentsCalculation
     | Calculated  of CalculatedEngageableOpponents
 
-    let determineEngageableOpponents (numDice:uint) (engageableOpponents:EngageableOpponents) : CalculatedEngageableOpponents =
+    let determineEngageableOpponents numDice engageableOpponents =
         match engageableOpponents with
         | Calculated calculatedEngageableOpponents->
             calculatedEngageableOpponents
         | Calculation eoCalculation->
             divideUintsThenCompareToMaxThenRound numDice eoCalculation.combatRollDivisor eoCalculation.maxEO true
 
-    let mapMaxEO (input:string) =
+    let mapMaxEO input =
         if isNumeric input then
             uint input
             |> Some
         else
           None
 
-    let createEngageableOpponentsCalculation tuple = 
-        match tuple with
-        | (desc, combatRollDivisor, maxEO) -> { desc = desc; combatRollDivisor = combatRollDivisor; maxEO = mapMaxEO maxEO }
-
-    let createCalculatedEngageableOpponents (tuple:string * uint) : CalculatedEngageableOpponents= 
-        match tuple with
-        | (_, engageableOpponents) -> engageableOpponents
-
-    let createEOCalculationMap = createMapFromTuple3List createEngageableOpponentsCalculation
-    let createCalculatedEOMap  = createMapFromTuple2List createCalculatedEngageableOpponents
-
-    let createEOInterface (calculatedEOMap:Map<string,CalculatedEngageableOpponents>) 
-                    (eoCalculationMap:Map<string,EngageableOpponentsCalculation>) 
-                    (input:string) =
-
-        if Map.containsKey input calculatedEOMap then
-            calculatedEOMap.Item input
+    let eoMap eoCalculationMap input =
+        if isNumeric input then
+            uint input
             |> Calculated
         elif Map.containsKey input eoCalculationMap then
             eoCalculationMap.Item input
@@ -224,17 +116,33 @@ module Neg1To4 =
         | 4 -> Some Four
         | _ -> None
 
-    let convert_Neg1To4_To_Int num =
-        match num with
+    let neg1To4ToInt neg1To4 =
+        match neg1To4 with
         | NegOne -> -1
-        | Zero  -> 0
+        | Zero -> 0
         | One -> 1
         | Two -> 2
         | Three -> 3
         | Four -> 4
 
-    let intToNeg1To4 (num:int) =
+    let intToNeg1To4 num =
         defaultArg (createNeg1To4 num) NegOne
+
+module ZeroToFour =
+    type ZeroToFour =
+    | Zero
+    | One
+    | Two
+    | Three
+    | Four
+
+    let zeroToFourToUint zeroToFour =
+        match zeroToFour with
+        | Zero -> 0u
+        | One -> 1u
+        | Two -> 2u
+        | Three -> 3u
+        | Four -> 4u
 
 module Dice =
 
@@ -254,7 +162,7 @@ module Dice =
     | RemoveDice of DicePoolPenalty
 
     let emptyDicePool    = { d4=0u; d6=0u; d8=0u; d10=0u; d12=0u; d20=0u}
-    let baseDicePool     = { d4=0u; d6=3u; d8=0u; d10=0u; d12=0u; d20=0u}
+    let baseDicePool     = { emptyDicePool with d6 = 3u }
 
     let createD6DicePoolMod (numDice:uint) = AddDice { d4=0u; d6=numDice; d8=0u; d10=0u; d12=0u; d20=0u }
 
@@ -265,20 +173,20 @@ module Dice =
         if dicePoolString = "" then "0d6" else dicePoolString
 
     let dicePoolToString (dicePool: DicePool) =
-        [|
+        [
             diceToString dicePool.d4 "d4"
             diceToString dicePool.d6 "d6"
             diceToString dicePool.d8 "d8"
             diceToString dicePool.d10 "d10"
             diceToString dicePool.d12 "d12"
             diceToString dicePool.d20 "d20"
-        |]
-        |> Array.filter ( fun diceString -> diceString <> "")
+        ]
+        |> List.filter ( fun diceString -> diceString <> "")
         |> String.concat ", "
         |> checkIfEmptyDicePoolString
 
     let combineDicePools dicePools =
-        Array.fold (fun acc pool ->
+        List.fold (fun acc pool ->
             {
                 d4  = acc.d4  + pool.d4
                 d6  = acc.d6  + pool.d6
@@ -287,7 +195,7 @@ module Dice =
                 d12 = acc.d12 + pool.d12
                 d20 = acc.d20 + pool.d20
             }
-        ) { d4 = 0u; d6 = 0u; d8 = 0u; d10 = 0u; d12 = 0u; d20 = 0u } dicePools
+        ) emptyDicePool dicePools
 
     let removeDice (dice:uint) (neg:uint) : uint * uint =
         let result = int dice - int neg
@@ -310,7 +218,7 @@ module Dice =
     let modifyDicePool (dicePool:DicePool) (dicePoolModification:DicePoolModification)  : DicePool =
         match dicePoolModification with
         | AddDice diceToAdd ->
-            combineDicePools [|dicePool; diceToAdd|]
+            combineDicePools [dicePool; diceToAdd]
         | RemoveDice diceToRemove ->
             removeDiceFromDicePool dicePool diceToRemove
     
@@ -318,48 +226,43 @@ module Dice =
         let { d4 = d4; d6 = d6; d8 = d8; d10 = d10; d12 = d12; d20 = d20 } = dicePool
         d4 + d6 + d8 + d10 + d12 + d20
 
-    let modifyDicePoolByModList (dicePool:DicePool) (dicePoolModifications:DicePoolModification array) : DicePool =
+    let modifyDicePoolByModList dicePool dicePoolModifications =
 
-        let acc : DicePoolPenalty = 0u
         let combinedDicePoolPenalty = 
-            Array.fold (fun acc diceMod ->
+            List.fold (fun acc diceMod ->
                 match diceMod with
                 | RemoveDice dicePoolPenalty -> acc + dicePoolPenalty
                 | _ -> acc
-            ) acc dicePoolModifications |> RemoveDice
+            ) 0u dicePoolModifications |> RemoveDice
 
         let combinedPositiveDicePool = 
-            Array.fold (fun acc diceMod ->
+            List.fold (fun acc diceMod ->
                 match diceMod with
-                | AddDice dicePool -> combineDicePools [| acc; dicePool |] 
+                | AddDice dicePool -> combineDicePools [ acc; dicePool ] 
                 | _ -> acc
             ) dicePool dicePoolModifications
 
         // Does the subtractions only at the end after combining
         modifyDicePool combinedPositiveDicePool combinedDicePoolPenalty
 
-    let dicePoolModToInt (dicePoolMod: DicePoolModification) : int =
-        match dicePoolMod with
-        | AddDice data -> sumDicePool data |> int
-        | RemoveDice data -> (int data) * -1
-
     let intToDicePoolModification (num : int) =
-        if num < 0 then RemoveDice (uint (abs num)) else AddDice { d4=0u; d6=(uint num); d8=0u; d10=0u; d12=0u; d20=0u }
+        if num < 0 then RemoveDice (uint (abs num)) else createD6DicePoolMod (uint num)
 
     let createDicePoolModification (numDiceStr:string) (diceType:string) =
         let numDice = uint numDiceStr
         match diceType with
-        | "4"  -> {d4=numDice;d6=0u;d8=0u;d10=0u;d12=0u;d20=0u}
-        | "6"  -> {d4=0u;d6=numDice;d8=0u;d10=0u;d12=0u;d20=0u}
-        | "8"  -> {d4=0u;d6=0u;d8=numDice;d10=0u;d12=0u;d20=0u}
-        | "10" -> {d4=0u;d6=0u;d8=0u;d10=numDice;d12=0u;d20=0u}
-        | "12" -> {d4=0u;d6=0u;d8=0u;d10=0u;d12=numDice;d20=0u}
-        | "20" -> {d4=0u;d6=0u;d8=0u;d10=0u;d12=0u;d20=numDice}
-        | _    -> {d4=0u;d6=0u;d8=0u;d10=0u;d12=0u;d20=0u}
+        | "4"  -> {emptyDicePool with d4 = numDice}
+        | "6"  -> {emptyDicePool with d6 = numDice}
+        | "8"  -> {emptyDicePool with d8 = numDice}
+        | "10" -> {emptyDicePool with d10 = numDice}
+        | "12" -> {emptyDicePool with d12 = numDice}
+        | "20" -> {emptyDicePool with d20 = numDice}
+        | _    -> emptyDicePool
     
     let stringToDicePool (str:string) =
         str.Split ", "
-        |> Array.map( fun (diceStr) ->
+        |> List.ofArray
+        |> List.map( fun (diceStr) ->
             let diceNumAndDiceType = diceStr.Split "d"
             createDicePoolModification diceNumAndDiceType[0] diceNumAndDiceType[1]
         )
@@ -396,43 +299,34 @@ module Attribute =
         lvl       : Neg1To4
     }
 
-    let emptyAttributeStat = {
-        attribute = ""
-        lvl = NegOne
-    }
-
-    let tupleToAttributeStat (attributeMap:Map<string,Attribute>) (attribute, lvl) = {
-        attribute = attributeMap.Item attribute
-        lvl       = intToNeg1To4 lvl
-    }
-
-    let determineAttributeLvl (attributeArray:Attribute array) (attributeStatArray:AttributeStat array) = 
-        Array.map ( fun attributeStat -> 
-            if Array.contains attributeStat.attribute attributeArray then
+    let determineAttributeLvl attributeList attributeStatList = 
+        List.map ( fun attributeStat -> 
+            if List.contains attributeStat.attribute attributeList then
                 attributeStat.lvl
             else
                 Zero
-        ) attributeStatArray
-        |> Array.map convert_Neg1To4_To_Int
-        |> Array.sum
+        ) attributeStatList
+        |> List.map neg1To4ToInt
+        |> List.sum
 
-    let determineAttributeDiceMod (attributeArray:Attribute array) (attributeStatArray:AttributeStat array) =
-        determineAttributeLvl attributeArray attributeStatArray
+    let determineAttributeDiceMod attributeList attributeStatList =
+        determineAttributeLvl attributeList attributeStatList
         |> intToDicePoolModification
 
     type AttributeDeterminedDiceMod = {
         name                 : string
-        attributesToEffect   : Attribute array
+        attributesToEffect   : Attribute list
         dicePoolModification : DicePoolModification
     }
 
-    let determineAttributeDeterminedDiceMod governingAttributeOfSkill (attributeDeterminedDiceModArray: AttributeDeterminedDiceMod array) =
-        attributeDeterminedDiceModArray
-        |> Array.filter ( fun attributeDeterminedDiceMod ->
-            attributeDeterminedDiceMod.attributesToEffect
-            |> Array.exists ( fun attribute -> Array.contains attribute governingAttributeOfSkill)
+    let determineAttributeDeterminedDiceMod governingAttributeOfSkill attributeDeterminedDiceModList =
+        attributeDeterminedDiceModList
+        |> List.filter ( fun attributeDeterminedDiceMod ->
+            List.exists ( fun attribute -> 
+                List.contains attribute governingAttributeOfSkill
+            ) attributeDeterminedDiceMod.attributesToEffect
         )
-        |> Array.map ( fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolModification)
+        |> List.map ( fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolModification)
 
 module Range =
 
@@ -460,10 +354,15 @@ module Range =
 
     let calculatedRangeToString calculatedRange =
         sprintf "%u/%u" calculatedRange.effectiveRange calculatedRange.maxRange
+    
 
-    let calculateRange (numDice:uint) (rangeCalculation:RangeCalculation): CalculatedRange =
+    let calculateRange numDice rangeCalculation =
         { desc           = rangeCalculation.desc
-          effectiveRange = uint (Math.Ceiling(float numDice/float rangeCalculation.numDicePerEffectiveRangeUnit)) * rangeCalculation.ftPerEffectiveRangeUnit
+          effectiveRange =
+            if rangeCalculation.roundEffectiveRangeUp then
+                uint (Math.Ceiling(float numDice/float rangeCalculation.numDicePerEffectiveRangeUnit)) * rangeCalculation.ftPerEffectiveRangeUnit
+            else
+                uint (Math.Floor(float numDice/float rangeCalculation.numDicePerEffectiveRangeUnit)) * rangeCalculation.ftPerEffectiveRangeUnit
           maxRange       = rangeCalculation.maxRange
         }
 
@@ -473,15 +372,15 @@ module Range =
         | RangeCalculation rangeCalculation -> calculateRange numDice rangeCalculation
 
     let determineGreatestRange numDice (primaryRange:Range) (optionalRange:Range option) =
+        let calculatedPrimaryRange = rangeToCalculatedRange numDice primaryRange
         match optionalRange with
         | Some secondaryRange ->
-            let calculatedPrimaryRange   = rangeToCalculatedRange numDice primaryRange
             let calculatedSecondaryRange = rangeToCalculatedRange numDice secondaryRange
             if calculatedPrimaryRange.effectiveRange >= calculatedSecondaryRange.effectiveRange then
                 calculatedPrimaryRange
             else
                 calculatedSecondaryRange
-        | None -> rangeToCalculatedRange numDice primaryRange
+        | None -> calculatedPrimaryRange
 
     let calculatedRangeListToRangeMap calculatedRangeList =
         List.map ( fun (calculatedRange:CalculatedRange) -> calculatedRange.desc, CalculatedRange calculatedRange) calculatedRangeList
@@ -496,6 +395,14 @@ module Range =
             (fun acc key value -> Map.add key value acc) 
             (calculatedRangeListToRangeMap calculatedRanges)
             (rangeCalculationListToRangeMap rangeCalculations)
+    
+    let isMeleeOrReachRange range =
+        match range with
+        | CalculatedRange calculatedRange ->
+            match calculatedRange.desc with
+            | "Melee" | "Reach" -> true
+            | _ -> false
+        | _ -> false
 
 module AreaOfEffect =
     type AreaOfEffect =
@@ -597,18 +504,19 @@ module WeaponResourceClass =
     open Damage
     open AreaOfEffect
     open ResourceClass
+    open Penetration
 
     type WeaponResourceClass = {
         name                : string
         resourceClass       : ResourceClass
         resourceDice        : DicePoolModification
-        penetration         : uint
+        penetration         : Penetration
         range               : Range option
-        damageTypes         : DamageType []
+        damageTypes         : DamageType list
         areaOfEffect        : AreaOfEffect option
     }
 
-    let determineResource (resource:WeaponResourceClass option) =
+    let prepareWeaponResourceClassOptionForUse (resource:WeaponResourceClass option) =
         match resource with
         | Some resource ->
             (
@@ -616,7 +524,7 @@ module WeaponResourceClass =
                 resource.range, resource.damageTypes, resource.areaOfEffect
             )
         | None ->
-            ("", createD6DicePoolMod(0u), 0u, None, [||], None)
+            ("", createD6DicePoolMod(0u), 0u, None, [], None)
 
 module WeaponClass =
     open Dice
@@ -634,12 +542,12 @@ module WeaponClass =
         twoHandedWeaponDice : DicePoolModification
         penetration         : Penetration
         range               : Range
-        damageTypes         : DamageType array
+        damageTypes         : DamageType list
         engageableOpponents : EngageableOpponents
         dualWieldableBonus  : DicePoolModification option
         areaOfEffect        : AreaOfEffect option
         resourceClass       : ResourceClass option
-        governingAttributes : Attribute array
+        governingAttributes : Attribute List
     }
 
 module ItemTier =
@@ -653,7 +561,49 @@ module ItemTier =
         durabilityMax : uint
     }
 
+module DefenseClass =
+
+    type DefenseClass = {
+        name             : string
+        physicalDefense  : float
+        mentalDefense    : float
+        spiritualDefense : float
+    }
+
+module MagicResource =
+
+    open Dice
+    open ResourceClass
+
+    type MagicResource = {
+        magicResouceClass    : ResourceClass
+        numMagicResourceDice : uint
+    }
+
+    let determineMagicResource (resource:MagicResource) =
+        sprintf "( %u %s )" resource.numMagicResourceDice resource.magicResouceClass
+        , createD6DicePoolMod resource.numMagicResourceDice
+
+    type ResourcePool = {
+        name               : ResourceClass
+        remainingResources : uint
+        poolMax            : uint
+    }
+
+module MagicSkill = 
+    open Damage
+    open ResourceClass
+
+    type MagicSkill = {
+        desc                 : string
+        damageTypes          : DamageType list
+        rangeAdjustment      : int
+        isMeleeCapable       : bool
+        magicResourceClass   : ResourceClass
+    }
+
 module ConduitClass =
+    open MagicSkill
     open Dice
     open Range
     open Damage
@@ -669,30 +619,49 @@ module ConduitClass =
         twoHandedDice       : DicePoolModification
         penetration         : Penetration
         rangeAdjustment     : RangeAdjustment
-        damageTypes         : DamageType array
+        damageTypes         : DamageType list
         engageableOpponents : EngageableOpponents option
         dualWieldableBonus  : DicePoolModification option
         areaOfEffect        : AreaOfEffect option
         resourceClass       : ResourceClass option
-        governingAttributes : Attribute array
+        governingAttributes : Attribute list
+        effectedMagicSkills : MagicSkill list
     }
 
-module DefenseClass =
+module MagicCombat =
 
-    type DefenseClass = {
-        name             : string
-        physicalDefense  : float
-        mentalDefense    : float
-        spiritualDefense : float
+
+
+
+    open Range
+    open EngageableOpponents
+    open AreaOfEffect
+    open Neg1To4
+    open Penetration
+    open Dice
+
+    type MagicCombat = {
+        desc                  : string
+        lvlRequirment         : Neg1To4
+        diceModification      : DicePoolModification
+        penetration           : Penetration
+        range                 : Range
+        engageableOpponents   : EngageableOpponents
+        minResourceRequirment : uint
+        areaOfEffect          : AreaOfEffect option
     }
 
-    let tupleToDefenseClass (name, physicalDefense, mentalDefense, spiritualDefense) =
-        {
-            name             = name
-            physicalDefense  = physicalDefense
-            mentalDefense    = mentalDefense
-            spiritualDefense = spiritualDefense
-        }
+    let determineMagicCombatTypes (meleeCapable:bool) (lvl:Neg1To4) (magicCombatList:MagicCombat list) =
+        // Logic for filtering by Lvl requirement
+        List.filter ( fun magicCombat ->
+            neg1To4ToInt lvl >= neg1To4ToInt magicCombat.lvlRequirment
+        ) magicCombatList
+        // Logic for filtering by if it can melee
+        |> List.filter ( fun magicCombat ->
+            not (isMeleeOrReachRange magicCombat.range && not meleeCapable)
+        )
+
+// Character
 
 module Item =
     open ItemTier
@@ -709,7 +678,7 @@ module Item =
 
     type Item = {
         name        : string
-        itemClasses : ItemClass array
+        itemClasses : ItemClass list
         itemTier    : ItemTier
         value       : string
         weight      : float
@@ -727,111 +696,35 @@ module Item =
  
     let collectWeaponItemClasses item =
         item.itemClasses
-        |> Array.collect( fun itemClass->
+        |> List.collect( fun itemClass->
             match itemClass with
-            | WeaponClass specifiedItemClass -> [| specifiedItemClass |]
-            | _ -> [||]
+            | WeaponClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> []
         )
 
     let collectConduitClasses item =
         item.itemClasses
-        |> Array.collect( fun itemClass->
+        |> List.collect( fun itemClass->
             match itemClass with
-            | ConduitClass specifiedItemClass -> [| specifiedItemClass |]
-            | _ -> [||]
+            | ConduitClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> []
         )
 
     let collectWeaponResourceItemClasses item =
         item.itemClasses
-        |> Array.collect( fun itemClass->
+        |> List.collect( fun itemClass->
             match itemClass with
-            | WeaponResourceClass specifiedItemClass -> [| specifiedItemClass |]
-            | _ -> [||]
+            | WeaponResourceClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> []
         )
 
     let collectDefenseClasses item =
         item.itemClasses
-        |> Array.collect( fun itemClass->
+        |> List.collect( fun itemClass->
             match itemClass with
-            | DefenseClass specifiedItemClass -> [| specifiedItemClass |]
-            | _ -> [||]
+            | DefenseClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> []
         )
-
-// Magic
-
-module MagicResource =
-
-    open Dice
-    open ResourceClass
-
-    type MagicResource = {
-        magicResouceClass    : ResourceClass
-        numMagicResourceDice : uint
-    }
-
-    let determineMagicResource (resource:MagicResource) =
-        ( sprintf "( %u %s )" resource.numMagicResourceDice resource.magicResouceClass, createD6DicePoolMod resource.numMagicResourceDice )
-
-    type ResourcePool = {
-        name               : ResourceClass
-        remainingResources : uint
-        poolMax            : uint
-    }
-
-module MagicSkill = 
-    open Damage
-    open ResourceClass
-
-    type MagicSkill = {
-        desc                 : string
-        damageTypes          : DamageType array
-        rangeAdjustment      : int
-        meleeCapable         : bool
-        magicResourceClass   : ResourceClass
-    }
-
-module MagicCombat =
-    open Range
-    open EngageableOpponents
-    open AreaOfEffect
-    open Neg1To4
-    open Penetration
-    open Dice
-
-    type MagicCombat = {
-        desc                  : string
-        lvlRequirment         : Neg1To4
-        diceModification      : DicePoolModification
-        penetration           : Penetration
-        range                 : Range
-        engageableOpponents   : EngageableOpponents
-        minResourceRequirment : uint
-        canVocationAssist     : bool
-        areaOfEffect          : AreaOfEffect option
-    }
-
-    let isMeleeOrReachRange (magicCombatCalculatedRange:CalculatedRange) =
-        match magicCombatCalculatedRange.desc with
-        | "Melee" | "Reach" -> true
-        | _ -> false
-
-    let determineMagicCombatTypes (meleeCapable:bool) (lvl:Neg1To4) (magicCombatList:MagicCombat []) =
-        // Logic for filtering by Lvl requirement
-        Array.filter (fun (magicCombat:MagicCombat) -> 
-            let skillLvl       = convert_Neg1To4_To_Int lvl
-            let requirementLvl = convert_Neg1To4_To_Int magicCombat.lvlRequirment
-            (skillLvl >= requirementLvl)
-        ) magicCombatList
-        // Logic for filtering by if it can melee
-        |> Array.filter (fun (magicCombat:MagicCombat) ->
-            match magicCombat.range with
-            | CalculatedRange magicCombatCalculatedRange ->
-                not (isMeleeOrReachRange magicCombatCalculatedRange && not meleeCapable)
-            | _ -> true
-        )
-        |> Array.map ( fun (magicCombat:MagicCombat) -> magicCombat.desc) 
-
-// Character
 
 module Container =
     open Item
@@ -846,165 +739,200 @@ module Equipment =
     open Item
     open ConduitClass
 
-    type EquipmentItem = {
-        equipped : bool
-        item     : Item
-        quantity : uint
+    type Equipment = {
+        isEquipped : bool
+        item       : Item
+        quantity   : uint
     }
 
-    let tupleToEquipmentItem (itemMap:Map<string,Item>) (equipped, desc, quantity) = { 
-        equipped = equipped
-        item     = itemMap.Item desc
-        quantity = quantity 
-    }
-
-    let calculateEquipmentItemArrayWeight (equipmentArray:EquipmentItem array) =
-        equipmentArray
-        |> Array.fold ( fun acc (equipmentItem:EquipmentItem) -> 
+    let calculateEquipmentListWeight equipmentList =
+        equipmentList
+        |> List.fold ( fun acc (equipmentItem:Equipment) -> 
             (equipmentItem.item.weight * float equipmentItem.quantity) + acc
         ) 0.0
 
-    let getEquipedItems equipment =
-        Array.filter (fun equipmentItem  -> equipmentItem.equipped = true && equipmentItem.quantity > 0u ) equipment
-        |> Array.map (fun equipmentItem -> equipmentItem.item )
+    let getEquipedItems equipmentList =
+        equipmentList
+        |> List.filter ( fun equipmentItem  -> equipmentItem.isEquipped && equipmentItem.quantity > 0u )
+        |> List.map ( fun equipmentItem -> equipmentItem.item )
 
-    let getEquipedConduitItemsWithSkillName equipment (skillName:string) : Item array=
-        getEquipedItems equipment
-        |> Array.filter ( fun (item) ->
+    let getEquipedWeaponClassItems equipmentList =
+        equipmentList
+        |> getEquipedItems
+        |> List.filter ( fun item ->
+            match item.
+        )
+
+    let doesConduitEffectMagicSkill conduitClass skillName =
+        conduitClass.effectedMagicSkills
+        |> List.exists ( fun magicSkill -> magicSkill.desc = skillName )
+
+    let getEquipedConduitItemsWithSkillName equipmentList skillName =
+        equipmentList
+        |> getEquipedItems
+        |> List.filter ( fun (item) ->
             item
             |> collectConduitClasses
-            |> Array.filter ( fun conduitClass -> conduitClass.desc.Contains skillName )
-            |> Array.isEmpty
+            |> List.filter ( fun conduitClass -> doesConduitEffectMagicSkill conduitClass skillName )
+            |> List.isEmpty
             |> not
         )
 
 module SkillStat = 
     open Neg1To4
-    open Attribute
 
     type SkillStat = {
-        name               : string
-        lvl                : Neg1To4
-        governingAttributes : Attribute array
-    }
-
-    let emptySkillStat = {
-        name = ""
-        lvl = NegOne
-        governingAttributes = [||]
-    }
-
-    let tupleToSkillStat (attributeMap:Map<string,Attribute>) (name, lvl, governingAttribute) = { 
-        name               = name
-        lvl                = intToNeg1To4  lvl
-        governingAttributes = attributeMap.Item governingAttribute |> Array.singleton
-    }
-
-    let findSkillStat (skillName:string) (skillStatArray: SkillStat array) =
-        Array.filter (fun skill -> skill.name = skillName) skillStatArray
-        |> (fun list ->
-            if list.Length = 0 then
-                {name = skillName; lvl = Zero; governingAttributes = [||]}
-            else
-                Array.maxBy (fun skill -> skill.lvl) list
-        )
-
-    let skillStatLvlToInt skillStat = convert_Neg1To4_To_Int skillStat.lvl
-
-module SkillRoll = 
-    open Attribute
-    open Dice
-    open SkillStat
-    open Neg1To4
-
-    type SkillRoll = {
-        desc     : string
-        dicePool : DicePool
-        lvl      : Neg1To4
-    }
-
-    let matchAttributeDiceWithSkillDice (skillStat:SkillStat) (attributeStats:AttributeStat array) : DicePoolModification=
-        Array.filter ( fun attributeStat -> 
-            Array.exists ( fun skillGoverningAttribute -> 
-                attributeStat.attribute = skillGoverningAttribute
-            ) skillStat.governingAttributes
-        ) attributeStats
-        |> Array.sumBy ( fun attributeStat -> convert_Neg1To4_To_Int ( attributeStat.lvl ) )
-        |> intToDicePoolModification
-
-    let skillStatToSkillRoll (skillStat:SkillStat) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray =
-
-        let skillDiceMods     = convert_Neg1To4_To_Int ( skillStat.lvl ) |> intToDicePoolModification
-        let attributeDiceMods = matchAttributeDiceWithSkillDice skillStat attributeStats
-        let diceMod = 
-            determineAttributeDeterminedDiceMod skillStat.governingAttributes attributeDeterminedDiceModArray
-            |> Array.append [| skillDiceMods; attributeDiceMods |]
-        {
-            desc     = skillStat.name
-            dicePool = modifyDicePoolByModList baseDice diceMod
-            lvl      = skillStat.lvl
-        }
-
-    let skillStatsToSkillRolls (skillStats:SkillStat array) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray =
-        Array.map ( fun skillStat ->
-            skillStatToSkillRoll skillStat attributeStats baseDice attributeDeterminedDiceModArray
-        ) skillStats
-
-module VocationStat =
-
-    open Neg1To4
-    open Attribute
-    open SkillStat
-    
-    type VocationStat = {
         name                : string
         lvl                 : Neg1To4
-        governingAttributes : Attribute array
-        vocationalSkills    : SkillStat []
     }
 
-    let findVocationalSkill (vocations: VocationStat array) (vocationalSkillName:string) =
-        Array.map (fun vocation -> vocation.vocationalSkills) vocations
-        |> Array.collect (fun x -> x)
-        |> findSkillStat vocationalSkillName
+    // let skillStatLvlToInt skillStat = neg1To4ToInt skillStat.lvl
 
-module VocationRoll =
-    open VocationStat
-    open Neg1To4
-    open Dice
+// module SkillRoll = 
+//     open Attribute
+//     open Dice
+//     open SkillStat
+//     open Neg1To4
+
+//     type SkillRoll = {
+//         desc     : string
+//         dicePool : DicePool
+//         lvl      : Neg1To4
+//     }
+
+//     let matchAttributeDiceWithSkillDice (skillStat:SkillStat) (attributeStats:AttributeStat array) : DicePoolModification=
+//         Array.filter ( fun attributeStat -> 
+//             Array.exists ( fun skillGoverningAttribute -> 
+//                 attributeStat.attribute = skillGoverningAttribute
+//             ) skillStat.governingAttributes
+//         ) attributeStats
+//         |> Array.sumBy ( fun attributeStat -> neg1To4ToInt ( attributeStat.lvl ) )
+//         |> intToDicePoolModification
+
+//     let skillStatToSkillRoll (skillStat:SkillStat) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray =
+
+//         let skillDiceMods     = neg1To4ToInt ( skillStat.lvl ) |> intToDicePoolModification
+//         let attributeDiceMods = matchAttributeDiceWithSkillDice skillStat attributeStats
+//         let diceMod = 
+//             determineAttributeDeterminedDiceMod skillStat.governingAttributes attributeDeterminedDiceModArray
+//             |> Array.append [| skillDiceMods; attributeDiceMods |]
+//         {
+//             desc     = skillStat.name
+//             dicePool = modifyDicePoolByModList baseDice diceMod
+//             lvl      = skillStat.lvl
+//         }
+
+//     let skillStatsToSkillRolls (skillStats:SkillStat array) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray =
+//         Array.map ( fun skillStat ->
+//             skillStatToSkillRoll skillStat attributeStats baseDice attributeDeterminedDiceModArray
+//         ) skillStats
+
+module CoreSkillGroup =
+
     open Attribute
-    open SkillRoll
+    open SkillStat
 
-    type VocationRoll = {
-        name             : string
-        vocationDicePool : DicePool
-        vocationalSkills : SkillRoll array
+    type CoreSkillGroup = {
+        attributeStat : AttributeStat
+        skillStatList : SkillStat list
     }
 
-    let determineVocationAttributeDiceMod (vocationStat:VocationStat) (attributeStats:AttributeStat array) : DicePoolModification =
-        Array.filter ( fun attributeStat -> 
-            Array.exists ( fun vocationGoverningAttribute -> 
-                attributeStat.attribute = vocationGoverningAttribute
-            ) vocationStat.governingAttributes
-        ) attributeStats
-        |> Array.sumBy ( fun attributeStat -> convert_Neg1To4_To_Int ( attributeStat.lvl ) )
-        |> intToDicePoolModification
+module VocationStat =
+    open ZeroToFour
 
-    let vocationStatToVocationRoll (vocationStat:VocationStat) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray : VocationRoll=
-        let name = vocationStat.name
-        let attDiceMod = determineVocationAttributeDiceMod vocationStat attributeStats
+    type VocationStat = {
+        name : string
+        level : ZeroToFour
+    }
 
-        let vocationLvlDiceMod = convert_Neg1To4_To_Int ( vocationStat.lvl ) |> intToDicePoolModification
+module VocationGroup =
 
-        let diceMods = 
-            determineAttributeDeterminedDiceMod vocationStat.governingAttributes attributeDeterminedDiceModArray
-            |> Array.append [| attDiceMod; vocationLvlDiceMod |]
+    open Neg1To4
+    open Attribute
+    open VocationStat
+    open SkillStat
 
-        {
-            name = name
-            vocationDicePool = modifyDicePoolByModList baseDice diceMods
-            vocationalSkills = skillStatsToSkillRolls vocationStat.vocationalSkills attributeStats baseDice attributeDeterminedDiceModArray
-        }
+    type GoverningAttribute = {
+        isGoverning : bool
+        attributeStat : Attribute
+    }
+
+    type VocationGroup = {
+        vocationStat : VocationStat
+        governingAttributes : GoverningAttribute list
+        vocationalSkills  : SkillStat
+    }
+
+    let findVocationalSkillStat skillName skillStatList =
+        skillStatList
+        |> List.filter (fun skill -> skill.name = skillName)
+        |> ( fun list ->
+            if list.Length = 0 then
+                {name = skillName; lvl = Zero}
+            else
+                List.maxBy (fun skill -> skill.lvl) list
+        )
+    
+    let findVocationalSkill (vocationGroupList: VocationGroup list) (vocationalSkillName:string) =
+        vocationGroupList
+        |> List.map (fun vocation -> vocation.vocationalSkills)
+        |> findVocationalSkillStat vocationalSkillName
+
+// module Vocation =
+
+//     type GoverningAttribute = {
+//         isGoverning : bool
+//         attributeStat : Attribute
+//     }
+
+//     open Neg1To4
+//     open Attribute
+//     open SkillStat
+    
+//     type VocationStat = {
+//         name                : string
+//         lvl                 : Neg1To4
+//         governingAttributes : Attribute array
+//         vocationalSkills    : SkillStat []
+//     }
+
+// module VocationRoll =
+//     open VocationStat
+//     open Neg1To4
+//     open Dice
+//     open Attribute
+//     open SkillRoll
+
+//     type VocationRoll = {
+//         name             : string
+//         vocationDicePool : DicePool
+//         vocationalSkills : SkillRoll array
+//     }
+
+//     let determineVocationAttributeDiceMod (vocationStat:VocationStat) (attributeStats:AttributeStat array) : DicePoolModification =
+//         Array.filter ( fun attributeStat -> 
+//             Array.exists ( fun vocationGoverningAttribute -> 
+//                 attributeStat.attribute = vocationGoverningAttribute
+//             ) vocationStat.governingAttributes
+//         ) attributeStats
+//         |> Array.sumBy ( fun attributeStat -> neg1To4ToInt ( attributeStat.lvl ) )
+//         |> intToDicePoolModification
+
+//     let vocationStatToVocationRoll (vocationStat:VocationStat) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray : VocationRoll=
+//         let name = vocationStat.name
+//         let attDiceMod = determineVocationAttributeDiceMod vocationStat attributeStats
+
+//         let vocationLvlDiceMod = neg1To4ToInt ( vocationStat.lvl ) |> intToDicePoolModification
+
+//         let diceMods = 
+//             determineAttributeDeterminedDiceMod vocationStat.governingAttributes attributeDeterminedDiceModArray
+//             |> Array.append [| attDiceMod; vocationLvlDiceMod |]
+
+//         {
+//             name = name
+//             vocationDicePool = modifyDicePoolByModList baseDice diceMods
+//             vocationalSkills = skillStatsToSkillRolls vocationStat.vocationalSkills attributeStats baseDice attributeDeterminedDiceModArray
+//         }
 
 module CombatRoll =
     open Dice
@@ -1018,25 +946,11 @@ module CombatRoll =
         desc                          : string
         combatRoll                    : DicePool
         calculatedRange               : CalculatedRange
-        penetration                   : CalculatedPenetration
-        damageTypes                   : DamageType []
+        penetration                   : Penetration
+        damageTypes                   : DamageType list
         areaOfEffectShape             : Shape option
         engageableOpponents           : CalculatedEngageableOpponents
     }
-
-    let combatRollToStringArray combatRoll =
-        [|
-            combatRoll.desc
-            dicePoolToString combatRoll.combatRoll
-            string combatRoll.penetration
-            (calculatedRangeToString combatRoll.calculatedRange) + " ft (" + combatRoll.calculatedRange.desc + ")"
-            damageTypesToString combatRoll.damageTypes
-            string combatRoll.engageableOpponents
-            shapeOptionToString combatRoll.areaOfEffectShape
-        |]
-
-    let combatRollsToStringArrays combatRolls =
-        Array.map ( fun combatRoll -> combatRollToStringArray combatRoll ) combatRolls
 
 module WeaponCombatRoll =
     open Dice
@@ -1044,11 +958,10 @@ module WeaponCombatRoll =
     open Neg1To4
     open Shape
     open Range
-    open Penetration
     open EngageableOpponents
 
     open Equipment
-    open VocationStat
+    open VocationGroup
     open SkillStat
     open CombatRoll
 
@@ -1059,16 +972,16 @@ module WeaponCombatRoll =
 
     let createCombatRoll desc weaponClass weaponTierBaseDice attributeDeterminedDiceModArray attributeStats skillStatLvl resource descSuffix wieldingDiceMods =
 
-        let (resourceDesc, resourceDice, resourcePenetration, resourceRange, resourceDamageTypes, resourceAreaOfEffect) = determineResource resource
+        let (resourceDesc, resourceDice, resourcePenetration, resourceRange, resourceDamageTypes, resourceAreaOfEffect) = prepareWeaponResourceClassOptionForUse resource
 
         let dicePool =
             determineAttributeDeterminedDiceMod weaponClass.governingAttributes attributeDeterminedDiceModArray // These are injuries, weight penalties, ect...
-            |> Array.append wieldingDiceMods
-            |> Array.append [|
+            |> List.append wieldingDiceMods
+            |> List.append [
                 attributeStats |> determineAttributeDiceMod weaponClass.governingAttributes
-                skillStatLvl   |> convert_Neg1To4_To_Int |> intToDicePoolModification
+                skillStatLvl   |> neg1To4ToInt |> intToDicePoolModification
                 resourceDice
-            |]
+            ]
             |> modifyDicePoolByModList weaponTierBaseDice
 
         let numDice = sumDicePool dicePool
@@ -1077,57 +990,61 @@ module WeaponCombatRoll =
             desc                = desc + resourceDesc + descSuffix
             combatRoll          = dicePool
             calculatedRange     = determineGreatestRange numDice weaponClass.range resourceRange
-            penetration         = determinePenetration numDice weaponClass.penetration (CalculatedPenetration resourcePenetration)
-            damageTypes         = Array.append weaponClass.damageTypes resourceDamageTypes
+            penetration         = weaponClass.penetration + resourcePenetration
+            damageTypes         = List.append weaponClass.damageTypes resourceDamageTypes
             areaOfEffectShape   = compareAndDetermineAOE numDice weaponClass.areaOfEffect resourceAreaOfEffect
             engageableOpponents = determineEngageableOpponents numDice weaponClass.engageableOpponents
         }
 
-    let createHandedVariationsCombatRolls twoHandedWeaponDice oneHandedWeaponDiceOption dualWieldableBonusOption preloadedCreateCombatRoll =
+    let createHandedVariationsCombatRolls
+        (twoHandedWeaponDice: DicePoolModification) 
+        (oneHandedWeaponDiceOption: DicePoolModification Option) 
+        (dualWieldableBonusOption: DicePoolModification Option) 
+        preloadedCreateCombatRoll : CombatRoll list =
 
-        let twoHandedCombat = preloadedCreateCombatRoll " (Two-handed)" [|twoHandedWeaponDice|]
+        let twoHandedCombat = preloadedCreateCombatRoll " (Two-handed)" [twoHandedWeaponDice]
         
         match oneHandedWeaponDiceOption with
-        | None -> [|twoHandedCombat|]
+        | None -> [twoHandedCombat]
         | Some oneHandedWeaponDice ->
 
-            let oneHandedCombat = preloadedCreateCombatRoll " (One-handed)" [|oneHandedWeaponDice|]
+            let oneHandedCombat = preloadedCreateCombatRoll " (One-handed)" [oneHandedWeaponDice]
 
             // If two and one handed have the same dice roll, then just return one handed to not clutter UI
-            let handedVariations = if oneHandedWeaponDice = twoHandedWeaponDice then [|oneHandedCombat|] else [|twoHandedCombat;oneHandedCombat|]
+            let handedVariations = if oneHandedWeaponDice = twoHandedWeaponDice then [oneHandedCombat] else [twoHandedCombat;oneHandedCombat]
      
             match dualWieldableBonusOption  with
             | None -> handedVariations
             | Some dualWieldableBonus -> 
-                preloadedCreateCombatRoll " (Dual-wielded)" [|oneHandedWeaponDice;dualWieldableBonus|]
-                |> Array.singleton
-                |> Array.append handedVariations
+                preloadedCreateCombatRoll " (Dual-wielded)" [oneHandedWeaponDice;dualWieldableBonus]
+                |> List.singleton
+                |> List.append handedVariations
 
-    let createWeaponCombatRollWithEquipmentList (equipment:EquipmentItem array) (attributeStats:AttributeStat array) (vocationStats:VocationStat array) attributeDeterminedDiceModArray =
+    let createWeaponCombatRollWithEquipmentList equipmentList (attributeStats:AttributeStat list) (vocationGroupList:VocationGroup list) attributeDeterminedDiceModArray =
+        equipmentList
+        |> getEquipedItems
+        |> List.collect (fun weaponItem ->
+            weaponItem
+            |> collectWeaponItemClasses
+            |> List.collect (fun weaponClass ->
 
-        getEquipedItems equipment
-        |> Array.collect (fun weaponItem ->
-
-            collectWeaponItemClasses weaponItem
-            |> Array.collect (fun weaponClass ->
-
-                let skillStat = findVocationalSkill vocationStats weaponClass.desc
-
-                let preloadedCreateHandVariationsCombatRolls =
-                    createHandedVariationsCombatRolls weaponClass.twoHandedWeaponDice weaponClass.oneHandedWeaponDice weaponClass.dualWieldableBonus
+                let skillStat = findVocationalSkill vocationGroupList weaponClass.desc
 
                 let preloadedCreateCombatRoll = 
                     createCombatRoll weaponItem.name weaponClass weaponItem.itemTier.baseDice attributeDeterminedDiceModArray attributeStats skillStat.lvl
 
-                match weaponClass.resourceClass with
-                | Some resourceClass -> 
-                    getEquipedItems equipment
-                    |> Array.collect( fun item ->
-                        collectWeaponResourceItemClasses item
-                        |> Array.filter ( fun weaponResourceItem -> weaponResourceItem.resourceClass = resourceClass)
-                        |> Array.collect (fun weaponResourceClass -> 
-                           Some weaponResourceClass |> preloadedCreateCombatRoll |> preloadedCreateHandVariationsCombatRolls
+                let preloadedCreateHandVariationsCombatRolls =
+                    createHandedVariationsCombatRolls weaponClass.twoHandedWeaponDice weaponClass.oneHandedWeaponDice weaponClass.dualWieldableBonus
 
+                match weaponClass.resourceClass with
+                | Some resourceClass ->
+                    equipmentList
+                    |> getEquipedItems
+                    |> List.collect( fun item ->
+                        collectWeaponResourceItemClasses item
+                        |> List.filter ( fun weaponResourceItem -> weaponResourceItem.resourceClass = resourceClass)
+                        |> List.collect (fun weaponResourceClass -> 
+                           Some weaponResourceClass |> preloadedCreateCombatRoll |> preloadedCreateHandVariationsCombatRolls
                         )
                     )
                 | None -> None |> preloadedCreateCombatRoll |> preloadedCreateHandVariationsCombatRolls
@@ -1139,7 +1056,6 @@ module MagicCombatRoll =
     open Attribute
     open Neg1To4
     open Range
-    open Penetration
     open Shape
     open EngageableOpponents
 
@@ -1173,21 +1089,28 @@ module MagicCombatRoll =
         | "Ranged Trick" -> rangeMap.Item "Short"
         | _           -> determineMagicRangedClass rangeMap lvl
 
-    let createMagicCombatRoll (magicResource:MagicResource) (attributeStats:AttributeStat array) skillStat (magicSkill:MagicSkill)
-                              (magicCombatType:MagicCombat) rangeMap attributeDeterminedDiceModArray : CombatRoll =
+    let createMagicCombatRoll
+        (magicResource:MagicResource)
+        (attributeStats:AttributeStat list)
+        (skillStat:SkillStat)
+        (magicSkill:MagicSkill)
+        (magicCombatType:MagicCombat)
+        (rangeMap:Map<string,Range>)
+        (attributeDeterminedDiceModArray:list<AttributeDeterminedDiceMod>)
+        : CombatRoll =
 
         let (resourceDesc, resourceDice) = determineMagicResource magicResource
 
-        let range = determineMagicRange rangeMap magicCombatType.desc <| (convert_Neg1To4_To_Int skillStat.lvl)
+        let range = determineMagicRange rangeMap magicCombatType.desc (neg1To4ToInt skillStat.lvl)
 
         let diceMods =
             determineAttributeDeterminedDiceMod skillStat.governingAttributes attributeDeterminedDiceModArray
-            |> Array.append [|
+            |> List.append [
                 determineAttributeDiceMod skillStat.governingAttributes attributeStats
-                convert_Neg1To4_To_Int skillStat.lvl |> intToDicePoolModification
+                neg1To4ToInt skillStat.lvl |> intToDicePoolModification
                 magicCombatType.diceModification
                 resourceDice
-            |]
+            ]
 
         let combatRoll = modifyDicePoolByModList baseDicePool diceMods
 
@@ -1197,7 +1120,7 @@ module MagicCombatRoll =
             desc                = sprintf "%s %s %s" magicSkill.desc magicCombatType.desc resourceDesc
             combatRoll          = combatRoll
             calculatedRange     = rangeToCalculatedRange numDice range
-            penetration         = calculatePenetration numDice magicCombatType.penetration
+            penetration         = magicCombatType.penetration
             damageTypes         = magicSkill.damageTypes
             areaOfEffectShape   = determineAOE numDice magicCombatType.areaOfEffect
             engageableOpponents = determineEngageableOpponents numDice magicCombatType.engageableOpponents
@@ -1208,7 +1131,7 @@ module MagicCombatRoll =
 
         let (resourceDesc, resourceDice) = determineMagicResource magicResource
 
-        let skillStatLvlAsInt = convert_Neg1To4_To_Int skillStatLvl
+        let skillStatLvlAsInt = neg1To4ToInt skillStatLvl
 
         let range = determineMagicRange rangeMap magicCombatType.desc (skillStatLvlAsInt + conduit.rangeAdjustment)
         let damageTypes = Array.append magicSkill.damageTypes conduit.damageTypes
@@ -1260,7 +1183,7 @@ module MagicCombatRoll =
                 |> Array.append handedVariations
 
     let createMagicCombatRolls (attributeStats:AttributeStat array) (vocationStats:VocationStat array) (magicSkillMap: Map<string,MagicSkill>)
-                               (magicCombatMap:Map<string,MagicCombat>) (equipment:EquipmentItem []) rangeMap attributeDeterminedDiceModArray =
+                               (magicCombatMap:Map<string,MagicCombat>) (equipment:Equipment []) rangeMap attributeDeterminedDiceModArray =
 
         let magicMapKeys  = magicSkillMap.Keys |> Array.ofSeq
         vocationStats
@@ -1270,12 +1193,10 @@ module MagicCombatRoll =
                 // Indexes into tho the magicMap for the type of Magic
                 let magicSkill        = magicSkillMap.Item skillStat.name
                 // Determines what types of MagicCombat can be preformed for the Magic
-                let magicCombatNames = determineMagicCombatTypes magicSkill.meleeCapable skillStat.lvl (magicCombatMap.Values |> Seq.toArray)
 
                 // Maps across the magicCombat types that the magic is capable of
-                magicCombatNames
-                |>Array.collect ( fun (magicCombatName:string) -> 
-                    let magicCombatType = magicCombatMap.Item magicCombatName
+                determineMagicCombatTypes magicSkill.isMeleeCapable skillStat.lvl (Seq.toList magicCombatMap.Values)
+                |> Array.collect ( fun magicCombatType -> 
 
                     let equipedConduits = getEquipedConduitItemsWithSkillName equipment skillStat.name
 
@@ -1350,9 +1271,9 @@ module MovementSpeedCalculation =
     type MovementSpeedCalculation = {
         desc                : string
         baseMovementSpeed   : uint
-        governingAttributes : Attribute array
+        governingAttributes : Attribute list
         feetPerAttributeLvl : uint
-        skillString         : string
+        governingSkill      : string
         feetPerSkillLvl     : uint
     }
 
@@ -1394,7 +1315,7 @@ module Effects =
         match effect with
         | MovementSpeedCalculation calculation ->
             let attributeLvl = determineAttributeLvl calculation.governingAttributes attributeStatArray
-            let athleticsLvl = findSkillStat calculation.skillString skillStatArray |> skillStatLvlToInt
+            let athleticsLvl = findSkillStat calculation.governingSkill skillStatArray |> skillStatLvlToInt
             createMovementSpeedString calculation attributeLvl athleticsLvl weightClass.percentOfMovementSpeed
         | CarryWeightCalculation maxCarryWeightCalculation ->
 
@@ -1454,7 +1375,6 @@ module Character =
     open VocationRoll
     open Effects
     open Attribute
-    open Item
     open CarryWeightCalculation
     open Equipment
 
@@ -1468,7 +1388,7 @@ module Character =
     let createCharacter skillStats attributeStats equipment  vocationData magicSkillMap (magicCombatMap:Map<string,MagicCombat>) rangeMap effectOptionTupleArray 
         (attributeDeterminedDicePoolModMap:Map<string,AttributeDeterminedDiceMod>) (carryWeightCalculation:CarryWeightCalculation) (weightClassData:WeightClass array) =
 
-        let totalWeight = calculateEquipmentItemArrayWeight equipment
+        let totalWeight = calculateEquipmentListWeight equipment
         let maxWeight   = calculateMaxCarryWeight carryWeightCalculation attributeStats skillStats
         let percentOfMaxWeight = totalWeight / maxWeight
 
@@ -1507,309 +1427,3 @@ module Character =
             calculatedEffectTable = calculatedEffectTable
         }
 
-module BuildRules =
-
-    open MapUtils
-    open Damage
-    open Penetration
-    open EngageableOpponents
-    open Range
-    open ResourceClass
-    open Attribute
-    open MagicSkill
-    open MagicCombat
-    open Dice
-    open WeaponClass
-    open ConduitClass
-    open WeaponResourceClass    
-    open ItemTier
-    open Item
-    open Equipment
-    open Neg1To4
-    open SkillStat
-    open VocationStat
-    open Character
-    open TypeUtils
-    open MovementSpeedCalculation
-    open Effects
-    open AreaOfEffect
-    open DefenseClass
-    open CarryWeightCalculation
-
-    type EffectMap = {
-        movementSpeedCalculationMap : Map<string,MovementSpeedCalculation>
-    }
-
-    let buildRules damageTypeData penetrationCalculationData calculatedEngageableOpponentsData 
-                   engageableOpponentsCalculationData calculatedRangeData rangeCalculationData resourceClassData
-                   attributeData  magicSkillData magicCombatData weaponClassData conduitClassData itemTierData itemData
-                   weaponResourceClassData equipmentData skillStatData attributeStatData movementSpeedData
-                   (vocationDataArray: (string * int * (string * int) array ) array) effectsTableData defenseClassData attributeDeterminedDiceModData 
-                   carryWeightCalculationData weightClassData =
-        // DamageTypeData
-        let stringToDamageTypeArray =
-            damageTypeData
-            |> stringArrayToTypeMap 
-            |> stringAndMapToDamageTypeArray 
-
-        // PenetrationData
-        let penetrationMap = 
-            penetrationCalculationData 
-            |> createMapFromTuple2List tupleToPenetrationCalculation 
-            |> createPenetrationMap 
-
-        // EngageableOpponentsData
-        let EOInterface =
-            createEOInterface 
-            <| createCalculatedEOMap calculatedEngageableOpponentsData
-            <| createEOCalculationMap engageableOpponentsCalculationData
-
-        // RangeData
-        let rangeMap = createRangeMap calculatedRangeData rangeCalculationData
-
-        let RangeOptionMap string =
-            match string with
-            | "None" -> None
-            | _      -> rangeMap.Item string |> Some
-
-        // ResourceClassData
-        let resourceClassMap : Map<string,ResourceClass> = stringArrayToTypeMap resourceClassData
-
-        let weaponResourceClassOptionMap string =
-            match string with
-            | "None" -> None
-            | _      -> Some <| resourceClassMap.Item string
-
-        // AttributeData
-        let internalAttributeMap = stringArrayToTypeMap attributeData
-
-        let MapAndStringToAttributes (attributeMap:Map<string,Attribute>) = 
-            String.filter ((<>)' ')
-            >> (fun s -> s.Split(',', System.StringSplitOptions.RemoveEmptyEntries))
-            >> Array.map (fun attributeString -> attributeMap.Item attributeString)
-
-        let stringToAttributes = MapAndStringToAttributes internalAttributeMap
-
-        let stringDescToAttributes (inputString:string) =
-            if inputString.Contains('{') then
-                let splitArray = inputString.Split('{', System.StringSplitOptions.RemoveEmptyEntries)
-                let removedFrontCurly = Array.last splitArray
-                let removedBackCurly  = removedFrontCurly.Split('}', System.StringSplitOptions.RemoveEmptyEntries)
-                stringToAttributes (removedBackCurly.[0])
-            else
-               [||]
-
-        // MagicSkillData
-        let createMagicSkill (desc, damageTypes, rangeAdjustment, meleeCapable, magicResourceClass) : MagicSkill = { 
-                desc               = desc
-                damageTypes        = stringToDamageTypeArray damageTypes
-                rangeAdjustment    = rangeAdjustment
-                meleeCapable       = meleeCapable
-                magicResourceClass = resourceClassMap.Item magicResourceClass
-            }
-
-        let magicSkillMap = createMapFromTuple5List createMagicSkill magicSkillData
-
-        // MagicCombatData
-        let createMagicCombat (desc, lvlRequirment, diceModification, penetration, range, 
-            engageableOpponents, minResourceRequirment, canVocationAssist, areaOfEffect ) =
-            { 
-                desc                  = desc
-                lvlRequirment         = intToNeg1To4 lvlRequirment
-                diceModification      = stringToDicePoolModification diceModification
-                penetration           = penetrationMap penetration
-                range                 = rangeMap.Item range
-                engageableOpponents   = EOInterface engageableOpponents
-                minResourceRequirment = minResourceRequirment
-                canVocationAssist     = canVocationAssist
-                areaOfEffect          = AreaOfEffectOptionMap.Item areaOfEffect
-            }
-
-        let magicCombatMap = createMapFromTuple9List createMagicCombat magicCombatData
-
-        // WeaponClassData
-        let createWeaponClass (desc, oneHandedWeaponDice, twoHandedWeaponDice, penetration, range, damageTypes, engageableOpponents, 
-               dualWieldableBonus, areaOfEffect, resourceClass, governingAttributes) = 
-            { 
-                desc                = desc
-                oneHandedWeaponDice = stringToDicePoolModificationOption oneHandedWeaponDice
-                twoHandedWeaponDice = stringToDicePoolModification twoHandedWeaponDice
-                penetration         = penetrationMap penetration
-                range               = rangeMap.Item range
-                damageTypes         = stringToDamageTypeArray damageTypes
-                engageableOpponents = EOInterface engageableOpponents
-                dualWieldableBonus  = stringToDicePoolModificationOption dualWieldableBonus
-                areaOfEffect        = AreaOfEffectOptionMap.Item areaOfEffect
-                resourceClass       = weaponResourceClassOptionMap resourceClass
-                governingAttributes = stringDescToAttributes governingAttributes
-            }
-
-        let weaponClassMap = createMapFromTuple11List createWeaponClass weaponClassData
-
-        // ConduitClassData
-        let createConduitClass (desc, oneHandedDice, twoHandedDice, penetration, rangeAdjustment, damageTypes, engageableOpponents, 
-                 dualWieldableBonus, areaOfEffect, resourceClass, governingAttributes) : ConduitClass = { 
-                desc                = desc
-                oneHandedDice       = stringToDicePoolModificationOption oneHandedDice
-                twoHandedDice       = stringToDicePoolModification twoHandedDice
-                penetration         = penetrationMap penetration
-                rangeAdjustment     = rangeAdjustment
-                damageTypes         = stringToDamageTypeArray damageTypes
-                engageableOpponents = match engageableOpponents with | "None" -> None | _ -> Some <| EOInterface engageableOpponents
-                dualWieldableBonus  = stringToDicePoolModificationOption dualWieldableBonus
-                areaOfEffect        = AreaOfEffectOptionMap.Item areaOfEffect
-                resourceClass       = weaponResourceClassOptionMap resourceClass
-                governingAttributes = stringDescToAttributes governingAttributes
-            }
-
-        let conduitClassMap = createMapFromTuple11List createConduitClass conduitClassData
-
-        // WeaponResourceClassData
-        let createWeaponResourceClass (name, resourceClass, resourceDice, penetration, range, damageTypes, areaOfEffect) = {
-            name                = name
-            resourceClass       = resourceClassMap.Item resourceClass
-            resourceDice        = stringToDicePoolModification resourceDice
-            penetration         = penetration
-            range               = RangeOptionMap range
-            damageTypes         = stringToDamageTypeArray damageTypes
-            areaOfEffect        = AreaOfEffectOptionMap.Item areaOfEffect
-        }
-    
-        let weaponResourceClassMap = createMapFromTuple7List createWeaponResourceClass weaponResourceClassData
-
-        // DefenseClassData
-
-        let defenseClassMap = createMapFromTuple4List tupleToDefenseClass defenseClassData
-
-        // ItemTierData
-        let createItemTier (desc, level, runeSlots, baseDice, durabilityMax) = 
-            { 
-                desc = desc
-                level = level
-                runeSlots = runeSlots 
-                baseDice = stringToDicePool baseDice
-                durabilityMax = durabilityMax 
-            }
-
-        let itemTierMap = createMapFromTuple5List createItemTier itemTierData
-
-        // ItemData
-
-        let stringToItemClassArray (weaponClassMap:Map<string,WeaponClass>) (conduitClassMap:Map<string,ConduitClass>) (weaponResourceClassMap:Map<string,WeaponResourceClass>) (input:string)  =
-            input.Split ", " |> 
-            Array.collect ( fun className ->
-                match className with
-                | weaponClassName  when weaponClassMap.Keys.Contains weaponClassName  -> weaponClassMap.Item weaponClassName |> WeaponClass |> Array.singleton
-                | conduitClassName when conduitClassMap.Keys.Contains conduitClassName -> conduitClassMap.Item conduitClassName |> ConduitClass |> Array.singleton
-                | weaponResourceClassName when weaponResourceClassMap.Keys.Contains weaponResourceClassName -> weaponResourceClassMap.Item weaponResourceClassName |> WeaponResourceClass |> Array.singleton
-                | defenseClassName when defenseClassMap.Keys.Contains defenseClassName -> defenseClassMap.Item defenseClassName |> DefenseClass |> Array.singleton
-                | _ -> [||]
-            )
-
-        let createItem (name, itemClasses, itemTier, durabilityOrAmount, weight, value) = 
-            {
-                name           = name
-                itemClasses    = stringToItemClassArray weaponClassMap conduitClassMap weaponResourceClassMap itemClasses
-                itemTier       = itemTierMap.Item itemTier
-                value          = value
-                weight         = weight
-            }
-
-        let itemMap   = createMapFromTuple6List createItem itemData
-
-        // EquipmentData
-
-        let equipmentArray = Array.map ( fun tuple -> tupleToEquipmentItem itemMap tuple) equipmentData
-
-        // SkillStatData
-        let createSkillStatArray skillStatData = Array.map ( fun tuple -> tupleToSkillStat internalAttributeMap tuple) skillStatData
-        let skillStatArray = createSkillStatArray skillStatData
-
-        // VocationData
-        let filterVocationData vocationDataArray : (string * int * (string * int) array ) array = 
-            Array.collect ( fun vocationData -> 
-                match vocationData with
-                | ( vocationDataName, vocationDataLvl, skillDataArray) ->
-                    if vocationDataName = "" then
-                        [||]
-                    else
-                        let filteredVocationalSkillData : (string * int) array= 
-                            Array.collect (fun skillData ->
-                                match skillData with
-                                | (skillDataName, skillDataLvl) ->
-                                    if skillDataName <> "" then
-                                        [|(skillDataName, skillDataLvl)|]
-                                    else
-                                        [||]
-                            ) skillDataArray
-                        [|(vocationDataName, vocationDataLvl, filteredVocationalSkillData)|]
-
-            ) vocationDataArray
-
-        let createVocationalSkill vocationGoverningAttributes (weaponClassMap: Map<string, WeaponClass>) vocationalSkillStatTuple: SkillStat =
-            match vocationalSkillStatTuple with
-            | (name, lvl) ->
-                if weaponClassMap.Keys.Contains name then
-                    let weaponClass = weaponClassMap.Item name
-                    { name = name; lvl = intToNeg1To4 lvl; governingAttributes = weaponClass.governingAttributes }
-                else
-                    { name = name; lvl = intToNeg1To4 lvl; governingAttributes = vocationGoverningAttributes }
-
-        let createVocationStat (vocationDataArray: (string * int * (string * int) array ) array) =
-            Array.map ( fun vocationData ->
-                match vocationData with
-                | ((vocationStatName:string), (vocationStatLvl:int),  (vocationalSkillDataArray)) ->
-                    let vocationGoverningAttributes = stringDescToAttributes vocationStatName;
-                    { 
-                        name = vocationStatName
-                        lvl = intToNeg1To4 vocationStatLvl
-                        governingAttributes = vocationGoverningAttributes
-                        vocationalSkills = Array.map (createVocationalSkill vocationGoverningAttributes weaponClassMap) vocationalSkillDataArray
-                    }
-            ) vocationDataArray
-
-        let vocationArray = filterVocationData vocationDataArray |> createVocationStat
-
-        // AttributeStatData
-        let attributeStatArray = Array.map ( fun tuple -> tupleToAttributeStat internalAttributeMap tuple) attributeStatData
-                
-        // MovementSpeedCalculationData
-        let createMovementSpeedCalculation (desc, baseMovementSpeed, attributesString, feetPerAttributeLvl, skillString, feetPerSkillLvl) =  
-            {
-                desc                = desc
-                baseMovementSpeed   = baseMovementSpeed
-                governingAttributes = stringToAttributes attributesString
-                feetPerAttributeLvl = feetPerAttributeLvl
-                skillString         = skillString
-                feetPerSkillLvl     = feetPerSkillLvl
-            }
-
-        let movementSpeedCalculationMap = createMapFromTuple6List createMovementSpeedCalculation movementSpeedData
-
-        // AttributeDeterminedDicePoolMod
-        let createAttributeDeterminedDicePoolMod (name, attributeString, diceModString) = { 
-            name                 = name
-            attributesToEffect   = stringToAttributes attributeString
-            dicePoolModification = stringToDicePoolModification diceModString 
-        }
-
-        // EffectTableData
-        let createEffectOptionTuples (desc, effect, time) = (
-            descToEffect movementSpeedCalculationMap desc,
-            desc, 
-            effect,
-            time
-        )
-
-        createCharacter 
-            skillStatArray 
-            attributeStatArray 
-            equipmentArray 
-            vocationArray 
-            magicSkillMap 
-            magicCombatMap 
-            rangeMap 
-            ( Array.map ( fun tuple -> createEffectOptionTuples tuple) effectsTableData )  // EffectionOtionTuple Array
-            ( createMapFromTuple3List createAttributeDeterminedDicePoolMod attributeDeterminedDiceModData ) // AttributeDeterminedDicePoolMod Data
-            ( createCarryWeightCalculation (carryWeightCalculationData |> Array.head) )                     // CarryWeightCalculation Data
-            ( Array.map ( fun tuple -> tupleToWeightClass tuple) weightClassData )  // WeightClassCalculation Data

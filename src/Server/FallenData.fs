@@ -3,7 +3,6 @@ namespace FallenData
 module Data =
     open FSharp.Data
 
-    open OldFallenLib.MapUtils
     open OldFallenLib.Damage
     open OldFallenLib.Penetration
     open OldFallenLib.EngageableOpponents
@@ -132,7 +131,7 @@ module Data =
                 desc = string row.["desc"]
                 damageTypes = stringToDamageTypeArray (string row.["damageTypes"])
                 rangeAdjustment = int row.["rangeAdjustment"]
-                meleeCapable = Bool row.["meleeCapable"]
+                isMeleeCapable = Bool row.["meleeCapable"]
                 magicResourceClass = string     row.["magicResourceClass"]
             })
 
@@ -148,7 +147,6 @@ module Data =
                 range                 = rangeMap.Item (string row.["Range"])
                 engageableOpponents   = engageableOpponentsMap row.["Engageable Opponents"]
                 minResourceRequirment = uint row.["Resource Requirment"]
-                canVocationAssist     = Bool row.["Vocation Assistable"]
                 areaOfEffect          = AreaOfEffectOptionMap.Item row.["Area Of Effect"]
             })
 
@@ -190,6 +188,7 @@ module Data =
                 areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
                 resourceClass = weaponResourceClassOptionMap row.["resourceClass"]
                 governingAttributes = stringToAttributes row.["governingAttributes"]
+                effectedMagicSkills = 
             })
 
     let conduitClassMap =

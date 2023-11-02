@@ -1,25 +1,5 @@
 namespace FallenLib
 
-module Neg1To4 =
-    type Neg1To4 = 
-    | NegOne
-    | Zero
-    | One
-    | Two
-    | Three
-    | Four
-
-    let neg1To4ToInt neg1To4 =
-        match neg1To4 with
-        | NegOne -> -1
-        | Zero -> 0
-        | One -> 1
-        | Two -> 2
-        | Three -> 3
-        | Four -> 4
-
-
-
 module Dice =
 
     open FParsec  
@@ -304,7 +284,6 @@ module Vocation =
 
 module VocationalSkill =
     open SkillUtils
-    open Neg1To4
     open Dice
     open Vocation
 
