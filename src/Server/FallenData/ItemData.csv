@@ -1,14 +1,16 @@
 desc,itemClasses,itemTier,durability,weight,value,quantity
-Copper Coin,Misc,Mundane,,0.02," 1 cc",1
-Bronze Coin,Misc,Mundane,,0.02," 1 bc",1
-Gold Coin,Misc,Mundane,,0.02," 1 gc",1
-Platinum Coin,Misc,Mundane,,0.02," 1 pc",1
+Copper Coin,Misc,Mundane,,0.02, 1 cc,1
+Bronze Coin,Misc,Mundane,,0.02, 1 bc,1
+Gold Coin,Misc,Mundane,,0.02, 1 gc,1
+Platinum Coin,Misc,Mundane,,0.02, 1 pc,1
 ,,,,,,
 Unarmed,Unarmed,Mundane,12/12,0,0 bc,1
 Unarmed Disarming,Disarming Unarmed,Mundane,12/12,0,0 bc,1
 Dagger,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Mundane,12/12,1,2 bc,1
-Shortsword,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Mundane,12/12,1.5,10 bc,1
+Shoddy Shortsword,"Small Thursting Point, Small Slashing Blade, Thrown Small Point",Shoddy,9/9,1.5,7 bc,1
+Shortsword,"Small Thursting Point, Small Slashing Blade, Thrown Small Point",Mundane,12/12,1.5,10 bc,1
 Handaxe,Small Hafted Blade,Mundane,12/12,2,10 bc,1
+Shoddy Sickle,Small Hafted Blade,Shoddy,9/9,2,3 bc,1
 Sickle,Small Hafted Blade,Mundane,12/12,2,5 bc,1
 Light Hammer,Small Hafted Blunt,Mundane,12/12,2,1 bc,1
 Arming Sword,"Med. Thrusting Sword, Med. Slashing Sword",Mundane,12/12,2,2 bc,1
@@ -17,18 +19,20 @@ Scimitar,Med. Slashing Sword,Mundane,12/12,2,25 bc,1
 Shoddy Scimitar,Med. Slashing Sword,Shoddy,9/9,2,15 bc,1
 Battleaxe,Med. Hafted Axe,Mundane,12/12,4,10 bc,1
 Flail,Med. Hafted Blunt,Mundane,12/12,3,10 bc,1
+Shoddy Morning Star,Med. Hafted Blunt,Shoddy,9/9,4,10 bc,1
 Morning Star,Med. Hafted Blunt,Mundane,12/12,4,15 bc,1
 Mace,Med. Hafted Blunt,Mundane,12/12,3,5 bc,1
 Warhammer/pick,"Med. Hafted Blunt, Med. Hafted Point",Mundane,12/12,4,9 bc,1
-Longsword,Large Sword,Mundane,12/12,3,15 bc,1
+Longsword,"Large Thrusting Sword, Large Slashing Sword",Mundane,12/12,3,15 bc,1
 Glaive,Large Hafted Blade,Mundane,12/12,6,20 bc,1
 Greataxe,Large Hafted Blade,Mundane,12/12,7,30 bc,1
 Maul,Large Hafted Blunt,Mundane,12/12,7,10 bc,1
 Short Spear,"Short Spear, Thrown Short Spear",Mundane,12/12,3,1 bc,1
 Trident,"Short Spear, Thrown Short Spear",Mundane,12/12,3,5 bc,1
 Poleaxe,"Large Hafted Blunt, Large Hafted Blade, Large Hafted Point",Mundane,12/12,6,40 bc,1
+Crude Wooden Javelin,"Short Spear, Thrown Short Spear",Compromised,6/6,3,1 bc,1
 Javelin,"Short Spear, Thrown Short Spear",Mundane,12/12,3,5 bc,1
-Greatsword,Greatsword,Mundane,12/12,6,50 bc,1
+"Thrusting Greatsword, Slashing Greatsword","Thrusting Greatsword, Slashing Greatsword",Mundane,12/12,6,50 bc,1
 Swordstaff,"Reach Hafted Blade, Longspear",Mundane,12/12,6,50 bc,1
 Halberd,"Reach Hafted Blade, Reach Hafted Point",Mundane,12/12,7,20 bc,1
 Long Poleaxe,"Reach Hafted Blunt, Reach Hafted Blade, Reach Hafted Point",Mundane,12/12,7,41 bc,1
@@ -60,13 +64,13 @@ Fang - Practice,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point
 Sirius’s Sword,"Med. Thrusting Sword, Med. Slashing Sword",Fine,18/18,2,?,1
 Monkey Staff,Med. Hafted Blunt,Excellent,21/21,4,?,1
 Hew,Med. Hafted Axe,Excellent,21/21,4,?,1
-Char,Greatsword,Mundane,12/12,6,?,1
+Char,"Thrusting Greatsword, Slashing Greatsword",Mundane,12/12,6,?,1
 Epilogue,"Med. Thrusting Sword, Med. Slashing Sword",Excellent,21/21,2,?,1
 Echo,"Med. Thrusting Sword, Med. Slashing Sword",Superior,24/24,2,?,1
 Asclepius,"Short Spear, Whip",Mastercraft,33/33,3,?,1
 Soot and Ash,"Med. Thrusting Sword, Med. Slashing Sword, Small Thrusting Point, Small Slashing Blade",Epic,39/39,0.2,?,1
 The Spear of Destiny,"Reach Hafted Blade, Longspear",Artifact,48/48,14,?,1
-Dancing Moonlight,"Large Sword, Greatsword, Default Conduit",Mythic,45/45,3,?,1
+Dancing Moonlight,"Large Thrusting Sword, Large Slashing Sword, Thrusting Greatsword, Slashing Greatsword, Default Conduit",Mythic,45/45,3,?,1
 Adversary - Damaged,Radiance Conduit,Fine,18/18,1,?,1
 Sharp Cap,Small Slashing Blade,Shoddy,9/9,0.5,2 bc,1
 Fine Arming Sword,"Med. Thrusting Sword, Med. Slashing Sword",Fine,18/18,2,?,1
@@ -75,7 +79,7 @@ Bodkin Knife,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",M
 Quality Warhammer/pick,"Med. Hafted Blunt, Med. Hafted Point",Quality,15/15,4,?,1
 Quality War Axe,Large Hafted Blade,Quality,15/15,5,5 bc,1
 War Axe,Large Hafted Blade,Mundane,12/12,5,5 bc,1
-Asher’s Arms Bollock Dagger,"Small Bladed, Thrown Small Point",Superior,24/24,1,10 bc,1
+Asher’s Arms Bollock Dagger,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Superior,24/24,1,10 bc,1
 Spencer's Arms Arming Sword,"Med. Thrusting Sword, Med. Slashing Sword",Superior,24/24,2,20 bc,1
 Dragon Torch,"Med. Torch, Blazecraft Conduit",Artifact,48/48,3,9999 bc,1
 Shovel,Med. Hafted Blunt,Shoddy,9/9,5,2 bc,1
@@ -89,11 +93,12 @@ Shoddy Club,Med. Hafted Blunt,Shoddy,9/9,2,10 cc,1
 Claws (Large),Claws (Large),Mundane,,0,None,1
 Claws,Claws,Mundane,,0,None,1
 Bite (Large),Claws (Large),Mundane,,0,None,1
-Bite,Bite (Large),Mundane,,0,None,1
+Bite,Bite,Mundane,,0,None,1
 Stomp (Large),Stomp (Large),Mundane,,0,None,1
 Stomp (Medium),Stomp (Medium),Mundane,,0,None,1
 Horns (Medium),Horns (Medium),Mundane,,0,None,1
 ,,,,,,
+Natural Armor Level 1,Phy. Def. 1,Mundane,,0,None,1
 Natural Armor Level 2,Phy. Def. 2,Mundane,,0,None,1
 ,,,,,,
 Gambeson Coat,Phy. Def. 1,Mundane,12/12,5,2 bc,1
@@ -113,6 +118,7 @@ Superior Leather Cuirass and Pauldrons,Phy. Def. 0.5,Superior,24/24,4,3 bc,1
 Superior Leather Cuisses and Greaves,Phy. Def. 0.5,Superior,24/24,3,2 bc,1
 Superior Leather Vambrace,Phy. Def. 0.5,Superior,24/24,2,1.5 bc,1
 Chainmail Coif,Phy. Def. 0.75,Superior,24/24,4,11.2 bc,1
+Rusted Chainmail Shirt,Phy. Def. 1,Compromised,3/3,24,1 bc,1
 Chainmail Shirt,Phy. Def. 1,Mundane,12/12,24,22.4 bc,1
 Chainmail Leggings,Phy. Def. 0.75,Mundane,12/12,15,11.2 bc,1
 Chainmail Sleeves,Phy. Def. 0.75,Mundane,12/12,12,11.2 bc,1
