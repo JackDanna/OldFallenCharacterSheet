@@ -4,7 +4,7 @@ open FallenLib.Neg1To4
 open Neg1To4Stat
 open FallenLib.VocationGroup
 
-type Model = Neg1To4
+type Model = Neg1To4Stat.Model
 
 type Msg =
     | ToggleNegOne of bool

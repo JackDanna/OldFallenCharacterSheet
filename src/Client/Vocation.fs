@@ -1,4 +1,4 @@
-module VocationRow
+module Vocation
 
 open FallenLib.Vocation
 open FallenLib.Attribute
@@ -12,10 +12,10 @@ type Msg =
     | ZeroToFourStat of ZeroToFourStat.Msg
     | ToggleGoverningAttribute of int
 
-let init (governingAttributes:GoverningAttribute list) : Model = {
+let init () : Model = {
     name = ""
     level = ZeroToFourStat.init()
-    governingAttributes = governingAttributes
+    governingAttributes = []
 }
 
 let attributesToGoverningAttributes attributes governingAttributes =

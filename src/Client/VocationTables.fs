@@ -1,18 +1,16 @@
 module VocationTables
 
-open FallenLib.Vocation
-
 type Model = VocationTable.Model list
 
 type Msg =
     | Modify of int * VocationTable.Msg
 
-let init (governingAttributes:GoverningAttribute list) : Model =
+let init() : Model =
     
     [
-        VocationTable.init(governingAttributes);
-        VocationTable.init(governingAttributes);
-        VocationTable.init(governingAttributes);
+        VocationTable.init();
+        VocationTable.init();
+        VocationTable.init();
     ]
 
 let update (msg: Msg) (model: Model) : Model =
