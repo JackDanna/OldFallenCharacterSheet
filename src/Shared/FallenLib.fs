@@ -1280,8 +1280,8 @@ module Effects =
         match effect with
         | MovementSpeedCalculation calculation ->
             let attributeLvl = determineAttributeLvl calculation.governingAttributes attributeStatArray
-            let athleticsLvl = findVocationalSkillStat calculation.governingSkill skillStatArray |> skillStatLvlToInt
-            createMovementSpeedString calculation attributeLvl athleticsLvl weightClass.percentOfMovementSpeed
+            let skillLvl = findVocationalSkillStat calculation.governingSkill skillStatArray |> skillStatLvlToInt
+            createMovementSpeedString calculation attributeLvl skillLvl weightClass.percentOfMovementSpeed
         | CarryWeightCalculation maxCarryWeightCalculation ->
 
             "Wrong path, fix this" // Remove this path
