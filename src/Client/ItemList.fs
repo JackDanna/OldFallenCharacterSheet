@@ -1,6 +1,6 @@
 module ItemRowList
 
-open OldFallenLib.Item
+open FallenLib.Item
 
 type Model = ItemRow.Model list
 
