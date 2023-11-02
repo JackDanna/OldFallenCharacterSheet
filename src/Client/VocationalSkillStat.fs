@@ -2,13 +2,9 @@ module VocationalSkillStat
 
 open FallenLib.Neg1To4
 open Neg1To4Stat
-open FallenLib.VocationalSkill
+open FallenLib.VocationGroup
 
-
-type Model = {
-    level : Neg1To4Stat.Model
-    levelCap : VocationStat.Model
-}
+type Model = Neg1To4
 
 type Msg =
     | ToggleNegOne of bool
@@ -16,12 +12,8 @@ type Msg =
     | ToggleTwo of bool
     | ToggleThree of bool
     | ToggleFour of bool
-    | SetLevelCap of VocationStat.Model
 
-let init (levelCap : VocationStat.Model) : Model = {
-    level = Zero
-    levelCap = levelCap
-}
+let init () : Model = Neg1To4Stat.init()
 
 let determineIfCapped levelCap level =
     (neg1To4ToInt level) > neg1To4ToInt (zeroToFourToNegOneToFour levelCap)
@@ -32,7 +24,7 @@ let determineIfCappedAndReturnModel levelCap level =
     | true  -> zeroToFourToNegOneToFour levelCap
     | false -> level
 
-let update (msg: Msg) (model: Model) : Model =
+let update (levelCap:ZeroToFourStat.Model) (msg: Msg) (model: Model) : Model =
 
     let toggleLogic levelCap isChecked levelIfTrue levelIfFalse =
         match isChecked with
@@ -40,16 +32,11 @@ let update (msg: Msg) (model: Model) : Model =
         | false -> determineIfCappedAndReturnModel levelCap levelIfFalse
 
     match msg with
-    | ToggleNegOne isChecked -> { model with level = toggleLogic model.levelCap isChecked NegOne Zero }
-    | ToggleOne isChecked -> { model with level = toggleLogic model.levelCap isChecked One Zero }
-    | ToggleTwo isChecked -> { model with level = toggleLogic model.levelCap isChecked Two One }
-    | ToggleThree isChecked -> { model with level = toggleLogic model.levelCap isChecked Three Two }
-    | ToggleFour isChecked -> { model with level = toggleLogic model.levelCap isChecked Four Three }
-    | SetLevelCap levelCap ->
-        { model with
-            level = determineIfCappedAndReturnModel levelCap model.level
-            levelCap = levelCap
-        }
+    | ToggleNegOne isChecked -> toggleLogic levelCap isChecked NegOne Zero
+    | ToggleOne isChecked -> toggleLogic levelCap isChecked One Zero
+    | ToggleTwo isChecked -> toggleLogic levelCap isChecked Two One
+    | ToggleThree isChecked -> toggleLogic levelCap isChecked Three Two
+    | ToggleFour isChecked -> toggleLogic levelCap isChecked Four Three
 
 open Feliz
 open Feliz.Bulma
@@ -59,45 +46,26 @@ let isVocationalCheckboxDisabled levelCap level checkboxRepresented =
         | true -> true
         | _ -> isCheckboxDisabled level checkboxRepresented
 
-let view (model : Model) (dispatch : Msg -> unit) =
-    
-    Bulma.columns [
+let view (levelCap:ZeroToFourStat.Model) (model : Model) (dispatch : Msg -> unit) =
+
+    let checkbox levelCap model neg1To4 toggleNeg1To4 =
         Bulma.column [
             Bulma.input.checkbox [
-                prop.disabled (isVocationalCheckboxDisabled model.levelCap model.level NegOne)
-                prop.isChecked (isCheckedLogic model.level NegOne)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleNegOne isChecked) )
+                prop.disabled (isVocationalCheckboxDisabled levelCap model neg1To4)
+                prop.isChecked (isCheckedLogic model NegOne)
+                prop.onCheckedChange ( fun isChecked -> dispatch (toggleNeg1To4 isChecked) )
             ]
         ]
+
+    let loadedCheckbox = checkbox levelCap model
+    
+    Bulma.columns [
+        loadedCheckbox NegOne ToggleNegOne
         Bulma.column [
             Html.div [ prop.text "-" ]
         ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isVocationalCheckboxDisabled model.levelCap model.level One)
-                prop.isChecked (isCheckedLogic model.level One)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleOne isChecked) )
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isVocationalCheckboxDisabled model.levelCap model.level Two)
-                prop.isChecked (isCheckedLogic model.level Two)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleTwo isChecked) )
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isVocationalCheckboxDisabled model.levelCap model.level Three)
-                prop.isChecked (isCheckedLogic model.level Three)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleThree isChecked) )
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isVocationalCheckboxDisabled model.levelCap model.level Four)
-                prop.isChecked (isCheckedLogic model.level Four)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleFour isChecked) )
-            ]
-        ]
+        loadedCheckbox One ToggleOne
+        loadedCheckbox Two ToggleTwo
+        loadedCheckbox Three ToggleThree
+        loadedCheckbox Four ToggleFour
     ]

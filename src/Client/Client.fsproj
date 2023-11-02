@@ -14,7 +14,7 @@
     <Compile Include="ZeroToFourStat.fs" />
     <Compile Include="Vocation.fs" />
     <Compile Include="VocationalSkillStat.fs" />
-    <Compile Include="VocationalSkillRow.fs" />
+    <Compile Include="VocationalSkill.fs" />
     <Compile Include="VocationTable.fs" />
     <Compile Include="VocationTables.fs" />
     <Compile Include="Item.fs" />

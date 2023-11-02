@@ -44,44 +44,25 @@ open Feliz.Bulma
 
 
 let view (model : Model) (dispatch : Msg -> unit) =
-    
-    Bulma.columns [
+
+    let checkbox model neg1To4 toggleNeg1To4 =
         Bulma.column [
             Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model NegOne)
-                prop.isChecked (isCheckedLogic model NegOne)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleNegOne isChecked) )
+                prop.disabled (isCheckboxDisabled model neg1To4)
+                prop.isChecked (isCheckedLogic model neg1To4)
+                prop.onCheckedChange ( fun isChecked -> dispatch (toggleNeg1To4 isChecked) )
             ]
         ]
+    
+    let loadedCheckbox = checkbox model
+    
+    Bulma.columns [
+        loadedCheckbox NegOne ToggleNegOne
         Bulma.column [
             Html.div [ prop.text "-" ]
         ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model One)
-                prop.isChecked (isCheckedLogic model One)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleOne isChecked) )
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model Two)
-                prop.isChecked (isCheckedLogic model Two)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleTwo isChecked) )
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model Three)
-                prop.isChecked (isCheckedLogic model Three)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleThree isChecked) )
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model Four)
-                prop.isChecked (isCheckedLogic model Four)
-                prop.onCheckedChange ( fun isChecked -> dispatch (ToggleFour isChecked) )
-            ]
-        ]
+        loadedCheckbox One ToggleOne
+        loadedCheckbox Two ToggleTwo
+        loadedCheckbox Three ToggleThree
+        loadedCheckbox Four ToggleFour
     ]

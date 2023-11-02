@@ -4,21 +4,21 @@ open FallenLib.Vocation
 
 type Model = {
     vocationRow : VocationRow.Model
-    vocationalSkillRowList : VocationalSkillRow.Model List
+    vocationalSkillRowList : VocationalSkill.Model List
 }
 
 type Msg =
     | VocationRowMsg of VocationRow.Msg
     | Insert
     | Remove
-    | Modify of int * VocationalSkillRow.Msg
+    | Modify of int * VocationalSkill.Msg
     | SetGoverningAttributes of AttributeStat.Model list
 
 let init (governingAttributes:GoverningAttribute list) : Model =
     let vocationRow = VocationRow.init(governingAttributes)
     {
         vocationRow = vocationRow
-        vocationalSkillRowList = [VocationalSkillRow.init (vocationRow) ]
+        vocationalSkillRowList = [VocationalSkill.init (vocationRow) ]
     }
 
 let update (msg: Msg) (model: Model) : Model =
@@ -30,14 +30,14 @@ let update (msg: Msg) (model: Model) : Model =
             vocationRow = newVocationRow
             vocationalSkillRowList =
                 List.map ( fun vocationalSkillRow ->
-                    VocationalSkillRow.update (VocationalSkillRow.Msg.SetVocationRow (newVocationRow)) vocationalSkillRow
+                    VocationalSkill.update (VocationalSkill.Msg.SetVocationRow (newVocationRow)) vocationalSkillRow
                 ) model.vocationalSkillRowList
         }
 
     | Insert ->
         { model with 
             vocationalSkillRowList = 
-                List.append model.vocationalSkillRowList [VocationalSkillRow.init(model.vocationRow)]
+                List.append model.vocationalSkillRowList [VocationalSkill.init(model.vocationRow)]
         }
 
     | Remove ->
@@ -49,9 +49,9 @@ let update (msg: Msg) (model: Model) : Model =
     | Modify (position, msg) ->
         { model with 
             vocationalSkillRowList = 
-                List.mapi ( fun i (skillRow:VocationalSkillRow.Model) ->
+                List.mapi ( fun i (skillRow:VocationalSkill.Model) ->
                     if position = i then
-                        VocationalSkillRow.update msg skillRow
+                        VocationalSkill.update msg skillRow
                     else 
                         skillRow
                 ) model.vocationalSkillRowList
@@ -62,7 +62,7 @@ let update (msg: Msg) (model: Model) : Model =
             vocationRow = newVocationRow 
             vocationalSkillRowList =
                 List.map ( fun vocationalSkill ->
-                    VocationalSkillRow.update (VocationalSkillRow.Msg.SetVocationRow (newVocationRow)) vocationalSkill 
+                    VocationalSkill.update (VocationalSkill.Msg.SetVocationRow (newVocationRow)) vocationalSkill 
                 ) model.vocationalSkillRowList}
     
 
@@ -77,7 +77,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 List.mapi ( 
                     fun position skillRow ->
 
-                        VocationalSkillRow.view
+                        VocationalSkill.view
                             skillRow
                             ( fun msg -> dispatch ( Modify (position,msg) ) )
 

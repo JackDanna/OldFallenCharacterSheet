@@ -1,45 +1,33 @@
-module VocationalSkillRow
+module VocationalSkill
 
+open FallenLib.VocationGroup
+open FallenLib.Vocation
 open FallenLib.Dice
-open FallenLib.VocationalSkill
+open FallenLib.SkillStat
 
-type Model = {
-    name : string
-    vocationalSkillStat : VocationalSkillStat.Model
-    vocationRow : VocationRow.Model
-}
+type Model = SkillStat
 
 type Msg =
     | SetName of string
-    | SetVocationRow of VocationRow.Model
     | VocationalSkillStatMsg of VocationalSkillStat.Msg
 
-let init (vocationRow:VocationRow.Model) : Model = 
+let init () : Model = 
     {
         name = ""
-        vocationalSkillStat = VocationalSkillStat.init (vocationRow.level)
-        vocationRow = vocationRow
+        lvl = Neg1To4Stat.init()
     }
 
 
-let update(msg: Msg) (model: Model) : Model =
+let update (levelCap:ZeroToFourStat.Model) (msg: Msg) (model: Model) : Model =
     match msg with
     | SetName name -> { model with name = name }
-    | SetVocationRow newVocationRow ->
-        { model with
-            vocationRow = newVocationRow
-            vocationalSkillStat = 
-                VocationalSkillStat.update (VocationalSkillStat.Msg.SetLevelCap (newVocationRow.level)) model.vocationalSkillStat
-        }
     | VocationalSkillStatMsg vocationalSkillStatMsg ->
-        { model with
-            vocationalSkillStat = VocationalSkillStat.update vocationalSkillStatMsg model.vocationalSkillStat
-        }
+        { model with lvl = VocationalSkillStat.update levelCap vocationalSkillStatMsg model.lvl }
         
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (governingAttributes:GoverningAttribute list) (levelCap:ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [
             Bulma.dropdown [
@@ -61,15 +49,16 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            vocationalToDicePoolString
-                baseDicePoolCalculation
-                model.vocationRow.governingAttributes
-                model.vocationalSkillStat.level
+            vocationalSkillToString
+                baseDicePool
+                model.lvl
+                governingAttributes
             |> prop.text
         ]
         Bulma.column [
             VocationalSkillStat.view
-                model.vocationalSkillStat
+                levelCap
+                model.lvl
                 (VocationalSkillStatMsg >> dispatch)
         ]
     ]

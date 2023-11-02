@@ -840,8 +840,10 @@ module Vocation =
 module VocationGroup =
 
     open Neg1To4
+    open ZeroToFour
     open SkillStat
     open Vocation
+    open Dice
 
     type VocationGroup = {
         vocation : Vocation
@@ -853,7 +855,7 @@ module VocationGroup =
         |> List.filter (fun skill -> skill.name = skillName)
         |> ( fun list ->
             if list.Length = 0 then
-                {name = skillName; lvl = Zero}
+                {name = skillName; lvl = Neg1To4.Zero}
             else
                 List.maxBy (fun skill -> skill.lvl) list
         )
@@ -863,6 +865,22 @@ module VocationGroup =
         |> List.map (fun vocation -> vocation.vocationalSkills)
         |> List.collect ( fun x -> x)
         |> findVocationalSkillStat vocationalSkillName
+    
+    let zeroToFourToNegOneToFour zeroToFour =
+        match zeroToFour with
+        | Zero -> Neg1To4.Zero
+        | One -> Neg1To4.One
+        | Two -> Neg1To4.Two
+        | Three -> Neg1To4.Three
+        | Four -> Neg1To4.Four
+    
+    let vocationalSkillToString baseDice level governingAttributes =
+        let diceModList =
+            List.append
+                (governingAttributesToDicePoolModification governingAttributes) 
+                [neg1To4ToD6DicePoolModification level]
+        modifyDicePoolByModList baseDice diceModList
+        |> dicePoolToString
 
 module CombatRoll =
     open Dice
