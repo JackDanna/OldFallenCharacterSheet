@@ -568,6 +568,8 @@ module DefenseClass =
         spiritualDefense : float
     }
 
+// Magic
+
 module MagicResource =
 
     open Dice
