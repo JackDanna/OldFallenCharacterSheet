@@ -92,24 +92,10 @@ let update (msg: Msg) (model: Model) : Model =
     | VocationTableMsg vocationTableMsg ->
         { model with vocationTables = VocationTables.update vocationTableMsg model.vocationTables }
 
-    | SetName name -> { model with name = name}
+    | SetName name -> { model with name = name }
 
 open Feliz
 open Feliz.Bulma
-
-let navBrand =
-    Bulma.navbarBrand.div [
-        Bulma.navbarItem.a [
-            prop.href "https://safe-stack.github.io/"
-            navbarItem.isActive
-            prop.children [
-                Html.img [
-                    prop.src "/favicon.png"
-                    prop.alt "Logo"
-                ]
-            ]
-        ]
-    ]
 
 let view (model: Model) (dispatch: Msg -> unit) =
     
