@@ -1,4 +1,4 @@
-namespace OldFallenLib
+namespace NewFallenLib
 
 module Dice =
 
