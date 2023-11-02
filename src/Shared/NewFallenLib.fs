@@ -1,4 +1,4 @@
-namespace FallenLib
+namespace OldFallenLib
 
 module Dice =
 
@@ -177,19 +177,9 @@ module Dice =
     let calcDicePoolCalculation dicePoolCalculation =
         removeDiceFromDicePool dicePoolCalculation.dicePool dicePoolCalculation.dicePoolPenalty
 
-module Attribute =
-    open Neg1To4
-    
-    type Attribute = {
-        name : string
-        neg1To4Stat : Neg1To4
-    }
-
 module SkillUtils =
 
-    open Neg1To4
     open Dice
-    open Attribute
 
     type Skill = {
         name  : string

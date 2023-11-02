@@ -1,9 +1,9 @@
-module CoreSkillTables
+module CoreSkillGroups
 
-type Model = CoreSkillTable.Model list
+type Model = CoreSkillGroup.Model list
 
 type Msg =
-    | Modify of int * CoreSkillTable.Msg
+    | Modify of int * CoreSkillGroup.Msg
 
 let init() : Model = []
 
@@ -13,7 +13,7 @@ let update (msg: Msg) (model: Model) : Model =
 
         List.mapi ( fun i coreSkilTableModel ->
             if i = position then
-                CoreSkillTable.update coreSkillTableMsg coreSkilTableModel
+                CoreSkillGroup.update coreSkillTableMsg coreSkilTableModel
             else
                 coreSkilTableModel
         ) model
@@ -35,7 +35,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 |> List.mapi ( 
                     fun position coreSkillTable -> 
                         Bulma.column [
-                            CoreSkillTable.view 
+                            CoreSkillGroup.view 
                                 coreSkillTable
                                 (fun msg -> dispatch (Modify (position, msg)) )
                         ]

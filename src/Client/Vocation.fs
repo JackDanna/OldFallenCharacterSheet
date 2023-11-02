@@ -1,36 +1,32 @@
 module VocationRow
 
 open FallenLib.Vocation
-open FallenLib.Dice
 open FallenLib.Attribute
+open FallenLib.Dice
 
-type Model = {
-    name : string
-    level : VocationStat.Model
-    governingAttributes : GoverningAttribute list
-}
+type Model = Vocation
 
 type Msg =
     | SetName of string
-    | SetGoverningAttributes of Attribute list
-    | VocationStatMsg of VocationStat.Msg
+    | SetGoverningAttributes of AttributeStat list
+    | ZeroToFourStat of ZeroToFourStat.Msg
     | ToggleGoverningAttribute of int
 
 let init (governingAttributes:GoverningAttribute list) : Model = {
     name = ""
-    level = VocationStat.init()
+    level = ZeroToFourStat.init()
     governingAttributes = governingAttributes
 }
 
 let attributesToGoverningAttributes attributes governingAttributes =
     attributes
-    |> List.map ( fun (attribute:AttributeRow.Model) ->
+    |> List.map ( fun (attributeStat:AttributeStat) ->
         {
-            attributeStat = attribute
+            attributeStat = attributeStat
             isGoverning =
                 governingAttributes
                 |> List.collect ( fun currentGoverningAttribute ->
-                    if (currentGoverningAttribute.attributeStat.name = attribute.name) && currentGoverningAttribute.isGoverning then
+                    if (currentGoverningAttribute.attributeStat.attribute = attributeStat.attribute) && currentGoverningAttribute.isGoverning then
                         [currentGoverningAttribute.isGoverning]
                     else
                         []
@@ -47,8 +43,8 @@ let update (msg: Msg) (model: Model) : Model =
     | SetGoverningAttributes attributes ->
         { model with governingAttributes = attributesToGoverningAttributes attributes model.governingAttributes }
 
-    | VocationStatMsg neg1ToStatMsg ->
-        { model with level = VocationStat.update neg1ToStatMsg model.level }
+    | ZeroToFourStat neg1ToStatMsg ->
+        { model with level = ZeroToFourStat.update neg1ToStatMsg model.level }
 
     | ToggleGoverningAttribute position ->
 
@@ -77,7 +73,7 @@ let governingAttributeItems (model: Model) (dispatch: Msg -> unit) =
                         ]
                     ]
                     Bulma.column [
-                        prop.text governingAttribute.attributeStat.name
+                        prop.text governingAttribute.attributeStat.attribute
                     ]
                 ]
             ]
@@ -110,10 +106,10 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            vocationToDicePoolString baseDicePoolCalculation model.governingAttributes model.level
+            vocationToString baseDicePool model.level model.governingAttributes
             |> prop.text
         ]
         Bulma.column [
-            VocationStat.view model.level (VocationStatMsg >> dispatch)
+            ZeroToFourStat.view model.level (ZeroToFourStat >> dispatch)
         ]
     ]

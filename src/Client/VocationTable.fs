@@ -12,7 +12,7 @@ type Msg =
     | Insert
     | Remove
     | Modify of int * VocationalSkillRow.Msg
-    | SetGoverningAttributes of AttributeRow.Model list
+    | SetGoverningAttributes of AttributeStat.Model list
 
 let init (governingAttributes:GoverningAttribute list) : Model =
     let vocationRow = VocationRow.init(governingAttributes)

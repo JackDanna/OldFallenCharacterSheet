@@ -8,11 +8,11 @@ open FallenLib.Vocation
 
 type Model = {
     name: string
-    coreSkillTables : CoreSkillTables.Model
+    coreSkillTables : CoreSkillGroups.Model
     vocationTables : VocationTables.Model
 }
 
-let defaultCoreSkillTables : CoreSkillTables.Model = [
+let defaultCoreSkillTables : CoreSkillGroups.Model = [
     {
         attributeRow = { AttributeRow.init() with name = "STR"}
         coreSkillList = [
@@ -43,15 +43,15 @@ let defaultCoreSkillTables : CoreSkillTables.Model = [
 ]
 
 let attributesToGoverningAttributesInit attributes =
-    List.map ( fun (attribute:AttributeRow.Model) ->
+    List.map ( fun (attribute:AttributeStat.Model) ->
         {
             attributeStat = attribute
             isGoverning = false
         }
     ) attributes
 
-let coreSkillTablesToAttributes (coreSkillTables:CoreSkillTables.Model) =
-    List.map ( fun (table: CoreSkillTable.Model) ->
+let coreSkillTablesToAttributes (coreSkillTables:CoreSkillGroups.Model) =
+    List.map ( fun (table: CoreSkillGroup.Model) ->
         table.attributeRow
     ) coreSkillTables
 
@@ -62,7 +62,7 @@ let defaultGoverningAttribute =
 
 
 type Msg =
-    | CoreSkillTablesMsg of CoreSkillTables.Msg
+    | CoreSkillTablesMsg of CoreSkillGroups.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
 
@@ -76,7 +76,7 @@ let init () : Model =
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | CoreSkillTablesMsg coreSkillTableMsg ->
-        let newCoreSkillTables = CoreSkillTables.update coreSkillTableMsg model.coreSkillTables
+        let newCoreSkillTables = CoreSkillGroups.update coreSkillTableMsg model.coreSkillTables
 
         {
             model with 
@@ -153,7 +153,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         ]
                     ]
                     Bulma.container [
-                        CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
+                        CoreSkillGroups.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
                     ]
                     Bulma.container [
                         VocationTables.view model.vocationTables ( VocationTableMsg >> dispatch )

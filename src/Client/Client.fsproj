@@ -6,13 +6,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Neg1To4Stat.fs" />
-    <Compile Include="AttributeRow.fs" />
-    <Compile Include="CoreSkillRow.fs" />
-    <Compile Include="CoreSkillTable.fs" />
-    <Compile Include="CoreSkillTables.fs" />
+    <Compile Include="AttributeStat.fs" />
+    <Compile Include="CoreSkill.fs" />
+    <Compile Include="CoreSkillGroup.fs" />
+    <Compile Include="CoreSkillGroups.fs" />
     <None Include="index.html" />
-    <Compile Include="VocationStat.fs" />
-    <Compile Include="VocationRow.fs" />
+    <Compile Include="ZeroToFourStat.fs" />
+    <Compile Include="Vocation.fs" />
     <Compile Include="VocationalSkillStat.fs" />
     <Compile Include="VocationalSkillRow.fs" />
     <Compile Include="VocationTable.fs" />

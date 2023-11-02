@@ -1,4 +1,4 @@
-namespace OldFallenLib
+namespace FallenLib
 
 // Util
 module StringUtils =
@@ -129,6 +129,7 @@ module Neg1To4 =
         defaultArg (createNeg1To4 num) NegOne
 
 module ZeroToFour =
+
     type ZeroToFour =
     | Zero
     | One
@@ -145,6 +146,9 @@ module ZeroToFour =
         | Four -> 4u
 
 module Dice =
+
+    open Neg1To4
+    open ZeroToFour
 
     type DicePool = {
         d4  : uint
@@ -247,6 +251,12 @@ module Dice =
 
     let intToDicePoolModification (num : int) =
         if num < 0 then RemoveDice (uint (abs num)) else createD6DicePoolMod (uint num)
+
+    let neg1To4ToD6DicePoolModification neg1To4 =
+        neg1To4 |> neg1To4ToInt |> intToDicePoolModification
+
+    let zeroToFourToDicePoolModification zeroToFour =
+        zeroToFour |> zeroToFourToUint |> createD6DicePoolMod
 
     let createDicePoolModification (numDiceStr:string) (diceType:string) =
         let numDice = uint numDiceStr
@@ -781,39 +791,64 @@ module CoreSkillGroup =
 
     open Attribute
     open SkillStat
+    open Dice
 
     type CoreSkillGroup = {
         attributeStat : AttributeStat
-        skillStatList : SkillStat list
+        coreSkillList : SkillStat list
     }
 
-module VocationStat =
-    open ZeroToFour
+    let coreSkillToString baseDice lvl attributeLvl =
 
-    type VocationStat = {
+        modifyDicePoolByModList baseDice [
+            neg1To4ToD6DicePoolModification lvl
+            neg1To4ToD6DicePoolModification attributeLvl
+        ]
+        |> dicePoolToString
+
+module Vocation =
+    open ZeroToFour
+    open Attribute
+    open Dice
+
+    type GoverningAttribute = {
+        isGoverning : bool
+        attributeStat : AttributeStat
+    }
+
+    type Vocation = {
         name : string
         level : ZeroToFour
+        governingAttributes : GoverningAttribute list
     }
+
+    let governingAttributesToDicePoolModification governingAttributes =
+        governingAttributes
+        |> List.filter ( fun governingAttribute -> governingAttribute.isGoverning )
+        |> List.map ( fun governingAttribute ->
+            neg1To4ToD6DicePoolModification governingAttribute.attributeStat.lvl
+        )
+
+    let vocationToString baseDice level governingAttributes =
+        let diceModList =
+            List.append
+                (governingAttributesToDicePoolModification governingAttributes) 
+                [zeroToFourToDicePoolModification level]
+        modifyDicePoolByModList baseDice diceModList
+        |> dicePoolToString
 
 module VocationGroup =
 
     open Neg1To4
-    open Attribute
-    open VocationStat
     open SkillStat
-
-    type GoverningAttribute = {
-        isGoverning : bool
-        attributeStat : Attribute
-    }
+    open Vocation
 
     type VocationGroup = {
-        vocationStat : VocationStat
-        governingAttributes : GoverningAttribute list
+        vocation : Vocation
         vocationalSkills  : SkillStat list
     }
 
-    let findVocationalSkillStat skillName skillStatList =
+    let findVocationalSkillStat skillName (skillStatList:SkillStat list) =
         skillStatList
         |> List.filter (fun skill -> skill.name = skillName)
         |> ( fun list ->
