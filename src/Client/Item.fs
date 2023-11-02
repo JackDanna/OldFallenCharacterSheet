@@ -59,7 +59,7 @@ let view (itemList:Item list) (model: Model) (dispatch: Msg -> unit) =
         makeRow
             item.name
             (itemClassesToString item.itemClasses)
-            item.itemTier.desc
+            item.itemTier.name
             item.weight
             item.value
     | Empty ->

@@ -58,7 +58,7 @@ module Data =
         makeFallenData 
             "EngageableOpponentsCalculationData.csv"
             (fun row -> {
-                desc = string row.["desc"]
+                name = string row.["desc"]
                 combatRollDivisor = uint row.["combatRollDivisor"]
                 maxEO = mapMaxEO row.["maxEO"]
             })
@@ -71,7 +71,7 @@ module Data =
         makeFallenData
             "CalculatedRangeData.csv"
             (fun row -> {
-                desc = string row.["desc"]
+                name = string row.["desc"]
                 effectiveRange = uint row.["effectiveRange"]
                 maxRange =  uint row.["maxRange"]
             })
@@ -80,7 +80,7 @@ module Data =
         makeFallenData
             "RangeCalculationData.csv"
             (fun row -> {
-                desc = string row.["desc"]
+                name = string row.["desc"]
                 numDicePerEffectiveRangeUnit = uint row.["numDicePerEffectiveRangeUnit"]
                 ftPerEffectiveRangeUnit = uint row.["ftPerEffectiveRangeUnit"]
                 roundEffectiveRangeUp = Bool row.["roundEffectiveRangeUp"]
@@ -128,7 +128,7 @@ module Data =
         makeFallenData
             "MagicSkillData.csv"
             (fun row -> {
-                desc = string row.["desc"]
+                name = string row.["desc"]
                 damageTypes = stringToDamageTypeArray (string row.["damageTypes"])
                 rangeAdjustment = int row.["rangeAdjustment"]
                 isMeleeCapable = Bool row.["meleeCapable"]
@@ -140,7 +140,7 @@ module Data =
         makeFallenData
             "MagicCombatData.csv"
             (fun row -> {
-                desc                  = string row.["Description"]
+                name                  = string row.["Description"]
                 lvlRequirment         = int row.["Lvl Requirment"] |> intToNeg1To4
                 diceModification      = string row.["Dice Modification"] |> stringToDicePoolModification
                 penetration           = uint row.["Penetration"]
@@ -155,7 +155,7 @@ module Data =
         makeFallenData
             "WeaponClassData.csv"
             (fun row -> {
-                desc                = string row.["desc"]
+                name                = string row.["desc"]
                 oneHandedWeaponDice = stringToDicePoolModificationOption row.["oneHandedWeaponDice"]
                 twoHandedWeaponDice = stringToDicePoolModification row.["twoHandedWeaponDice"]
                 penetration         = uint row.["penetration"]
@@ -169,7 +169,7 @@ module Data =
             })
     
     let weaponClassMap =
-        List.map (fun (weaponClass:WeaponClass) -> weaponClass.desc, weaponClass ) weaponClassData
+        List.map (fun (weaponClass:WeaponClass) -> weaponClass.name, weaponClass ) weaponClassData
         |> Map.ofList
         
     // ConduitClass
@@ -177,7 +177,7 @@ module Data =
         makeFallenData
             "ConduitClassData.csv"
             (fun row -> {
-                desc = string row.["desc"]
+                name = string row.["desc"]
                 oneHandedDice = stringToDicePoolModificationOption row.["oneHandedDice"]
                 twoHandedDice = stringToDicePoolModification row.["twoHandedDice"]
                 penetration = uint row.["penetration"]
@@ -192,7 +192,7 @@ module Data =
             })
 
     let conduitClassMap =
-        List.map (fun (conduitClass:ConduitClass) -> conduitClass.desc, conduitClass ) conduitClassData
+        List.map (fun (conduitClass:ConduitClass) -> conduitClass.name, conduitClass ) conduitClassData
         |> Map.ofList
 
     // DefenseClass
@@ -233,7 +233,7 @@ module Data =
         makeFallenData
             "ItemTierData.csv"
             (fun row -> {
-                desc = string row.["desc"]
+                name = string row.["desc"]
                 level = int row.["level"]
                 runeSlots = uint row.["runeSlots"]
                 baseDice = stringToDicePool row.["baseDice"]
@@ -241,7 +241,7 @@ module Data =
             })
     
     let itemTierMap =
-        List.map (fun (itemTier:ItemTier) -> itemTier.desc, itemTier) itemTierData
+        List.map (fun (itemTier:ItemTier) -> itemTier.name, itemTier) itemTierData
         |> Map.ofList
 
     // Item
@@ -278,7 +278,7 @@ module Data =
         makeFallenData
             "MovementSpeedCalculationData.csv"
             (fun row -> {
-                desc = string row.["desc"]
+                name = string row.["desc"]
                 baseMovementSpeed = uint row.["baseMovementSpeed"]
                 governingAttributes = stringToAttributes row.["governingAttributes"]
                 feetPerAttributeLvl = uint row.["feetPerAttributeLvl"]

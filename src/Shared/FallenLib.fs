@@ -58,13 +58,13 @@ module EngageableOpponents =
     open StringUtils
 
     type EngageableOpponentsCalculation = {
-        desc              : string
+        name              : string
         combatRollDivisor : uint
         maxEO             : uint option
     }
 
     let eoCalculationListToMap calculatedRangeList =
-        List.map ( fun (eoCalculation) -> eoCalculation.desc, eoCalculation) calculatedRangeList
+        List.map ( fun (eoCalculation) -> eoCalculation.name, eoCalculation) calculatedRangeList
         |> Map.ofList
 
     type CalculatedEngageableOpponents = uint
@@ -333,13 +333,13 @@ module Range =
     open System
 
     type CalculatedRange = {
-        desc           : string
+        name           : string
         effectiveRange : uint
         maxRange       : uint
     }
 
     type RangeCalculation = {
-        desc                         : string    // Description of the range
+        name                         : string    // Description of the range
         numDicePerEffectiveRangeUnit : uint      // The amount of dice required to gain an effective Range Unit
         ftPerEffectiveRangeUnit      : uint      // The amount of ft per effective range unit
         roundEffectiveRangeUp        : bool      // If true, round up the effective range, otherwise round down
@@ -357,7 +357,7 @@ module Range =
     
 
     let calculateRange numDice rangeCalculation =
-        { desc           = rangeCalculation.desc
+        { name           = rangeCalculation.name
           effectiveRange =
             if rangeCalculation.roundEffectiveRangeUp then
                 uint (Math.Ceiling(float numDice/float rangeCalculation.numDicePerEffectiveRangeUnit)) * rangeCalculation.ftPerEffectiveRangeUnit
@@ -383,11 +383,11 @@ module Range =
         | None -> calculatedPrimaryRange
 
     let calculatedRangeListToRangeMap calculatedRangeList =
-        List.map ( fun (calculatedRange:CalculatedRange) -> calculatedRange.desc, CalculatedRange calculatedRange) calculatedRangeList
+        List.map ( fun (calculatedRange:CalculatedRange) -> calculatedRange.name, CalculatedRange calculatedRange) calculatedRangeList
         |> Map.ofList
 
     let rangeCalculationListToRangeMap rangeCalculationList =
-        List.map ( fun (rangeCalculation:RangeCalculation) -> rangeCalculation.desc, RangeCalculation rangeCalculation) rangeCalculationList
+        List.map ( fun (rangeCalculation:RangeCalculation) -> rangeCalculation.name, RangeCalculation rangeCalculation) rangeCalculationList
         |> Map.ofList
 
     let createRangeMap (calculatedRanges:CalculatedRange list) rangeCalculations : Map<string,Range>=
@@ -399,7 +399,7 @@ module Range =
     let isMeleeOrReachRange range =
         match range with
         | CalculatedRange calculatedRange ->
-            match calculatedRange.desc with
+            match calculatedRange.name with
             | "Melee" | "Reach" -> true
             | _ -> false
         | _ -> false
@@ -536,7 +536,7 @@ module WeaponClass =
     open ResourceClass
 
     type WeaponClass = {
-        desc                : string
+        name                : string
         oneHandedWeaponDice : DicePoolModification option
         twoHandedWeaponDice : DicePoolModification
         penetration         : Penetration
@@ -552,7 +552,7 @@ module ItemTier =
     open Dice
 
     type ItemTier = {
-        desc          : string
+        name          : string
         level         : int
         runeSlots     : uint
         baseDice      : DicePool
@@ -595,7 +595,7 @@ module MagicSkill =
     open ResourceClass
 
     type MagicSkill = {
-        desc                 : string
+        name                 : string
         damageTypes          : DamageType list
         rangeAdjustment      : int
         isMeleeCapable       : bool
@@ -614,7 +614,7 @@ module ConduitClass =
     open Attribute
 
     type ConduitClass = {
-        desc                : string
+        name                : string
         oneHandedDice       : DicePoolModification option
         twoHandedDice       : DicePoolModification
         penetration         : Penetration
@@ -637,7 +637,7 @@ module MagicCombat =
     open Dice
 
     type MagicCombat = {
-        desc                  : string
+        name                  : string
         lvlRequirment         : Neg1To4
         diceModification      : DicePoolModification
         penetration           : Penetration
@@ -683,8 +683,8 @@ module Item =
     let itemClassesToString itemClasses =
         Array.map ( fun itemClass ->
             match itemClass with
-            | WeaponClass weaponClass -> weaponClass.desc
-            | ConduitClass conduitClass -> conduitClass.desc
+            | WeaponClass weaponClass -> weaponClass.name
+            | ConduitClass conduitClass -> conduitClass.name
             | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
             | DefenseClass defenseClass -> defenseClass.name
         ) itemClasses
@@ -754,7 +754,7 @@ module Equipment =
 
     let doesConduitEffectMagicSkill conduitClass skillName =
         conduitClass.effectedMagicSkills
-        |> List.exists ( fun magicSkill -> magicSkill.desc = skillName )
+        |> List.exists ( fun magicSkill -> magicSkill.name = skillName )
 
     let getEquipedConduitItemsWithSkillName equipmentList skillName =
         equipmentList
@@ -838,7 +838,7 @@ module CombatRoll =
     open Penetration
 
     type CombatRoll = {
-        desc                          : string
+        name                          : string
         combatRoll                    : DicePool
         calculatedRange               : CalculatedRange
         penetration                   : Penetration
@@ -866,7 +866,7 @@ module WeaponCombatRoll =
     open WeaponClass
 
     let createCombatRoll
-        desc 
+        name 
         (weaponClass: WeaponClass)
         weaponTierBaseDice 
         attributeDeterminedDiceModArray 
@@ -893,7 +893,7 @@ module WeaponCombatRoll =
         let numDice = sumDicePool dicePool
 
         {
-            desc                = desc + resourceDesc + descSuffix
+            name                = name + resourceDesc + descSuffix
             combatRoll          = dicePool
             calculatedRange     = determineGreatestRange numDice weaponClass.range resourceRange
             penetration         = weaponClass.penetration + resourcePenetration
@@ -942,7 +942,7 @@ module WeaponCombatRoll =
             |> collectWeaponItemClasses
             |> List.collect (fun weaponClass ->
 
-                let skillStat = findVocationalSkill vocationGroupList weaponClass.desc
+                let skillStat = findVocationalSkill vocationGroupList weaponClass.name
 
                 let preloadedCreateCombatRoll = 
                     createCombatRoll
@@ -1023,9 +1023,9 @@ module MagicCombatRoll =
         (combatRollGoverningAttributes:Attribute list)
         : CombatRoll =
 
-        let (resourceDesc, resourceDice) = determineMagicResource magicResource
+        let (resourceName, resourceDice) = determineMagicResource magicResource
 
-        let range = determineMagicRange rangeMap magicCombatType.desc (neg1To4ToInt skillStat.lvl)
+        let range = determineMagicRange rangeMap magicCombatType.name (neg1To4ToInt skillStat.lvl)
 
         let diceMods =
             determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
@@ -1041,7 +1041,7 @@ module MagicCombatRoll =
         let numDice = sumDicePool combatRoll
 
         {
-            desc                = sprintf "%s %s %s" magicSkill.desc magicCombatType.desc resourceDesc
+            name                = sprintf "%s %s %s" magicSkill.name magicCombatType.name resourceName
             combatRoll          = combatRoll
             calculatedRange     = rangeToCalculatedRange numDice range
             penetration         = magicCombatType.penetration
@@ -1070,7 +1070,7 @@ module MagicCombatRoll =
 
         let skillStatLvlAsInt = neg1To4ToInt skillStatLvl
 
-        let range = determineMagicRange rangeMap magicCombatType.desc (skillStatLvlAsInt + conduit.rangeAdjustment)
+        let range = determineMagicRange rangeMap magicCombatType.name (skillStatLvlAsInt + conduit.rangeAdjustment)
         let damageTypes = List.append magicSkill.damageTypes conduit.damageTypes
 
         let engageableOpponents = match conduit.engageableOpponents with | Some EO -> EO | None -> magicCombatType.engageableOpponents
@@ -1089,7 +1089,7 @@ module MagicCombatRoll =
         let numDice = sumDicePool dicePool
 
         {
-            desc                = sprintf "%s %s with %s %s %s" magicSkill.desc magicCombatType.desc conduitItemDesc resourceDesc descSuffix
+            name                = sprintf "%s %s with %s %s %s" magicSkill.name magicCombatType.name conduitItemDesc resourceDesc descSuffix
             combatRoll          = dicePool
             calculatedRange     = rangeToCalculatedRange numDice range
             penetration         = magicCombatType.penetration + conduit.penetration
@@ -1233,7 +1233,7 @@ module MovementSpeedCalculation =
     open Attribute
 
     type MovementSpeedCalculation = {
-        desc                : string
+        name                : string
         baseMovementSpeed   : uint
         governingAttributes : Attribute list
         feetPerAttributeLvl : uint
@@ -1271,9 +1271,9 @@ module Effects =
     | MovementSpeedCalculation  of MovementSpeedCalculation
     | CarryWeightCalculation of CarryWeightCalculation
 
-    let descToEffect (movementSpeedMap:Map<string,MovementSpeedCalculation>) desc =
-        match desc with
-        | desc when Map.containsKey desc movementSpeedMap -> movementSpeedMap.Item desc |> MovementSpeedCalculation |> Some
+    let descToEffect (movementSpeedMap:Map<string,MovementSpeedCalculation>) name =
+        match name with
+        | name when Map.containsKey name movementSpeedMap -> movementSpeedMap.Item name |> MovementSpeedCalculation |> Some
         | _ -> None
 
     let effectToEffectString (effect:Effect) attributeStatArray skillStatArray weightClass =
@@ -1425,4 +1425,3 @@ module Character =
             combatRolls = List.append weaponCombatRolls magicCombatRolls
             calculatedEffectTable = calculatedEffectTable
         }
-
