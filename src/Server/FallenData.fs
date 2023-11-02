@@ -192,7 +192,7 @@ module Data =
                 resourceClass = weaponResourceClassOptionMap row.["resourceClass"]
                 governingAttributes = stringToAttributes row.["governingAttributes"]
                 effectedMagicSkills =
-                    row.["governingAttributes"].Split ", "
+                    row.["effectedMagicSkills"].Split ", "
                     |> List.ofArray
                     |> List.map ( fun magicSkillStr -> magicSkillMap.Item magicSkillStr )
             })
