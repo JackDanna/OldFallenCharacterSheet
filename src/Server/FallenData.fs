@@ -30,7 +30,6 @@ module Data =
     open OldFallenLib.DefenseClass
     open OldFallenLib.CarryWeightCalculation
 
-
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
 
@@ -55,17 +54,18 @@ module Data =
         |> stringListToTypeMap 
         |> stringAndMapToDamageTypeArray 
 
-    // PenetrationData
-    let calculatedEngageableOpponentsData = 
+    // EngageableOpponents
+    let engageableOpponentsCalculationData = 
         makeFallenData 
-            "CalculatedEngageableOpponentsData.csv"
-            (fun row -> (
-                string row.["desc"],
-                uint   row.["engageableOpponents"]
-            ))
+            "EngageableOpponentsCalculationData.csv"
+            (fun row -> {
+                desc = string row.["desc"]
+                combatRollDivisor = uint row.["combatRollDivisor"]
+                maxEO = mapMaxEO row.["maxEO"]
+            })
 
-    let calculatedEngageableOpponentsMap =
-        createCalculatedEOMap calculatedEngageableOpponentsData
+    let engageableOpponentsMap = 
+        eoMap (eoCalculationListToMap engageableOpponentsCalculationData)
 
     // Range
     let calculatedRangeData = 
@@ -89,6 +89,11 @@ module Data =
             })
 
     let rangeMap = createRangeMap calculatedRangeData rangeCalculationData
+
+    let rangeOptionMap string =
+            match string with
+            | "None" -> None
+            | _      -> rangeMap.Item string |> Some
     
     // ResourceClass
     let resourceClassData =
@@ -97,6 +102,11 @@ module Data =
             (fun row -> (ResourceClass row.["desc"]))
 
     let resourceClassMap = stringListToTypeMap resourceClassData
+
+    let weaponResourceClassOptionMap string =
+        match string with
+        | "None" -> None
+        | _      -> Some <| resourceClassMap.Item string
 
     // Attribute
     let attributeData =
@@ -131,114 +141,151 @@ module Data =
         makeFallenData
             "MagicCombatData.csv"
             (fun row -> {
-                desc                  = string     row.["Description"]
+                desc                  = string row.["Description"]
                 lvlRequirment         = int row.["Lvl Requirment"] |> intToNeg1To4
-                diceModification      = string row.["Dice Modification"] |> 
-                penetration           = string row.["Penetration"]
-                range                 = string row.["Range"]
-                engageableOpponents   = string row.["Engageable Opponents"]
+                diceModification      = string row.["Dice Modification"] |> stringToDicePoolModification
+                penetration           = uint row.["Penetration"]
+                range                 = rangeMap.Item (string row.["Range"])
+                engageableOpponents   = engageableOpponentsMap row.["Engageable Opponents"]
                 minResourceRequirment = uint row.["Resource Requirment"]
                 canVocationAssist     = Bool row.["Vocation Assistable"]
-                areaOfEffect          = string row.["Area Of Effect"]
+                areaOfEffect          = AreaOfEffectOptionMap.Item row.["Area Of Effect"]
             })
 
-    let magicCombatData = 
-        makeFallenData
-            "MagicCombatData.csv"
-            (fun row -> (
-                string     row.["Description"],
-                int        row.["Lvl Requirment"],
-                string     row.["Dice Modification"],
-                string     row.["Penetration"],
-                string     row.["Range"],
-                string     row.["Engageable Opponents"],
-                uint       row.["Resource Requirment"],
-                Bool       row.["Vocation Assistable"],
-                string     row.["Area Of Effect"]
-            ))
-
+    // WeaponClass
     let weaponClassData =
         makeFallenData
             "WeaponClassData.csv"
-            (fun row -> (
-                string row.["desc"],
-                string row.["oneHandedWeaponDice"],
-                string row.["twoHandedWeaponDice"],
-                string row.["penetration"],
-                string row.["range"],
-                string row.["damageTypes"],
-                string row.["engageableOpponents"],
-                string row.["dualWieldableBonus"],
-                string row.["areaOfEffect"],
-                string row.["resourceClass"],
-                string row.["governingAttributes"]
-            ))
-
+            (fun row -> {
+                desc                = string row.["desc"]
+                oneHandedWeaponDice = stringToDicePoolModificationOption row.["oneHandedWeaponDice"]
+                twoHandedWeaponDice = stringToDicePoolModification row.["twoHandedWeaponDice"]
+                penetration         = uint row.["penetration"]
+                range               = rangeMap.Item row.["range"]
+                damageTypes         = stringToDamageTypeArray row.["damageTypes"]
+                engageableOpponents = engageableOpponentsMap row.["engageableOpponents"]
+                dualWieldableBonus  = stringToDicePoolModificationOption row.["dualWieldableBonus"]
+                areaOfEffect        = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
+                resourceClass       = weaponResourceClassOptionMap row.["resourceClass"]
+                governingAttributes = stringToAttributes row.["governingAttributes"]
+            })
+    
+    let weaponClassMap =
+        List.map (fun (weaponClass:WeaponClass) -> weaponClass.desc, weaponClass ) weaponClassData
+        |> Map.ofList
+        
+    // ConduitClass
     let conduitClassData =
         makeFallenData
             "ConduitClassData.csv"
-            (fun row -> (
-                string row.["desc"],
-                string row.["oneHandedDice"],
-                string row.["twoHandedDice"],
-                string row.["penetration"],
-                int    row.["rangeAdjustment"],
-                string row.["damageTypes"],
-                string row.["engageableOpponents"],
-                string row.["dualWieldableBonus"],
-                string row.["areaOfEffect"],
-                string row.["resourceClass"],
-                string row.["governingAttributes"]
-            ))
+            (fun row -> {
+                desc = string row.["desc"]
+                oneHandedDice = stringToDicePoolModificationOption row.["oneHandedDice"]
+                twoHandedDice = stringToDicePoolModification row.["twoHandedDice"]
+                penetration = uint row.["penetration"]
+                rangeAdjustment = int row.["rangeAdjustment"]
+                damageTypes = stringToDamageTypeArray row.["damageTypes"]
+                engageableOpponents = match row.["engageableOpponents"] with | "None" -> None | _ -> Some <| engageableOpponentsMap row.["engageableOpponents"]
+                dualWieldableBonus = stringToDicePoolModificationOption row.["dualWieldableBonus"]
+                areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
+                resourceClass = weaponResourceClassOptionMap row.["resourceClass"]
+                governingAttributes = stringToAttributes row.["governingAttributes"]
+            })
 
+    let conduitClassMap =
+        List.map (fun (conduitClass:ConduitClass) -> conduitClass.desc, conduitClass ) conduitClassData
+        |> Map.ofList
+
+    // DefenseClass
+    let defenseClassData : DefenseClass list = 
+        makeFallenData
+            "DefenseClassData.csv"
+            (fun row -> {
+                name = string row.["desc"]
+                physicalDefense = float row.["physicalDefense"]
+                mentalDefense = float row.["mentalDefense"]
+                spiritualDefense = float row.["spiritualDefense"]
+            })
+
+    let defenseClassMap =
+        List.map (fun (defenseClass:DefenseClass) -> defenseClass.name, defenseClass ) defenseClassData
+        |> Map.ofList
+    
+    // WeaponResourceClass
+    let weaponResourceClassData = 
+        makeFallenData
+            "WeaponResourceClassData.csv"
+            (fun row -> {
+                name = string row.["desc"]
+                resourceClass = resourceClassMap.Item row.["resourceClass"]
+                resourceDice = stringToDicePoolModification row.["resourceDice"]
+                penetration = uint row.["penetration"]
+                range = rangeOptionMap row.["range"]
+                damageTypes = stringToDamageTypeArray row.["damageTypes"]
+                areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
+            })
+    
+    let weaponResourceClassMap =
+        List.map (fun (weaponResourceClass:WeaponResourceClass) -> weaponResourceClass.name, weaponResourceClass) weaponResourceClassData
+        |> Map.ofList
+
+    // ItemTier
     let itemTierData = 
         makeFallenData
             "ItemTierData.csv"
-            (fun row -> (
-                string row.["desc"],
-                int    row.["level"],
-                uint   row.["runeSlots"],
-                string row.["baseDice"],
-                uint   row.["durabilityMax"]
-            ))
+            (fun row -> {
+                desc = string row.["desc"]
+                level = int row.["level"]
+                runeSlots = uint row.["runeSlots"]
+                baseDice = stringToDicePool row.["baseDice"]
+                durabilityMax = uint row.["durabilityMax"]
+            })
+    
+    let itemTierMap =
+        List.map (fun (itemTier:ItemTier) -> itemTier.desc, itemTier) itemTierData
+        |> Map.ofList
+
+    // Item
+    let stringToItemClassList (weaponClassMap:Map<string,WeaponClass>) (conduitClassMap:Map<string,ConduitClass>) (weaponResourceClassMap:Map<string,WeaponResourceClass>) (input:string)  =
+            input.Split ", "
+            |> List.ofArray
+            |> List.collect ( fun className ->
+                match className with
+                | weaponClassName  when weaponClassMap.Keys.Contains weaponClassName  -> weaponClassMap.Item weaponClassName |> WeaponClass |> List.singleton
+                | conduitClassName when conduitClassMap.Keys.Contains conduitClassName -> conduitClassMap.Item conduitClassName |> ConduitClass |> List.singleton
+                | weaponResourceClassName when weaponResourceClassMap.Keys.Contains weaponResourceClassName -> weaponResourceClassMap.Item weaponResourceClassName |> WeaponResourceClass |> List.singleton
+                | defenseClassName when defenseClassMap.Keys.Contains defenseClassName -> defenseClassMap.Item defenseClassName |> DefenseClass |> List.singleton
+                | _ -> []
+            )
 
     let itemData = 
         makeFallenData
             "ItemData.csv"
-            (fun row -> (
-                string row.["desc"],
-                string row.["itemClasses"],
-                string row.["itemTier"],
-                string row.["durability"],
-                float  row.["weight"],
-                string row.["value"]
-                //uint row.["quantity"] This exists on the csv, but is for equipment table purposes on the goolge Fallen Character Sheet
-            ))
-
-    let weaponResourceClassData = 
-        makeFallenData
-            "WeaponResourceClassData.csv"
-            (fun row -> (
-                string row.["desc"],
-                string row.["resourceClass"],
-                string row.["resourceDice"],
-                uint   row.["penetration"],
-                string row.["range"],
-                string row.["damageTypes"],
-                string row.["areaOfEffect"]
-            ))
-
+            (fun row -> {
+                name = string row.["desc"]
+                itemClasses =
+                    stringToItemClassList
+                        weaponClassMap 
+                        conduitClassMap 
+                        weaponResourceClassMap 
+                        row.["itemClasses"]
+                itemTier = itemTierMap.Item row.["itemTier"]
+                value = string row.["value"]
+                weight = float  row.["weight"]
+            })
+    
+    // MovementSpeedCalculation
     let movementSpeedCalculationData =
         makeFallenData
             "MovementSpeedCalculationData.csv"
-            (fun row -> (
-                string row.["desc"],
-                uint   row.["baseMovementSpeed"],
-                string row.["governingAttributes"],
-                uint   row.["feetPerAttributeLvl"],
-                string row.["governingSkill"],
-                uint   row.["feetPerSkillLvl"]
-            ))
+            (fun row -> {
+                desc = string row.["desc"]
+                baseMovementSpeed = uint row.["baseMovementSpeed"]
+                governingAttributes = stringToAttributes row.["governingAttributes"]
+                feetPerAttributeLvl = uint row.["feetPerAttributeLvl"]
+                governingSkill = string row.["governingSkill"]
+                feetPerSkillLvl = uint row.["feetPerSkillLvl"]
+            })
 
     let carryWeightCalculationData = 
         makeFallenData
@@ -263,16 +310,6 @@ module Data =
                
             ))
 
-    let defenseClassData = 
-        makeFallenData
-            "DefenseClassData.csv"
-            (fun row -> (
-                string row.["desc"],
-                float  row.["physicalDefense"],
-                float  row.["mentalDefense"],
-                float  row.["spiritualDefense"]
-            ))
-
     let attributeDeterminedDiceModData =
         makeFallenData
             "AttributeDeterminedDiceModData.csv"
@@ -281,16 +318,6 @@ module Data =
                 string row.["attributesToEffect"],
                 string row.["dicePoolModification"]
             ))
-
-    let equipmentData = [|
-        (true,             "Shoddy Club", 1u)
-        //(true,       "Arming Sword",  1u )
-        (true,       "Light Crossbow",  1u )
-        (true,           "Bodkin Bolt", 1u )
-        //(true,  "Adversary - Damaged",  1u )
-        (true,          "Gambeson Coat", 1u)
-        (true,         "Leather Helmet", 1u)
-    |]
 
     let skillStatData = [|
         ("Endurance",          1, "STR")
@@ -308,38 +335,4 @@ module Data =
         ("Communication",      1, "INT")
         ("Spiritual",          1, "INT")
         ("Survival",           1, "INT")
-    |]
-
-    let attributeStatData = [|
-        ("STR",  0) 
-        ("RFX",  1)
-        ("INT",  3)
-    |]
-
-    let vocationalSkill1Data = [|
-        ("Small Bladed", 2)
-    |]
-
-    let vocationalSkill2Data = [|
-        ("Blazecraft", -1)
-        //("Radiance", 4)
-    |]
-
-    let vocationalSkill3Data = [|
-        //("Blazecraft", 4)
-        ("Fire Rune", 1)
-    |]
-
-    let vocationDataArray = [|
-        ("Warrior {STR}"          , 2, vocationalSkill1Data)
-        (""                       , 0, vocationalSkill2Data)
-        ("Fellcraft {STR,RFX,INT}", 2, vocationalSkill3Data)
-    |]
-
-    let effectsTableData = [|
-        ( "Humaniod Movement Speed", "(Run Character Sheet Calculation)", "-")
-        ( "Random ass effect lalal", "(Should be unchanged  lalalalala)", "-")
-        ( "Defense Level",           "(Should be unchanged  lalalalala)", "-")
-        //( "Level 5 Injury",                         "-1d6 to all checks", "-")
-        ( "Inventory Weight",                       "-1d6 to all checks", "-")
     |]
