@@ -775,45 +775,6 @@ module SkillStat =
 
     let skillStatLvlToInt skillStat = neg1To4ToInt skillStat.lvl
 
-// module SkillRoll = 
-//     open Attribute
-//     open Dice
-//     open SkillStat
-//     open Neg1To4
-
-//     type SkillRoll = {
-//         desc     : string
-//         dicePool : DicePool
-//         lvl      : Neg1To4
-//     }
-
-//     let matchAttributeDiceWithSkillDice (skillStat:SkillStat) (attributeStats:AttributeStat array) : DicePoolModification=
-//         Array.filter ( fun attributeStat -> 
-//             Array.exists ( fun skillGoverningAttribute -> 
-//                 attributeStat.attribute = skillGoverningAttribute
-//             ) skillStat.governingAttributes
-//         ) attributeStats
-//         |> Array.sumBy ( fun attributeStat -> neg1To4ToInt ( attributeStat.lvl ) )
-//         |> intToDicePoolModification
-
-//     let skillStatToSkillRoll (skillStat:SkillStat) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray =
-
-//         let skillDiceMods     = neg1To4ToInt ( skillStat.lvl ) |> intToDicePoolModification
-//         let attributeDiceMods = matchAttributeDiceWithSkillDice skillStat attributeStats
-//         let diceMod = 
-//             determineAttributeDeterminedDiceMod skillStat.governingAttributes attributeDeterminedDiceModArray
-//             |> Array.append [| skillDiceMods; attributeDiceMods |]
-//         {
-//             desc     = skillStat.name
-//             dicePool = modifyDicePoolByModList baseDice diceMod
-//             lvl      = skillStat.lvl
-//         }
-
-//     let skillStatsToSkillRolls (skillStats:SkillStat array) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray =
-//         Array.map ( fun skillStat ->
-//             skillStatToSkillRoll skillStat attributeStats baseDice attributeDeterminedDiceModArray
-//         ) skillStats
-
 module CoreSkillGroup =
 
     open Attribute
@@ -865,62 +826,6 @@ module VocationGroup =
         |> List.map (fun vocation -> vocation.vocationalSkills)
         |> List.collect ( fun x -> x)
         |> findVocationalSkillStat vocationalSkillName
-
-// module Vocation =
-
-//     type GoverningAttribute = {
-//         isGoverning : bool
-//         attributeStat : Attribute
-//     }
-
-//     open Neg1To4
-//     open Attribute
-//     open SkillStat
-    
-//     type VocationStat = {
-//         name                : string
-//         lvl                 : Neg1To4
-//         governingAttributes : Attribute array
-//         vocationalSkills    : SkillStat []
-//     }
-
-// module VocationRoll =
-//     open VocationStat
-//     open Neg1To4
-//     open Dice
-//     open Attribute
-//     open SkillRoll
-
-//     type VocationRoll = {
-//         name             : string
-//         vocationDicePool : DicePool
-//         vocationalSkills : SkillRoll array
-//     }
-
-//     let determineVocationAttributeDiceMod (vocationStat:VocationStat) (attributeStats:AttributeStat array) : DicePoolModification =
-//         Array.filter ( fun attributeStat -> 
-//             Array.exists ( fun vocationGoverningAttribute -> 
-//                 attributeStat.attribute = vocationGoverningAttribute
-//             ) vocationStat.governingAttributes
-//         ) attributeStats
-//         |> Array.sumBy ( fun attributeStat -> neg1To4ToInt ( attributeStat.lvl ) )
-//         |> intToDicePoolModification
-
-//     let vocationStatToVocationRoll (vocationStat:VocationStat) (attributeStats:AttributeStat array) (baseDice:DicePool) attributeDeterminedDiceModArray : VocationRoll=
-//         let name = vocationStat.name
-//         let attDiceMod = determineVocationAttributeDiceMod vocationStat attributeStats
-
-//         let vocationLvlDiceMod = neg1To4ToInt ( vocationStat.lvl ) |> intToDicePoolModification
-
-//         let diceMods = 
-//             determineAttributeDeterminedDiceMod vocationStat.governingAttributes attributeDeterminedDiceModArray
-//             |> Array.append [| attDiceMod; vocationLvlDiceMod |]
-
-//         {
-//             name = name
-//             vocationDicePool = modifyDicePoolByModList baseDice diceMods
-//             vocationalSkills = skillStatsToSkillRolls vocationStat.vocationalSkills attributeStats baseDice attributeDeterminedDiceModArray
-//         }
 
 module CombatRoll =
     open Dice
