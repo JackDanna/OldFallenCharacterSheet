@@ -6,55 +6,35 @@ open FallenLib.Dice
 
 type Model = Vocation
 
-let attributesToGoverningAttributesInit attributes =
-    List.map
-        (fun (attributeStat: AttributeStat.Model) ->
-            { attributeStat = attributeStat
-              isGoverning = false })
-        attributes
-
-let attributesToGoverningAttributes attributes governingAttributes =
-    attributes
-    |> List.map (fun (attributeStat: AttributeStat) ->
-        { attributeStat = attributeStat
-          isGoverning =
-            governingAttributes
-            |> List.collect (fun currentGoverningAttribute ->
-                if (currentGoverningAttribute.attributeStat.attribute = attributeStat.attribute)
-                   && currentGoverningAttribute.isGoverning then
-                    [ currentGoverningAttribute.isGoverning ]
-                else
-                    [])
-            |> List.isEmpty
-            |> not })
-
 type Msg =
     | SetName of string
     | ZeroToFourStat of ZeroToFourStat.Msg
     | ToggleGoverningAttribute of int
+    | SetAttributeStatsAndCalculateDicePools
 
 let init (attributeStatList: AttributeStat List) : Model =
     { name = ""
       level = ZeroToFourStat.init ()
       governingAttributes = attributesToGoverningAttributesInit attributeStatList }
 
-let update (msg: Msg) (model: Model) : Model =
+let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
     match msg with
     | SetName newName -> { model with name = newName }
 
     | ZeroToFourStat neg1ToStatMsg -> { model with level = ZeroToFourStat.update neg1ToStatMsg model.level }
 
     | ToggleGoverningAttribute position ->
+        let toggledGoverningAttributes =
+            model.governingAttributes
+            |> List.mapi (fun i governingAttribute ->
+                if position = i then
+                    { governingAttribute with isGoverning = not governingAttribute.isGoverning }
+                else
+                    governingAttribute)
 
-        { model with
-            governingAttributes =
-                List.mapi
-                    (fun index governingAttribute ->
-                        if position = index then
-                            { governingAttribute with isGoverning = not governingAttribute.isGoverning }
-                        else
-                            governingAttribute)
-                    model.governingAttributes }
+        { model with governingAttributes = attributesToGoverningAttributes attributeStatList toggledGoverningAttributes }
+    | SetAttributeStatsAndCalculateDicePools ->
+        { model with governingAttributes = attributesToGoverningAttributes attributeStatList model.governingAttributes }
 
 open Feliz
 open Feliz.Bulma

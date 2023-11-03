@@ -953,7 +953,6 @@ module VocationGroup =
                 [ neg1To4ToD6DicePoolModification level ]
 
         modifyDicePoolByModList baseDice diceModList
-        |> dicePoolToString
 
 module CombatRoll =
     open Dice

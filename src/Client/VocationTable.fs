@@ -11,17 +11,23 @@ type Msg =
     | Insert
     | Remove
     | Modify of int * VocationalSkill.Msg
-    | SetGoverningAttributes of AttributeStat.Model list
+    | SetAttributeStatsAndCalculateDicePools
 
-let init () : Model =
-    { vocation = Vocation.init ()
-      vocationalSkillList = [ VocationalSkill.init () ] }
+let init (attributeStatList: AttributeStat List) : Model =
+    let vocation = Vocation.init attributeStatList
 
-let update (msg: Msg) (model: Model) : Model =
+    { vocation = vocation
+      vocationalSkillList = [ VocationalSkill.init vocation.governingAttributes ] }
+
+let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
     match msg with
-    | VocationRowMsg vocationRowMsg -> { model with vocation = Vocation.update vocationRowMsg model.vocation }
+    | VocationRowMsg vocationRowMsg ->
+        { model with vocation = Vocation.update attributeStatList vocationRowMsg model.vocation }
 
-    | Insert -> { model with vocationalSkillList = List.append model.vocationalSkillList [ VocationalSkill.init () ] }
+    | Insert ->
+        { model with
+            vocationalSkillList =
+                List.append model.vocationalSkillList [ VocationalSkill.init model.vocation.governingAttributes ] }
 
     | Remove ->
         { model with
@@ -34,34 +40,44 @@ let update (msg: Msg) (model: Model) : Model =
     | Modify (position, msg) ->
         { model with
             vocationalSkillList =
-                List.mapi
-                    (fun i vocationalSkill ->
-                        if position = i then
-                            VocationalSkill.update model.vocation.level msg vocationalSkill
-                        else
+                model.vocationalSkillList
+                |> List.mapi (fun index vocationalSkill ->
+                    if position = index then
+                        VocationalSkill.update
+                            model.vocation.level
+                            model.vocation.governingAttributes
+                            msg
+                            vocationalSkill
+                    else
+                        vocationalSkill) }
+    | SetAttributeStatsAndCalculateDicePools ->
+        let newVocation =
+            Vocation.update attributeStatList Vocation.Msg.SetAttributeStatsAndCalculateDicePools model.vocation
+
+        { model with
+            vocation = newVocation
+            vocationalSkillList =
+                List.map
+                    (fun vocationalSkill ->
+                        VocationalSkill.update
+                            newVocation.level
+                            newVocation.governingAttributes
+                            VocationalSkill.Msg.CalculateDicePool
                             vocationalSkill)
                     model.vocationalSkillList }
-    | SetGoverningAttributes attributes ->
-        { model with vocation = Vocation.update (Vocation.Msg.SetGoverningAttributes(attributes)) model.vocation }
 
 
 open Feliz
 open Feliz.Bulma
 
-let view (attributeStats: AttributeStat list) (model: Model) (dispatch: Msg -> unit) =
+let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
-        Vocation.view attributeStats model.vocation (VocationRowMsg >> dispatch)
-
+        Vocation.view model.vocation (VocationRowMsg >> dispatch)
         Html.ul (
             List.append
                 (List.mapi
                     (fun position skillRow ->
-
-                        VocationalSkill.view
-                            model.vocation.governingAttributes
-                            model.vocation.level
-                            skillRow
-                            (fun msg -> dispatch (Modify(position, msg))))
+                        VocationalSkill.view model.vocation.level skillRow (fun msg -> dispatch (Modify(position, msg))))
                     model.vocationalSkillList)
                 [ Html.button [
                       prop.onClick (fun _ -> dispatch Insert)

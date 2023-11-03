@@ -7,6 +7,7 @@ open Shared
 open FallenLib.Vocation
 open FallenLib.Dice
 open FallenLib.CoreSkillGroup
+open FallenLib.Attribute
 
 type Model =
     { name: string
@@ -71,9 +72,11 @@ type Msg =
     | SetName of string
 
 let init () : Model =
+    let attributeStatListTemp = coreSkillGroupToAttributes defaultCoreSkillTables
+
     { name = "Javk Wick"
       coreSkillTables = defaultCoreSkillTables
-      vocationTables = VocationTables.init () }
+      vocationTables = VocationTables.init attributeStatListTemp }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
@@ -84,15 +87,18 @@ let update (msg: Msg) (model: Model) : Model =
         { model with
             coreSkillTables = newCoreSkillTables
             vocationTables =
-                List.map
-                    (fun vocationTable ->
-                        VocationTable.update
-                            (VocationTable.Msg.SetGoverningAttributes(coreSkillGroupToAttributes newCoreSkillTables))
-                            vocationTable)
+                VocationTables.update
+                    (coreSkillGroupToAttributes newCoreSkillTables)
+                    VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationTables }
 
     | VocationTableMsg vocationTableMsg ->
-        { model with vocationTables = VocationTables.update vocationTableMsg model.vocationTables }
+        { model with
+            vocationTables =
+                VocationTables.update
+                    (coreSkillGroupToAttributes model.coreSkillTables)
+                    vocationTableMsg
+                    model.vocationTables }
 
     | SetName name -> { model with name = name }
 

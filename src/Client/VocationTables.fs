@@ -4,28 +4,37 @@ open FallenLib.Attribute
 
 type Model = VocationTable.Model list
 
-type Msg = Modify of int * VocationTable.Msg
+type Msg =
+    | Modify of int * VocationTable.Msg
+    | SetAttributeStatsAndCalculateDicePools
 
-let init () : Model =
+let init (attributeStatList: AttributeStat List) : Model =
 
-    [ VocationTable.init ()
-      VocationTable.init ()
-      VocationTable.init () ]
+    [ VocationTable.init attributeStatList
+      VocationTable.init attributeStatList
+      VocationTable.init attributeStatList ]
 
-let update (msg: Msg) (model: Model) : Model =
+let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
     match msg with
     | Modify (position, vocationTableMsg) ->
         model
         |> List.mapi (fun i vocationTableModel ->
             if i = position then
-                VocationTable.update vocationTableMsg vocationTableModel
+                VocationTable.update attributeStatList vocationTableMsg vocationTableModel
             else
                 vocationTableModel)
+    | SetAttributeStatsAndCalculateDicePools ->
+        model
+        |> List.map (fun vocationTable ->
+            VocationTable.update
+                attributeStatList
+                VocationTable.Msg.SetAttributeStatsAndCalculateDicePools
+                vocationTable)
 
 open Feliz
 open Feliz.Bulma
 
-let view (attributeStats: AttributeStat list) (model: Model) (dispatch: Msg -> unit) =
+let view (model: Model) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.label [
@@ -38,7 +47,7 @@ let view (attributeStats: AttributeStat list) (model: Model) (dispatch: Msg -> u
                 model
                 |> List.mapi (fun position vocationTable ->
                     Bulma.column [
-                        VocationTable.view attributeStats vocationTable (fun msg -> dispatch (Modify(position, msg)))
+                        VocationTable.view vocationTable (fun msg -> dispatch (Modify(position, msg)))
                     ])
                 |> Bulma.columns
             ]

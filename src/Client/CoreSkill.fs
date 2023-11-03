@@ -6,7 +6,9 @@ open FallenLib.SkillStat
 
 type Model = SkillStat
 
-type Msg = Neg1To4StatMsg of Neg1To4Stat.Msg
+type Msg =
+    | Neg1To4StatMsg of Neg1To4Stat.Msg
+    | CalculateDicePool
 
 let init (attributeLvl: Neg1To4Stat.Model) =
     let lvl = Neg1To4Stat.init ()
@@ -18,9 +20,12 @@ let init (attributeLvl: Neg1To4Stat.Model) =
 let update (attributeLvl: Neg1To4Stat.Model) (msg: Msg) (model: Model) : Model =
     match msg with
     | Neg1To4StatMsg neg1To4StatMsg ->
+        let newLvl = Neg1To4Stat.update neg1To4StatMsg model.lvl
+
         { model with
-            lvl = Neg1To4Stat.update neg1To4StatMsg model.lvl
-            dicePool = coreSkillToDicePool baseDicePool model.lvl attributeLvl }
+            lvl = newLvl
+            dicePool = coreSkillToDicePool baseDicePool newLvl attributeLvl }
+    | CalculateDicePool -> { model with dicePool = coreSkillToDicePool baseDicePool model.lvl attributeLvl }
 
 open Feliz
 open Feliz.Bulma
