@@ -5,6 +5,8 @@ open Fable.Remoting.Client
 open Shared
 
 open FallenLib.Vocation
+open FallenLib.Dice
+open FallenLib.CoreSkillGroup
 
 type Model =
     { name: string
@@ -12,38 +14,54 @@ type Model =
       vocationTables: VocationTables.Model }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
-    [ { attributeStat = { AttributeStat.init () with attribute = "STR" }
+    let attribtueStat = AttributeStat.init ()
+    let lvl = Neg1To4Stat.init ()
+    let dicePool = coreSkillToDicePool baseDicePool lvl attribtueStat.lvl
+
+    [ { attributeStat = { attribtueStat with attribute = "STR" }
         coreSkillList =
           [ { name = "Athletics"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Climb"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Endurance"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Lift"
-              lvl = Neg1To4Stat.init () } ] }
+              lvl = lvl
+              dicePool = dicePool } ] }
       { attributeStat = { AttributeStat.init () with attribute = "RFX" }
         coreSkillList =
           [ { name = "Athletics"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Climb"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Endurance"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Lift"
-              lvl = Neg1To4Stat.init () } ] }
+              lvl = lvl
+              dicePool = dicePool } ] }
       { attributeStat = { AttributeStat.init () with attribute = "INT" }
         coreSkillList =
           [ { name = "Athletics"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Climb"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Endurance"
-              lvl = Neg1To4Stat.init () }
+              lvl = lvl
+              dicePool = dicePool }
             { name = "Lift"
-              lvl = Neg1To4Stat.init () } ] } ]
+              lvl = lvl
+              dicePool = dicePool } ] } ]
 
-let coreSkillTablesToAttributes (coreSkillTables: CoreSkillGroups.Model) =
+let coreSkillGroupToAttributes (coreSkillTables: CoreSkillGroups.Model) =
     List.map (fun (table: CoreSkillGroup.Model) -> table.attributeStat) coreSkillTables
 
 
@@ -69,7 +87,7 @@ let update (msg: Msg) (model: Model) : Model =
                 List.map
                     (fun vocationTable ->
                         VocationTable.update
-                            (VocationTable.Msg.SetGoverningAttributes(coreSkillTablesToAttributes newCoreSkillTables))
+                            (VocationTable.Msg.SetGoverningAttributes(coreSkillGroupToAttributes newCoreSkillTables))
                             vocationTable)
                     model.vocationTables }
 
@@ -130,10 +148,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
                     ]
                     Bulma.container [
-                        VocationTables.view
-                            (coreSkillGroupsToGoverningAttribute model.coreSkillTables)
-                            model.vocationTables
-                            (VocationTableMsg >> dispatch)
+                        VocationTables.view model.vocationTables (VocationTableMsg >> dispatch)
                     ]
                 ]
             ]
