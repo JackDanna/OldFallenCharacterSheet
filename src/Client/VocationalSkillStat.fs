@@ -12,6 +12,7 @@ type Msg =
     | ToggleTwo of bool
     | ToggleThree of bool
     | ToggleFour of bool
+    | CheckIfLevelCapExceeded
 
 let init () : Model = Neg1To4Stat.init ()
 
@@ -37,6 +38,7 @@ let update (levelCap: ZeroToFourStat.Model) (msg: Msg) (model: Model) : Model =
     | ToggleTwo isChecked -> toggleLogic levelCap isChecked Two One
     | ToggleThree isChecked -> toggleLogic levelCap isChecked Three Two
     | ToggleFour isChecked -> toggleLogic levelCap isChecked Four Three
+    | CheckIfLevelCapExceeded -> determineIfCappedAndReturnModel levelCap model
 
 open Feliz
 open Feliz.Bulma

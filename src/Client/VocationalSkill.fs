@@ -36,7 +36,12 @@ let update
             lvl = lvl
             dicePool = vocationalSkillToString baseDicePool lvl governingAttributeList }
     | CalculateDicePool ->
-        { model with dicePool = vocationalSkillToString baseDicePool model.lvl governingAttributeList }
+        let newLvl =
+            VocationalSkillStat.update levelCap VocationalSkillStat.Msg.CheckIfLevelCapExceeded model.lvl
+
+        { model with
+            lvl = newLvl
+            dicePool = vocationalSkillToString baseDicePool newLvl governingAttributeList }
 
 open Feliz
 open Feliz.Bulma

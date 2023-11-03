@@ -22,7 +22,19 @@ let init (attributeStatList: AttributeStat List) : Model =
 let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
     match msg with
     | VocationRowMsg vocationRowMsg ->
-        { model with vocation = Vocation.update attributeStatList vocationRowMsg model.vocation }
+        let newVocation = Vocation.update attributeStatList vocationRowMsg model.vocation
+
+        { model with
+            vocation = newVocation
+            vocationalSkillList =
+                List.map
+                    (fun vocationalSkill ->
+                        VocationalSkill.update
+                            newVocation.level
+                            newVocation.governingAttributes
+                            VocationalSkill.Msg.CalculateDicePool
+                            vocationalSkill)
+                    model.vocationalSkillList }
 
     | Insert ->
         { model with
