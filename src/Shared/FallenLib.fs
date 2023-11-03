@@ -865,21 +865,21 @@ module Vocation =
     type Vocation =
         { name: string
           level: ZeroToFour
-          governingAttributes: GoverningAttribute list }
+          governingAttributes: GoverningAttribute list
+          dicePool: DicePool }
 
     let governingAttributesToDicePoolModification governingAttributes =
         governingAttributes
         |> List.filter (fun governingAttribute -> governingAttribute.isGoverning)
         |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolModification governingAttribute.attributeStat.lvl)
 
-    let vocationToString baseDice level governingAttributes =
+    let vocationToDicePool baseDice level governingAttributes =
         let diceModList =
             List.append
                 (governingAttributesToDicePoolModification governingAttributes)
                 [ zeroToFourToDicePoolModification level ]
 
         modifyDicePoolByModList baseDice diceModList
-        |> dicePoolToString
 
     let attributesToGoverningAttributesInit attributes =
         List.map

@@ -13,9 +13,13 @@ type Msg =
     | SetAttributeStatsAndCalculateDicePools
 
 let init (attributeStatList: AttributeStat List) : Model =
+    let lvl = ZeroToFourStat.init ()
+    let governingAttribues = attributesToGoverningAttributesInit attributeStatList
+
     { name = ""
-      level = ZeroToFourStat.init ()
-      governingAttributes = attributesToGoverningAttributesInit attributeStatList }
+      level = lvl
+      governingAttributes = governingAttribues
+      dicePool = vocationToDicePool baseDicePool lvl governingAttribues }
 
 let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
     match msg with
@@ -86,7 +90,8 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            vocationToString baseDicePool model.level model.governingAttributes
+            vocationToDicePool baseDicePool model.level model.governingAttributes
+            |> dicePoolToString
             |> prop.text
         ]
         Bulma.column [
