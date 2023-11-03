@@ -33,6 +33,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
                     governingAttribute)
 
         { model with governingAttributes = attributesToGoverningAttributes attributeStatList toggledGoverningAttributes }
+
     | SetAttributeStatsAndCalculateDicePools ->
         { model with governingAttributes = attributesToGoverningAttributes attributeStatList model.governingAttributes }
 
