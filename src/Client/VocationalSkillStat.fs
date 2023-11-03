@@ -52,7 +52,7 @@ let view (levelCap: ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit)
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isVocationalCheckboxDisabled levelCap model neg1To4)
-                prop.isChecked (isCheckedLogic model NegOne)
+                prop.isChecked (isCheckedLogic model neg1To4)
                 prop.onCheckedChange (fun isChecked -> dispatch (toggleNeg1To4 isChecked))
             ]
         ]
