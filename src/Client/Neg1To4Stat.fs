@@ -11,7 +11,7 @@ type Msg =
     | ToggleThree of bool
     | ToggleFour of bool
 
-let init() : Model = Zero
+let init () : Model = Zero
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
@@ -27,7 +27,9 @@ let isCheckedLogic currentLevel checkboxRepresented =
         match currentLevel = NegOne with
         | true -> true
         | _ -> false
-    | _ -> neg1To4ToInt checkboxRepresented <= neg1To4ToInt currentLevel
+    | _ ->
+        neg1To4ToInt checkboxRepresented
+        <= neg1To4ToInt currentLevel
 
 let isCheckboxDisabled currentLevel checkboxRepresented =
 
@@ -36,26 +38,28 @@ let isCheckboxDisabled currentLevel checkboxRepresented =
     | _ ->
         let currentLevelInt = neg1To4ToInt currentLevel
         let checkboxRepresentedInt = neg1To4ToInt checkboxRepresented
-        checkboxRepresentedInt <> currentLevelInt && checkboxRepresentedInt <> currentLevelInt + 1
+
+        checkboxRepresentedInt <> currentLevelInt
+        && checkboxRepresentedInt <> currentLevelInt + 1
 
 
 open Feliz
 open Feliz.Bulma
 
 
-let view (model : Model) (dispatch : Msg -> unit) =
+let view (model: Model) (dispatch: Msg -> unit) =
 
     let checkbox model neg1To4 toggleNeg1To4 =
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isCheckboxDisabled model neg1To4)
                 prop.isChecked (isCheckedLogic model neg1To4)
-                prop.onCheckedChange ( fun isChecked -> dispatch (toggleNeg1To4 isChecked) )
+                prop.onCheckedChange (fun isChecked -> dispatch (toggleNeg1To4 isChecked))
             ]
         ]
-    
+
     let loadedCheckbox = checkbox model
-    
+
     Bulma.columns [
         loadedCheckbox NegOne ToggleNegOne
         Bulma.column [

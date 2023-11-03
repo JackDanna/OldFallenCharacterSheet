@@ -11,30 +11,32 @@ type Msg =
     | SetName of string
     | VocationalSkillStatMsg of VocationalSkillStat.Msg
 
-let init () : Model = 
-    {
-        name = ""
-        lvl = Neg1To4Stat.init()
-    }
+let init () : Model =
+    { name = ""; lvl = Neg1To4Stat.init () }
 
 
-let update (levelCap:ZeroToFourStat.Model) (msg: Msg) (model: Model) : Model =
+let update (levelCap: ZeroToFourStat.Model) (msg: Msg) (model: Model) : Model =
     match msg with
     | SetName name -> { model with name = name }
     | VocationalSkillStatMsg vocationalSkillStatMsg ->
         { model with lvl = VocationalSkillStat.update levelCap vocationalSkillStatMsg model.lvl }
-        
+
 open Feliz
 open Feliz.Bulma
 
-let view (governingAttributes:GoverningAttribute list) (levelCap:ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit) =
+let view
+    (governingAttributes: GoverningAttribute list)
+    (levelCap: ZeroToFourStat.Model)
+    (model: Model)
+    (dispatch: Msg -> unit)
+    =
     Bulma.columns [
         Bulma.column [
             Bulma.dropdown [
                 Bulma.dropdownTrigger [
-                    Bulma.input.text [ 
+                    Bulma.input.text [
                         prop.defaultValue model.name
-                        prop.onTextChange (fun value -> dispatch (SetName value) )
+                        prop.onTextChange (fun value -> dispatch (SetName value))
                     ]
                 ]
                 Bulma.dropdownMenu [
@@ -49,16 +51,10 @@ let view (governingAttributes:GoverningAttribute list) (levelCap:ZeroToFourStat.
             ]
         ]
         Bulma.column [
-            vocationalSkillToString
-                baseDicePool
-                model.lvl
-                governingAttributes
+            vocationalSkillToString baseDicePool model.lvl governingAttributes
             |> prop.text
         ]
         Bulma.column [
-            VocationalSkillStat.view
-                levelCap
-                model.lvl
-                (VocationalSkillStatMsg >> dispatch)
+            VocationalSkillStat.view levelCap model.lvl (VocationalSkillStatMsg >> dispatch)
         ]
     ]

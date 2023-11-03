@@ -4,40 +4,29 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
-type Model = {
-    name: string
-    coreSkillTables : CoreSkillTables.Model
-}
+type Model =
+    { name: string
+      coreSkillTables: CoreSkillTables.Model }
 
-let defaultCoreSkillTables : CoreSkillTables.Model = [
-    {
-        attributeRow = { SkillHeaderRow.init() with name = "STR"}
-        skillRowList = [
-            { SkillRow.init() with name = "Athletics" }
-            { SkillRow.init() with name = "Climb" }
-            { SkillRow.init() with name = "Endurance" }
-            { SkillRow.init() with name = "Lift" }
-        ]
-    }
-    {
-        attributeRow = { SkillHeaderRow.init() with name = "RFX"}
-        skillRowList = [
-            { SkillRow.init() with name = "Acrobatics" }
-            { SkillRow.init() with name = "Perception" }
-            { SkillRow.init() with name = "Sleight of Hand" }
-            { SkillRow.init() with name = "Stealth" }
-        ]
-    }
-    {
-        attributeRow = { SkillHeaderRow.init() with name = "INT"}
-        skillRowList = [
-            { SkillRow.init() with name = "Communication" }
-            { SkillRow.init() with name = "General KNowledge" }
-            { SkillRow.init() with name = "Survival" }
-            { SkillRow.init() with name = "Willpower" }
-        ]
-    }
-]
+let defaultCoreSkillTables: CoreSkillTables.Model =
+    [ { attributeRow = { SkillHeaderRow.init () with name = "STR" }
+        skillRowList =
+          [ { SkillRow.init () with name = "Athletics" }
+            { SkillRow.init () with name = "Climb" }
+            { SkillRow.init () with name = "Endurance" }
+            { SkillRow.init () with name = "Lift" } ] }
+      { attributeRow = { SkillHeaderRow.init () with name = "RFX" }
+        skillRowList =
+          [ { SkillRow.init () with name = "Acrobatics" }
+            { SkillRow.init () with name = "Perception" }
+            { SkillRow.init () with name = "Sleight of Hand" }
+            { SkillRow.init () with name = "Stealth" } ] }
+      { attributeRow = { SkillHeaderRow.init () with name = "INT" }
+        skillRowList =
+          [ { SkillRow.init () with name = "Communication" }
+            { SkillRow.init () with name = "General KNowledge" }
+            { SkillRow.init () with name = "Survival" }
+            { SkillRow.init () with name = "Willpower" } ] } ]
 
 type Msg =
     | CoreSkillTablesMsg of CoreSkillTables.Msg
@@ -45,14 +34,15 @@ type Msg =
     | Reset
 
 let init () : Model =
-    { name = "Name"; coreSkillTables = defaultCoreSkillTables }
+    { name = "Name"
+      coreSkillTables = defaultCoreSkillTables }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | CoreSkillTablesMsg coreSkillTableMsg ->
         { model with coreSkillTables = CoreSkillTables.update coreSkillTableMsg model.coreSkillTables }
-    | SetName name -> { model with name = name}
-    | Reset -> init()
+    | SetName name -> { model with name = name }
+    | Reset -> init ()
 
 open Feliz
 open Feliz.Bulma
@@ -78,7 +68,8 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
         prop.style [
             style.backgroundSize "cover"
-            style.backgroundImageUrl "https://www.onlygfx.com/wp-content/uploads/2015/12/simple-old-paper-1-transparent.jpg"
+            style.backgroundImageUrl
+                "https://www.onlygfx.com/wp-content/uploads/2015/12/simple-old-paper-1-transparent.jpg"
             style.backgroundPosition "no-repeat center center fixed"
         ]
 
@@ -103,7 +94,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
             Bulma.heroBody [
                 Bulma.container [
                     Bulma.columns [
-                        CoreSkillTables.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
+                        CoreSkillTables.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
                     ]
                     // Bulma.control.p [
                     //     control.isExpanded
@@ -115,7 +106,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     //     ]
                     // ]
                     //Bulma.title model.Name
-                ]
+                    ]
             ]
         ]
-    ] 
+    ]

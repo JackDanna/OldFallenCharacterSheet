@@ -5,7 +5,7 @@ open Farmer.Builders
 
 open Helpers
 
-initializeContext()
+initializeContext ()
 
 let sharedPath = Path.getFullName "src/Shared"
 let serverPath = Path.getFullName "src/Server"
@@ -25,59 +25,54 @@ Target.create "InstallClient" (fun _ -> run npm "install" ".")
 Target.create "Bundle" (fun _ ->
     [ "server", dotnet $"publish -c Release -o \"{deployPath}\"" serverPath
       "client", dotnet "fable -o output -s --run npm run build" clientPath ]
-    |> runParallel
-)
+    |> runParallel)
 
 Target.create "Azure" (fun _ ->
-    let web = webApp {
-        name "FallenCharacterSheet"
-        operating_system OS.Windows
-        runtime_stack Runtime.DotNet60
-        zip_deploy "deploy"
-    }
-    let deployment = arm {
-        location Location.WestEurope
-        add_resource web
-    }
+    let web =
+        webApp {
+            name "FallenCharacterSheet"
+            operating_system OS.Windows
+            runtime_stack Runtime.DotNet60
+            zip_deploy "deploy"
+        }
+
+    let deployment =
+        arm {
+            location Location.WestEurope
+            add_resource web
+        }
 
     deployment
     |> Deploy.execute "FallenCharacterSheet" Deploy.NoParameters
-    |> ignore
-)
+    |> ignore)
 
 Target.create "Run" (fun _ ->
     run dotnet "build" sharedPath
+
     [ "server", dotnet "watch run" serverPath
       "client", dotnet "fable watch -o output -s --run npm run start" clientPath ]
-    |> runParallel
-)
+    |> runParallel)
 
 Target.create "RunTests" (fun _ ->
     run dotnet "build" sharedTestsPath
+
     [ "server", dotnet "watch run" serverTestsPath
       "client", dotnet "fable watch -o output -s --run npm run test:live" clientTestsPath ]
-    |> runParallel
-)
+    |> runParallel)
 
-Target.create "Format" (fun _ ->
-    run dotnet "fantomas . -r" "src"
-)
+Target.create "Format" (fun _ -> run dotnet "fantomas . -r" "src")
 
 open Fake.Core.TargetOperators
 
-let dependencies = [
-    "Clean"
-        ==> "InstallClient"
-        ==> "Bundle"
-        ==> "Azure"
+let dependencies =
+    [ "Clean"
+      ==> "InstallClient"
+      ==> "Bundle"
+      ==> "Azure"
 
-    "Clean"
-        ==> "InstallClient"
-        ==> "Run"
+      "Clean" ==> "InstallClient" ==> "Run"
 
-    "InstallClient"
-        ==> "RunTests"
-]
+      "InstallClient" ==> "RunTests" ]
 
 [<EntryPoint>]
 let main args = runOrDefault args

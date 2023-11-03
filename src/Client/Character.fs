@@ -6,46 +6,45 @@ open Shared
 
 open FallenLib.Vocation
 
-type Model = {
-    name: string
-    coreSkillTables : CoreSkillGroups.Model
-    vocationTables : VocationTables.Model
-}
+type Model =
+    { name: string
+      coreSkillTables: CoreSkillGroups.Model
+      vocationTables: VocationTables.Model }
 
-let defaultCoreSkillTables : CoreSkillGroups.Model = [
-    {
-        attributeStat = { AttributeStat.init() with attribute = "STR"}
-        coreSkillList = [
-            { name = "Athletics"; lvl = Neg1To4Stat.init()}
-            { name = "Climb"; lvl = Neg1To4Stat.init()}
-            { name = "Endurance"; lvl = Neg1To4Stat.init()}
-            { name = "Lift"; lvl = Neg1To4Stat.init()}
-        ]
-    }
-    {
-        attributeStat = { AttributeStat.init() with attribute = "RFX"}
-        coreSkillList = [
-            { name = "Athletics"; lvl = Neg1To4Stat.init()}
-            { name = "Climb"; lvl = Neg1To4Stat.init() }
-            { name = "Endurance"; lvl = Neg1To4Stat.init() }
-            { name = "Lift"; lvl = Neg1To4Stat.init() }
-        ]
-    }
-    {
-        attributeStat = { AttributeStat.init() with attribute = "INT"}
-        coreSkillList = [
-            { name = "Athletics"; lvl = Neg1To4Stat.init() }
-            { name = "Climb"; lvl = Neg1To4Stat.init() }
-            { name = "Endurance"; lvl = Neg1To4Stat.init() }
-            { name = "Lift"; lvl = Neg1To4Stat.init() }
-        ]
-    }
-]
+let defaultCoreSkillTables: CoreSkillGroups.Model =
+    [ { attributeStat = { AttributeStat.init () with attribute = "STR" }
+        coreSkillList =
+          [ { name = "Athletics"
+              lvl = Neg1To4Stat.init () }
+            { name = "Climb"
+              lvl = Neg1To4Stat.init () }
+            { name = "Endurance"
+              lvl = Neg1To4Stat.init () }
+            { name = "Lift"
+              lvl = Neg1To4Stat.init () } ] }
+      { attributeStat = { AttributeStat.init () with attribute = "RFX" }
+        coreSkillList =
+          [ { name = "Athletics"
+              lvl = Neg1To4Stat.init () }
+            { name = "Climb"
+              lvl = Neg1To4Stat.init () }
+            { name = "Endurance"
+              lvl = Neg1To4Stat.init () }
+            { name = "Lift"
+              lvl = Neg1To4Stat.init () } ] }
+      { attributeStat = { AttributeStat.init () with attribute = "INT" }
+        coreSkillList =
+          [ { name = "Athletics"
+              lvl = Neg1To4Stat.init () }
+            { name = "Climb"
+              lvl = Neg1To4Stat.init () }
+            { name = "Endurance"
+              lvl = Neg1To4Stat.init () }
+            { name = "Lift"
+              lvl = Neg1To4Stat.init () } ] } ]
 
-let coreSkillTablesToAttributes (coreSkillTables:CoreSkillGroups.Model) =
-    List.map ( fun (table: CoreSkillGroup.Model) ->
-        table.attributeStat
-    ) coreSkillTables
+let coreSkillTablesToAttributes (coreSkillTables: CoreSkillGroups.Model) =
+    List.map (fun (table: CoreSkillGroup.Model) -> table.attributeStat) coreSkillTables
 
 
 type Msg =
@@ -54,27 +53,25 @@ type Msg =
     | SetName of string
 
 let init () : Model =
-    {
-        name = "Javk Wick"
-        coreSkillTables = defaultCoreSkillTables
-        vocationTables = VocationTables.init ()
-    }
+    { name = "Javk Wick"
+      coreSkillTables = defaultCoreSkillTables
+      vocationTables = VocationTables.init () }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | CoreSkillTablesMsg coreSkillTableMsg ->
-        let newCoreSkillTables = CoreSkillGroups.update coreSkillTableMsg model.coreSkillTables
+        let newCoreSkillTables =
+            CoreSkillGroups.update coreSkillTableMsg model.coreSkillTables
 
-        {
-            model with 
-                coreSkillTables = newCoreSkillTables
-                vocationTables =
-                    List.map ( fun vocationTable ->
+        { model with
+            coreSkillTables = newCoreSkillTables
+            vocationTables =
+                List.map
+                    (fun vocationTable ->
                         VocationTable.update
-                            (VocationTable.Msg.SetGoverningAttributes (coreSkillTablesToAttributes newCoreSkillTables))
-                            vocationTable
-                    ) model.vocationTables
-        }
+                            (VocationTable.Msg.SetGoverningAttributes(coreSkillTablesToAttributes newCoreSkillTables))
+                            vocationTable)
+                    model.vocationTables }
 
     | VocationTableMsg vocationTableMsg ->
         { model with vocationTables = VocationTables.update vocationTableMsg model.vocationTables }
@@ -85,14 +82,15 @@ open Feliz
 open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
-    
+
     Bulma.hero [
         hero.isFullHeight
         color.isDanger
 
         prop.style [
             style.backgroundSize "cover"
-            style.backgroundImageUrl "https://www.onlygfx.com/wp-content/uploads/2015/12/simple-old-paper-1-transparent.jpg"
+            style.backgroundImageUrl
+                "https://www.onlygfx.com/wp-content/uploads/2015/12/simple-old-paper-1-transparent.jpg"
             style.backgroundPosition "no-repeat center center fixed"
         ]
 
@@ -122,19 +120,22 @@ let view (model: Model) (dispatch: Msg -> unit) =
                             prop.value model.name
                             prop.placeholder "Character Name"
                             prop.onChange (fun newName -> SetName newName |> dispatch)
-                            prop.classes ["is-large"; "has-text-centered"]
+                            prop.classes [
+                                "is-large"
+                                "has-text-centered"
+                            ]
                         ]
                     ]
                     Bulma.container [
-                        CoreSkillGroups.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
+                        CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
                     ]
                     Bulma.container [
                         VocationTables.view
                             (coreSkillGroupsToGoverningAttribute model.coreSkillTables)
                             model.vocationTables
-                            ( VocationTableMsg >> dispatch )
+                            (VocationTableMsg >> dispatch)
                     ]
                 ]
             ]
         ]
-    ] 
+    ]
