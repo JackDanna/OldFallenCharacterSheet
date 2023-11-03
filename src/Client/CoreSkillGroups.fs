@@ -9,7 +9,6 @@ let init () : Model = []
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | Modify (position, coreSkillTableMsg) ->
-
         List.mapi
             (fun i coreSkilTableModel ->
                 if i = position then
