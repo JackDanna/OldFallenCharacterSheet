@@ -1,10 +1,10 @@
 module VocationTable
 
-open FallenLib.Vocation
+open FallenLib.Attribute
 
 type Model = {
-    vocationRow : Vocation.Model
-    vocationalSkillRowList : VocationalSkill.Model List
+    vocation : Vocation.Model
+    vocationalSkillList : VocationalSkill.Model List
 }
 
 type Msg =
@@ -15,46 +15,46 @@ type Msg =
     | SetGoverningAttributes of AttributeStat.Model list
 
 let init() : Model = {
-    vocationRow =  Vocation.init()
-    vocationalSkillRowList = [VocationalSkill.init ()]
+    vocation =  Vocation.init()
+    vocationalSkillList = [VocationalSkill.init ()]
 }
 
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | VocationRowMsg vocationRowMsg ->
-        { model with vocationRow = Vocation.update vocationRowMsg model.vocationRow }
+        { model with vocation = Vocation.update vocationRowMsg model.vocation }
 
     | Insert ->
         { model with 
-            vocationalSkillRowList = List.append model.vocationalSkillRowList [VocationalSkill.init()]}
+            vocationalSkillList = List.append model.vocationalSkillList [VocationalSkill.init()]}
 
     | Remove ->
         { model with 
-            vocationalSkillRowList = 
-                model.vocationalSkillRowList |> List.rev |> List.tail |> List.rev
+            vocationalSkillList = 
+                model.vocationalSkillList |> List.rev |> List.tail |> List.rev
         }
 
     | Modify (position, msg) ->
         { model with 
-            vocationalSkillRowList = 
+            vocationalSkillList = 
                 List.mapi ( fun i vocationalSkill ->
                     if position = i then
-                        VocationalSkill.update model.vocationRow.level msg vocationalSkill
+                        VocationalSkill.update model.vocation.level msg vocationalSkill
                     else 
                         vocationalSkill
-                ) model.vocationalSkillRowList
+                ) model.vocationalSkillList
         }
     | SetGoverningAttributes attributes ->
         { model with
-            vocationRow = Vocation.update (Vocation.Msg.SetGoverningAttributes (attributes)) model.vocationRow }
+            vocation = Vocation.update (Vocation.Msg.SetGoverningAttributes (attributes)) model.vocation }
     
 
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (attributeStats:AttributeStat list) (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
-        Vocation.view model.vocationRow (VocationRowMsg >> dispatch)
+        Vocation.view attributeStats model.vocation (VocationRowMsg >> dispatch)
 
         Html.ul (
             List.append (
@@ -62,11 +62,11 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     fun position skillRow ->
 
                         VocationalSkill.view
-                            model.vocationRow.governingAttributes
-                            model.vocationRow .level
+                            model.vocation.governingAttributes
+                            model.vocation .level
                             skillRow
                             ( fun msg -> dispatch ( Modify (position,msg) ) )
-                ) model.vocationalSkillRowList
+                ) model.vocationalSkillList
             ) [
                 Html.button [
                     prop.onClick (fun _ -> dispatch Insert)

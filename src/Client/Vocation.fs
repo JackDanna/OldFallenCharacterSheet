@@ -6,17 +6,13 @@ open FallenLib.Dice
 
 type Model = Vocation
 
-type Msg =
-    | SetName of string
-    | SetGoverningAttributes of AttributeStat list
-    | ZeroToFourStat of ZeroToFourStat.Msg
-    | ToggleGoverningAttribute of int
-
-let init () : Model = {
-    name = ""
-    level = ZeroToFourStat.init()
-    governingAttributes = []
-}
+let attributesToGoverningAttributesInit attributes =
+    List.map ( fun (attributeStat:AttributeStat.Model) ->
+        {
+            attributeStat = attributeStat
+            isGoverning = false
+        }
+    ) attributes
 
 let attributesToGoverningAttributes attributes governingAttributes =
     attributes
@@ -36,12 +32,20 @@ let attributesToGoverningAttributes attributes governingAttributes =
         }
     )
 
+type Msg =
+    | SetName of string
+    | ZeroToFourStat of ZeroToFourStat.Msg
+    | ToggleGoverningAttribute of int
+
+let init (attributeStatList:AttributeStat List) : Model = {
+    name = ""
+    level = ZeroToFourStat.init()
+    governingAttributes = attributesToGoverningAttributesInit attributeStatList
+}
+
 let update (msg: Msg) (model: Model) : Model =
     match msg with
     | SetName newName -> { model with name = newName }
-
-    | SetGoverningAttributes attributes ->
-        { model with governingAttributes = attributesToGoverningAttributes attributes model.governingAttributes }
 
     | ZeroToFourStat neg1ToStatMsg ->
         { model with level = ZeroToFourStat.update neg1ToStatMsg model.level }

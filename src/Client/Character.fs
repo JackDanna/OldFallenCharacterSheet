@@ -42,23 +42,10 @@ let defaultCoreSkillTables : CoreSkillGroups.Model = [
     }
 ]
 
-let attributesToGoverningAttributesInit attributes =
-    List.map ( fun (attribute:AttributeStat.Model) ->
-        {
-            attributeStat = attribute
-            isGoverning = false
-        }
-    ) attributes
-
 let coreSkillTablesToAttributes (coreSkillTables:CoreSkillGroups.Model) =
     List.map ( fun (table: CoreSkillGroup.Model) ->
         table.attributeStat
     ) coreSkillTables
-
-let defaultGoverningAttribute =
-    defaultCoreSkillTables 
-    |> coreSkillTablesToAttributes 
-    |> attributesToGoverningAttributesInit
 
 
 type Msg =
@@ -142,7 +129,10 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         CoreSkillGroups.view model.coreSkillTables ( CoreSkillTablesMsg >> dispatch )
                     ]
                     Bulma.container [
-                        VocationTables.view model.vocationTables ( VocationTableMsg >> dispatch )
+                        VocationTables.view
+                            (coreSkillGroupsToGoverningAttribute model.coreSkillTables)
+                            model.vocationTables
+                            ( VocationTableMsg >> dispatch )
                     ]
                 ]
             ]

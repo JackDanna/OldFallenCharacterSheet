@@ -1,5 +1,7 @@
 module VocationTables
 
+open FallenLib.Attribute
+
 type Model = VocationTable.Model list
 
 type Msg =
@@ -27,7 +29,7 @@ let update (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (attributeStats:AttributeStat list) (model: Model) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.label [
@@ -41,7 +43,8 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 |> List.mapi ( 
                     fun position vocationTable -> 
                         Bulma.column [
-                            VocationTable.view 
+                            VocationTable.view
+                                attributeStats
                                 vocationTable
                                 (fun msg -> dispatch (Modify (position, msg)) )
                         ]
