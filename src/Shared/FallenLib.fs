@@ -829,10 +829,12 @@ module Equipment =
 
 module SkillStat =
     open Neg1To4
+    open Dice
 
-    type SkillStat = { name: string; lvl: Neg1To4 }
-
-    let skillStatLvlToInt skillStat = neg1To4ToInt skillStat.lvl
+    type SkillStat =
+        { name: string
+          lvl: Neg1To4
+          dicePool: DicePool }
 
 module CoreSkillGroup =
 
@@ -844,13 +846,12 @@ module CoreSkillGroup =
         { attributeStat: AttributeStat
           coreSkillList: SkillStat list }
 
-    let coreSkillToString baseDice lvl attributeLvl =
+    let coreSkillToDicePool baseDice lvl attributeLvl =
 
         modifyDicePoolByModList
             baseDice
             [ neg1To4ToD6DicePoolModification lvl
               neg1To4ToD6DicePoolModification attributeLvl ]
-        |> dicePoolToString
 
 module Vocation =
     open ZeroToFour
@@ -880,6 +881,30 @@ module Vocation =
         modifyDicePoolByModList baseDice diceModList
         |> dicePoolToString
 
+    let attributesToGoverningAttributesInit attributes =
+        List.map
+            (fun (attributeStat: AttributeStat) ->
+                { attributeStat = attributeStat
+                  isGoverning = false })
+            attributes
+
+    let attributesToGoverningAttributes attributeStats oldGoverningAttributes =
+
+        attributeStats
+        |> List.map (fun attributeStat ->
+            { attributeStat = attributeStat
+              isGoverning =
+                List.collect
+                    (fun (oldGoverningAttribute: GoverningAttribute) ->
+                        if (oldGoverningAttribute.attributeStat.attribute = attributeStat.attribute)
+                           && oldGoverningAttribute.isGoverning then
+                            [ oldGoverningAttribute.isGoverning ]
+                        else
+                            [])
+                    oldGoverningAttributes
+                |> List.isEmpty
+                |> not })
+
 module VocationGroup =
 
     open Neg1To4
@@ -892,20 +917,26 @@ module VocationGroup =
         { vocation: Vocation
           vocationalSkills: SkillStat list }
 
-    let findVocationalSkillStat skillName (skillStatList: SkillStat list) =
+    let findVocationalSkillLvlWithDefault skillName (defaultLvl: Neg1To4) (skillStatList: SkillStat list) =
         skillStatList
         |> List.filter (fun skill -> skill.name = skillName)
         |> (fun list ->
             if list.Length = 0 then
-                { name = skillName; lvl = Neg1To4.Zero }
+                defaultLvl
             else
-                List.maxBy (fun skill -> skill.lvl) list)
+                List.maxBy (fun skill -> skill.lvl) list
+                |> (fun skillList -> skillList.lvl))
 
-    let findVocationalSkill (vocationGroupList: VocationGroup list) (vocationalSkillName: string) : SkillStat =
+    let findVocationalSkillLvl
+        (vocationGroupList: VocationGroup list)
+        (vocationalSkillName: string)
+        (defaultLvl: Neg1To4)
+        : Neg1To4 =
+
         vocationGroupList
         |> List.map (fun vocation -> vocation.vocationalSkills)
         |> List.collect (fun x -> x)
-        |> findVocationalSkillStat vocationalSkillName
+        |> findVocationalSkillLvlWithDefault vocationalSkillName defaultLvl
 
     let zeroToFourToNegOneToFour zeroToFour =
         match zeroToFour with
@@ -1045,8 +1076,6 @@ module WeaponCombatRoll =
             |> collectWeaponItemClasses
             |> List.collect (fun weaponClass ->
 
-                let skillStat = findVocationalSkill vocationGroupList weaponClass.name
-
                 let preloadedCreateCombatRoll =
                     createCombatRoll
                         weaponItem.name
@@ -1054,7 +1083,7 @@ module WeaponCombatRoll =
                         weaponItem.itemTier.baseDice
                         attributeDeterminedDiceModArray
                         attributeStats
-                        skillStat.lvl
+                        (findVocationalSkillLvl vocationGroupList weaponClass.name Zero)
                         combatRollGoverningAttributes
 
                 let preloadedCreateHandVariationsCombatRolls =
@@ -1306,6 +1335,7 @@ module CarryWeightCalculation =
     open Attribute
     open SkillStat
     open VocationGroup
+    open Neg1To4
 
     type CarryWeightCalculation =
         { name: string
@@ -1331,8 +1361,8 @@ module CarryWeightCalculation =
             determineAttributeLvl [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
 
         let skillLevel =
-            findVocationalSkillStat maxCarryWeightCalculation.governingSkill coreSkillList
-            |> skillStatLvlToInt
+            findVocationalSkillLvlWithDefault maxCarryWeightCalculation.governingSkill Zero coreSkillList
+            |> neg1To4ToInt
 
         int maxCarryWeightCalculation.baseWeight
         |> (+)
@@ -1393,6 +1423,7 @@ module Effects =
     open DefenseClass
     open CarryWeightCalculation
     open VocationGroup
+    open Neg1To4
 
     type EffectTable = (string * string * string) list
 
@@ -1415,8 +1446,8 @@ module Effects =
                 determineAttributeLvl calculation.governingAttributes attributeStatArray
 
             let skillLvl =
-                findVocationalSkillStat calculation.governingSkill skillStatArray
-                |> skillStatLvlToInt
+                findVocationalSkillLvlWithDefault calculation.governingSkill Zero skillStatArray
+                |> neg1To4ToInt
 
             createMovementSpeedString calculation attributeLvl skillLvl weightClass.percentOfMovementSpeed
         | CarryWeightCalculation maxCarryWeightCalculation ->
