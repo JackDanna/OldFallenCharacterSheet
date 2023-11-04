@@ -1,4 +1,4 @@
-desc,oneHandedDice,twoHandedDice,penetration,rangeAdjustment,damageTypes,engageableOpponents,dualWieldableBonus,areaOfEffect,resourceClass,governingAttributes
-Radiance Conduit,+0d6,+0d6,0,0,,None,None,None,None,"{STR,RFX,INT}"
-Default Conduit,+0d6,+0d6,0,0,,None,None,None,None,"{STR,RFX,INT}"
-Blazecraft Conduit,+0d6,+0d6,0,0,,None,None,None,None,"{STR,RFX,INT}"
+desc,oneHandedDice,twoHandedDice,penetration,rangeAdjustment,damageTypes,engageableOpponents,dualWieldableBonus,areaOfEffect,resourceClass,effectedMagicSkills
+Radiance Conduit,+0d6,+0d6,0,0,,None,None,None,None,Radiance
+Default Conduit,+0d6,+0d6,0,0,,None,None,None,None,Blazecraft
+Blazecraft Conduit,+0d6,+0d6,0,0,,None,None,None,None,Blazecraft

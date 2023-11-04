@@ -670,7 +670,6 @@ module ConduitClass =
     open AreaOfEffect
     open Penetration
     open ResourceClass
-    open Attribute
 
     type ConduitClass =
         { name: string
@@ -683,7 +682,6 @@ module ConduitClass =
           dualWieldableBonus: DicePoolModification option
           areaOfEffect: AreaOfEffect option
           resourceClass: ResourceClass option
-          governingAttributes: Attribute list
           effectedMagicSkills: MagicSkill list }
 
 module MagicCombat =

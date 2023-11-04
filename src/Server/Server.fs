@@ -122,7 +122,7 @@ module FallenServerData =
 
     let resourceClassMap = stringListToTypeMap resourceClassData
 
-    let weaponResourceClassOptionMap string =
+    let resourceClassOptionMap string =
         match string with
         | "None" -> None
         | _ -> Some <| resourceClassMap.Item string
@@ -178,11 +178,56 @@ module FallenServerData =
               engageableOpponents = engageableOpponentsMap row.["engageableOpponents"]
               dualWieldableBonus = stringToDicePoolModificationOption row.["dualWieldableBonus"]
               areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
-              resourceClass = weaponResourceClassOptionMap row.["resourceClass"] })
+              resourceClass = resourceClassOptionMap row.["resourceClass"] })
 
     let weaponClassMap =
         List.map (fun (weaponClass: WeaponClass) -> weaponClass.name, weaponClass) weaponClassData
         |> Map.ofList
+
+    // ConduitClass
+    let conduitClassData =
+        makeFallenData "ConduitClassData.csv" (fun row ->
+
+            let name = string row.["desc"]
+            let oneHandedDice = stringToDicePoolModificationOption row.["oneHandedDice"]
+            let twoHandedDice = stringToDicePoolModification row.["twoHandedDice"]
+            let penetration = uint row.["penetration"]
+            let rangeAdjustment = int row.["rangeAdjustment"]
+            let damageTypes = stringToDamageTypeList row.["damageTypes"]
+
+            let engageableOpponents =
+                match row.["engageableOpponents"] with
+                | "None" -> None
+                | something -> Some(engageableOpponentsMap something)
+
+            let dualWieldableBonus =
+                stringToDicePoolModificationOption row.["dualWieldableBonus"]
+
+            let areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
+            let resourceClass = resourceClassOptionMap row.["resourceClass"]
+
+            let effectedMagicSkills =
+                row.["effectedMagicSkills"].Split ", "
+                |> List.ofArray
+                |> List.map (fun magicSkillStr -> magicSkillMap.Item magicSkillStr)
+
+
+            { name = name
+              oneHandedDice = oneHandedDice
+              twoHandedDice = twoHandedDice
+              penetration = penetration
+              rangeAdjustment = rangeAdjustment
+              damageTypes = damageTypes
+              engageableOpponents = engageableOpponents
+              dualWieldableBonus = dualWieldableBonus
+              areaOfEffect = areaOfEffect
+              resourceClass = resourceClass
+              effectedMagicSkills = effectedMagicSkills })
+
+    let conduitClassMap =
+        List.map (fun (conduitClass: ConduitClass) -> conduitClass.name, conduitClass) conduitClassData
+        |> Map.ofList
+
 
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
