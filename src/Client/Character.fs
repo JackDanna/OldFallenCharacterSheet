@@ -8,13 +8,13 @@ open FallenLib.Vocation
 open FallenLib.Dice
 open FallenLib.CoreSkillGroup
 open FallenLib.Attribute
-open FallenLib.Damage
+open FallenLib.Item
 
 type Model =
     { name: string
       coreSkillTables: CoreSkillGroups.Model
       vocationTables: VocationTables.Model
-      damageTypes: DamageType list }
+      itemList: Item list }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -72,7 +72,7 @@ type Msg =
     | CoreSkillTablesMsg of CoreSkillGroups.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
-    | GotDamageTypes of DamageType list
+    | GotDamageTypes of Item list
 
 let fallenDataApi =
     Remoting.createApi ()
@@ -85,8 +85,8 @@ let init () : Model * Cmd<Msg> =
     { name = "Javk Wick"
       coreSkillTables = defaultCoreSkillTables
       vocationTables = VocationTables.init attributeStatListTemp
-      damageTypes = [] },
-    Cmd.OfAsync.perform fallenDataApi.getDamageTypes () GotDamageTypes
+      itemList = [] },
+    Cmd.OfAsync.perform fallenDataApi.getItems () GotDamageTypes
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
@@ -113,7 +113,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
-    | GotDamageTypes damageTypes -> { model with damageTypes = damageTypes }, Cmd.none
+    | GotDamageTypes damageTypes -> { model with itemList = damageTypes }, Cmd.none
 
 open Feliz
 open Feliz.Bulma
@@ -165,8 +165,8 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     ]
                     Bulma.content [
                         Html.ol [
-                            for damageType in model.damageTypes do
-                                Html.li [ prop.text damageType ]
+                            for damageType in model.itemList do
+                                Html.li [ prop.text damageType.name ]
                         ]
                     ]
                     Bulma.container [

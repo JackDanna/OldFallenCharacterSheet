@@ -325,7 +325,7 @@ module FallenServerData =
 
 
 let fallenDataApi: IFallenDataApi =
-    { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
+    { getItems = fun () -> async { return FallenServerData.itemData } }
 
 
 let webApp =

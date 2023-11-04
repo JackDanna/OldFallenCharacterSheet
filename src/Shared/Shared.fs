@@ -2,7 +2,6 @@ namespace Shared
 
 open System
 open FallenLib.Item
-open FallenLib.Damage
 
 type Todo = { Id: Guid; Description: string }
 
@@ -23,6 +22,4 @@ type ITodosApi =
       addTodo: Todo -> Async<Todo> }
 
 
-type IFallenDataApi =
-    { //getItems: unit -> Async<Item list>
-      getDamageTypes: unit -> Async<DamageType list> }
+type IFallenDataApi = { getItems: unit -> Async<Item list> }
