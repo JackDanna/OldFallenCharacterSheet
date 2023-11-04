@@ -290,6 +290,17 @@ module FallenServerData =
               value = string row.["value"]
               weight = float row.["weight"] })
 
+    // MovementSpeedCalculation
+    let movementSpeedCalculationData =
+        makeFallenData "MovementSpeedCalculationData.csv" (fun row ->
+            { name = string row.["desc"]
+              baseMovementSpeed = uint row.["baseMovementSpeed"]
+              governingAttributes = stringToAttributes row.["governingAttributes"]
+              feetPerAttributeLvl = uint row.["feetPerAttributeLvl"]
+              governingSkill = string row.["governingSkill"]
+              feetPerSkillLvl = uint row.["feetPerSkillLvl"] })
+
+
 
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
