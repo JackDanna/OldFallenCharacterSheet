@@ -239,6 +239,19 @@ module FallenServerData =
             weaponResourceClassData
         |> Map.ofList
 
+    // ItemTier
+    let itemTierData =
+        makeFallenData "ItemTierData.csv" (fun row ->
+            { name = string row.["desc"]
+              level = int row.["level"]
+              runeSlots = uint row.["runeSlots"]
+              baseDice = stringToDicePool row.["baseDice"]
+              durabilityMax = uint row.["durabilityMax"] })
+
+    let itemTierMap =
+        List.map (fun (itemTier: ItemTier) -> itemTier.name, itemTier) itemTierData
+        |> Map.ofList
+
 
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
