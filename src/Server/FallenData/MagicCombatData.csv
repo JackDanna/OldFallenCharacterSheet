@@ -1,9 +1,9 @@
-Description,Lvl Requirment,Dice Modification,Penetration,Range,Engageable Opponents,Resource Requirment,Vocation Assistable,Area Of Effect
-Melee Trick,-1,+0d6,'0,Melee,Rapid,0,FALSE,None
-Ranged Trick,-1,+0d6,'0,Close,Standard,0,TRUE,None
-Melee,0,+0d6,'2,Melee,Rapid,1,TRUE,None
-Ranged,0,+0d6,'1,Close,Standard,1,TRUE,None
-Cone,0,+0d6,'2,Close,Focused,1,TRUE,Cone
-Reach Melee,1,+0d6,'2,Reach,Rapid,1,TRUE,None
-Focused,1,+1d6,'2,Close,Focused,1,TRUE,None
-Sphere,2,+0d6,'3,Close,Focused,2,TRUE,Sphere
+Description,Lvl Requirment,Dice Modification,Penetration,Range,Engageable Opponents,Resource Requirment,Area Of Effect
+Melee Trick,-1,+0d6,'0,Melee,Rapid,0,None
+Ranged Trick,-1,+0d6,'0,Close,Standard,0,None
+Melee,0,+0d6,'2,Melee,Rapid,1,None
+Ranged,0,+0d6,'1,Close,Standard,1,None
+Cone,0,+0d6,'2,Close,Focused,1,Cone
+Reach Melee,1,+0d6,'2,Reach,Rapid,1,None
+Focused,1,+1d6,'2,Close,Focused,1,None
+Sphere,2,+0d6,'3,Close,Focused,2,Sphere
