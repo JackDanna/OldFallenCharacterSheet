@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="NewFallenLib.fs" />
     <Compile Include="FallenLib.fs" />
+    <Compile Include="NewFallenLib.fs" />
     <Compile Include="Shared.fs" />
   </ItemGroup>
   <ItemGroup>
