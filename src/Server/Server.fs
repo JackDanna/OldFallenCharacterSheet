@@ -150,6 +150,10 @@ module FallenServerData =
               isMeleeCapable = Bool row.["meleeCapable"]
               magicResourceClass = string row.["magicResourceClass"] })
 
+    let magicSkillMap =
+        List.map (fun (magicSkill: MagicSkill) -> magicSkill.name, magicSkill) magicSkillData
+        |> Map.ofList
+
     // MagicCombat
     let magicCombatData =
         makeFallenData "MagicCombatData.csv" (fun row ->
@@ -178,11 +182,6 @@ module FallenServerData =
 
     let weaponClassMap =
         List.map (fun (weaponClass: WeaponClass) -> weaponClass.name, weaponClass) weaponClassData
-        |> Map.ofList
-
-
-    let magicSkillMap =
-        List.map (fun (magicSkill: MagicSkill) -> magicSkill.name, magicSkill) magicSkillData
         |> Map.ofList
 
 let fallenDataApi: IFallenDataApi =
