@@ -14,7 +14,8 @@ type Model =
     { name: string
       coreSkillTables: CoreSkillGroups.Model
       vocationTables: VocationTables.Model
-      itemList: Item list }
+      AllItemList: Item list
+      item: Item.Model }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -73,6 +74,7 @@ type Msg =
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
     | GotDamageTypes of Item list
+    | ItemMsg of Item.Msg
 
 let fallenDataApi =
     Remoting.createApi ()
@@ -85,7 +87,8 @@ let init () : Model * Cmd<Msg> =
     { name = "Javk Wick"
       coreSkillTables = defaultCoreSkillTables
       vocationTables = VocationTables.init attributeStatListTemp
-      itemList = [] },
+      AllItemList = []
+      item = Item.Model.Empty },
     Cmd.OfAsync.perform fallenDataApi.getItems () GotDamageTypes
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
@@ -113,7 +116,8 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
-    | GotDamageTypes damageTypes -> { model with itemList = damageTypes }, Cmd.none
+    | GotDamageTypes damageTypes -> { model with AllItemList = damageTypes }, Cmd.none
+    | ItemMsg itemMsg -> { model with item = Item.update model.AllItemList itemMsg model.item }, Cmd.none
 
 open Feliz
 open Feliz.Bulma
@@ -164,10 +168,11 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         ]
                     ]
                     Bulma.content [
-                        Html.ol [
-                            for damageType in model.itemList do
-                                Html.li [ prop.text damageType.name ]
-                        ]
+                        // Html.ol [
+                        //     for damageType in model.itemList do
+                        //         Html.li [ prop.text damageType.name ]
+                        // ]
+                        Item.view model.AllItemList model.item (ItemMsg >> dispatch)
                     ]
                     Bulma.container [
                         CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
