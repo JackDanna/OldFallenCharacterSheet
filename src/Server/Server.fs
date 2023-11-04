@@ -127,6 +127,21 @@ module FallenServerData =
         | "None" -> None
         | _ -> Some <| resourceClassMap.Item string
 
+    // Attribute
+    let attributeData =
+        makeFallenData "AttributeData.csv" (fun row -> Attribute row.["desc"])
+
+    let attributeMap = stringListToTypeMap attributeData
+
+    let mapAndStringToAttributes (attributeMap: Map<string, Attribute>) (input) =
+        String.filter ((<>) ' ') input
+        |> (fun s -> s.Split(',', System.StringSplitOptions.RemoveEmptyEntries))
+        |> List.ofArray
+        |> List.map (fun attributeString -> attributeMap.Item attributeString)
+
+    let stringToAttributes = mapAndStringToAttributes attributeMap
+
+
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
 
