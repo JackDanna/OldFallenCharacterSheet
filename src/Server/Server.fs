@@ -300,6 +300,28 @@ module FallenServerData =
               governingSkill = string row.["governingSkill"]
               feetPerSkillLvl = uint row.["feetPerSkillLvl"] })
 
+    // CarryWeightCalculation
+    let carryWeightCalculationData =
+        makeFallenData "CarryWeightCalculationData.csv" (fun row ->
+            (string row.["desc"],
+             uint row.["baseWeight"],
+             string row.["governingAttribute"],
+             uint row.["weightIncreasePerAttribute"],
+             string row.["governingSkill"],
+             uint row.["weightIncreasePerSkill"]))
+
+    // WeightClassData
+    let weightClassData =
+        makeFallenData "WeightClassData.csv" (fun row ->
+            (string row.["name"],
+             float row.["bottomPercent"],
+             float row.["topPercent"],
+             float row.["percentOfMovementSpeed"]))
+
+    // AttributeDeterminedDiceMod
+    let attributeDeterminedDiceModData =
+        makeFallenData "AttributeDeterminedDiceModData.csv" (fun row ->
+            (string row.["name"], string row.["attributesToEffect"], string row.["dicePoolModification"]))
 
 
 let fallenDataApi: IFallenDataApi =
