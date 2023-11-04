@@ -12,7 +12,8 @@ open FallenLib.Attribute
 type Model =
     { name: string
       coreSkillTables: CoreSkillGroups.Model
-      vocationTables: VocationTables.Model }
+      vocationTables: VocationTables.Model
+      todos: Todo list }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -70,14 +71,21 @@ type Msg =
     | CoreSkillTablesMsg of CoreSkillGroups.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
+    | GotTodos of Todo list
+
+let todosApi =
+    Remoting.createApi ()
+    |> Remoting.withRouteBuilder Route.builder
+    |> Remoting.buildProxy<ITodosApi>
 
 let init () : Model * Cmd<Msg> =
     let attributeStatListTemp = coreSkillGroupToAttributes defaultCoreSkillTables
 
     { name = "Javk Wick"
       coreSkillTables = defaultCoreSkillTables
-      vocationTables = VocationTables.init attributeStatListTemp },
-    Cmd.none
+      vocationTables = VocationTables.init attributeStatListTemp
+      todos = [] },
+    Cmd.OfAsync.perform todosApi.getTodos () GotTodos
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
@@ -104,6 +112,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
+    | GotTodos todos -> { model with todos = todos }, Cmd.none
 
 open Feliz
 open Feliz.Bulma
@@ -151,6 +160,12 @@ let view (model: Model) (dispatch: Msg -> unit) =
                                 "is-large"
                                 "has-text-centered"
                             ]
+                        ]
+                    ]
+                    Bulma.content [
+                        Html.ol [
+                            for todo in model.todos do
+                                Html.li [ prop.text todo.Description ]
                         ]
                     ]
                     Bulma.container [
