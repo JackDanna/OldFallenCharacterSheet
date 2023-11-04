@@ -7,8 +7,6 @@ open Saturn
 open Shared
 
 
-
-
 module Storage =
     let todos = ResizeArray()
 
@@ -37,12 +35,40 @@ let todosApi =
                     | Error e -> failwith e
             } }
 
-//let FallenDataApi = { fun () -> async { FallenData.Data.itemData } }
+module FallenServerData =
+    open FSharp.Data
+    open FallenLib.Damage
+
+    let makeFallenDataPath fileName =
+        __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
+
+    let makeFallenData fileName mappingFunc =
+        CsvFile
+            .Load(
+                makeFallenDataPath fileName,
+                hasHeaders = true
+            )
+            .Rows
+        |> Seq.map (mappingFunc)
+        |> List.ofSeq
+
+    let Bool boolString =
+        match boolString with
+        | "TRUE" -> true
+        | "FALSE" -> false
+        | _ -> failwith ("Error: returns " + boolString)
+
+    let damageTypeData =
+        makeFallenData "DamageTypeData.csv" (fun row -> (DamageType row.["desc"]))
+
+let fallenDataApi: IFallenDataApi =
+    { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
+
 
 let webApp =
     Remoting.createApi ()
     |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.fromValue todosApi
+    |> Remoting.fromValue fallenDataApi
     |> Remoting.buildHttpHandler
 
 let app =

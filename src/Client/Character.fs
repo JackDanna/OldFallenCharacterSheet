@@ -8,12 +8,13 @@ open FallenLib.Vocation
 open FallenLib.Dice
 open FallenLib.CoreSkillGroup
 open FallenLib.Attribute
+open FallenLib.Damage
 
 type Model =
     { name: string
       coreSkillTables: CoreSkillGroups.Model
       vocationTables: VocationTables.Model
-      todos: Todo list }
+      damageTypes: DamageType list }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -71,12 +72,12 @@ type Msg =
     | CoreSkillTablesMsg of CoreSkillGroups.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
-    | GotTodos of Todo list
+    | GotDamageTypes of DamageType list
 
-let todosApi =
+let fallenDataApi =
     Remoting.createApi ()
     |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.buildProxy<ITodosApi>
+    |> Remoting.buildProxy<IFallenDataApi>
 
 let init () : Model * Cmd<Msg> =
     let attributeStatListTemp = coreSkillGroupToAttributes defaultCoreSkillTables
@@ -84,8 +85,8 @@ let init () : Model * Cmd<Msg> =
     { name = "Javk Wick"
       coreSkillTables = defaultCoreSkillTables
       vocationTables = VocationTables.init attributeStatListTemp
-      todos = [] },
-    Cmd.OfAsync.perform todosApi.getTodos () GotTodos
+      damageTypes = [] },
+    Cmd.OfAsync.perform fallenDataApi.getDamageTypes () GotDamageTypes
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
@@ -112,7 +113,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
-    | GotTodos todos -> { model with todos = todos }, Cmd.none
+    | GotDamageTypes damageTypes -> { model with damageTypes = damageTypes }, Cmd.none
 
 open Feliz
 open Feliz.Bulma
@@ -164,8 +165,8 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     ]
                     Bulma.content [
                         Html.ol [
-                            for todo in model.todos do
-                                Html.li [ prop.text todo.Description ]
+                            for damageType in model.damageTypes do
+                                Html.li [ prop.text damageType ]
                         ]
                     ]
                     Bulma.container [
