@@ -141,6 +141,18 @@ module FallenServerData =
 
     let stringToAttributes = mapAndStringToAttributes attributeMap
 
+    // MagicSkill
+    let magicSkillData =
+        makeFallenData "MagicSkillData.csv" (fun row ->
+            { name = string row.["desc"]
+              damageTypes = stringToDamageTypeList (string row.["damageTypes"])
+              rangeAdjustment = int row.["rangeAdjustment"]
+              isMeleeCapable = Bool row.["meleeCapable"]
+              magicResourceClass = string row.["magicResourceClass"] })
+
+    let magicSkillMap =
+        List.map (fun (magicSkill: MagicSkill) -> magicSkill.name, magicSkill) magicSkillData
+        |> Map.ofList
 
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
