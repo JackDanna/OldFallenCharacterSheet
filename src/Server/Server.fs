@@ -150,6 +150,19 @@ module FallenServerData =
               isMeleeCapable = Bool row.["meleeCapable"]
               magicResourceClass = string row.["magicResourceClass"] })
 
+    // MagicCombat
+    let magicCombatData =
+        makeFallenData "MagicCombatData.csv" (fun row ->
+            { name = string row.["Description"]
+              lvlRequirment = int row.["Lvl Requirment"] |> intToNeg1To4
+              diceModification = stringToDicePoolModification row.["Dice Modification"]
+              penetration = uint row.["Penetration"]
+              range = rangeMap.Item(string row.["Range"])
+              engageableOpponents = engageableOpponentsMap row.["Engageable Opponents"]
+              minResourceRequirment = uint row.["Resource Requirment"]
+              areaOfEffect = AreaOfEffectOptionMap.Item row.["Area Of Effect"] })
+
+
     let magicSkillMap =
         List.map (fun (magicSkill: MagicSkill) -> magicSkill.name, magicSkill) magicSkillData
         |> Map.ofList
