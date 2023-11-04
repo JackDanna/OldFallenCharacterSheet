@@ -222,6 +222,23 @@ module FallenServerData =
         List.map (fun (defenseClass: DefenseClass) -> defenseClass.name, defenseClass) defenseClassData
         |> Map.ofList
 
+    // WeaponResourceClass
+    let weaponResourceClassData =
+        makeFallenData "WeaponResourceClassData.csv" (fun row ->
+            { name = string row.["desc"]
+              resourceClass = resourceClassMap.Item row.["resourceClass"]
+              resourceDice = stringToDicePoolModification row.["resourceDice"]
+              penetration = uint row.["penetration"]
+              range = rangeOptionMap row.["range"]
+              damageTypes = stringToDamageTypeList row.["damageTypes"]
+              areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"] })
+
+    let weaponResourceClassMap =
+        List.map
+            (fun (weaponResourceClass: WeaponResourceClass) -> weaponResourceClass.name, weaponResourceClass)
+            weaponResourceClassData
+        |> Map.ofList
+
 
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
