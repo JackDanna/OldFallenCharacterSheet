@@ -116,6 +116,17 @@ module FallenServerData =
         | "None" -> None
         | _ -> rangeMap.Item string |> Some
 
+    // ResourceClass
+    let resourceClassData =
+        makeFallenData "ResourceClassData.csv" (fun row -> (ResourceClass row.["desc"]))
+
+    let resourceClassMap = stringListToTypeMap resourceClassData
+
+    let weaponResourceClassOptionMap string =
+        match string with
+        | "None" -> None
+        | _ -> Some <| resourceClassMap.Item string
+
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
 
