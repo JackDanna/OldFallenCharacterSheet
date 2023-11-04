@@ -71,14 +71,15 @@ type Msg =
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
 
-let init () : Model =
+let init () : Model * Cmd<Msg> =
     let attributeStatListTemp = coreSkillGroupToAttributes defaultCoreSkillTables
 
     { name = "Javk Wick"
       coreSkillTables = defaultCoreSkillTables
-      vocationTables = VocationTables.init attributeStatListTemp }
+      vocationTables = VocationTables.init attributeStatListTemp },
+    Cmd.none
 
-let update (msg: Msg) (model: Model) : Model =
+let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
     | CoreSkillTablesMsg coreSkillTableMsg ->
         let newCoreSkillTables =
@@ -90,7 +91,8 @@ let update (msg: Msg) (model: Model) : Model =
                 VocationTables.update
                     (coreSkillGroupToAttributes newCoreSkillTables)
                     VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationTables }
+                    model.vocationTables },
+        Cmd.none
 
     | VocationTableMsg vocationTableMsg ->
         { model with
@@ -98,9 +100,10 @@ let update (msg: Msg) (model: Model) : Model =
                 VocationTables.update
                     (coreSkillGroupToAttributes model.coreSkillTables)
                     vocationTableMsg
-                    model.vocationTables }
+                    model.vocationTables },
+        Cmd.none
 
-    | SetName name -> { model with name = name }
+    | SetName name -> { model with name = name }, Cmd.none
 
 open Feliz
 open Feliz.Bulma
