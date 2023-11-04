@@ -162,6 +162,24 @@ module FallenServerData =
               minResourceRequirment = uint row.["Resource Requirment"]
               areaOfEffect = AreaOfEffectOptionMap.Item row.["Area Of Effect"] })
 
+    // WeaponClass
+    let weaponClassData =
+        makeFallenData "WeaponClassData.csv" (fun row ->
+            { name = string row.["desc"]
+              oneHandedWeaponDice = stringToDicePoolModificationOption row.["oneHandedWeaponDice"]
+              twoHandedWeaponDice = stringToDicePoolModification row.["twoHandedWeaponDice"]
+              penetration = uint row.["penetration"]
+              range = rangeMap.Item row.["range"]
+              damageTypes = stringToDamageTypeList row.["damageTypes"]
+              engageableOpponents = engageableOpponentsMap row.["engageableOpponents"]
+              dualWieldableBonus = stringToDicePoolModificationOption row.["dualWieldableBonus"]
+              areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
+              resourceClass = weaponResourceClassOptionMap row.["resourceClass"] })
+
+    let weaponClassMap =
+        List.map (fun (weaponClass: WeaponClass) -> weaponClass.name, weaponClass) weaponClassData
+        |> Map.ofList
+
 
     let magicSkillMap =
         List.map (fun (magicSkill: MagicSkill) -> magicSkill.name, magicSkill) magicSkillData
