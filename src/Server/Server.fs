@@ -210,6 +210,18 @@ module FallenServerData =
         List.map (fun (conduitClass: ConduitClass) -> conduitClass.name, conduitClass) conduitClassData
         |> Map.ofList
 
+    // DefenseClass
+    let defenseClassData: DefenseClass list =
+        makeFallenData "DefenseClassData.csv" (fun row ->
+            { name = string row.["desc"]
+              physicalDefense = float row.["physicalDefense"]
+              mentalDefense = float row.["mentalDefense"]
+              spiritualDefense = float row.["spiritualDefense"] })
+
+    let defenseClassMap =
+        List.map (fun (defenseClass: DefenseClass) -> defenseClass.name, defenseClass) defenseClassData
+        |> Map.ofList
+
 
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
