@@ -5,7 +5,6 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FallenData.fs" />
     <None Include="paket.references" />
     <Compile Include="Server.fs" />
   </ItemGroup>
