@@ -252,6 +252,44 @@ module FallenServerData =
         List.map (fun (itemTier: ItemTier) -> itemTier.name, itemTier) itemTierData
         |> Map.ofList
 
+    // Item
+    let stringToItemClassList
+        (weaponClassMap: Map<string, WeaponClass>)
+        (conduitClassMap: Map<string, ConduitClass>)
+        (weaponResourceClassMap: Map<string, WeaponResourceClass>)
+        (input: string)
+        =
+        input.Split ", "
+        |> List.ofArray
+        |> List.collect (fun className ->
+            match className with
+            | weaponClassName when weaponClassMap.Keys.Contains weaponClassName ->
+                weaponClassMap.Item weaponClassName
+                |> WeaponClass
+                |> List.singleton
+            | conduitClassName when conduitClassMap.Keys.Contains conduitClassName ->
+                conduitClassMap.Item conduitClassName
+                |> ConduitClass
+                |> List.singleton
+            | weaponResourceClassName when weaponResourceClassMap.Keys.Contains weaponResourceClassName ->
+                weaponResourceClassMap.Item weaponResourceClassName
+                |> WeaponResourceClass
+                |> List.singleton
+            | defenseClassName when defenseClassMap.Keys.Contains defenseClassName ->
+                defenseClassMap.Item defenseClassName
+                |> DefenseClass
+                |> List.singleton
+            | _ -> [])
+
+    let itemData =
+        makeFallenData "ItemData.csv" (fun row ->
+            { name = string row.["desc"]
+              itemClasses =
+                stringToItemClassList weaponClassMap conduitClassMap weaponResourceClassMap row.["itemClasses"]
+              itemTier = itemTierMap.Item row.["itemTier"]
+              value = string row.["value"]
+              weight = float row.["weight"] })
+
 
 let fallenDataApi: IFallenDataApi =
     { getDamageTypes = fun () -> async { return FallenServerData.damageTypeData } }
