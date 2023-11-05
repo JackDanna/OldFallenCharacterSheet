@@ -31,19 +31,18 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
     Bulma.table [
         table.isBordered
         prop.children [
-            Html.tableHeader [
-                Html.tr (
-                    List.map
-                        (fun (thString: string) -> Html.th thString)
-                        [ "On"
-                          "Name"
-                          "#"
-                          "Type"
-                          "Tier"
-                          "Dur."
-                          "LB"
-                          "Value" ]
-                )
+            Html.thead [
+                List.map
+                    (fun (thString: string) -> Html.th thString)
+                    [ "On"
+                      "#"
+                      "Name"
+                      "Type"
+                      "Tier"
+                      "Dur."
+                      "LB"
+                      "Value" ]
+                |> Html.tr
             ]
             Html.tableBody (
                 List.mapi

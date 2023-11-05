@@ -46,23 +46,22 @@ open Feliz.Bulma
 
 let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
     let makeEquipmentRow isEquipped (quantity: uint) item =
-        Html.tr [
-            Html.td [
-                Bulma.input.checkbox [
-                    prop.isChecked isEquipped
-                    prop.onCheckedChange (fun isChecked -> dispatch (SetEquipmentIsEquiped(isChecked)))
-                ]
-            ]
-            Html.td [
-                Bulma.input.number [
-                    prop.min 0
-                    prop.value (int quantity)
-                    prop.onChange (fun (num: int) -> dispatch (SetEquipmentQuantity(uint num)))
-                ]
-            ]
-
-            ItemRow.view itemList item (ItemRowMsg >> dispatch)
-        ]
+        List.append
+            [ Html.td [
+                  Bulma.input.checkbox [
+                      prop.isChecked isEquipped
+                      prop.onCheckedChange (fun isChecked -> dispatch (SetEquipmentIsEquiped(isChecked)))
+                  ]
+              ]
+              Html.td [
+                  Bulma.input.number [
+                      prop.min 0
+                      prop.value (int quantity)
+                      prop.onChange (fun (num: int) -> dispatch (SetEquipmentQuantity(uint num)))
+                  ]
+              ] ]
+            (ItemRow.view itemList item (ItemRowMsg >> dispatch))
+        |> Html.tr
 
     match model with
     | Equipment equipment -> makeEquipmentRow equipment.isEquipped equipment.quantity (ItemRow.Item equipment.item)

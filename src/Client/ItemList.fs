@@ -43,5 +43,5 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
                       "Value" ]
             )
         ]
-        Html.tbody temp
-    ]
+        //Html.tbody temp
+        ]

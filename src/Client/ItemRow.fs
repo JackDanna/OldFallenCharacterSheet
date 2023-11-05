@@ -22,30 +22,28 @@ open Feliz.Bulma
 
 let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
     let makeRow (name: string) (itemClassesDesc: string) (itemTierDesc: string) (weight: float) (value: string) =
-        Html.tr [
-            Html.td [
-                prop.children [
-                    Bulma.input.text [
-                        prop.list "temp"
-                        prop.value (
-                            match model with
-                            | Empty -> ""
-                            | Item item -> item.name
-                        )
+        [ Html.td [
+              prop.children [
+                  Bulma.input.text [
+                      prop.list "temp"
+                      prop.value (
+                          match model with
+                          | Empty -> ""
+                          | Item item -> item.name
+                      )
 
-                        prop.onTextChange (fun input -> dispatch (SetItem input))
-                    ]
-                    Html.datalist [
-                        prop.id "temp"
-                        prop.children (List.map (fun item -> Html.option [ prop.value item.name ]) itemList)
-                    ]
-                ]
-            ]
-            Html.td itemClassesDesc
-            Html.td itemTierDesc
-            Html.td weight
-            Html.td value
-        ]
+                      prop.onTextChange (fun input -> dispatch (SetItem input))
+                  ]
+                  Html.datalist [
+                      prop.id "temp"
+                      prop.children (List.map (fun item -> Html.option [ prop.value item.name ]) itemList)
+                  ]
+              ]
+          ]
+          Html.td itemClassesDesc
+          Html.td itemTierDesc
+          Html.td weight
+          Html.td value ]
 
     match model with
     | Item item -> makeRow item.name (itemClassesToString item.itemClasses) item.itemTier.name item.weight item.value
