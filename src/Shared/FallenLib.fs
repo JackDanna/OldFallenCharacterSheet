@@ -43,8 +43,8 @@ module Damage =
 
     type DamageType = string
 
-    let damageTypesToString (damageTypes: DamageType []) =
-        Array.map (fun damageType -> damageType.ToString()) damageTypes
+    let damageTypesToString (damageTypes: DamageType list) =
+        List.map (fun damageType -> damageType.ToString()) damageTypes
         |> String.concat ", "
 
     let stringAndMapToDamageTypeArray (damageTypeMap: Map<string, DamageType>) (damageTypesString: string) =
@@ -962,7 +962,7 @@ module CombatRoll =
 
     type CombatRoll =
         { name: string
-          combatRoll: DicePool
+          dicePool: DicePool
           calculatedRange: CalculatedRange
           penetration: Penetration
           damageTypes: DamageType list
@@ -1017,7 +1017,7 @@ module WeaponCombatRoll =
         let numDice = sumDicePool dicePool
 
         { name = name + resourceDesc + descSuffix
-          combatRoll = dicePool
+          dicePool = dicePool
           calculatedRange = determineGreatestRange numDice weaponClass.range resourceRange
           penetration = weaponClass.penetration + resourcePenetration
           damageTypes = List.append weaponClass.damageTypes resourceDamageTypes
@@ -1058,7 +1058,7 @@ module WeaponCombatRoll =
                 |> List.singleton
                 |> List.append handedVariations
 
-    let createWeaponCombatRollWithEquipmentList
+    let createWeaponCombatRolls
         equipmentList
         (attributeStats: AttributeStat list)
         (vocationGroupList: VocationGroup list)
@@ -1172,7 +1172,7 @@ module MagicCombatRoll =
         let numDice = sumDicePool combatRoll
 
         { name = sprintf "%s %s %s" magicSkill.name magicCombatType.name resourceName
-          combatRoll = combatRoll
+          dicePool = combatRoll
           calculatedRange = rangeToCalculatedRange numDice range
           penetration = magicCombatType.penetration
           damageTypes = magicSkill.damageTypes
@@ -1223,7 +1223,7 @@ module MagicCombatRoll =
 
         { name =
             sprintf "%s %s with %s %s %s" magicSkill.name magicCombatType.name conduitItemDesc resourceDesc descSuffix
-          combatRoll = dicePool
+          dicePool = dicePool
           calculatedRange = rangeToCalculatedRange numDice range
           penetration = magicCombatType.penetration + conduit.penetration
           damageTypes = damageTypes
@@ -1594,7 +1594,7 @@ module Character =
                     [])
 
         let weaponCombatRolls =
-            createWeaponCombatRollWithEquipmentList
+            createWeaponCombatRolls
                 equipment
                 attributeStats
                 vocationData

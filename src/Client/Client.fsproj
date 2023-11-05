@@ -21,6 +21,7 @@
     <Compile Include="ItemList.fs" />
     <Compile Include="EquipmentRow.fs" />
     <Compile Include="EquipmentRowList.fs" />
+    <Compile Include="CombatRollTable.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
     <Compile Include="App.fs" />
