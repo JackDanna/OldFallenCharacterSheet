@@ -34,7 +34,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (combatVocationalSkills: string list) (model: Model) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.label [
@@ -47,7 +47,8 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 model
                 |> List.mapi (fun position vocationTable ->
                     Bulma.column [
-                        VocationTable.view vocationTable (fun msg -> dispatch (Modify(position, msg)))
+                        VocationTable.view combatVocationalSkills vocationTable (fun msg ->
+                            dispatch (Modify(position, msg)))
                     ])
                 |> Bulma.columns
             ]

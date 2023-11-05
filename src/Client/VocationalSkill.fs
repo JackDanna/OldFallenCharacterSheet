@@ -46,14 +46,26 @@ let update
 open Feliz
 open Feliz.Bulma
 
-let view (levelCap: ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit) =
+let view (combatVocationalSkills: string list) (levelCap: ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [
             Bulma.dropdown [
                 Bulma.dropdownTrigger [
                     Bulma.input.text [
+                        prop.list "combatVocationalSkills"
                         prop.defaultValue model.name
                         prop.onTextChange (fun value -> dispatch (SetName value))
+                    ]
+                    Html.datalist [
+                        prop.id "combatVocationalSkills"
+                        prop.children (
+                            List.map
+                                (fun (combatVocationalSkill: string) ->
+                                    Html.option [
+                                        prop.value combatVocationalSkill
+                                    ])
+                                combatVocationalSkills
+                        )
                     ]
                 ]
                 Bulma.dropdownMenu [

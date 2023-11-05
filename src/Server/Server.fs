@@ -327,6 +327,12 @@ module FallenServerData =
         makeFallenData "AttributeDeterminedDiceModData.csv" (fun row ->
             (string row.["name"], string row.["attributesToEffect"], string row.["dicePoolModification"]))
 
+    let combatVocationalSkill =
+        List.append
+            (List.map (fun (weaponClassData: WeaponClass) -> weaponClassData.name) weaponClassData)
+            (List.map (fun (magicSkill: MagicSkill) -> magicSkill.name) magicSkillData)
+
+
 
 let fallenDataApi: IFallenDataApi =
     { getInitData =
@@ -336,7 +342,8 @@ let fallenDataApi: IFallenDataApi =
                     (FallenServerData.itemData,
                      FallenServerData.magicSkillMap,
                      FallenServerData.magicCombatMap,
-                     FallenServerData.rangeMap)
+                     FallenServerData.rangeMap,
+                     FallenServerData.combatVocationalSkill)
             } }
 
 

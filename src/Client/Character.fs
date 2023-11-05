@@ -22,7 +22,8 @@ type Model =
       AllItemList: Item list
       magicSkillMap: Map<string, MagicSkill>
       magicCombatMap: Map<string, MagicCombat>
-      rangeMap: Map<string, Range> }
+      rangeMap: Map<string, Range>
+      combatVocationalSkill: string list }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -80,7 +81,7 @@ type Msg =
     | CoreSkillTablesMsg of CoreSkillGroups.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
-    | GotInitData of Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range>
+    | GotInitData of Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range> * string list
     | EquipmentRowListMsg of EquipmentRowList.Msg
 
 let fallenDataApi =
@@ -99,7 +100,8 @@ let init () : Model * Cmd<Msg> =
       AllItemList = []
       magicSkillMap = Map.empty
       magicCombatMap = Map.empty
-      rangeMap = Map.empty },
+      rangeMap = Map.empty
+      combatVocationalSkill = [] },
     Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
@@ -149,12 +151,13 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
-    | GotInitData (allItemData, magicSkillMap, magicCombatMap, rangeMap) ->
+    | GotInitData (allItemData, magicSkillMap, magicCombatMap, rangeMap, combatVocationalSkill) ->
         { model with
             AllItemList = allItemData
             magicSkillMap = magicSkillMap
             magicCombatMap = magicCombatMap
-            rangeMap = rangeMap },
+            rangeMap = rangeMap
+            combatVocationalSkill = combatVocationalSkill },
         Cmd.none
     | EquipmentRowListMsg equipmentRowListMsg ->
         let newEquipmentRowList =
@@ -224,7 +227,10 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
                     ]
                     Bulma.container [
-                        VocationTables.view model.vocationTables (VocationTableMsg >> dispatch)
+                        VocationTables.view
+                            model.combatVocationalSkill
+                            model.vocationTables
+                            (VocationTableMsg >> dispatch)
                     ]
                     Bulma.container [
                         EquipmentRowList.view

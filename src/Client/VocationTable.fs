@@ -81,14 +81,15 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (combatVocationalSkills: string list) (model: Model) (dispatch: Msg -> unit) =
     Bulma.box [
         Vocation.view model.vocation (VocationRowMsg >> dispatch)
         Html.ul (
             List.append
                 (List.mapi
                     (fun position skillRow ->
-                        VocationalSkill.view model.vocation.level skillRow (fun msg -> dispatch (Modify(position, msg))))
+                        VocationalSkill.view combatVocationalSkills model.vocation.level skillRow (fun msg ->
+                            dispatch (Modify(position, msg))))
                     model.vocationalSkills)
                 [ Html.button [
                       prop.onClick (fun _ -> dispatch Insert)

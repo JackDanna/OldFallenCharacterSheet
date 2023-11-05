@@ -27,4 +27,5 @@ type ITodosApi =
 
 
 type IFallenDataApi =
-    { getInitData: unit -> Async<Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range>> }
+    { getInitData: unit
+        -> Async<Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range> * string list> }
