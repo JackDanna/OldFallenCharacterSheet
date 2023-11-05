@@ -1,15 +1,16 @@
 module EquipmentRowList
 
 open FallenLib.Item
+open FallenLib.Equipment
 
 type Model = EquipmentRow.Model list
 
 type Msg =
     | ModifyEquipmentRow of int * EquipmentRow.Msg
-    | Insert
+    | Insert of string
     | Remove of int
 
-let init () : Model = [ EquipmentRow.init () ]
+let init () : Model = []
 
 let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
     match msg with
@@ -21,7 +22,12 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
                 else
                     equipmentRow)
             model
-    | Insert -> List.append model [ EquipmentRow.init () ]
+    | Insert itemName ->
+        { isEquipped = false
+          quantity = 1u
+          item = (List.find (fun item -> item.name = itemName) itemList) }
+        |> List.singleton
+        |> List.append model
     | Remove position -> List.removeAt position model
 
 open Feliz
@@ -64,10 +70,7 @@ let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
                     model
             )
             Html.tfoot [
-                Html.button [
-                    prop.onClick (fun _ -> dispatch Insert)
-                    prop.text "+"
-                ]
+                ItemRow.itemInput "" itemNameList (fun input -> dispatch (Insert input))
             ]
         ]
     ]
