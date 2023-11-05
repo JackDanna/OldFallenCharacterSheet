@@ -1,10 +1,9 @@
 module VocationTable
 
 open FallenLib.Attribute
+open FallenLib.VocationGroup
 
-type Model =
-    { vocation: Vocation.Model
-      vocationalSkillList: VocationalSkill.Model List }
+type Model = VocationGroup
 
 type Msg =
     | VocationRowMsg of Vocation.Msg
@@ -17,7 +16,7 @@ let init (attributeStatList: AttributeStat List) : Model =
     let vocation = Vocation.init attributeStatList
 
     { vocation = vocation
-      vocationalSkillList = [ VocationalSkill.init vocation.governingAttributes ] }
+      vocationalSkills = [ VocationalSkill.init vocation.governingAttributes ] }
 
 let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
     match msg with
@@ -26,7 +25,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
 
         { model with
             vocation = newVocation
-            vocationalSkillList =
+            vocationalSkills =
                 List.map
                     (fun vocationalSkill ->
                         VocationalSkill.update
@@ -34,25 +33,25 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
                             newVocation.governingAttributes
                             VocationalSkill.Msg.CalculateDicePool
                             vocationalSkill)
-                    model.vocationalSkillList }
+                    model.vocationalSkills }
 
     | Insert ->
         { model with
-            vocationalSkillList =
-                List.append model.vocationalSkillList [ VocationalSkill.init model.vocation.governingAttributes ] }
+            vocationalSkills =
+                List.append model.vocationalSkills [ VocationalSkill.init model.vocation.governingAttributes ] }
 
     | Remove ->
         { model with
-            vocationalSkillList =
-                model.vocationalSkillList
+            vocationalSkills =
+                model.vocationalSkills
                 |> List.rev
                 |> List.tail
                 |> List.rev }
 
     | Modify (position, msg) ->
         { model with
-            vocationalSkillList =
-                model.vocationalSkillList
+            vocationalSkills =
+                model.vocationalSkills
                 |> List.mapi (fun index vocationalSkill ->
                     if position = index then
                         VocationalSkill.update
@@ -68,7 +67,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
 
         { model with
             vocation = newVocation
-            vocationalSkillList =
+            vocationalSkills =
                 List.map
                     (fun vocationalSkill ->
                         VocationalSkill.update
@@ -76,7 +75,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
                             newVocation.governingAttributes
                             VocationalSkill.Msg.CalculateDicePool
                             vocationalSkill)
-                    model.vocationalSkillList }
+                    model.vocationalSkills }
 
 
 open Feliz
@@ -90,7 +89,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                 (List.mapi
                     (fun position skillRow ->
                         VocationalSkill.view model.vocation.level skillRow (fun msg -> dispatch (Modify(position, msg))))
-                    model.vocationalSkillList)
+                    model.vocationalSkills)
                 [ Html.button [
                       prop.onClick (fun _ -> dispatch Insert)
                       prop.text "+"
