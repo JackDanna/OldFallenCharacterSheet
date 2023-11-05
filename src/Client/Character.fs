@@ -10,14 +10,20 @@ open FallenLib.CoreSkillGroup
 open FallenLib.Attribute
 open FallenLib.Item
 open FallenLib.CombatRoll
+open FallenLib.MagicSkill
+open FallenLib.MagicCombat
+open FallenLib.Range
 
 type Model =
     { name: string
       coreSkillTables: CoreSkillGroups.Model
       vocationTables: VocationTables.Model
-      AllItemList: Item list
       equipmentRowList: EquipmentRowList.Model
-      combatRolls: CombatRoll list }
+      combatRolls: CombatRoll list
+      AllItemList: Item list
+      magicSkillMap: Map<string, MagicSkill>
+      magicCombatMap: Map<string, MagicCombat>
+      rangeMap: Map<string, Range> }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -91,7 +97,10 @@ let init () : Model * Cmd<Msg> =
       vocationTables = VocationTables.init attributeStatListTemp
       AllItemList = []
       equipmentRowList = EquipmentRowList.init ()
-      combatRolls = [] },
+      combatRolls = []
+      magicSkillMap = Map.empty
+      magicCombatMap = Map.empty
+      rangeMap = Map.empty },
     Cmd.OfAsync.perform fallenDataApi.getItems () GotDamageTypes
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
@@ -129,6 +138,17 @@ open Feliz
 open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
+
+    let combatRolls =
+        CombatRollTable.createCombatRolls
+            model.equipmentRowList
+            (coreSkillGroupToAttributes model.coreSkillTables)
+            model.vocationTables
+            []
+            [ "STR"; "RFX"; "INT" ]
+            model.magicSkillMap
+            model.magicCombatMap
+            model.rangeMap
 
     Bulma.hero [
         hero.isFullHeight
@@ -186,11 +206,10 @@ let view (model: Model) (dispatch: Msg -> unit) =
                             (EquipmentRowListMsg >> dispatch)
                         |> Bulma.content
                     ]
-                    // Bulma.container [
-                    //     CombatRollTable.createCombatRolls
-                    //     CombatRollTable.view model.combatRolls (CombatRollsMsg >> dispatch)
-                    // ]
+                    Bulma.container [
+                        CombatRollTable.CombatRollTable model.combatRolls
                     ]
+                ]
             ]
         ]
     ]
