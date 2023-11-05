@@ -27,7 +27,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
+let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
     Bulma.table [
         table.isBordered
         prop.children [
@@ -47,7 +47,8 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
             Html.tableBody (
                 List.mapi
                     (fun position equipmentRow ->
-                        EquipmentRow.view itemList equipmentRow (fun msg -> dispatch (ModifyEquipmentRow(position, msg))))
+                        EquipmentRow.view itemNameList equipmentRow (fun msg ->
+                            dispatch (ModifyEquipmentRow(position, msg))))
                     model
             )
             Html.tfoot [

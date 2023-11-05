@@ -22,11 +22,11 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
+let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
 
     let temp =
         List.mapi
-            (fun position itemRow -> ItemRow.view itemList itemRow (fun msg -> dispatch (Modify(position, msg))))
+            (fun position itemRow -> ItemRow.view itemNameList itemRow (fun msg -> dispatch (Modify(position, msg))))
             model
 
     Bulma.table [

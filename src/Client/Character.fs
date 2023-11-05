@@ -177,7 +177,10 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         VocationTables.view model.vocationTables (VocationTableMsg >> dispatch)
                     ]
                     Bulma.container [
-                        EquipmentRowList.view model.AllItemList model.equipmentRowList (EquipmentRowListMsg >> dispatch)
+                        EquipmentRowList.view
+                            (List.map (fun (item: Item) -> item.name) model.AllItemList)
+                            model.equipmentRowList
+                            (EquipmentRowListMsg >> dispatch)
                         |> Bulma.content
                     ]
                 ]

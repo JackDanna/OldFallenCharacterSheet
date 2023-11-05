@@ -44,7 +44,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
+let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
     let makeEquipmentRow isEquipped (quantity: uint) item =
         List.append
             [ Html.td [
@@ -60,7 +60,7 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
                       prop.onChange (fun (num: int) -> dispatch (SetEquipmentQuantity(uint num)))
                   ]
               ] ]
-            (ItemRow.itemRowColumns itemList item (ItemRowMsg >> dispatch))
+            (ItemRow.itemRowColumns itemNameList item (ItemRowMsg >> dispatch))
         |> Html.tr
 
     match model with
