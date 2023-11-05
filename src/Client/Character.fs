@@ -81,9 +81,8 @@ type Msg =
     | CoreSkillTablesMsg of CoreSkillGroups.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
-    | GotDamageTypes of Item list
+    | GotInitData of Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range>
     | EquipmentRowListMsg of EquipmentRowList.Msg
-    | CombatRollTableMsg of CombatRollTable.Msg
 
 let fallenDataApi =
     Remoting.createApi ()
@@ -96,13 +95,13 @@ let init () : Model * Cmd<Msg> =
     { name = "Javk Wick"
       coreSkillTables = defaultCoreSkillTables
       vocationTables = VocationTables.init attributeStatListTemp
-      AllItemList = []
       equipmentRowList = EquipmentRowList.init ()
       combatRolls = []
+      AllItemList = []
       magicSkillMap = Map.empty
       magicCombatMap = Map.empty
       rangeMap = Map.empty },
-    Cmd.OfAsync.perform fallenDataApi.getItems () GotDamageTypes
+    Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
@@ -129,7 +128,13 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
-    | GotDamageTypes damageTypes -> { model with AllItemList = damageTypes }, Cmd.none
+    | GotInitData (allItemData, magicSkillMap, magicCombatMap, rangeMap) ->
+        { model with
+            AllItemList = allItemData
+            magicSkillMap = magicSkillMap
+            magicCombatMap = magicCombatMap
+            rangeMap = rangeMap },
+        Cmd.none
     | EquipmentRowListMsg equipmentRowListMsg ->
         let newEquipmentRowList =
             EquipmentRowList.update model.AllItemList equipmentRowListMsg model.equipmentRowList
@@ -213,7 +218,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         |> Bulma.content
                     ]
                     Bulma.container [
-                        CombatRollTable.view model.combatRolls (CombatRollTableMsg >> dispatch)
+                        CombatRollTable.view model.combatRolls
                     ]
                 ]
             ]

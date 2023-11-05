@@ -166,6 +166,10 @@ module FallenServerData =
               minResourceRequirment = uint row.["Resource Requirment"]
               areaOfEffect = AreaOfEffectOptionMap.Item row.["Area Of Effect"] })
 
+    let magicCombatMap =
+        List.map (fun (magicCombat: MagicCombat) -> magicCombat.name, magicCombat) magicCombatData
+        |> Map.ofList
+
     // WeaponClass
     let weaponClassData =
         makeFallenData "WeaponClassData.csv" (fun row ->
@@ -325,7 +329,15 @@ module FallenServerData =
 
 
 let fallenDataApi: IFallenDataApi =
-    { getItems = fun () -> async { return FallenServerData.itemData } }
+    { getInitData =
+        fun () ->
+            async {
+                return
+                    (FallenServerData.itemData,
+                     FallenServerData.magicSkillMap,
+                     FallenServerData.magicCombatMap,
+                     FallenServerData.rangeMap)
+            } }
 
 
 let webApp =

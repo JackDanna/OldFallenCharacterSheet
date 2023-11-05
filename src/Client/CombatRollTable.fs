@@ -86,7 +86,7 @@ let CombatRollRow (combatRoll: CombatRoll) =
         Html.td (shapeOptionToString combatRoll.areaOfEffectShape)
     ]
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (model: Model) =
     Bulma.table [
         table.isBordered
         prop.children [

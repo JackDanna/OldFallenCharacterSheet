@@ -1,7 +1,11 @@
 namespace Shared
 
 open System
+
 open FallenLib.Item
+open FallenLib.MagicSkill
+open FallenLib.MagicCombat
+open FallenLib.Range
 
 type Todo = { Id: Guid; Description: string }
 
@@ -22,4 +26,5 @@ type ITodosApi =
       addTodo: Todo -> Async<Todo> }
 
 
-type IFallenDataApi = { getItems: unit -> Async<Item list> }
+type IFallenDataApi =
+    { getInitData: unit -> Async<Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range>> }
