@@ -60,7 +60,7 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
                       prop.onChange (fun (num: int) -> dispatch (SetEquipmentQuantity(uint num)))
                   ]
               ] ]
-            (ItemRow.view itemList item (ItemRowMsg >> dispatch))
+            (ItemRow.itemRowColumns itemList item (ItemRowMsg >> dispatch))
         |> Html.tr
 
     match model with

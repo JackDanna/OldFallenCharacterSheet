@@ -50,5 +50,15 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
                         EquipmentRow.view itemList equipmentRow (fun msg -> dispatch (ModifyEquipmentRow(position, msg))))
                     model
             )
+            Html.tfoot [
+                Html.button [
+                    prop.onClick (fun _ -> dispatch Insert)
+                    prop.text "+"
+                ]
+                Html.button [
+                    prop.onClick (fun _ -> dispatch Remove)
+                    prop.text "-"
+                ]
+            ]
         ]
     ]

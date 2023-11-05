@@ -20,7 +20,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
+let itemRowColumns (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
     let makeRow (name: string) (itemClassesDesc: string) (itemTierDesc: string) (weight: float) (value: string) =
         [ Html.td [
               prop.children [
@@ -48,3 +48,6 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
     match model with
     | Item item -> makeRow item.name (itemClassesToString item.itemClasses) item.itemTier.name item.weight item.value
     | Empty -> makeRow "" "" "" 0.0 ""
+
+let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
+    itemRowColumns itemList model dispatch |> Html.tr
