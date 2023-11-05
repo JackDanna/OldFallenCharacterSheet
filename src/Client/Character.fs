@@ -4,7 +4,6 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
-open FallenLib.Vocation
 open FallenLib.Dice
 open FallenLib.CoreSkillGroup
 open FallenLib.Attribute
@@ -104,27 +103,49 @@ let init () : Model * Cmd<Msg> =
     Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
+    let temp =
+        CombatRollTable.update model.magicSkillMap model.magicCombatMap model.rangeMap [ "STR"; "RFX"; "INT" ] []
+
     match msg with
     | CoreSkillTablesMsg coreSkillTableMsg ->
         let newCoreSkillTables =
             CoreSkillGroups.update coreSkillTableMsg model.coreSkillTables
 
+        let newVocationTables =
+            VocationTables.update
+                (coreSkillGroupToAttributes newCoreSkillTables)
+                VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
+                model.vocationTables
+
         { model with
             coreSkillTables = newCoreSkillTables
-            vocationTables =
-                VocationTables.update
+            vocationTables = newVocationTables
+            combatRolls =
+                temp
+                    model.equipmentRowList
                     (coreSkillGroupToAttributes newCoreSkillTables)
-                    VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationTables },
+                    newVocationTables
+                    (CombatRollTable.Msg.RecalculateCombatRolls)
+                    model.combatRolls },
         Cmd.none
 
     | VocationTableMsg vocationTableMsg ->
+        let newVocationTables =
+            VocationTables.update
+                (coreSkillGroupToAttributes model.coreSkillTables)
+                vocationTableMsg
+                model.vocationTables
+
         { model with
-            vocationTables =
-                VocationTables.update
+            vocationTables = newVocationTables
+
+            combatRolls =
+                temp
+                    model.equipmentRowList
                     (coreSkillGroupToAttributes model.coreSkillTables)
-                    vocationTableMsg
-                    model.vocationTables },
+                    newVocationTables
+                    (CombatRollTable.Msg.RecalculateCombatRolls)
+                    model.combatRolls },
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
@@ -142,15 +163,10 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         { model with
             equipmentRowList = newEquipmentRowList
             combatRolls =
-                CombatRollTable.update
+                temp
                     newEquipmentRowList
                     (coreSkillGroupToAttributes model.coreSkillTables)
                     model.vocationTables
-                    []
-                    [ "STR"; "RFX"; "INT" ]
-                    model.magicSkillMap
-                    model.magicCombatMap
-                    model.rangeMap
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRolls },
         Cmd.none

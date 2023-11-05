@@ -18,14 +18,14 @@ type Model = CombatRoll list
 type Msg = | RecalculateCombatRolls
 
 let createCombatRolls
-    (equipmentList: Equipment list)
-    (attributeStatList: AttributeStat list)
-    (vocationGroupList: VocationGroup list)
-    (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
-    (combatRollGoverningAttributeList: Attribute list)
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
+    (combatRollGoverningAttributeList: Attribute list)
+    (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
+    (equipmentList: Equipment list)
+    (attributeStatList: AttributeStat list)
+    (vocationGroupList: VocationGroup list)
     : CombatRoll list =
 
     List.append
@@ -46,14 +46,14 @@ let createCombatRolls
             combatRollGoverningAttributeList)
 
 let update
-    (equipmentList: Equipment list)
-    (attributeStatList: AttributeStat list)
-    (vocationGroupList: VocationGroup list)
-    (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
-    (combatRollGoverningAttributeList: Attribute list)
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
+    (combatRollGoverningAttributeList: Attribute list)
+    (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
+    (equipmentList: Equipment list)
+    (attributeStatList: AttributeStat list)
+    (vocationGroupList: VocationGroup list)
     (msg: Msg)
     (model: Model)
     : CombatRoll list =
@@ -61,14 +61,14 @@ let update
     match msg with
     | RecalculateCombatRolls ->
         createCombatRolls
-            equipmentList
-            attributeStatList
-            vocationGroupList
-            attributeDeterminedDiceModList
-            combatRollGoverningAttributeList
             magicSkillMap
             magicCombatMap
             rangeMap
+            combatRollGoverningAttributeList
+            attributeDeterminedDiceModList
+            equipmentList
+            attributeStatList
+            vocationGroupList
 
 
 
