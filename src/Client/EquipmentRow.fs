@@ -44,7 +44,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
+let equipmentRowTableData (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
     let makeEquipmentRow isEquipped (quantity: uint) item =
         List.append
             [ Html.td [
@@ -61,8 +61,11 @@ let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
                   ]
               ] ]
             (ItemRow.itemRowColumns itemNameList item (ItemRowMsg >> dispatch))
-        |> Html.tr
 
     match model with
     | Equipment equipment -> makeEquipmentRow equipment.isEquipped equipment.quantity (ItemRow.Item equipment.item)
     | Empty -> makeEquipmentRow false 0u ItemRow.Empty
+
+let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
+    equipmentRowTableData itemNameList model dispatch
+    |> Html.tr

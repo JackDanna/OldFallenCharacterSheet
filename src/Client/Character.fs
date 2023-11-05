@@ -9,13 +9,15 @@ open FallenLib.Dice
 open FallenLib.CoreSkillGroup
 open FallenLib.Attribute
 open FallenLib.Item
+open FallenLib.CombatRoll
 
 type Model =
     { name: string
       coreSkillTables: CoreSkillGroups.Model
       vocationTables: VocationTables.Model
       AllItemList: Item list
-      equipmentRowList: EquipmentRowList.Model }
+      equipmentRowList: EquipmentRowList.Model
+      combatRolls: CombatRoll list }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -88,7 +90,8 @@ let init () : Model * Cmd<Msg> =
       coreSkillTables = defaultCoreSkillTables
       vocationTables = VocationTables.init attributeStatListTemp
       AllItemList = []
-      equipmentRowList = EquipmentRowList.init () },
+      equipmentRowList = EquipmentRowList.init ()
+      combatRolls = [] },
     Cmd.OfAsync.perform fallenDataApi.getItems () GotDamageTypes
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
@@ -183,7 +186,11 @@ let view (model: Model) (dispatch: Msg -> unit) =
                             (EquipmentRowListMsg >> dispatch)
                         |> Bulma.content
                     ]
-                ]
+                    // Bulma.container [
+                    //     CombatRollTable.createCombatRolls
+                    //     CombatRollTable.view model.combatRolls (CombatRollsMsg >> dispatch)
+                    // ]
+                    ]
             ]
         ]
     ]

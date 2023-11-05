@@ -13,13 +13,7 @@ open FallenLib.VocationGroup
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 
-type Model = CombatRoll list
-
-type Msg = RecalculateCombatRolls
-
-let init () = []
-
-let update
+let createCombatRolls
     (equipmentList: Equipment list)
     (attributeStatList: AttributeStat list)
     (vocationGroupList: VocationGroup list)
@@ -28,28 +22,24 @@ let update
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
-    (msg: Msg)
-    (model: Model)
-    : Model =
-    match msg with
-    | RecalculateCombatRolls ->
+    : CombatRoll list =
 
-        List.append
-            (createWeaponCombatRolls
-                equipmentList
-                attributeStatList
-                vocationGroupList
-                attributeDeterminedDiceModList
-                combatRollGoverningAttributeList)
-            (createMagicCombatRolls
-                attributeStatList
-                vocationGroupList
-                magicSkillMap
-                magicCombatMap
-                equipmentList
-                rangeMap
-                attributeDeterminedDiceModList
-                combatRollGoverningAttributeList)
+    List.append
+        (createWeaponCombatRolls
+            equipmentList
+            attributeStatList
+            vocationGroupList
+            attributeDeterminedDiceModList
+            combatRollGoverningAttributeList)
+        (createMagicCombatRolls
+            attributeStatList
+            vocationGroupList
+            magicSkillMap
+            magicCombatMap
+            equipmentList
+            rangeMap
+            attributeDeterminedDiceModList
+            combatRollGoverningAttributeList)
 
 
 open Feliz
@@ -66,7 +56,7 @@ let CombatRollRow (combatRoll: CombatRoll) =
         Html.td (shapeOptionToString combatRoll.areaOfEffectShape)
     ]
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let CombatRollTable (combatRollList: CombatRoll list) =
     Bulma.table [
         table.isBordered
         prop.children [
@@ -82,6 +72,6 @@ let view (model: Model) (dispatch: Msg -> unit) =
                       "AOE" ]
                 |> Html.tr
             ]
-            Html.tableBody (List.map (fun combatRoll -> CombatRollRow combatRoll) model)
+            Html.tableBody (List.map (fun combatRoll -> CombatRollRow combatRoll) combatRollList)
         ]
     ]

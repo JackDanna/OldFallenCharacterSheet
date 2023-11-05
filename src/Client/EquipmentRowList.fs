@@ -7,7 +7,7 @@ type Model = EquipmentRow.Model list
 type Msg =
     | ModifyEquipmentRow of int * EquipmentRow.Msg
     | Insert
-    | Remove
+    | Remove of int
 
 let init () : Model = [ EquipmentRow.init () ]
 
@@ -22,7 +22,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
                     equipmentRow)
             model
     | Insert -> List.append model [ EquipmentRow.init () ]
-    | Remove -> model |> List.rev |> List.tail |> List.rev
+    | Remove position -> List.removeAt position model
 
 open Feliz
 open Feliz.Bulma
@@ -47,18 +47,26 @@ let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
             Html.tableBody (
                 List.mapi
                     (fun position equipmentRow ->
-                        EquipmentRow.view itemNameList equipmentRow (fun msg ->
-                            dispatch (ModifyEquipmentRow(position, msg))))
+                        let equipmentRowTableData =
+                            (EquipmentRow.equipmentRowTableData itemNameList equipmentRow (fun msg ->
+                                dispatch (ModifyEquipmentRow(position, msg))))
+
+                        let deleteEquipmentRowButton =
+                            Html.td [
+                                Html.button [
+                                    prop.onClick (fun _ -> dispatch (Remove(position)))
+                                    prop.text "-"
+                                ]
+                            ]
+                            |> List.singleton
+
+                        Html.tr (List.append equipmentRowTableData deleteEquipmentRowButton))
                     model
             )
             Html.tfoot [
                 Html.button [
                     prop.onClick (fun _ -> dispatch Insert)
                     prop.text "+"
-                ]
-                Html.button [
-                    prop.onClick (fun _ -> dispatch Remove)
-                    prop.text "-"
                 ]
             ]
         ]
