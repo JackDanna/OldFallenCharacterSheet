@@ -13,6 +13,10 @@ open FallenLib.VocationGroup
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 
+type Model = CombatRoll list
+
+type Msg = | RecalculateCombatRolls
+
 let createCombatRolls
     (equipmentList: Equipment list)
     (attributeStatList: AttributeStat list)
@@ -41,6 +45,32 @@ let createCombatRolls
             attributeDeterminedDiceModList
             combatRollGoverningAttributeList)
 
+let update
+    (equipmentList: Equipment list)
+    (attributeStatList: AttributeStat list)
+    (vocationGroupList: VocationGroup list)
+    (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
+    (combatRollGoverningAttributeList: Attribute list)
+    (magicSkillMap: Map<string, MagicSkill>)
+    (magicCombatMap: Map<string, MagicCombat>)
+    (rangeMap: Map<string, Range>)
+    (msg: Msg)
+    (model: Model)
+    : CombatRoll list =
+
+    match msg with
+    | RecalculateCombatRolls ->
+        createCombatRolls
+            equipmentList
+            attributeStatList
+            vocationGroupList
+            attributeDeterminedDiceModList
+            combatRollGoverningAttributeList
+            magicSkillMap
+            magicCombatMap
+            rangeMap
+
+
 
 open Feliz
 open Feliz.Bulma
@@ -56,7 +86,7 @@ let CombatRollRow (combatRoll: CombatRoll) =
         Html.td (shapeOptionToString combatRoll.areaOfEffectShape)
     ]
 
-let CombatRollTable (combatRollList: CombatRoll list) =
+let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.table [
         table.isBordered
         prop.children [
@@ -72,6 +102,6 @@ let CombatRollTable (combatRollList: CombatRoll list) =
                       "AOE" ]
                 |> Html.tr
             ]
-            Html.tableBody (List.map (fun combatRoll -> CombatRollRow combatRoll) combatRollList)
+            Html.tableBody (List.map (fun combatRoll -> CombatRollRow combatRoll) model)
         ]
     ]

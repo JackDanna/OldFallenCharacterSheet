@@ -83,6 +83,7 @@ type Msg =
     | SetName of string
     | GotDamageTypes of Item list
     | EquipmentRowListMsg of EquipmentRowList.Msg
+    | CombatRollTableMsg of CombatRollTable.Msg
 
 let fallenDataApi =
     Remoting.createApi ()
@@ -130,25 +131,30 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     | SetName name -> { model with name = name }, Cmd.none
     | GotDamageTypes damageTypes -> { model with AllItemList = damageTypes }, Cmd.none
     | EquipmentRowListMsg equipmentRowListMsg ->
+        let newEquipmentRowList =
+            EquipmentRowList.update model.AllItemList equipmentRowListMsg model.equipmentRowList
+
         { model with
-            equipmentRowList = EquipmentRowList.update model.AllItemList equipmentRowListMsg model.equipmentRowList },
+            equipmentRowList = newEquipmentRowList
+            combatRolls =
+                CombatRollTable.update
+                    newEquipmentRowList
+                    (coreSkillGroupToAttributes model.coreSkillTables)
+                    model.vocationTables
+                    []
+                    [ "STR"; "RFX"; "INT" ]
+                    model.magicSkillMap
+                    model.magicCombatMap
+                    model.rangeMap
+                    (CombatRollTable.Msg.RecalculateCombatRolls)
+                    model.combatRolls },
         Cmd.none
+
 
 open Feliz
 open Feliz.Bulma
 
 let view (model: Model) (dispatch: Msg -> unit) =
-
-    let combatRolls =
-        CombatRollTable.createCombatRolls
-            model.equipmentRowList
-            (coreSkillGroupToAttributes model.coreSkillTables)
-            model.vocationTables
-            []
-            [ "STR"; "RFX"; "INT" ]
-            model.magicSkillMap
-            model.magicCombatMap
-            model.rangeMap
 
     Bulma.hero [
         hero.isFullHeight
@@ -207,7 +213,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         |> Bulma.content
                     ]
                     Bulma.container [
-                        CombatRollTable.CombatRollTable model.combatRolls
+                        CombatRollTable.view model.combatRolls (CombatRollTableMsg >> dispatch)
                     ]
                 ]
             ]
