@@ -39,7 +39,7 @@ let view (itemList: Item list) (model: Model) (dispatch: Msg -> unit) =
                       "Name"
                       "Type"
                       "Tier"
-                      "Dur."
+                      //"Dur."
                       "LB"
                       "Value" ]
                 |> Html.tr
