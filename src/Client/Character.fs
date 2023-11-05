@@ -15,7 +15,7 @@ type Model =
       coreSkillTables: CoreSkillGroups.Model
       vocationTables: VocationTables.Model
       AllItemList: Item list
-      equipmentRow: EquipmentRow.Model }
+      equipmentRowList: EquipmentRowList.Model }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -74,7 +74,7 @@ type Msg =
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
     | GotDamageTypes of Item list
-    | EquipmentRowMsg of EquipmentRow.Msg
+    | EquipmentRowListMsg of EquipmentRowList.Msg
 
 let fallenDataApi =
     Remoting.createApi ()
@@ -88,7 +88,7 @@ let init () : Model * Cmd<Msg> =
       coreSkillTables = defaultCoreSkillTables
       vocationTables = VocationTables.init attributeStatListTemp
       AllItemList = []
-      equipmentRow = EquipmentRow.Model.Empty },
+      equipmentRowList = EquipmentRowList.init () },
     Cmd.OfAsync.perform fallenDataApi.getItems () GotDamageTypes
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
@@ -117,8 +117,10 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
 
     | SetName name -> { model with name = name }, Cmd.none
     | GotDamageTypes damageTypes -> { model with AllItemList = damageTypes }, Cmd.none
-    | EquipmentRowMsg itemMsg ->
-        { model with equipmentRow = EquipmentRow.update model.AllItemList itemMsg model.equipmentRow }, Cmd.none
+    | EquipmentRowListMsg equipmentRowListMsg ->
+        { model with
+            equipmentRowList = EquipmentRowList.update model.AllItemList equipmentRowListMsg model.equipmentRowList },
+        Cmd.none
 
 open Feliz
 open Feliz.Bulma
@@ -168,18 +170,14 @@ let view (model: Model) (dispatch: Msg -> unit) =
                             ]
                         ]
                     ]
-                    Bulma.content [
-                        // Html.ol [
-                        //     for damageType in model.itemList do
-                        //         Html.li [ prop.text damageType.name ]
-                        // ]
-                        EquipmentRow.view model.AllItemList model.equipmentRow (EquipmentRowMsg >> dispatch)
-                    ]
                     Bulma.container [
                         CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
                     ]
                     Bulma.container [
                         VocationTables.view model.vocationTables (VocationTableMsg >> dispatch)
+                    ]
+                    Bulma.container [
+                        EquipmentRowList.view model.AllItemList model.equipmentRowList (EquipmentRowListMsg >> dispatch)
                     ]
                 ]
             ]
