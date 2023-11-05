@@ -15,7 +15,7 @@ type Model =
       coreSkillTables: CoreSkillGroups.Model
       vocationTables: VocationTables.Model
       AllItemList: Item list
-      item: Item.Model }
+      equipmentRow: EquipmentRow.Model }
 
 let defaultCoreSkillTables: CoreSkillGroups.Model =
     let attribtueStat = AttributeStat.init ()
@@ -74,7 +74,7 @@ type Msg =
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
     | GotDamageTypes of Item list
-    | ItemMsg of Item.Msg
+    | EquipmentRowMsg of EquipmentRow.Msg
 
 let fallenDataApi =
     Remoting.createApi ()
@@ -88,7 +88,7 @@ let init () : Model * Cmd<Msg> =
       coreSkillTables = defaultCoreSkillTables
       vocationTables = VocationTables.init attributeStatListTemp
       AllItemList = []
-      item = Item.Model.Empty },
+      equipmentRow = EquipmentRow.Model.Empty },
     Cmd.OfAsync.perform fallenDataApi.getItems () GotDamageTypes
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
@@ -117,7 +117,8 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
 
     | SetName name -> { model with name = name }, Cmd.none
     | GotDamageTypes damageTypes -> { model with AllItemList = damageTypes }, Cmd.none
-    | ItemMsg itemMsg -> { model with item = Item.update model.AllItemList itemMsg model.item }, Cmd.none
+    | EquipmentRowMsg itemMsg ->
+        { model with equipmentRow = EquipmentRow.update model.AllItemList itemMsg model.equipmentRow }, Cmd.none
 
 open Feliz
 open Feliz.Bulma
@@ -172,7 +173,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                         //     for damageType in model.itemList do
                         //         Html.li [ prop.text damageType.name ]
                         // ]
-                        Item.view model.AllItemList model.item (ItemMsg >> dispatch)
+                        EquipmentRow.view model.AllItemList model.equipmentRow (EquipmentRowMsg >> dispatch)
                     ]
                     Bulma.container [
                         CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
