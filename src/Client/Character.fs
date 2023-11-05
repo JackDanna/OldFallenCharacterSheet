@@ -178,6 +178,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                     ]
                     Bulma.container [
                         EquipmentRowList.view model.AllItemList model.equipmentRowList (EquipmentRowListMsg >> dispatch)
+                        |> Bulma.content
                     ]
                 ]
             ]
