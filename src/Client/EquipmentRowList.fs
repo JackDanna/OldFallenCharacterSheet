@@ -70,7 +70,18 @@ let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
                     model
             )
             Html.tfoot [
-                ItemRow.itemInput "" itemNameList (fun input -> dispatch (Insert input))
+                Html.div [
+                    Bulma.input.text [
+                        prop.list "temp"
+                        prop.onTextChange (fun input -> dispatch (Insert input))
+                    ]
+                    Html.datalist [
+                        prop.id "temp"
+                        prop.children (
+                            List.map (fun (itemName: string) -> Html.option [ prop.value itemName ]) itemNameList
+                        )
+                    ]
+                ]
             ]
         ]
     ]
