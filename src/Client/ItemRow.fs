@@ -26,12 +26,6 @@ let itemRowColumns (itemList: Item list) (model: Model) (dispatch: Msg -> unit) 
               prop.children [
                   Bulma.input.text [
                       prop.list "temp"
-                      prop.value (
-                          match model with
-                          | Empty -> ""
-                          | Item item -> item.name
-                      )
-
                       prop.onTextChange (fun input -> dispatch (SetItem input))
                   ]
                   Html.datalist [
