@@ -4,9 +4,7 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
-open FallenLib.Dice
 open FallenLib.CoreSkillGroup
-open FallenLib.Attribute
 open FallenLib.Item
 open FallenLib.CombatRoll
 open FallenLib.MagicSkill
