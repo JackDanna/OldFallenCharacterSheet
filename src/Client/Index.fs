@@ -1,65 +1,88 @@
-module Character
+module Index
 
 open Elmish
+
 open Fable.Remoting.Client
 open Shared
 
-type Model =
-    { name: string
-      coreSkillTables: CoreSkillTables.Model }
+open FallenLib.Item
+open FallenLib.MagicSkill
+open FallenLib.MagicCombat
+open FallenLib.Range
+open FallenLib.CoreSkillGroup
 
-let defaultCoreSkillTables: CoreSkillTables.Model =
-    [ { attributeRow = { SkillHeaderRow.init () with name = "STR" }
-        skillRowList =
-          [ { SkillRow.init () with name = "Athletics" }
-            { SkillRow.init () with name = "Climb" }
-            { SkillRow.init () with name = "Endurance" }
-            { SkillRow.init () with name = "Lift" } ] }
-      { attributeRow = { SkillHeaderRow.init () with name = "RFX" }
-        skillRowList =
-          [ { SkillRow.init () with name = "Acrobatics" }
-            { SkillRow.init () with name = "Perception" }
-            { SkillRow.init () with name = "Sleight of Hand" }
-            { SkillRow.init () with name = "Stealth" } ] }
-      { attributeRow = { SkillHeaderRow.init () with name = "INT" }
-        skillRowList =
-          [ { SkillRow.init () with name = "Communication" }
-            { SkillRow.init () with name = "General KNowledge" }
-            { SkillRow.init () with name = "Survival" }
-            { SkillRow.init () with name = "Willpower" } ] } ]
+type Model =
+    { defaultCoreSkillTables: CoreSkillGroups.Model
+      allItemList: Item list
+      magicSkillMap: Map<string, MagicSkill>
+      magicCombatMap: Map<string, MagicCombat>
+      rangeMap: Map<string, Range>
+      combatVocationalSkill: string list
+      character: Character.Model }
 
 type Msg =
-    | CoreSkillTablesMsg of CoreSkillTables.Msg
-    | SetName of string
-    | Reset
+    | CharacterMsg of Character.Msg
+    | GotInitData of
+        CoreSkillGroup list *
+        Item list *
+        Map<string, MagicSkill> *
+        Map<string, MagicCombat> *
+        Map<string, Range> *
+        string list
 
-let init () : Model =
-    { name = "Name"
-      coreSkillTables = defaultCoreSkillTables }
+let fallenDataApi =
+    Remoting.createApi ()
+    |> Remoting.withRouteBuilder Route.builder
+    |> Remoting.buildProxy<IFallenDataApi>
 
-let update (msg: Msg) (model: Model) : Model =
+let init () : Model * Cmd<Msg> =
+
+    { defaultCoreSkillTables = []
+      allItemList = []
+      magicSkillMap = Map.empty
+      magicCombatMap = Map.empty
+      rangeMap = Map.empty
+      combatVocationalSkill = []
+      character = Character.init (List.Empty) },
+    Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
+
+let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
-    | CoreSkillTablesMsg coreSkillTableMsg ->
-        { model with coreSkillTables = CoreSkillTables.update coreSkillTableMsg model.coreSkillTables }
-    | SetName name -> { model with name = name }
-    | Reset -> init ()
+    | CharacterMsg characterMsg ->
+        { model with
+            character =
+                Character.update
+                    model.defaultCoreSkillTables
+                    model.allItemList
+                    model.magicSkillMap
+                    model.magicCombatMap
+                    model.rangeMap
+                    characterMsg
+                    model.character },
+        Cmd.none
+    | GotInitData (defaultCoreSkillGroups, allItemData, magicSkillMap, magicCombatMap, rangeMap, combatVocationalSkill) ->
+
+        { model with
+            defaultCoreSkillTables = defaultCoreSkillGroups
+            allItemList = allItemData
+            magicSkillMap = magicSkillMap
+            magicCombatMap = magicCombatMap
+            rangeMap = rangeMap
+            combatVocationalSkill = combatVocationalSkill
+            character = Character.init defaultCoreSkillGroups
+        // Character.update
+        //     defaultCoreSkillGroups
+        //     allItemData
+        //     magicSkillMap
+        //     magicCombatMap
+        //     rangeMap
+        //     characterMsg
+        //     model.character
+         },
+        Cmd.none
 
 open Feliz
 open Feliz.Bulma
-
-let navBrand =
-    Bulma.navbarBrand.div [
-        Bulma.navbarItem.a [
-            prop.href "https://safe-stack.github.io/"
-            navbarItem.isActive
-            prop.children [
-                Html.img [
-                    prop.src "/favicon.png"
-                    prop.alt "Logo"
-                ]
-            ]
-        ]
-    ]
 
 let view (model: Model) (dispatch: Msg -> unit) =
     Bulma.hero [
@@ -92,21 +115,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
 
             Bulma.heroBody [
-                Bulma.container [
-                    Bulma.columns [
-                        CoreSkillTables.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
-                    ]
-                    // Bulma.control.p [
-                    //     control.isExpanded
-                    //     prop.children [
-                    //         Bulma.input.text [
-                    //             prop.value model.Name
-                    //             prop.onChange (fun input -> SetName input |> dispatch)
-                    //         ]
-                    //     ]
-                    // ]
-                    //Bulma.title model.Name
-                    ]
+                Character.view model.combatVocationalSkill model.allItemList model.character (CharacterMsg >> dispatch)
             ]
         ]
     ]
