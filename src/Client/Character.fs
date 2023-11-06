@@ -19,6 +19,7 @@ type Msg =
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
     | EquipmentRowListMsg of EquipmentRowList.Msg
+    | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Model =
     let attributeStatList = coreSkillGroupToAttributeStats coreSkillGroups
@@ -47,6 +48,15 @@ let update
             []
 
     match msg with
+    | SetDefault ->
+
+        { model with
+            coreSkillTables = defaultCoreSkillTables
+            vocationTables =
+                VocationTables.update
+                    (coreSkillGroupToAttributeStats defaultCoreSkillTables)
+                    VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
+                    model.vocationTables }
     | CoreSkillTablesMsg coreSkillTableMsg ->
         let newCoreSkillTables =
             CoreSkillGroups.update coreSkillTableMsg model.coreSkillTables

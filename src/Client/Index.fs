@@ -69,16 +69,15 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
             magicCombatMap = magicCombatMap
             rangeMap = rangeMap
             combatVocationalSkill = combatVocationalSkill
-            character = Character.init defaultCoreSkillGroups
-        // Character.update
-        //     defaultCoreSkillGroups
-        //     allItemData
-        //     magicSkillMap
-        //     magicCombatMap
-        //     rangeMap
-        //     characterMsg
-        //     model.character
-         },
+            character =
+                Character.update
+                    defaultCoreSkillGroups
+                    allItemData
+                    magicSkillMap
+                    magicCombatMap
+                    rangeMap
+                    Character.Msg.SetDefault
+                    model.character },
         Cmd.none
 
 open Feliz
