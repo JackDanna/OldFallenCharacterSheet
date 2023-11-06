@@ -24,7 +24,7 @@ type Msg =
 let init (coreSkillGroups: CoreSkillGroup list) : Model =
     let attributeStatList = coreSkillGroupToAttributeStats coreSkillGroups
 
-    { name = "Javk Wick"
+    { name = ""
       coreSkillTables = coreSkillGroups
       vocationTables = VocationTables.init attributeStatList
       equipmentRowList = EquipmentRowList.init ()
