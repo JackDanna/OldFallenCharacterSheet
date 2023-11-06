@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FallenLib.fs" />
     <Compile Include="OrensDiceParsing.fs" />
+    <Compile Include="FallenLib.fs" />
     <Compile Include="Shared.fs" />
   </ItemGroup>
   <ItemGroup>
