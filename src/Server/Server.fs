@@ -55,6 +55,8 @@ module FallenServerData =
     open FallenLib.ItemTier
     open FallenLib.Item
     open FallenLib.MovementSpeedCalculation
+    open FallenLib.CoreSkillGroup
+    open FallenLib.SkillStat
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -127,9 +129,33 @@ module FallenServerData =
         | "None" -> None
         | _ -> Some <| resourceClassMap.Item string
 
-    // Attribute
-    let attributeData =
-        makeFallenData "AttributeData.csv" (fun row -> Attribute row.["desc"])
+    // AttributeAndCoreSkill
+    let coreSkillGroupData: CoreSkillGroup list =
+        makeFallenData "AttributeAndCoreSkillData.csv" (fun row ->
+            let skillStatList: SkillStat list =
+                List.collect
+                    (fun (coreSkillString: string) ->
+                        match coreSkillString with
+                        | "None" -> []
+                        | _ ->
+                            let lvl = Zero
+
+                            { name = coreSkillString
+                              lvl = lvl
+                              dicePool = coreSkillToDicePool baseDicePool lvl Zero }
+                            |> List.singleton)
+                    [ (string row.["Core Skill 1"])
+                      (string row.["Core Skill 2"])
+                      (string row.["Core Skill 3"])
+                      (string row.["Core Skill 4"])
+                      (string row.["Core Skill 5"]) ]
+
+            { attributeStat =
+                { attribute = Attribute row.["desc"]
+                  lvl = Zero }
+              coreSkillList = skillStatList })
+
+    let attributeData = coreSkillGroupToAttributes coreSkillGroupData
 
     let attributeMap = stringListToTypeMap attributeData
 
@@ -339,7 +365,8 @@ let fallenDataApi: IFallenDataApi =
         fun () ->
             async {
                 return
-                    (FallenServerData.itemData,
+                    (FallenServerData.coreSkillGroupData,
+                     FallenServerData.itemData,
                      FallenServerData.magicSkillMap,
                      FallenServerData.magicCombatMap,
                      FallenServerData.rangeMap,

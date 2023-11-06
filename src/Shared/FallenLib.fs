@@ -851,6 +851,13 @@ module CoreSkillGroup =
             [ neg1To4ToD6DicePoolModification lvl
               neg1To4ToD6DicePoolModification attributeLvl ]
 
+    let coreSkillGroupToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
+        List.map (fun coreSkillGroup -> coreSkillGroup.attributeStat) coreSkillGroups
+
+    let coreSkillGroupToAttributes coreSkillGroupData =
+        coreSkillGroupToAttributeStats coreSkillGroupData
+        |> List.map (fun attributeStat -> attributeStat.attribute)
+
 module Vocation =
     open ZeroToFour
     open Attribute

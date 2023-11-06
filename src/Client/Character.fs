@@ -25,63 +25,17 @@ type Model =
       rangeMap: Map<string, Range>
       combatVocationalSkill: string list }
 
-let defaultCoreSkillTables: CoreSkillGroups.Model =
-    let attribtueStat = AttributeStat.init ()
-    let lvl = Neg1To4Stat.init ()
-    let dicePool = coreSkillToDicePool baseDicePool lvl attribtueStat.lvl
-
-    [ { attributeStat = { attribtueStat with attribute = "STR" }
-        coreSkillList =
-          [ { name = "Athletics"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Climb"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Endurance"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Lift"
-              lvl = lvl
-              dicePool = dicePool } ] }
-      { attributeStat = { AttributeStat.init () with attribute = "RFX" }
-        coreSkillList =
-          [ { name = "Athletics"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Climb"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Endurance"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Lift"
-              lvl = lvl
-              dicePool = dicePool } ] }
-      { attributeStat = { AttributeStat.init () with attribute = "INT" }
-        coreSkillList =
-          [ { name = "Athletics"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Climb"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Endurance"
-              lvl = lvl
-              dicePool = dicePool }
-            { name = "Lift"
-              lvl = lvl
-              dicePool = dicePool } ] } ]
-
-let coreSkillGroupToAttributes (coreSkillTables: CoreSkillGroups.Model) =
-    List.map (fun (table: CoreSkillGroup.Model) -> table.attributeStat) coreSkillTables
-
-
 type Msg =
     | CoreSkillTablesMsg of CoreSkillGroups.Msg
     | VocationTableMsg of VocationTables.Msg
     | SetName of string
-    | GotInitData of Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range> * string list
+    | GotInitData of
+        CoreSkillGroup list *
+        Item list *
+        Map<string, MagicSkill> *
+        Map<string, MagicCombat> *
+        Map<string, Range> *
+        string list
     | EquipmentRowListMsg of EquipmentRowList.Msg
 
 let fallenDataApi =
@@ -90,11 +44,10 @@ let fallenDataApi =
     |> Remoting.buildProxy<IFallenDataApi>
 
 let init () : Model * Cmd<Msg> =
-    let attributeStatListTemp = coreSkillGroupToAttributes defaultCoreSkillTables
 
     { name = "Javk Wick"
-      coreSkillTables = defaultCoreSkillTables
-      vocationTables = VocationTables.init attributeStatListTemp
+      coreSkillTables = []
+      vocationTables = []
       equipmentRowList = EquipmentRowList.init ()
       combatRolls = []
       AllItemList = []
@@ -115,7 +68,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
 
         let newVocationTables =
             VocationTables.update
-                (coreSkillGroupToAttributes newCoreSkillTables)
+                (coreSkillGroupToAttributeStats newCoreSkillTables)
                 VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationTables
 
@@ -125,7 +78,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
             combatRolls =
                 temp
                     model.equipmentRowList
-                    (coreSkillGroupToAttributes newCoreSkillTables)
+                    (coreSkillGroupToAttributeStats newCoreSkillTables)
                     newVocationTables
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRolls },
@@ -134,7 +87,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     | VocationTableMsg vocationTableMsg ->
         let newVocationTables =
             VocationTables.update
-                (coreSkillGroupToAttributes model.coreSkillTables)
+                (coreSkillGroupToAttributeStats model.coreSkillTables)
                 vocationTableMsg
                 model.vocationTables
 
@@ -144,15 +97,19 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
             combatRolls =
                 temp
                     model.equipmentRowList
-                    (coreSkillGroupToAttributes model.coreSkillTables)
+                    (coreSkillGroupToAttributeStats model.coreSkillTables)
                     newVocationTables
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRolls },
         Cmd.none
 
     | SetName name -> { model with name = name }, Cmd.none
-    | GotInitData (allItemData, magicSkillMap, magicCombatMap, rangeMap, combatVocationalSkill) ->
+    | GotInitData (coreSkillGroups, allItemData, magicSkillMap, magicCombatMap, rangeMap, combatVocationalSkill) ->
+        let attributeStatList = coreSkillGroupToAttributeStats coreSkillGroups
+
         { model with
+            coreSkillTables = coreSkillGroups
+            vocationTables = VocationTables.init attributeStatList
             AllItemList = allItemData
             magicSkillMap = magicSkillMap
             magicCombatMap = magicCombatMap
@@ -168,7 +125,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
             combatRolls =
                 temp
                     newEquipmentRowList
-                    (coreSkillGroupToAttributes model.coreSkillTables)
+                    (coreSkillGroupToAttributeStats model.coreSkillTables)
                     model.vocationTables
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRolls },
