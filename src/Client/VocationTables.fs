@@ -11,7 +11,6 @@ type Msg =
 let init (attributeStatList: AttributeStat List) : Model =
 
     [ VocationTable.init attributeStatList
-      VocationTable.init attributeStatList
       VocationTable.init attributeStatList ]
 
 let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
