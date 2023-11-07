@@ -799,8 +799,8 @@ module Equipment =
         equipmentList
         |> List.fold
             (fun acc (equipmentItem: Equipment) ->
-                (equipmentItem.item.weight
-                 * float equipmentItem.quantity)
+                equipmentItem.item.weight
+                * float equipmentItem.quantity
                 + acc)
             0.0
 
@@ -1531,9 +1531,6 @@ module Effects =
 
 module Character =
 
-    open MagicCombatRoll
-    open WeaponCombatRoll
-    open MagicCombat
     open CombatRoll
     open Effects
     open Attribute
@@ -1552,15 +1549,10 @@ module Character =
         skillStats
         attributeStats
         equipment
-        vocationData
-        magicSkillMap
-        (magicCombatMap: Map<string, MagicCombat>)
-        rangeMap
         effectOptionTupleArray
         (attributeDeterminedDicePoolModMap: Map<string, AttributeDeterminedDiceMod>)
         (carryWeightCalculation: CarryWeightCalculation)
         (weightClassData: WeightClass list)
-        (combatRollGoverningAttributes: Attribute list)
         =
 
         let totalWeight = calculateEquipmentListWeight equipment
@@ -1600,25 +1592,6 @@ module Character =
                 else
                     [])
 
-        let weaponCombatRolls =
-            createWeaponCombatRolls
-                equipment
-                attributeStats
-                vocationData
-                attributeDeterminedDiceModArray
-                combatRollGoverningAttributes
-
-        let magicCombatRolls =
-            createMagicCombatRolls
-                attributeStats
-                vocationData
-                magicSkillMap
-                magicCombatMap
-                equipment
-                rangeMap
-                attributeDeterminedDiceModArray
-                combatRollGoverningAttributes
-
         let calculatedEffectTable =
             createCalculatedEffectTableArray
                 effectOptionTupleArray
@@ -1628,9 +1601,6 @@ module Character =
                 (weightClass, totalWeight, maxWeight)
 
         { vocationRolls = []
-          // List.map ( fun vocationStat ->
-          //     vocationStatToVocationRoll vocationStat attributeStats (stringToDicePool "3d6") attributeDeterminedDiceModArray
-          // ) vocationData
-          coreSkillRolls = [] //skillStatsToSkillRolls skillStats attributeStats (stringToDicePool "3d6") attributeDeterminedDiceModArray
-          combatRolls = List.append weaponCombatRolls magicCombatRolls
+          coreSkillRolls = []
+          combatRolls = []
           calculatedEffectTable = calculatedEffectTable }
