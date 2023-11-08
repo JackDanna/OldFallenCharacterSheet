@@ -5,7 +5,7 @@
     <DefineConstants>FABLE_COMPILER</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Neg1To4Stat.fs" />
+    <Compile Include="Neg1To4.fs" />
     <Compile Include="AttributeStat.fs" />
     <Compile Include="CoreSkill.fs" />
     <Compile Include="CoreSkillGroup.fs" />

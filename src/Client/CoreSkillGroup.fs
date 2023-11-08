@@ -4,7 +4,7 @@ open FallenLib.CoreSkillGroup
 open FallenLib.SkillAdjustment
 
 type Msg =
-    | AttributeRowMsg of AttributeStat.Msg
+    | AttributeMsg of AttributeStat.Msg
     | ModifyCoreSkill of int * CoreSkill.Msg
     | RecalculateCoreSkillGroup
 
@@ -16,7 +16,7 @@ let init (skillAdjustmentList: SkillAdjustment list) : CoreSkillGroup =
 
 let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSkillGroup) : CoreSkillGroup =
     match msg with
-    | AttributeRowMsg attributeRowMsg ->
+    | AttributeMsg attributeRowMsg ->
         let newAttributeStat = AttributeStat.update attributeRowMsg model.attributeStat
 
         { model with
@@ -48,7 +48,7 @@ open Feliz.Bulma
 
 let view (model: CoreSkillGroup) (dispatch: Msg -> unit) =
     Bulma.box [
-        AttributeStat.view model.attributeStat (AttributeRowMsg >> dispatch)
+        AttributeStat.view model.attributeStat (AttributeMsg >> dispatch)
         Html.ul (
             List.mapi
                 (fun position skill -> CoreSkill.view skill (fun msg -> dispatch (ModifyCoreSkill(position, msg))))

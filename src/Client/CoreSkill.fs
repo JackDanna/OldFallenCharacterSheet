@@ -7,11 +7,11 @@ open FallenLib.SkillAdjustment
 open FallenLib.Neg1To4
 
 type Msg =
-    | Neg1To4StatMsg of Neg1To4Stat.Msg
+    | Neg1To4Msg of Neg1To4.Msg
     | CalculateDicePool
 
 let init (skillAdjustmentList: SkillAdjustment list) (attributeLvl: Neg1To4) =
-    let lvl = Neg1To4Stat.init ()
+    let lvl = Neg1To4.init ()
 
     let name = ""
 
@@ -28,8 +28,8 @@ let update
     : SkillStat =
 
     match msg with
-    | Neg1To4StatMsg neg1To4StatMsg ->
-        let newLvl = Neg1To4Stat.update neg1To4StatMsg model.lvl
+    | Neg1To4Msg neg1To4StatMsg ->
+        let newLvl = Neg1To4.update neg1To4StatMsg model.lvl
 
         { model with
             lvl = newLvl
@@ -58,6 +58,6 @@ let view (model: SkillStat) (dispatch: Msg -> unit) =
             model.dicePool |> dicePoolToString |> prop.text
         ]
         Bulma.column [
-            Neg1To4Stat.view model.lvl (Neg1To4StatMsg >> dispatch)
+            Neg1To4.view model.lvl (Neg1To4Msg >> dispatch)
         ]
     ]

@@ -12,7 +12,7 @@ type Msg =
     | CalculateDicePool
 
 let init (governingAttribute: GoverningAttribute list) : SkillStat =
-    let lvl = Neg1To4Stat.init ()
+    let lvl = Neg1To4.init ()
 
     { name = ""
       lvl = lvl

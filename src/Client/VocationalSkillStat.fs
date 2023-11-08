@@ -3,7 +3,7 @@ module VocationalSkillStat
 open FallenLib.Neg1To4
 open FallenLib.VocationGroup
 open FallenLib.ZeroToFour
-open Neg1To4Stat
+open Neg1To4
 
 type Msg =
     | ToggleNegOne of bool
@@ -13,7 +13,7 @@ type Msg =
     | ToggleFour of bool
     | CheckIfLevelCapExceeded
 
-let init () : Neg1To4 = Neg1To4Stat.init ()
+let init () : Neg1To4 = Neg1To4.init ()
 
 let determineIfCapped levelCap level =
     (neg1To4ToInt level) > neg1To4ToInt (zeroToFourToNegOneToFour levelCap)
