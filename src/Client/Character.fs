@@ -11,10 +11,10 @@ open FallenLib.VocationGroup
 
 type Model =
     { name: string
-      coreSkillTables: CoreSkillGroup list
-      vocationTables: VocationGroup list
-      equipmentRowList: Equipment list
-      combatRolls: CombatRoll list }
+      coreSkillGroupList: CoreSkillGroup list
+      vocationGroupList: VocationGroup list
+      equipmentList: Equipment list
+      combatRollList: CombatRoll list }
 
 type Msg =
     | CoreSkillGroupListMsg of CoreSkillGroupList.Msg
@@ -27,10 +27,10 @@ let init (coreSkillGroups: CoreSkillGroup list) : Model =
     let attributeStatList = coreSkillGroupToAttributeStats coreSkillGroups
 
     { name = ""
-      coreSkillTables = coreSkillGroups
-      vocationTables = VocationGroupList.init attributeStatList
-      equipmentRowList = EquipmentList.init ()
-      combatRolls = [] }
+      coreSkillGroupList = coreSkillGroups
+      vocationGroupList = VocationGroupList.init attributeStatList
+      equipmentList = EquipmentList.init ()
+      combatRollList = [] }
 
 let update
     (defaultCoreSkillTables: CoreSkillGroup list)
@@ -51,75 +51,76 @@ let update
 
     match msg with
     | SetDefault ->
-
         { model with
-            coreSkillTables = defaultCoreSkillTables
-            vocationTables =
+            coreSkillGroupList = defaultCoreSkillTables
+            vocationGroupList =
                 VocationGroupList.update
                     (coreSkillGroupToAttributeStats defaultCoreSkillTables)
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationTables }
+                    model.vocationGroupList }
+
     | CoreSkillGroupListMsg coreSkillTableMsg ->
         let newCoreSkillTables =
             CoreSkillGroupList.update
-                (collectEquipmentSkillAdjustments model.equipmentRowList)
+                (collectEquipmentSkillAdjustments model.equipmentList)
                 coreSkillTableMsg
-                model.coreSkillTables
+                model.coreSkillGroupList
 
         let newVocationTables =
             VocationGroupList.update
                 (coreSkillGroupToAttributeStats newCoreSkillTables)
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                model.vocationTables
+                model.vocationGroupList
 
         { model with
-            coreSkillTables = newCoreSkillTables
-            vocationTables = newVocationTables
-            combatRolls =
+            coreSkillGroupList = newCoreSkillTables
+            vocationGroupList = newVocationTables
+            combatRollList =
                 loadedCombatRollUpdate
-                    model.equipmentRowList
+                    model.equipmentList
                     (coreSkillGroupToAttributeStats newCoreSkillTables)
                     newVocationTables
                     (CombatRollTable.Msg.RecalculateCombatRolls)
-                    model.combatRolls }
+                    model.combatRollList }
 
     | VocationGroupListMsg vocationTableMsg ->
         let newVocationTables =
             VocationGroupList.update
-                (coreSkillGroupToAttributeStats model.coreSkillTables)
+                (coreSkillGroupToAttributeStats model.coreSkillGroupList)
                 vocationTableMsg
-                model.vocationTables
+                model.vocationGroupList
 
         { model with
-            vocationTables = newVocationTables
+            vocationGroupList = newVocationTables
 
-            combatRolls =
+            combatRollList =
                 loadedCombatRollUpdate
-                    model.equipmentRowList
-                    (coreSkillGroupToAttributeStats model.coreSkillTables)
+                    model.equipmentList
+                    (coreSkillGroupToAttributeStats model.coreSkillGroupList)
                     newVocationTables
                     (CombatRollTable.Msg.RecalculateCombatRolls)
-                    model.combatRolls }
+                    model.combatRollList }
 
     | SetName name -> { model with name = name }
+
     | EquipmentListMsg equipmentRowListMsg ->
         let newEquipmentRowList =
-            EquipmentList.update allItemList equipmentRowListMsg model.equipmentRowList
+            EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
 
         { model with
-            coreSkillTables =
+            coreSkillGroupList =
                 CoreSkillGroupList.update
                     (collectEquipmentSkillAdjustments newEquipmentRowList)
                     CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
-                    model.coreSkillTables
-            equipmentRowList = newEquipmentRowList
-            combatRolls =
+                    model.coreSkillGroupList
+            equipmentList = newEquipmentRowList
+            combatRollList =
                 loadedCombatRollUpdate
                     newEquipmentRowList
-                    (coreSkillGroupToAttributeStats model.coreSkillTables)
-                    model.vocationTables
+                    (coreSkillGroupToAttributeStats model.coreSkillGroupList)
+                    model.vocationGroupList
                     (CombatRollTable.Msg.RecalculateCombatRolls)
-                    model.combatRolls }
+                    model.combatRollList }
 
 open Feliz
 open Feliz.Bulma
@@ -139,19 +140,19 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Model) (dispat
             ]
         ]
         Bulma.container [
-            CoreSkillGroupList.view model.coreSkillTables (CoreSkillGroupListMsg >> dispatch)
+            CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
         ]
         Bulma.container [
-            VocationGroupList.view combatVocationalSkill model.vocationTables (VocationGroupListMsg >> dispatch)
+            VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
         ]
         Bulma.container [
             EquipmentList.view
                 (List.map (fun (item: Item) -> item.name) allItemList)
-                model.equipmentRowList
+                model.equipmentList
                 (EquipmentListMsg >> dispatch)
             |> Bulma.content
         ]
         Bulma.container [
-            CombatRollTable.view model.combatRolls
+            CombatRollTable.view model.combatRollList
         ]
     ]
