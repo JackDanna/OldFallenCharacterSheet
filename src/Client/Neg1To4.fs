@@ -44,7 +44,7 @@ open Feliz.Bulma
 
 let view (model: Neg1To4) (dispatch: Msg -> unit) =
 
-    let checkbox model neg1To4 toggleNeg1To4 =
+    let checkbox neg1To4 toggleNeg1To4 =
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isCheckboxDisabled model neg1To4)
@@ -53,15 +53,13 @@ let view (model: Neg1To4) (dispatch: Msg -> unit) =
             ]
         ]
 
-    let loadedCheckbox = checkbox model
-
     Bulma.columns [
-        loadedCheckbox NegOne ToggleNegOne
+        checkbox NegOne ToggleNegOne
         Bulma.column [
             Html.div [ prop.text "-" ]
         ]
-        loadedCheckbox One ToggleOne
-        loadedCheckbox Two ToggleTwo
-        loadedCheckbox Three ToggleThree
-        loadedCheckbox Four ToggleFour
+        checkbox One ToggleOne
+        checkbox Two ToggleTwo
+        checkbox Three ToggleThree
+        checkbox Four ToggleFour
     ]
