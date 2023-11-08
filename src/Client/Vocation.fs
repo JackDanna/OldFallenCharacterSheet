@@ -6,12 +6,12 @@ open FallenLib.Dice
 
 type Msg =
     | SetName of string
-    | ZeroToFourStat of ZeroToFourStat.Msg
+    | ZeroToFourStat of ZeroToFour.Msg
     | ToggleGoverningAttribute of int
     | SetAttributeStatsAndCalculateDicePools
 
 let init (attributeStatList: AttributeStat List) : Vocation =
-    let lvl = ZeroToFourStat.init ()
+    let lvl = ZeroToFour.init ()
     let governingAttribues = attributesToGoverningAttributesInit attributeStatList
 
     { name = ""
@@ -23,7 +23,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) 
     match msg with
     | SetName newName -> { model with name = newName }
 
-    | ZeroToFourStat neg1ToStatMsg -> { model with level = ZeroToFourStat.update neg1ToStatMsg model.level }
+    | ZeroToFourStat neg1ToStatMsg -> { model with level = ZeroToFour.update neg1ToStatMsg model.level }
 
     | ToggleGoverningAttribute position ->
         let toggledGoverningAttributes =
@@ -93,6 +93,6 @@ let view (model: Vocation) (dispatch: Msg -> unit) =
             |> prop.text
         ]
         Bulma.column [
-            ZeroToFourStat.view model.level (ZeroToFourStat >> dispatch)
+            ZeroToFour.view model.level (ZeroToFourStat >> dispatch)
         ]
     ]
