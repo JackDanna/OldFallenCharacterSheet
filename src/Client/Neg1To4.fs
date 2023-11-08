@@ -21,10 +21,7 @@ let update (msg: Msg) (model: Neg1To4) : Neg1To4 =
 
 let isCheckedLogic currentLevel checkboxRepresented =
     match checkboxRepresented = NegOne with
-    | true ->
-        match currentLevel = NegOne with
-        | true -> true
-        | _ -> false
+    | true -> currentLevel = NegOne
     | _ ->
         neg1To4ToInt checkboxRepresented
         <= neg1To4ToInt currentLevel
