@@ -37,10 +37,8 @@ let isCheckboxDisabled currentLevel checkboxRepresented =
         checkboxRepresentedInt <> currentLevelInt
         && checkboxRepresentedInt <> currentLevelInt + 1
 
-
 open Feliz
 open Feliz.Bulma
-
 
 let view (model: Neg1To4) (dispatch: Msg -> unit) =
 

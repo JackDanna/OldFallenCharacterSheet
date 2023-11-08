@@ -29,7 +29,6 @@ let isCheckboxDisabled currentLevel checkboxRepresented =
     checkboxRepresentedInt <> currentLevelInt
     && checkboxRepresentedInt <> currentLevelInt + 1u
 
-
 open Feliz
 open Feliz.Bulma
 

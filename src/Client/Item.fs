@@ -24,7 +24,6 @@ let itemInput (nameValue: string) itemNameList onTextChange =
         ]
     ]
 
-
 let itemRowColumns (itemNameList: string list) (model: Item) (dispatch: Msg -> unit) =
 
     [ itemInput model.name itemNameList (fun input -> dispatch (SetItem input))
