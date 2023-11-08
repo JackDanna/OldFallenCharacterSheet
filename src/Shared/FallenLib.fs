@@ -852,7 +852,7 @@ module Equipment =
     let collectEquipmentSkillAdjustments equipmentList =
         equipmentList
         |> getEquipedItems
-        |> List.collect (fun item -> collectSkillAdjustments item)
+        |> List.collect (collectSkillAdjustments)
 
 module SkillStat =
     open Neg1To4
