@@ -17,7 +17,7 @@ type Model =
       combatRolls: CombatRoll list }
 
 type Msg =
-    | CoreSkillTablesMsg of CoreSkillGroups.Msg
+    | CoreSkillTablesMsg of CoreSkillGroupList.Msg
     | VocationTableMsg of VocationGroupList.Msg
     | SetName of string
     | EquipmentRowListMsg of EquipmentList.Msg
@@ -61,7 +61,7 @@ let update
                     model.vocationTables }
     | CoreSkillTablesMsg coreSkillTableMsg ->
         let newCoreSkillTables =
-            CoreSkillGroups.update
+            CoreSkillGroupList.update
                 (collectEquipmentSkillAdjustments model.equipmentRowList)
                 coreSkillTableMsg
                 model.coreSkillTables
@@ -108,9 +108,9 @@ let update
 
         { model with
             coreSkillTables =
-                CoreSkillGroups.update
+                CoreSkillGroupList.update
                     (collectEquipmentSkillAdjustments newEquipmentRowList)
-                    CoreSkillGroups.Msg.RecalculateCoreSkillGroups
+                    CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                     model.coreSkillTables
             equipmentRowList = newEquipmentRowList
             combatRolls =
@@ -140,7 +140,7 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Model) (dispat
             ]
         ]
         Bulma.container [
-            CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
+            CoreSkillGroupList.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
         ]
         Bulma.container [
             VocationGroupList.view combatVocationalSkill model.vocationTables (VocationTableMsg >> dispatch)

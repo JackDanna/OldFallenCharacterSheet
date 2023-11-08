@@ -1,4 +1,4 @@
-module CoreSkillGroups
+module CoreSkillGroupList
 
 open FallenLib.SkillAdjustment
 open FallenLib.CoreSkillGroup
