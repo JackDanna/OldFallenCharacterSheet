@@ -6,6 +6,7 @@ open FallenLib.CombatRoll
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 open FallenLib.Range
+open FallenLib.Equipment
 
 type Model =
     { name: string
@@ -59,7 +60,10 @@ let update
                     model.vocationTables }
     | CoreSkillTablesMsg coreSkillTableMsg ->
         let newCoreSkillTables =
-            CoreSkillGroups.update coreSkillTableMsg model.coreSkillTables
+            CoreSkillGroups.update
+                (collectEquipmentSkillAdjustments model.equipmentRowList)
+                coreSkillTableMsg
+                model.coreSkillTables
 
         let newVocationTables =
             VocationTables.update
@@ -102,6 +106,11 @@ let update
             EquipmentRowList.update allItemList equipmentRowListMsg model.equipmentRowList
 
         { model with
+            coreSkillTables =
+                CoreSkillGroups.update
+                    (collectEquipmentSkillAdjustments newEquipmentRowList)
+                    CoreSkillGroups.Msg.RecalculateCoreSkillGroups
+                    model.coreSkillTables
             equipmentRowList = newEquipmentRowList
             combatRolls =
                 temp

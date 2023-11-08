@@ -3,6 +3,7 @@ module CoreSkill
 open FallenLib.CoreSkillGroup
 open FallenLib.Dice
 open FallenLib.SkillStat
+open FallenLib.SkillAdjustment
 
 type Model = SkillStat
 
@@ -10,22 +11,43 @@ type Msg =
     | Neg1To4StatMsg of Neg1To4Stat.Msg
     | CalculateDicePool
 
-let init (attributeLvl: Neg1To4Stat.Model) =
+let init (skillAdjustmentList: SkillAdjustment list) (attributeLvl: Neg1To4Stat.Model) =
     let lvl = Neg1To4Stat.init ()
 
-    { name = ""
-      lvl = lvl
-      dicePool = coreSkillToDicePool baseDicePool lvl attributeLvl }
+    let name = ""
 
-let update (attributeLvl: Neg1To4Stat.Model) (msg: Msg) (model: Model) : Model =
+    { name = name
+      lvl = lvl
+      dicePool =
+        coreSkillToDicePool baseDicePool lvl attributeLvl (collectSkillAdjustmentDiceMods name skillAdjustmentList) }
+
+let update
+    (skillAdjustmentList: SkillAdjustment list)
+    (attributeLvl: Neg1To4Stat.Model)
+    (msg: Msg)
+    (model: Model)
+    : Model =
+
     match msg with
     | Neg1To4StatMsg neg1To4StatMsg ->
         let newLvl = Neg1To4Stat.update neg1To4StatMsg model.lvl
 
         { model with
             lvl = newLvl
-            dicePool = coreSkillToDicePool baseDicePool newLvl attributeLvl }
-    | CalculateDicePool -> { model with dicePool = coreSkillToDicePool baseDicePool model.lvl attributeLvl }
+            dicePool =
+                coreSkillToDicePool
+                    baseDicePool
+                    newLvl
+                    attributeLvl
+                    (collectSkillAdjustmentDiceMods model.name skillAdjustmentList) }
+    | CalculateDicePool ->
+        { model with
+            dicePool =
+                coreSkillToDicePool
+                    baseDicePool
+                    model.lvl
+                    attributeLvl
+                    (collectSkillAdjustmentDiceMods model.name skillAdjustmentList) }
 
 open Feliz
 open Feliz.Bulma

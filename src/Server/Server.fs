@@ -28,6 +28,7 @@ module FallenServerData =
     open FallenLib.MovementSpeedCalculation
     open FallenLib.CoreSkillGroup
     open FallenLib.SkillStat
+    open FallenLib.SkillAdjustment
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -113,7 +114,7 @@ module FallenServerData =
 
                             { name = coreSkillString
                               lvl = lvl
-                              dicePool = coreSkillToDicePool baseDicePool lvl Zero }
+                              dicePool = coreSkillToDicePool baseDicePool lvl Zero [] }
                             |> List.singleton)
                     [ (string row.["Core Skill 1"])
                       (string row.["Core Skill 2"])
@@ -223,6 +224,17 @@ module FallenServerData =
         List.map (fun (defenseClass: DefenseClass) -> defenseClass.name, defenseClass) defenseClassData
         |> Map.ofList
 
+    // SkillAdjusment
+    let skillAdjustmentData: SkillAdjustment list =
+        makeFallenData "SkillAdjustment.csv" (fun row ->
+            { name = string row.["Name"]
+              skill = string row.["Skill"]
+              diceMod = stringToDicePoolModification row.["Dice Modification"] })
+
+    let skillAdjustmentMap =
+        List.map (fun (skillAdjustment: SkillAdjustment) -> skillAdjustment.name, skillAdjustment) skillAdjustmentData
+        |> Map.ofList
+
     // WeaponResourceClass
     let weaponResourceClassData =
         makeFallenData "WeaponResourceClassData.csv" (fun row ->
@@ -279,6 +291,10 @@ module FallenServerData =
             | defenseClassName when defenseClassMap.Keys.Contains defenseClassName ->
                 defenseClassMap.Item defenseClassName
                 |> DefenseClass
+                |> List.singleton
+            | skillAdjustmentName when skillAdjustmentMap.Keys.Contains skillAdjustmentName ->
+                skillAdjustmentMap.Item skillAdjustmentName
+                |> SkillAdjustment
                 |> List.singleton
             | _ -> [])
 

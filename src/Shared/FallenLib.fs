@@ -630,6 +630,20 @@ module DefenseClass =
           mentalDefense: float
           spiritualDefense: float }
 
+module SkillAdjustment =
+
+    open Dice
+
+    type SkillAdjustment =
+        { name: string
+          skill: string
+          diceMod: DicePoolModification }
+
+    let collectSkillAdjustmentDiceMods skillName skillAdjustmentList =
+        skillAdjustmentList
+        |> List.filter (fun skillAdjustment -> skillAdjustment.skill = skillName)
+        |> List.map (fun skillAdjustment -> skillAdjustment.diceMod)
+
 // Magic
 
 module MagicResource =
@@ -724,12 +738,14 @@ module Item =
     open WeaponResourceClass
     open ConduitClass
     open DefenseClass
+    open SkillAdjustment
 
     type ItemClass =
         | WeaponClass of WeaponClass
         | ConduitClass of ConduitClass
         | WeaponResourceClass of WeaponResourceClass
         | DefenseClass of DefenseClass
+        | SkillAdjustment of SkillAdjustment
 
     type Item =
         { name: string
@@ -745,7 +761,8 @@ module Item =
                 | WeaponClass weaponClass -> weaponClass.name
                 | ConduitClass conduitClass -> conduitClass.name
                 | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
-                | DefenseClass defenseClass -> defenseClass.name)
+                | DefenseClass defenseClass -> defenseClass.name
+                | SkillAdjustment skillAdjustment -> skillAdjustment.name)
             itemClasses
         |> String.concat ", "
 
@@ -775,6 +792,13 @@ module Item =
         |> List.collect (fun itemClass ->
             match itemClass with
             | DefenseClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> [])
+
+    let collectSkillAdjustments (item: Item) =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | SkillAdjustment skillAdjustment -> [ skillAdjustment ]
             | _ -> [])
 
 module Container =
@@ -825,6 +849,11 @@ module Equipment =
             |> List.isEmpty
             |> not)
 
+    let collectEquipmentSkillAdjustments equipmentList =
+        equipmentList
+        |> getEquipedItems
+        |> List.collect (fun item -> collectSkillAdjustments item)
+
 module SkillStat =
     open Neg1To4
     open Dice
@@ -844,12 +873,14 @@ module CoreSkillGroup =
         { attributeStat: AttributeStat
           coreSkillList: SkillStat list }
 
-    let coreSkillToDicePool baseDice lvl attributeLvl =
+    let coreSkillToDicePool baseDice lvl attributeLvl skillAdjustmentDiceModList =
 
         modifyDicePoolByModList
             baseDice
-            [ neg1To4ToD6DicePoolModification lvl
-              neg1To4ToD6DicePoolModification attributeLvl ]
+            (List.append
+                skillAdjustmentDiceModList
+                [ neg1To4ToD6DicePoolModification lvl
+                  neg1To4ToD6DicePoolModification attributeLvl ])
 
     let coreSkillGroupToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
         List.map (fun coreSkillGroup -> coreSkillGroup.attributeStat) coreSkillGroups
