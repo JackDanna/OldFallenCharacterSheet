@@ -78,7 +78,7 @@ let view (combatVocationalSkills: string list) (levelCap: ZeroToFour) (model: Sk
             ]
         ]
         Bulma.column [
-            model.dicePool |> dicePoolToString |> prop.text
+            prop.text (dicePoolToString model.dicePool)
         ]
         Bulma.column [
             VocationalSkillStat.view levelCap model.lvl (VocationalSkillStatMsg >> dispatch)
