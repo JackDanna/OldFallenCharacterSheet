@@ -33,36 +33,24 @@ let isCheckboxDisabled currentLevel checkboxRepresented =
 open Feliz
 open Feliz.Bulma
 
+let makeCheckbox (model: ZeroToFour) (dispatch: Msg -> unit) specifiedCheckbox toggleLogic =
+    Bulma.column [
+        Bulma.input.checkbox [
+            prop.disabled (isCheckboxDisabled model specifiedCheckbox)
+            prop.isChecked (isCheckedLogic model specifiedCheckbox)
+            prop.onCheckedChange (fun isChecked -> dispatch (toggleLogic isChecked))
+        ]
+    ]
+
+
 
 let view (model: ZeroToFour) (dispatch: Msg -> unit) =
 
+    let preloadedMakeCheckbox = makeCheckbox model dispatch
+
     Bulma.columns [
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model One)
-                prop.isChecked (isCheckedLogic model One)
-                prop.onCheckedChange (fun isChecked -> dispatch (ToggleOne isChecked))
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model Two)
-                prop.isChecked (isCheckedLogic model Two)
-                prop.onCheckedChange (fun isChecked -> dispatch (ToggleTwo isChecked))
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model Three)
-                prop.isChecked (isCheckedLogic model Three)
-                prop.onCheckedChange (fun isChecked -> dispatch (ToggleThree isChecked))
-            ]
-        ]
-        Bulma.column [
-            Bulma.input.checkbox [
-                prop.disabled (isCheckboxDisabled model Four)
-                prop.isChecked (isCheckedLogic model Four)
-                prop.onCheckedChange (fun isChecked -> dispatch (ToggleFour isChecked))
-            ]
-        ]
+        preloadedMakeCheckbox One ToggleOne
+        preloadedMakeCheckbox Two ToggleTwo
+        preloadedMakeCheckbox Three ToggleThree
+        preloadedMakeCheckbox Four ToggleFour
     ]
