@@ -154,5 +154,6 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Model) (dispat
         ]
         Bulma.container [
             CombatRollTable.view model.combatRollList
+            |> Bulma.content
         ]
     ]
