@@ -13,7 +13,6 @@ open FallenLib.MagicCombat
 
 type Msg = RecalculateCombatRolls
 
-
 let update
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
@@ -38,8 +37,6 @@ let update
             equipmentList
             attributeStatList
             vocationGroupList
-
-
 
 open Feliz
 open Feliz.Bulma
