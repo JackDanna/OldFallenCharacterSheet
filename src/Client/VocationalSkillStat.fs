@@ -49,7 +49,7 @@ let isVocationalCheckboxDisabled levelCap level checkboxRepresented =
 
 let view (levelCap: ZeroToFour) (model: Neg1To4) (dispatch: Msg -> unit) =
 
-    let checkbox levelCap model neg1To4 toggleNeg1To4 =
+    let checkbox neg1To4 toggleNeg1To4 =
         Bulma.column [
             Bulma.input.checkbox [
                 prop.disabled (isVocationalCheckboxDisabled levelCap model neg1To4)
@@ -58,15 +58,13 @@ let view (levelCap: ZeroToFour) (model: Neg1To4) (dispatch: Msg -> unit) =
             ]
         ]
 
-    let loadedCheckbox = checkbox levelCap model
-
     Bulma.columns [
-        loadedCheckbox NegOne ToggleNegOne
+        checkbox NegOne ToggleNegOne
         Bulma.column [
             Html.div [ prop.text "-" ]
         ]
-        loadedCheckbox Neg1To4.One ToggleOne
-        loadedCheckbox Neg1To4.Two ToggleTwo
-        loadedCheckbox Neg1To4.Three ToggleThree
-        loadedCheckbox Neg1To4.Four ToggleFour
+        checkbox Neg1To4.One ToggleOne
+        checkbox Neg1To4.Two ToggleTwo
+        checkbox Neg1To4.Three ToggleThree
+        checkbox Neg1To4.Four ToggleFour
     ]
