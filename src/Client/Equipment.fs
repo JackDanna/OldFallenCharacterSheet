@@ -1,10 +1,10 @@
-module EquipmentRow
+module Equipment
 
 open FallenLib.Equipment
 open FallenLib.Item
 
 type Msg =
-    | ItemRowMsg of ItemRow.Msg
+    | ItemRowMsg of Item.Msg
     | SetEquipmentIsEquiped of bool
     | SetEquipmentQuantity of uint
 
@@ -12,7 +12,7 @@ let update (itemList: Item list) (msg: Msg) (model: Equipment) : Equipment =
     match msg with
     | ItemRowMsg itemRowMsg ->
         { isEquipped = false
-          item = ItemRow.update itemList itemRowMsg model.item
+          item = Item.update itemList itemRowMsg model.item
           quantity = 1u }
 
     | SetEquipmentIsEquiped newIsEquiped -> { model with isEquipped = newIsEquiped }
@@ -37,7 +37,7 @@ let equipmentRowTableData (itemNameList: string list) (model: Equipment) (dispat
                   prop.onChange (fun (num: int) -> dispatch (SetEquipmentQuantity(uint num)))
               ]
           ] ]
-        (ItemRow.itemRowColumns itemNameList model.item (ItemRowMsg >> dispatch))
+        (Item.itemRowColumns itemNameList model.item (ItemRowMsg >> dispatch))
 
 let view (itemNameList: string list) (model: Equipment) (dispatch: Msg -> unit) =
     equipmentRowTableData itemNameList model dispatch

@@ -1,4 +1,4 @@
-module CombatRollList
+module CombatRollTable
 
 open FallenLib.CombatRoll
 open FallenLib.Dice

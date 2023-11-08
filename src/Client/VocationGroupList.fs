@@ -1,16 +1,16 @@
-module VocationTables
+module VocationGroupList
 
 open FallenLib.Attribute
 open FallenLib.VocationGroup
 
 type Msg =
-    | Modify of int * VocationTable.Msg
+    | Modify of int * VocationGroup.Msg
     | SetAttributeStatsAndCalculateDicePools
 
 let init (attributeStatList: AttributeStat List) : VocationGroup list =
 
-    [ VocationTable.init attributeStatList
-      VocationTable.init attributeStatList ]
+    [ VocationGroup.init attributeStatList
+      VocationGroup.init attributeStatList ]
 
 let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGroup list) : VocationGroup list =
     match msg with
@@ -18,15 +18,15 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGr
         model
         |> List.mapi (fun i vocationTableModel ->
             if i = position then
-                VocationTable.update attributeStatList vocationTableMsg vocationTableModel
+                VocationGroup.update attributeStatList vocationTableMsg vocationTableModel
             else
                 vocationTableModel)
     | SetAttributeStatsAndCalculateDicePools ->
         model
         |> List.map (fun vocationTable ->
-            VocationTable.update
+            VocationGroup.update
                 attributeStatList
-                VocationTable.Msg.SetAttributeStatsAndCalculateDicePools
+                VocationGroup.Msg.SetAttributeStatsAndCalculateDicePools
                 vocationTable)
 
 open Feliz
@@ -45,7 +45,7 @@ let view (combatVocationalSkills: string list) (model: VocationGroup list) (disp
                 model
                 |> List.mapi (fun position vocationTable ->
                     Bulma.column [
-                        VocationTable.view combatVocationalSkills vocationTable (fun msg ->
+                        VocationGroup.view combatVocationalSkills vocationTable (fun msg ->
                             dispatch (Modify(position, msg)))
                     ])
                 |> Bulma.columns

@@ -1,10 +1,10 @@
-module EquipmentRowList
+module EquipmentList
 
 open FallenLib.Item
 open FallenLib.Equipment
 
 type Msg =
-    | ModifyEquipmentRow of int * EquipmentRow.Msg
+    | ModifyEquipmentRow of int * Equipment.Msg
     | Insert of string
     | Remove of int
 
@@ -16,7 +16,7 @@ let update (itemList: Item list) (msg: Msg) (model: Equipment list) : Equipment 
         List.mapi
             (fun index equipmentRow ->
                 if position = index then
-                    EquipmentRow.update itemList equipmentRowMsg equipmentRow
+                    Equipment.update itemList equipmentRowMsg equipmentRow
                 else
                     equipmentRow)
             model
@@ -52,7 +52,7 @@ let view (itemNameList: string list) (model: Equipment list) (dispatch: Msg -> u
                 List.mapi
                     (fun position equipmentRow ->
                         let equipmentRowTableData =
-                            (EquipmentRow.equipmentRowTableData itemNameList equipmentRow (fun msg ->
+                            (Equipment.equipmentRowTableData itemNameList equipmentRow (fun msg ->
                                 dispatch (ModifyEquipmentRow(position, msg))))
 
                         let deleteEquipmentRowButton =

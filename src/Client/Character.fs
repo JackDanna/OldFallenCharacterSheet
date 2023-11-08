@@ -18,9 +18,9 @@ type Model =
 
 type Msg =
     | CoreSkillTablesMsg of CoreSkillGroups.Msg
-    | VocationTableMsg of VocationTables.Msg
+    | VocationTableMsg of VocationGroupList.Msg
     | SetName of string
-    | EquipmentRowListMsg of EquipmentRowList.Msg
+    | EquipmentRowListMsg of EquipmentList.Msg
     | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Model =
@@ -28,8 +28,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Model =
 
     { name = ""
       coreSkillTables = coreSkillGroups
-      vocationTables = VocationTables.init attributeStatList
-      equipmentRowList = EquipmentRowList.init ()
+      vocationTables = VocationGroupList.init attributeStatList
+      equipmentRowList = EquipmentList.init ()
       combatRolls = [] }
 
 let update
@@ -55,9 +55,9 @@ let update
         { model with
             coreSkillTables = defaultCoreSkillTables
             vocationTables =
-                VocationTables.update
+                VocationGroupList.update
                     (coreSkillGroupToAttributeStats defaultCoreSkillTables)
-                    VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
+                    VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationTables }
     | CoreSkillTablesMsg coreSkillTableMsg ->
         let newCoreSkillTables =
@@ -67,9 +67,9 @@ let update
                 model.coreSkillTables
 
         let newVocationTables =
-            VocationTables.update
+            VocationGroupList.update
                 (coreSkillGroupToAttributeStats newCoreSkillTables)
-                VocationTables.Msg.SetAttributeStatsAndCalculateDicePools
+                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationTables
 
         { model with
@@ -85,7 +85,7 @@ let update
 
     | VocationTableMsg vocationTableMsg ->
         let newVocationTables =
-            VocationTables.update
+            VocationGroupList.update
                 (coreSkillGroupToAttributeStats model.coreSkillTables)
                 vocationTableMsg
                 model.vocationTables
@@ -104,7 +104,7 @@ let update
     | SetName name -> { model with name = name }
     | EquipmentRowListMsg equipmentRowListMsg ->
         let newEquipmentRowList =
-            EquipmentRowList.update allItemList equipmentRowListMsg model.equipmentRowList
+            EquipmentList.update allItemList equipmentRowListMsg model.equipmentRowList
 
         { model with
             coreSkillTables =
@@ -143,10 +143,10 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Model) (dispat
             CoreSkillGroups.view model.coreSkillTables (CoreSkillTablesMsg >> dispatch)
         ]
         Bulma.container [
-            VocationTables.view combatVocationalSkill model.vocationTables (VocationTableMsg >> dispatch)
+            VocationGroupList.view combatVocationalSkill model.vocationTables (VocationTableMsg >> dispatch)
         ]
         Bulma.container [
-            EquipmentRowList.view
+            EquipmentList.view
                 (List.map (fun (item: Item) -> item.name) allItemList)
                 model.equipmentRowList
                 (EquipmentRowListMsg >> dispatch)

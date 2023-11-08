@@ -1,4 +1,4 @@
-module VocationTable
+module VocationGroup
 
 open FallenLib.Attribute
 open FallenLib.VocationGroup

@@ -1,8 +1,8 @@
-module ItemRowList
+module ItemList
 
 open FallenLib.Item
 
-type Msg = Modify of int * ItemRow.Msg
+type Msg = Modify of int * Item.Msg
 
 let init () = []
 
@@ -12,7 +12,7 @@ let update (itemList: Item list) (msg: Msg) (model: Item list) : Item list =
         List.mapi
             (fun i (itemRow: Item) ->
                 if position = i then
-                    ItemRow.update itemList msg itemRow
+                    Item.update itemList msg itemRow
                 else
                     itemRow)
             model
@@ -24,7 +24,7 @@ let view (itemNameList: string list) (model: Item list) (dispatch: Msg -> unit) 
 
     let temp =
         List.mapi
-            (fun position itemRow -> ItemRow.view itemNameList itemRow (fun msg -> dispatch (Modify(position, msg))))
+            (fun position itemRow -> Item.view itemNameList itemRow (fun msg -> dispatch (Modify(position, msg))))
             model
 
     Bulma.table [
