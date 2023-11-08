@@ -997,6 +997,20 @@ module CombatRoll =
     open Range
     open EngageableOpponents
     open Penetration
+    open Attribute
+    open Neg1To4
+    open Equipment
+    open VocationGroup
+    open WeaponResourceClass
+    open ItemTier
+    open Item
+    open WeaponClass
+
+    open SkillStat
+    open MagicResource
+    open MagicSkill
+    open MagicCombat
+    open ConduitClass
 
     type CombatRoll =
         { name: string
@@ -1007,25 +1021,8 @@ module CombatRoll =
           areaOfEffectShape: Shape option
           engageableOpponents: CalculatedEngageableOpponents }
 
-module WeaponCombatRoll =
-    open Dice
-    open Attribute
-    open Neg1To4
-    open Shape
-    open Range
-    open EngageableOpponents
-
-    open Equipment
-    open VocationGroup
-    open SkillStat
-    open CombatRoll
-
-    open WeaponResourceClass
-    open ItemTier
-    open Item
-    open WeaponClass
-
-    let createCombatRoll
+    // Weapon CombatRoll
+    let createWeaponCombatRoll
         name
         (weaponClass: WeaponClass)
         weaponTierBaseDice
@@ -1062,7 +1059,7 @@ module WeaponCombatRoll =
           areaOfEffectShape = compareAndDetermineAOE numDice weaponClass.areaOfEffect resourceAreaOfEffect
           engageableOpponents = determineEngageableOpponents numDice weaponClass.engageableOpponents }
 
-    let createHandedVariationsCombatRolls
+    let createHandedVariationsWeaponCombatRolls
         (twoHandedWeaponDice: DicePoolModification)
         (oneHandedWeaponDiceOption: DicePoolModification Option)
         (dualWieldableBonusOption: DicePoolModification Option)
@@ -1112,7 +1109,7 @@ module WeaponCombatRoll =
             |> List.collect (fun weaponClass ->
 
                 let preloadedCreateCombatRoll =
-                    createCombatRoll
+                    createWeaponCombatRoll
                         weaponItem.name
                         weaponClass
                         weaponItem.itemTier.baseDice
@@ -1122,7 +1119,7 @@ module WeaponCombatRoll =
                         combatRollGoverningAttributes
 
                 let preloadedCreateHandVariationsCombatRolls =
-                    createHandedVariationsCombatRolls
+                    createHandedVariationsWeaponCombatRolls
                         weaponClass.twoHandedWeaponDice
                         weaponClass.oneHandedWeaponDice
                         weaponClass.dualWieldableBonus
@@ -1143,27 +1140,7 @@ module WeaponCombatRoll =
                     |> preloadedCreateCombatRoll
                     |> preloadedCreateHandVariationsCombatRolls))
 
-module MagicCombatRoll =
-    open Dice
-    open Attribute
-    open Neg1To4
-    open Range
-    open Shape
-    open EngageableOpponents
-
-    open Equipment
-    open VocationGroup
-    open SkillStat
-    open CombatRoll
-
-    open ItemTier
-    open Item
-
-    open MagicResource
-    open MagicSkill
-    open MagicCombat
-    open ConduitClass
-
+    // Magic CombatRoll
     let determineMagicRangedClass (rangeMap: Map<string, Range>) (lvl: int) : Range =
         match lvl with
         | n when n = 0 -> rangeMap.Item "Short"
@@ -1365,6 +1342,34 @@ module MagicCombatRoll =
                             attributeDeterminedDiceModArray
                             combatRollGoverningAttributes
                         |> List.singleton)))
+
+    let createCombatRolls
+        (magicSkillMap: Map<string, MagicSkill>)
+        (magicCombatMap: Map<string, MagicCombat>)
+        (rangeMap: Map<string, Range>)
+        (combatRollGoverningAttributeList: Attribute list)
+        (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
+        (equipmentList: Equipment list)
+        (attributeStatList: AttributeStat list)
+        (vocationGroupList: VocationGroup list)
+        : CombatRoll list =
+
+        List.append
+            (createWeaponCombatRolls
+                equipmentList
+                attributeStatList
+                vocationGroupList
+                attributeDeterminedDiceModList
+                combatRollGoverningAttributeList)
+            (createMagicCombatRolls
+                attributeStatList
+                vocationGroupList
+                magicSkillMap
+                magicCombatMap
+                equipmentList
+                rangeMap
+                attributeDeterminedDiceModList
+                combatRollGoverningAttributeList)
 
 module CarryWeightCalculation =
     open Attribute

@@ -5,8 +5,6 @@ open FallenLib.Dice
 open FallenLib.Range
 open FallenLib.Damage
 open FallenLib.Shape
-open FallenLib.WeaponCombatRoll
-open FallenLib.MagicCombatRoll
 open FallenLib.Equipment
 open FallenLib.Attribute
 open FallenLib.VocationGroup
@@ -15,33 +13,6 @@ open FallenLib.MagicCombat
 
 type Msg = RecalculateCombatRolls
 
-let createCombatRolls
-    (magicSkillMap: Map<string, MagicSkill>)
-    (magicCombatMap: Map<string, MagicCombat>)
-    (rangeMap: Map<string, Range>)
-    (combatRollGoverningAttributeList: Attribute list)
-    (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
-    (equipmentList: Equipment list)
-    (attributeStatList: AttributeStat list)
-    (vocationGroupList: VocationGroup list)
-    : CombatRoll list =
-
-    List.append
-        (createWeaponCombatRolls
-            equipmentList
-            attributeStatList
-            vocationGroupList
-            attributeDeterminedDiceModList
-            combatRollGoverningAttributeList)
-        (createMagicCombatRolls
-            attributeStatList
-            vocationGroupList
-            magicSkillMap
-            magicCombatMap
-            equipmentList
-            rangeMap
-            attributeDeterminedDiceModList
-            combatRollGoverningAttributeList)
 
 let update
     (magicSkillMap: Map<string, MagicSkill>)
