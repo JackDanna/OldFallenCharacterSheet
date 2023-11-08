@@ -1,10 +1,9 @@
 module VocationalSkillStat
 
 open FallenLib.Neg1To4
-open Neg1To4Stat
 open FallenLib.VocationGroup
-
-type Model = Neg1To4Stat.Model
+open FallenLib.ZeroToFour
+open Neg1To4Stat
 
 type Msg =
     | ToggleNegOne of bool
@@ -14,7 +13,7 @@ type Msg =
     | ToggleFour of bool
     | CheckIfLevelCapExceeded
 
-let init () : Model = Neg1To4Stat.init ()
+let init () : Neg1To4 = Neg1To4Stat.init ()
 
 let determineIfCapped levelCap level =
     (neg1To4ToInt level) > neg1To4ToInt (zeroToFourToNegOneToFour levelCap)
@@ -25,7 +24,7 @@ let determineIfCappedAndReturnModel levelCap level =
     | true -> zeroToFourToNegOneToFour levelCap
     | false -> level
 
-let update (levelCap: ZeroToFourStat.Model) (msg: Msg) (model: Model) : Model =
+let update (levelCap: ZeroToFour) (msg: Msg) (model: Neg1To4) : Neg1To4 =
 
     let toggleLogic levelCap isChecked levelIfTrue levelIfFalse =
         match isChecked with
@@ -33,11 +32,11 @@ let update (levelCap: ZeroToFourStat.Model) (msg: Msg) (model: Model) : Model =
         | false -> determineIfCappedAndReturnModel levelCap levelIfFalse
 
     match msg with
-    | ToggleNegOne isChecked -> toggleLogic levelCap isChecked NegOne Zero
-    | ToggleOne isChecked -> toggleLogic levelCap isChecked One Zero
-    | ToggleTwo isChecked -> toggleLogic levelCap isChecked Two One
-    | ToggleThree isChecked -> toggleLogic levelCap isChecked Three Two
-    | ToggleFour isChecked -> toggleLogic levelCap isChecked Four Three
+    | ToggleNegOne isChecked -> toggleLogic levelCap isChecked NegOne Neg1To4.Zero
+    | ToggleOne isChecked -> toggleLogic levelCap isChecked Neg1To4.One Neg1To4.Zero
+    | ToggleTwo isChecked -> toggleLogic levelCap isChecked Neg1To4.Two Neg1To4.One
+    | ToggleThree isChecked -> toggleLogic levelCap isChecked Neg1To4.Three Neg1To4.Two
+    | ToggleFour isChecked -> toggleLogic levelCap isChecked Neg1To4.Four Neg1To4.Three
     | CheckIfLevelCapExceeded -> determineIfCappedAndReturnModel levelCap model
 
 open Feliz
@@ -48,7 +47,7 @@ let isVocationalCheckboxDisabled levelCap level checkboxRepresented =
     | true -> true
     | _ -> isCheckboxDisabled level checkboxRepresented
 
-let view (levelCap: ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit) =
+let view (levelCap: ZeroToFour) (model: Neg1To4) (dispatch: Msg -> unit) =
 
     let checkbox levelCap model neg1To4 toggleNeg1To4 =
         Bulma.column [
@@ -66,8 +65,8 @@ let view (levelCap: ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit)
         Bulma.column [
             Html.div [ prop.text "-" ]
         ]
-        loadedCheckbox One ToggleOne
-        loadedCheckbox Two ToggleTwo
-        loadedCheckbox Three ToggleThree
-        loadedCheckbox Four ToggleFour
+        loadedCheckbox Neg1To4.One ToggleOne
+        loadedCheckbox Neg1To4.Two ToggleTwo
+        loadedCheckbox Neg1To4.Three ToggleThree
+        loadedCheckbox Neg1To4.Four ToggleFour
     ]

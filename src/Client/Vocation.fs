@@ -4,15 +4,13 @@ open FallenLib.Vocation
 open FallenLib.Attribute
 open FallenLib.Dice
 
-type Model = Vocation
-
 type Msg =
     | SetName of string
     | ZeroToFourStat of ZeroToFourStat.Msg
     | ToggleGoverningAttribute of int
     | SetAttributeStatsAndCalculateDicePools
 
-let init (attributeStatList: AttributeStat List) : Model =
+let init (attributeStatList: AttributeStat List) : Vocation =
     let lvl = ZeroToFourStat.init ()
     let governingAttribues = attributesToGoverningAttributesInit attributeStatList
 
@@ -21,7 +19,7 @@ let init (attributeStatList: AttributeStat List) : Model =
       governingAttributes = governingAttribues
       dicePool = vocationToDicePool baseDicePool lvl governingAttribues }
 
-let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
+let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) : Vocation =
     match msg with
     | SetName newName -> { model with name = newName }
 
@@ -44,7 +42,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
 open Feliz
 open Feliz.Bulma
 
-let governingAttributeItems (model: Model) (dispatch: Msg -> unit) =
+let governingAttributeItems (model: Vocation) (dispatch: Msg -> unit) =
     List.mapi
         (fun i governingAttribute ->
             Bulma.dropdownItem.a [
@@ -64,7 +62,7 @@ let governingAttributeItems (model: Model) (dispatch: Msg -> unit) =
             ])
         model.governingAttributes
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (model: Vocation) (dispatch: Msg -> unit) =
 
     Bulma.columns [
         Bulma.column [

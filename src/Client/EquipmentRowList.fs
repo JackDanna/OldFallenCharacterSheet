@@ -3,16 +3,14 @@ module EquipmentRowList
 open FallenLib.Item
 open FallenLib.Equipment
 
-type Model = EquipmentRow.Model list
-
 type Msg =
     | ModifyEquipmentRow of int * EquipmentRow.Msg
     | Insert of string
     | Remove of int
 
-let init () : Model = []
+let init () : Equipment list = []
 
-let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
+let update (itemList: Item list) (msg: Msg) (model: Equipment list) : Equipment list =
     match msg with
     | ModifyEquipmentRow (position, equipmentRowMsg) ->
         List.mapi
@@ -33,7 +31,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
+let view (itemNameList: string list) (model: Equipment list) (dispatch: Msg -> unit) =
     Bulma.table [
         table.isBordered
         prop.children [

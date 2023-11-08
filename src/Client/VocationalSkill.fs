@@ -4,16 +4,14 @@ open FallenLib.VocationGroup
 open FallenLib.Vocation
 open FallenLib.Dice
 open FallenLib.SkillStat
-open FallenLib.CoreSkillGroup
-
-type Model = SkillStat
+open FallenLib.ZeroToFour
 
 type Msg =
     | SetName of string
     | VocationalSkillStatMsg of VocationalSkillStat.Msg
     | CalculateDicePool
 
-let init (governingAttribute: GoverningAttribute list) : Model =
+let init (governingAttribute: GoverningAttribute list) : SkillStat =
     let lvl = Neg1To4Stat.init ()
 
     { name = ""
@@ -22,11 +20,11 @@ let init (governingAttribute: GoverningAttribute list) : Model =
 
 
 let update
-    (levelCap: ZeroToFourStat.Model)
+    (levelCap: ZeroToFour)
     (governingAttributeList: GoverningAttribute list)
     (msg: Msg)
-    (model: Model)
-    : Model =
+    (model: SkillStat)
+    : SkillStat =
     match msg with
     | SetName newName -> { model with name = newName }
     | VocationalSkillStatMsg vocationalSkillStatMsg ->
@@ -46,7 +44,7 @@ let update
 open Feliz
 open Feliz.Bulma
 
-let view (combatVocationalSkills: string list) (levelCap: ZeroToFourStat.Model) (model: Model) (dispatch: Msg -> unit) =
+let view (combatVocationalSkills: string list) (levelCap: ZeroToFour) (model: SkillStat) (dispatch: Msg -> unit) =
     Bulma.columns [
         Bulma.column [
             Bulma.dropdown [

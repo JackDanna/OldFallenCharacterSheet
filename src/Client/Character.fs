@@ -7,12 +7,13 @@ open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.Equipment
+open FallenLib.VocationGroup
 
 type Model =
     { name: string
-      coreSkillTables: CoreSkillGroups.Model
-      vocationTables: VocationTables.Model
-      equipmentRowList: EquipmentRowList.Model
+      coreSkillTables: CoreSkillGroup list
+      vocationTables: VocationGroup list
+      equipmentRowList: Equipment list
       combatRolls: CombatRoll list }
 
 type Msg =

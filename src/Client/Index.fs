@@ -12,7 +12,7 @@ open FallenLib.Range
 open FallenLib.CoreSkillGroup
 
 type Model =
-    { defaultCoreSkillTables: CoreSkillGroups.Model
+    { defaultCoreSkillTables: CoreSkillGroup list
       allItemList: Item list
       magicSkillMap: Map<string, MagicSkill>
       magicCombatMap: Map<string, MagicCombat>

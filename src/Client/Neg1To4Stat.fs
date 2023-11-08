@@ -2,8 +2,6 @@ module Neg1To4Stat
 
 open FallenLib.Neg1To4
 
-type Model = Neg1To4
-
 type Msg =
     | ToggleNegOne of bool
     | ToggleOne of bool
@@ -11,9 +9,9 @@ type Msg =
     | ToggleThree of bool
     | ToggleFour of bool
 
-let init () : Model = Zero
+let init () : Neg1To4 = Zero
 
-let update (msg: Msg) (model: Model) : Model =
+let update (msg: Msg) (model: Neg1To4) : Neg1To4 =
     match msg with
     | ToggleNegOne isChecked -> if isChecked then NegOne else Zero
     | ToggleOne isChecked -> if isChecked then One else Zero
@@ -47,7 +45,7 @@ open Feliz
 open Feliz.Bulma
 
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (model: Neg1To4) (dispatch: Msg -> unit) =
 
     let checkbox model neg1To4 toggleNeg1To4 =
         Bulma.column [

@@ -1,19 +1,18 @@
 module VocationTables
 
 open FallenLib.Attribute
-
-type Model = VocationTable.Model list
+open FallenLib.VocationGroup
 
 type Msg =
     | Modify of int * VocationTable.Msg
     | SetAttributeStatsAndCalculateDicePools
 
-let init (attributeStatList: AttributeStat List) : Model =
+let init (attributeStatList: AttributeStat List) : VocationGroup list =
 
     [ VocationTable.init attributeStatList
       VocationTable.init attributeStatList ]
 
-let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : Model =
+let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGroup list) : VocationGroup list =
     match msg with
     | Modify (position, vocationTableMsg) ->
         model
@@ -33,7 +32,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Model) : M
 open Feliz
 open Feliz.Bulma
 
-let view (combatVocationalSkills: string list) (model: Model) (dispatch: Msg -> unit) =
+let view (combatVocationalSkills: string list) (model: VocationGroup list) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.label [

@@ -3,20 +3,18 @@ module CoreSkillGroup
 open FallenLib.CoreSkillGroup
 open FallenLib.SkillAdjustment
 
-type Model = CoreSkillGroup
-
 type Msg =
     | AttributeRowMsg of AttributeStat.Msg
     | ModifyCoreSkill of int * CoreSkill.Msg
     | RecalculateCoreSkillGroup
 
-let init (skillAdjustmentList: SkillAdjustment list) : Model =
+let init (skillAdjustmentList: SkillAdjustment list) : CoreSkillGroup =
     let attributeStat = AttributeStat.init ()
 
     { attributeStat = attributeStat
       coreSkillList = [ CoreSkill.init skillAdjustmentList attributeStat.lvl ] }
 
-let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: Model) : Model =
+let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSkillGroup) : CoreSkillGroup =
     match msg with
     | AttributeRowMsg attributeRowMsg ->
         let newAttributeStat = AttributeStat.update attributeRowMsg model.attributeStat
@@ -48,7 +46,7 @@ let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: Model)
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (model: CoreSkillGroup) (dispatch: Msg -> unit) =
     Bulma.box [
         AttributeStat.view model.attributeStat (AttributeRowMsg >> dispatch)
         Html.ul (

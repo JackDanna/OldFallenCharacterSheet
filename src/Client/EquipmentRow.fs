@@ -3,14 +3,12 @@ module EquipmentRow
 open FallenLib.Equipment
 open FallenLib.Item
 
-type Model = Equipment
-
 type Msg =
     | ItemRowMsg of ItemRow.Msg
     | SetEquipmentIsEquiped of bool
     | SetEquipmentQuantity of uint
 
-let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
+let update (itemList: Item list) (msg: Msg) (model: Equipment) : Equipment =
     match msg with
     | ItemRowMsg itemRowMsg ->
         { isEquipped = false
@@ -24,7 +22,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let equipmentRowTableData (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
+let equipmentRowTableData (itemNameList: string list) (model: Equipment) (dispatch: Msg -> unit) =
     List.append
         [ Html.td [
               Bulma.input.checkbox [
@@ -41,6 +39,6 @@ let equipmentRowTableData (itemNameList: string list) (model: Model) (dispatch: 
           ] ]
         (ItemRow.itemRowColumns itemNameList model.item (ItemRowMsg >> dispatch))
 
-let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
+let view (itemNameList: string list) (model: Equipment) (dispatch: Msg -> unit) =
     equipmentRowTableData itemNameList model dispatch
     |> Html.tr

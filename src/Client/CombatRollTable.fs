@@ -13,9 +13,7 @@ open FallenLib.VocationGroup
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 
-type Model = CombatRoll list
-
-type Msg = | RecalculateCombatRolls
+type Msg = RecalculateCombatRolls
 
 let createCombatRolls
     (magicSkillMap: Map<string, MagicSkill>)
@@ -55,7 +53,7 @@ let update
     (attributeStatList: AttributeStat list)
     (vocationGroupList: VocationGroup list)
     (msg: Msg)
-    (model: Model)
+    (model: CombatRoll list)
     : CombatRoll list =
 
     match msg with
@@ -86,7 +84,7 @@ let CombatRollRow (combatRoll: CombatRoll) =
         Html.td (shapeOptionToString combatRoll.areaOfEffectShape)
     ]
 
-let view (model: Model) =
+let view (model: CombatRoll list) =
     Bulma.table [
         table.isBordered
         prop.children [

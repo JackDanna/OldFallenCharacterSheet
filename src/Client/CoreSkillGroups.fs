@@ -1,16 +1,15 @@
 module CoreSkillGroups
 
 open FallenLib.SkillAdjustment
-
-type Model = CoreSkillGroup.Model list
+open FallenLib.CoreSkillGroup
 
 type Msg =
     | Modify of int * CoreSkillGroup.Msg
     | RecalculateCoreSkillGroups
 
-let init () : Model = []
+let init () : CoreSkillGroup list = []
 
-let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: Model) : Model =
+let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSkillGroup list) : CoreSkillGroup list =
     match msg with
     | Modify (position, coreSkillTableMsg) ->
         List.mapi
@@ -29,7 +28,7 @@ let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: Model)
 open Feliz
 open Feliz.Bulma
 
-let view (model: Model) (dispatch: Msg -> unit) =
+let view (model: CoreSkillGroup list) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.label [

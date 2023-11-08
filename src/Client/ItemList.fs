@@ -2,17 +2,15 @@ module ItemRowList
 
 open FallenLib.Item
 
-type Model = ItemRow.Model list
-
 type Msg = Modify of int * ItemRow.Msg
 
 let init () = []
 
-let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
+let update (itemList: Item list) (msg: Msg) (model: Item list) : Item list =
     match msg with
     | Modify (position, msg) ->
         List.mapi
-            (fun i (itemRow: ItemRow.Model) ->
+            (fun i (itemRow: Item) ->
                 if position = i then
                     ItemRow.update itemList msg itemRow
                 else
@@ -22,7 +20,7 @@ let update (itemList: Item list) (msg: Msg) (model: Model) : Model =
 open Feliz
 open Feliz.Bulma
 
-let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
+let view (itemNameList: string list) (model: Item list) (dispatch: Msg -> unit) =
 
     let temp =
         List.mapi
@@ -43,5 +41,4 @@ let view (itemNameList: string list) (model: Model) (dispatch: Msg -> unit) =
                       "Value" ]
             )
         ]
-        //Html.tbody temp
-        ]
+    ]
