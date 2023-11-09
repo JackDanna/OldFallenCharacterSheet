@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="OrensDiceParsing.fs" />
+    <Compile Include="OldEffectAndCharacter.fs" />
     <Compile Include="FallenLib.fs" />
     <Compile Include="Shared.fs" />
   </ItemGroup>

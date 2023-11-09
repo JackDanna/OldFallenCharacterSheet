@@ -2,19 +2,11 @@ module Character
 
 open FallenLib.CoreSkillGroup
 open FallenLib.Item
-open FallenLib.CombatRoll
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.Equipment
-open FallenLib.VocationGroup
-
-type Model =
-    { name: string
-      coreSkillGroupList: CoreSkillGroup list
-      vocationGroupList: VocationGroup list
-      equipmentList: Equipment list
-      combatRollList: CombatRoll list }
+open FallenLib.Character
 
 type Msg =
     | CoreSkillGroupListMsg of CoreSkillGroupList.Msg
@@ -23,7 +15,7 @@ type Msg =
     | EquipmentListMsg of EquipmentList.Msg
     | SetDefault
 
-let init (coreSkillGroups: CoreSkillGroup list) : Model =
+let init (coreSkillGroups: CoreSkillGroup list) : Character =
     let attributeStatList = coreSkillGroupToAttributeStats coreSkillGroups
 
     { name = ""
@@ -39,8 +31,8 @@ let update
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
     (msg: Msg)
-    (model: Model)
-    : Model =
+    (model: Character)
+    : Character =
     let loadedCombatRollUpdate =
         CombatRollTable.update
             magicSkillMap
@@ -125,7 +117,7 @@ let update
 open Feliz
 open Feliz.Bulma
 
-let view (combatVocationalSkill) (allItemList: Item list) (model: Model) (dispatch: Msg -> unit) =
+let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.content [

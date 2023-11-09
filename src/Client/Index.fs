@@ -10,6 +10,7 @@ open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.CoreSkillGroup
+open FallenLib.Character
 
 type Model =
     { defaultCoreSkillTables: CoreSkillGroup list
@@ -18,7 +19,7 @@ type Model =
       magicCombatMap: Map<string, MagicCombat>
       rangeMap: Map<string, Range>
       combatVocationalSkill: string list
-      character: Character.Model }
+      character: Character }
 
 type Msg =
     | CharacterMsg of Character.Msg
