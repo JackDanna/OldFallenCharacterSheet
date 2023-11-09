@@ -968,8 +968,7 @@ module VocationGroup =
         : Neg1To4 =
 
         vocationGroupList
-        |> List.map (fun vocation -> vocation.vocationalSkills)
-        |> List.collect id
+        |> List.collect (fun vocation -> vocation.vocationalSkills)
         |> findVocationalSkillLvlWithDefault vocationalSkillName defaultLvl
 
     let zeroToFourToNegOneToFour zeroToFour =
