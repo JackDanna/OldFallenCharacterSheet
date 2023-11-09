@@ -39,13 +39,11 @@ module Penetration =
 
     type Penetration = uint
 
-module Damage =
+module DamageType =
 
     type DamageType = string
 
-    let damageTypesToString (damageTypes: DamageType list) =
-        List.map (fun damageType -> damageType.ToString()) damageTypes
-        |> String.concat ", "
+    let damageTypesToString (damageTypes: DamageType list) = String.concat ", " damageTypes
 
     let stringAndMapToDamageTypeArray (damageTypeMap: Map<string, DamageType>) (damageTypesString: string) =
         if damageTypesString.Length = 0 then
@@ -566,7 +564,7 @@ module WeaponResourceClass =
 
     open Dice
     open Range
-    open Damage
+    open DamageType
     open AreaOfEffect
     open ResourceClass
     open Penetration
@@ -594,7 +592,7 @@ module WeaponResourceClass =
 module WeaponClass =
     open Dice
     open Range
-    open Damage
+    open DamageType
     open EngageableOpponents
     open AreaOfEffect
     open Penetration
@@ -665,7 +663,7 @@ module MagicResource =
           poolMax: uint }
 
 module MagicSkill =
-    open Damage
+    open DamageType
     open ResourceClass
 
     type MagicSkill =
@@ -679,7 +677,7 @@ module ConduitClass =
     open MagicSkill
     open Dice
     open Range
-    open Damage
+    open DamageType
     open EngageableOpponents
     open AreaOfEffect
     open Penetration
@@ -852,7 +850,7 @@ module Equipment =
     let collectEquipmentSkillAdjustments equipmentList =
         equipmentList
         |> getEquipedItems
-        |> List.collect (collectSkillAdjustments)
+        |> List.collect collectSkillAdjustments
 
 module SkillStat =
     open Neg1To4
@@ -971,7 +969,7 @@ module VocationGroup =
 
         vocationGroupList
         |> List.map (fun vocation -> vocation.vocationalSkills)
-        |> List.collect (fun x -> x)
+        |> List.collect id
         |> findVocationalSkillLvlWithDefault vocationalSkillName defaultLvl
 
     let zeroToFourToNegOneToFour zeroToFour =
@@ -992,7 +990,7 @@ module VocationGroup =
 
 module CombatRoll =
     open Dice
-    open Damage
+    open DamageType
     open Shape
     open Range
     open EngageableOpponents
@@ -1457,7 +1455,6 @@ module MovementSpeedCalculation =
 module Effects =
     open MovementSpeedCalculation
     open Attribute
-    open SkillStat
     open Equipment
     open Item
     open DefenseClass
@@ -1517,8 +1514,7 @@ module Effects =
                     | None ->
                         match desc with
                         | "Defense Level" ->
-                            let temp =
-                                List.collect (fun item -> collectDefenseClasses item) (getEquipedItems equipment)
+                            let temp = List.collect collectDefenseClasses (getEquipedItems equipment)
 
                             let temp2: (float * float * float) list =
                                 List.collect

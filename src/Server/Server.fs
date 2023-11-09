@@ -8,7 +8,7 @@ open Shared
 
 module FallenServerData =
     open FSharp.Data
-    open FallenLib.Damage
+    open FallenLib.DamageType
     open FallenLib.TypeUtils
     open FallenLib.EngageableOpponents
     open FallenLib.Range

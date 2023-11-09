@@ -3,7 +3,7 @@ module CombatRollTable
 open FallenLib.CombatRoll
 open FallenLib.Dice
 open FallenLib.Range
-open FallenLib.Damage
+open FallenLib.DamageType
 open FallenLib.Shape
 open FallenLib.Equipment
 open FallenLib.Attribute
