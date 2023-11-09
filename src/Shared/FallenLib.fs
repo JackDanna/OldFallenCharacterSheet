@@ -869,6 +869,13 @@ module Item =
             | ItemEffect itemEffect -> collectItemEffectSubType itemEffect
             | _ -> [])
 
+    let collectItemNameAndEffect (item: Item) =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ItemEffect itemEffect -> [ (item.name, itemEffect) ]
+            | _ -> [])
+
     let collectSkillAdjustments = collectItemEffectSubTypes collectSkillAdjustment
 
 module Container =
@@ -923,6 +930,12 @@ module Equipment =
         equipmentList
         |> getEquipedItems
         |> List.collect collectSkillAdjustments
+
+    let getEquipedEffectItems equipmentList =
+        equipmentList
+        |> getEquipedItems
+        |> List.collect collectItemNameAndEffect
+
 
 // Character
 

@@ -41,7 +41,7 @@ let update
 open Feliz
 open Feliz.Bulma
 
-let CombatRollRow (combatRoll: CombatRoll) =
+let combatRollRow (combatRoll: CombatRoll) =
     Html.tr [
         Html.td combatRoll.name
         Html.td (dicePoolToString combatRoll.dicePool)
@@ -68,6 +68,6 @@ let view (model: CombatRoll list) =
                       "AOE" ]
                 |> Html.tr
             ]
-            Html.tableBody (List.map (fun combatRoll -> CombatRollRow combatRoll) model)
+            Html.tableBody (List.map combatRollRow model)
         ]
     ]

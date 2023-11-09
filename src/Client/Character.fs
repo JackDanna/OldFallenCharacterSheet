@@ -138,6 +138,10 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (di
             VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
         ]
         Bulma.container [
+            ItemEffectList.view (getEquipedEffectItems model.equipmentList)
+            |> Bulma.content
+        ]
+        Bulma.container [
             EquipmentList.view
                 (List.map (fun (item: Item) -> item.name) allItemList)
                 model.equipmentList
