@@ -1,6 +1,6 @@
 module CoreSkillGroupList
 
-open FallenLib.SkillAdjustment
+open FallenLib.SkillDiceModificationEffect
 open FallenLib.CoreSkillGroup
 
 type Msg =
@@ -9,20 +9,27 @@ type Msg =
 
 let init () : CoreSkillGroup list = []
 
-let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSkillGroup list) : CoreSkillGroup list =
+let update
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (msg: Msg)
+    (model: CoreSkillGroup list)
+    : CoreSkillGroup list =
     match msg with
     | Modify (position, coreSkillTableMsg) ->
         List.mapi
             (fun i coreSkilTableModel ->
                 if i = position then
-                    CoreSkillGroup.update skillAdjustmentList coreSkillTableMsg coreSkilTableModel
+                    CoreSkillGroup.update skillDiceModificationEffectList coreSkillTableMsg coreSkilTableModel
                 else
                     coreSkilTableModel)
             model
     | RecalculateCoreSkillGroups ->
         List.map
             (fun coreSkillGroup ->
-                CoreSkillGroup.update skillAdjustmentList CoreSkillGroup.Msg.RecalculateCoreSkillGroup coreSkillGroup)
+                CoreSkillGroup.update
+                    skillDiceModificationEffectList
+                    CoreSkillGroup.Msg.RecalculateCoreSkillGroup
+                    coreSkillGroup)
             model
 
 open Feliz

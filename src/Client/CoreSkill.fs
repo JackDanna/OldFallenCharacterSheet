@@ -3,14 +3,14 @@ module CoreSkill
 open FallenLib.CoreSkillGroup
 open FallenLib.Dice
 open FallenLib.SkillStat
-open FallenLib.SkillAdjustment
+open FallenLib.SkillDiceModificationEffect
 open FallenLib.Neg1To4
 
 type Msg =
     | Neg1To4Msg of Neg1To4.Msg
     | CalculateDicePool
 
-let init (skillAdjustmentList: SkillAdjustment list) (attributeLvl: Neg1To4) =
+let init (skillDiceModificationEffectList: SkillDiceModificationEffect list) (attributeLvl: Neg1To4) =
     let lvl = Neg1To4.init ()
 
     let name = ""
@@ -18,10 +18,14 @@ let init (skillAdjustmentList: SkillAdjustment list) (attributeLvl: Neg1To4) =
     { name = name
       lvl = lvl
       dicePool =
-        coreSkillToDicePool baseDicePool lvl attributeLvl (collectSkillAdjustmentDiceMods name skillAdjustmentList) }
+        coreSkillToDicePool
+            baseDicePool
+            lvl
+            attributeLvl
+            (collectSkillAdjustmentDiceMods name skillDiceModificationEffectList) }
 
 let update
-    (skillAdjustmentList: SkillAdjustment list)
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
     (attributeLvl: Neg1To4)
     (msg: Msg)
     (model: SkillStat)
@@ -38,7 +42,7 @@ let update
                     baseDicePool
                     newLvl
                     attributeLvl
-                    (collectSkillAdjustmentDiceMods model.name skillAdjustmentList) }
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
     | CalculateDicePool ->
         { model with
             dicePool =
@@ -46,7 +50,7 @@ let update
                     baseDicePool
                     model.lvl
                     attributeLvl
-                    (collectSkillAdjustmentDiceMods model.name skillAdjustmentList) }
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
 
 open Feliz
 open Feliz.Bulma

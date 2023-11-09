@@ -331,6 +331,11 @@ module Dice =
         | "None" -> None
         | modString -> Some <| stringToDicePoolModification modString
 
+    let dicePoolModificationToString dicePoolModification =
+        match dicePoolModification with
+        | RemoveDice removeDice -> $"-{uint removeDice}d"
+        | AddDice addDice -> dicePoolToString addDice
+
 module Attribute =
     open Neg1To4
     open Dice
@@ -715,34 +720,108 @@ module DefenseClass =
           mentalDefense: float
           spiritualDefense: float }
 
-module SkillAdjustment =
+    let defenseClassToEffectString defenseClass =
+        $"{defenseClass.physicalDefense} Physical Defense"
+
+module SkillDiceModificationEffect =
 
     open Dice
 
-    type SkillAdjustment =
+    type SkillDiceModificationEffect =
         { name: string
           skill: string
           diceMod: DicePoolModification }
+
+    let skillDiceModificationEffectToEffectString skillDiceModificationEffect =
+        $"{dicePoolModificationToString skillDiceModificationEffect.diceMod} {skillDiceModificationEffect.skill}"
 
     let collectSkillAdjustmentDiceMods skillName skillAdjustmentList =
         skillAdjustmentList
         |> List.filter (fun skillAdjustment -> skillAdjustment.skill = skillName)
         |> List.map (fun skillAdjustment -> skillAdjustment.diceMod)
 
+module AttributeStatAdjustmentEffect =
+
+    open Attribute
+
+    type AttributeStatAdjustmentEffect =
+        { name: string
+          attribute: Attribute
+          adjustment: int }
+
+    let attributeStatAdjustmentToEffectString attributeStatAdjustment =
+        $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
+
+module ItemEffect =
+
+    open SkillDiceModificationEffect
+    open AttributeStatAdjustmentEffect
+    open DefenseClass
+
+    type ItemEffect =
+        | SkillDiceModificationEffect of SkillDiceModificationEffect
+        | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
+        | DefenseClass of DefenseClass
+
+    let itemEffectToString itemEffect =
+        match itemEffect with
+        | SkillDiceModificationEffect skillDiceModificationEffect -> skillDiceModificationEffect.name
+        | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
+        | DefenseClass defenseClass -> defenseClass.name
+
+    type EffectForDisplay =
+        { name: string
+          effect: string
+          duration: string
+          source: string }
+
+    // _ToEffectForDisplay
+
+    let skillDiceModificationEffectToEffectForDisplay
+        (skillDiceModificationEffect: SkillDiceModificationEffect)
+        source
+        =
+        { name = skillDiceModificationEffect.name
+          effect = skillDiceModificationEffectToEffectString skillDiceModificationEffect
+          duration = "While Equipped"
+          source = source }
+
+    let attributeStatAdjustmentToEffectForDisplay (attributeStatAdjustment: AttributeStatAdjustmentEffect) source =
+        { name = attributeStatAdjustment.name
+          effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
+          duration = "While Equipped"
+          source = source }
+
+    let defenseClassToEffectForDisplay (defenseClass: DefenseClass) source =
+        { name = defenseClass.name
+          effect = defenseClassToEffectString defenseClass
+          duration = "While Equipped"
+          source = source }
+
+    let itemEffectToEffectForDisplay itemEffect =
+        match itemEffect with
+        | SkillDiceModificationEffect sdme -> skillDiceModificationEffectToEffectForDisplay sdme
+        | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa
+        | DefenseClass dc -> defenseClassToEffectForDisplay dc
+
+    // Collects
+    let collectSkillAdjustment (itemEffect: ItemEffect) =
+        match itemEffect with
+        | SkillDiceModificationEffect skillAdjustment -> [ skillAdjustment ]
+        | _ -> []
+
 module Item =
     open ItemTier
     open WeaponClass
     open WeaponResourceClass
     open ConduitClass
-    open DefenseClass
-    open SkillAdjustment
+    open ItemEffect
 
     type ItemClass =
         | WeaponClass of WeaponClass
         | ConduitClass of ConduitClass
         | WeaponResourceClass of WeaponResourceClass
-        | DefenseClass of DefenseClass
-        | SkillAdjustment of SkillAdjustment
+        | ItemEffect of ItemEffect
 
     type Item =
         { name: string
@@ -758,8 +837,7 @@ module Item =
                 | WeaponClass weaponClass -> weaponClass.name
                 | ConduitClass conduitClass -> conduitClass.name
                 | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
-                | DefenseClass defenseClass -> defenseClass.name
-                | SkillAdjustment skillAdjustment -> skillAdjustment.name)
+                | ItemEffect itemEffect -> itemEffectToString itemEffect)
             itemClasses
         |> String.concat ", "
 
@@ -784,19 +862,14 @@ module Item =
             | WeaponResourceClass specifiedItemClass -> [ specifiedItemClass ]
             | _ -> [])
 
-    let collectDefenseClasses item =
+    let collectItemEffectSubTypes (collectItemEffectSubType) (item: Item) =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
-            | DefenseClass specifiedItemClass -> [ specifiedItemClass ]
+            | ItemEffect itemEffect -> collectItemEffectSubType itemEffect
             | _ -> [])
 
-    let collectSkillAdjustments (item: Item) =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | SkillAdjustment skillAdjustment -> [ skillAdjustment ]
-            | _ -> [])
+    let collectSkillAdjustments = collectItemEffectSubTypes collectSkillAdjustment
 
 module Container =
     open Item

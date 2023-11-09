@@ -1,20 +1,24 @@
 module CoreSkillGroup
 
 open FallenLib.CoreSkillGroup
-open FallenLib.SkillAdjustment
+open FallenLib.SkillDiceModificationEffect
 
 type Msg =
     | AttributeMsg of AttributeStat.Msg
     | ModifyCoreSkill of int * CoreSkill.Msg
     | RecalculateCoreSkillGroup
 
-let init (skillAdjustmentList: SkillAdjustment list) : CoreSkillGroup =
+let init (skillDiceModificationEffectList: SkillDiceModificationEffect list) : CoreSkillGroup =
     let attributeStat = AttributeStat.init ()
 
     { attributeStat = attributeStat
-      coreSkillList = [ CoreSkill.init skillAdjustmentList attributeStat.lvl ] }
+      coreSkillList = [ CoreSkill.init skillDiceModificationEffectList attributeStat.lvl ] }
 
-let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSkillGroup) : CoreSkillGroup =
+let update
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (msg: Msg)
+    (model: CoreSkillGroup)
+    : CoreSkillGroup =
     match msg with
     | AttributeMsg attributeRowMsg ->
         let newAttributeStat = AttributeStat.update attributeRowMsg model.attributeStat
@@ -24,7 +28,11 @@ let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSk
             coreSkillList =
                 List.map
                     (fun coreSkill ->
-                        CoreSkill.update skillAdjustmentList newAttributeStat.lvl CoreSkill.CalculateDicePool coreSkill)
+                        CoreSkill.update
+                            skillDiceModificationEffectList
+                            newAttributeStat.lvl
+                            CoreSkill.CalculateDicePool
+                            coreSkill)
                     model.coreSkillList }
 
     | ModifyCoreSkill (position, skillRowMsg) ->
@@ -33,7 +41,11 @@ let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSk
                 model.coreSkillList
                 |> List.mapi (fun i skillRowModel ->
                     if position = i then
-                        CoreSkill.update skillAdjustmentList model.attributeStat.lvl skillRowMsg skillRowModel
+                        CoreSkill.update
+                            skillDiceModificationEffectList
+                            model.attributeStat.lvl
+                            skillRowMsg
+                            skillRowModel
                     else
                         skillRowModel) }
     | RecalculateCoreSkillGroup ->
@@ -41,7 +53,11 @@ let update (skillAdjustmentList: SkillAdjustment list) (msg: Msg) (model: CoreSk
             coreSkillList =
                 model.coreSkillList
                 |> List.map (fun coreSkill ->
-                    CoreSkill.update skillAdjustmentList model.attributeStat.lvl CoreSkill.CalculateDicePool coreSkill) }
+                    CoreSkill.update
+                        skillDiceModificationEffectList
+                        model.attributeStat.lvl
+                        CoreSkill.CalculateDicePool
+                        coreSkill) }
 
 open Feliz
 open Feliz.Bulma

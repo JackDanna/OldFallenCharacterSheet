@@ -28,7 +28,9 @@ module FallenServerData =
     open FallenLib.MovementSpeedCalculation
     open FallenLib.CoreSkillGroup
     open FallenLib.SkillStat
-    open FallenLib.SkillAdjustment
+    open FallenLib.SkillDiceModificationEffect
+    open FallenLib.AttributeStatAdjustmentEffect
+    open FallenLib.ItemEffect
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -224,15 +226,45 @@ module FallenServerData =
         List.map (fun (defenseClass: DefenseClass) -> defenseClass.name, defenseClass) defenseClassData
         |> Map.ofList
 
-    // SkillAdjusment
-    let skillAdjustmentData: SkillAdjustment list =
-        makeFallenData "SkillAdjustment.csv" (fun row ->
+    // SkillDiceModificationEffect
+    let skillDiceModificationEffectData: SkillDiceModificationEffect list =
+        makeFallenData "SkillDiceModificationEffect.csv" (fun row ->
             { name = string row.["Name"]
               skill = string row.["Skill"]
               diceMod = stringToDicePoolModification row.["Dice Modification"] })
 
-    let skillAdjustmentMap =
-        List.map (fun (skillAdjustment: SkillAdjustment) -> skillAdjustment.name, skillAdjustment) skillAdjustmentData
+    let skillDiceModificationEffectMap =
+        skillDiceModificationEffectData
+        |> List.map (fun (skillAdjustment: SkillDiceModificationEffect) -> skillAdjustment.name, skillAdjustment)
+        |> Map.ofList
+
+    // AttributeStatAdjustmentEffect
+
+    let attributeStatAdjustmentEffectData =
+        makeFallenData "AttributeStatAdjustmentEffect.csv" (fun row ->
+            { name = string row.["Name"]
+              attribute = Attribute row.["Attribute"]
+              adjustment = int row.["Adjustment"] })
+
+    let attributeStatAdjustmentEffectMap =
+        attributeStatAdjustmentEffectData
+        |> List.map (fun (attributeStatAdjustmentEffect: AttributeStatAdjustmentEffect) ->
+            attributeStatAdjustmentEffect.name, attributeStatAdjustmentEffect)
+        |> Map.ofList
+
+    // ItemEffect
+    let itemEffectData: ItemEffect list =
+        List.map DefenseClass defenseClassData
+        @ List.map SkillDiceModificationEffect skillDiceModificationEffectData
+          @ List.map AttributeStatAdjustmentEffect attributeStatAdjustmentEffectData
+
+    let itemEffectDataMap =
+        itemEffectData
+        |> List.map (fun (itemEffect: ItemEffect) ->
+            match itemEffect with
+            | SkillDiceModificationEffect sdme -> sdme.name, SkillDiceModificationEffect sdme
+            | AttributeStatAdjustmentEffect asae -> asae.name, AttributeStatAdjustmentEffect asae
+            | DefenseClass dc -> dc.name, DefenseClass dc)
         |> Map.ofList
 
     // WeaponResourceClass
@@ -288,13 +320,9 @@ module FallenServerData =
                 weaponResourceClassMap.Item weaponResourceClassName
                 |> WeaponResourceClass
                 |> List.singleton
-            | defenseClassName when defenseClassMap.Keys.Contains defenseClassName ->
-                defenseClassMap.Item defenseClassName
-                |> DefenseClass
-                |> List.singleton
-            | skillAdjustmentName when skillAdjustmentMap.Keys.Contains skillAdjustmentName ->
-                skillAdjustmentMap.Item skillAdjustmentName
-                |> SkillAdjustment
+            | itemEffectName when itemEffectDataMap.Keys.Contains itemEffectName ->
+                itemEffectDataMap.Item itemEffectName
+                |> ItemEffect
                 |> List.singleton
             | _ -> [])
 
