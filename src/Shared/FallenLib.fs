@@ -559,7 +559,94 @@ module Shape =
 module ResourceClass =
     type ResourceClass = string
 
+// Magic
+
+module MagicResource =
+
+    open Dice
+    open ResourceClass
+
+    type MagicResource =
+        { magicResouceClass: ResourceClass
+          numMagicResourceDice: uint }
+
+    let determineMagicResource (resource: MagicResource) =
+        sprintf "( %u %s )" resource.numMagicResourceDice resource.magicResouceClass,
+        createD6DicePoolMod resource.numMagicResourceDice
+
+    type ResourcePool =
+        { name: ResourceClass
+          remainingResources: uint
+          poolMax: uint }
+
+module MagicSkill =
+    open DamageType
+    open ResourceClass
+
+    type MagicSkill =
+        { name: string
+          damageTypes: DamageType list
+          rangeAdjustment: int
+          isMeleeCapable: bool
+          magicResourceClass: ResourceClass }
+
+module MagicCombat =
+    open Range
+    open EngageableOpponents
+    open AreaOfEffect
+    open Neg1To4
+    open Penetration
+    open Dice
+
+    type MagicCombat =
+        { name: string
+          lvlRequirment: Neg1To4
+          diceModification: DicePoolModification
+          penetration: Penetration
+          range: Range
+          engageableOpponents: EngageableOpponents
+          minResourceRequirment: uint
+          areaOfEffect: AreaOfEffect option }
+
+    let determineMagicCombatTypes (meleeCapable: bool) (lvl: Neg1To4) (magicCombatList: MagicCombat list) =
+        // Logic for filtering by Lvl requirement
+        List.filter
+            (fun magicCombat ->
+                neg1To4ToInt lvl
+                >= neg1To4ToInt magicCombat.lvlRequirment)
+            magicCombatList
+        // Logic for filtering by if it can melee
+        |> List.filter (fun magicCombat ->
+            not (
+                isMeleeOrReachRange magicCombat.range
+                && not meleeCapable
+            ))
+
 // Item
+
+module ConduitClass =
+    open MagicSkill
+    open Dice
+    open Range
+    open DamageType
+    open EngageableOpponents
+    open AreaOfEffect
+    open Penetration
+    open ResourceClass
+
+    type ConduitClass =
+        { name: string
+          oneHandedDice: DicePoolModification option
+          twoHandedDice: DicePoolModification
+          penetration: Penetration
+          rangeAdjustment: RangeAdjustment
+          damageTypes: DamageType list
+          engageableOpponents: EngageableOpponents option
+          dualWieldableBonus: DicePoolModification option
+          areaOfEffect: AreaOfEffect option
+          resourceClass: ResourceClass option
+          effectedMagicSkills: MagicSkill list }
+
 module WeaponResourceClass =
 
     open Dice
@@ -641,94 +728,6 @@ module SkillAdjustment =
         skillAdjustmentList
         |> List.filter (fun skillAdjustment -> skillAdjustment.skill = skillName)
         |> List.map (fun skillAdjustment -> skillAdjustment.diceMod)
-
-// Magic
-
-module MagicResource =
-
-    open Dice
-    open ResourceClass
-
-    type MagicResource =
-        { magicResouceClass: ResourceClass
-          numMagicResourceDice: uint }
-
-    let determineMagicResource (resource: MagicResource) =
-        sprintf "( %u %s )" resource.numMagicResourceDice resource.magicResouceClass,
-        createD6DicePoolMod resource.numMagicResourceDice
-
-    type ResourcePool =
-        { name: ResourceClass
-          remainingResources: uint
-          poolMax: uint }
-
-module MagicSkill =
-    open DamageType
-    open ResourceClass
-
-    type MagicSkill =
-        { name: string
-          damageTypes: DamageType list
-          rangeAdjustment: int
-          isMeleeCapable: bool
-          magicResourceClass: ResourceClass }
-
-module ConduitClass =
-    open MagicSkill
-    open Dice
-    open Range
-    open DamageType
-    open EngageableOpponents
-    open AreaOfEffect
-    open Penetration
-    open ResourceClass
-
-    type ConduitClass =
-        { name: string
-          oneHandedDice: DicePoolModification option
-          twoHandedDice: DicePoolModification
-          penetration: Penetration
-          rangeAdjustment: RangeAdjustment
-          damageTypes: DamageType list
-          engageableOpponents: EngageableOpponents option
-          dualWieldableBonus: DicePoolModification option
-          areaOfEffect: AreaOfEffect option
-          resourceClass: ResourceClass option
-          effectedMagicSkills: MagicSkill list }
-
-module MagicCombat =
-    open Range
-    open EngageableOpponents
-    open AreaOfEffect
-    open Neg1To4
-    open Penetration
-    open Dice
-
-    type MagicCombat =
-        { name: string
-          lvlRequirment: Neg1To4
-          diceModification: DicePoolModification
-          penetration: Penetration
-          range: Range
-          engageableOpponents: EngageableOpponents
-          minResourceRequirment: uint
-          areaOfEffect: AreaOfEffect option }
-
-    let determineMagicCombatTypes (meleeCapable: bool) (lvl: Neg1To4) (magicCombatList: MagicCombat list) =
-        // Logic for filtering by Lvl requirement
-        List.filter
-            (fun magicCombat ->
-                neg1To4ToInt lvl
-                >= neg1To4ToInt magicCombat.lvlRequirment)
-            magicCombatList
-        // Logic for filtering by if it can melee
-        |> List.filter (fun magicCombat ->
-            not (
-                isMeleeOrReachRange magicCombat.range
-                && not meleeCapable
-            ))
-
-// Character
 
 module Item =
     open ItemTier
@@ -851,6 +850,8 @@ module Equipment =
         equipmentList
         |> getEquipedItems
         |> List.collect collectSkillAdjustments
+
+// Character
 
 module SkillStat =
     open Neg1To4
