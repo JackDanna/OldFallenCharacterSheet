@@ -120,36 +120,36 @@ open Feliz.Bulma
 let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (dispatch: Msg -> unit) =
 
     Bulma.container [
-        Bulma.content [
-            Bulma.input.text [
-                prop.value model.name
-                prop.placeholder "Character Name"
-                prop.onChange (SetName >> dispatch)
-                prop.classes [
-                    "is-large"
-                    "has-text-centered"
-                ]
+
+        Bulma.input.text [
+            prop.value model.name
+            prop.placeholder "Character Name"
+            prop.onChange (SetName >> dispatch)
+            prop.classes [
+                "is-large"
+                "has-text-centered"
             ]
         ]
-        Bulma.container [
-            CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
-        ]
-        Bulma.container [
-            VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
-        ]
-        Bulma.container [
-            ItemEffectList.view (getEquipedEffectItems model.equipmentList)
-            |> Bulma.content
-        ]
-        Bulma.container [
-            EquipmentList.view
-                (List.map (fun (item: Item) -> item.name) allItemList)
-                model.equipmentList
-                (EquipmentListMsg >> dispatch)
-            |> Bulma.content
-        ]
-        Bulma.container [
-            CombatRollTable.view model.combatRollList
-            |> Bulma.content
-        ]
+        |> Bulma.content
+
+        CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
+        |> Bulma.container
+
+        VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
+        |> Bulma.container
+
+        ItemEffectList.view (getEquipedEffectItems model.equipmentList)
+        |> Bulma.content
+        |> Bulma.container
+
+        EquipmentList.view
+            (List.map (fun (item: Item) -> item.name) allItemList)
+            model.equipmentList
+            (EquipmentListMsg >> dispatch)
+        |> Bulma.content
+        |> Bulma.container
+
+        CombatRollTable.view model.combatRollList
+        |> Bulma.content
+        |> Bulma.container
     ]
