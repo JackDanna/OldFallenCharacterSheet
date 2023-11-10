@@ -124,7 +124,7 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (di
             Bulma.input.text [
                 prop.value model.name
                 prop.placeholder "Character Name"
-                prop.onChange (fun newName -> SetName newName |> dispatch)
+                prop.onChange (SetName >> dispatch)
                 prop.classes [
                     "is-large"
                     "has-text-centered"
