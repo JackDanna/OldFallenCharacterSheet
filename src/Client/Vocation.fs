@@ -23,7 +23,13 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) 
     match msg with
     | SetName newName -> { model with name = newName }
 
-    | ZeroToFourStat neg1ToStatMsg -> { model with level = ZeroToFour.update neg1ToStatMsg model.level }
+    | ZeroToFourStat neg1ToStatMsg ->
+
+        let newLevel = ZeroToFour.update neg1ToStatMsg model.level
+
+        { model with
+            level = newLevel
+            dicePool = vocationToDicePool baseDicePool newLevel model.governingAttributes }
 
     | ToggleGoverningAttribute position ->
         let toggledGoverningAttributes =
@@ -34,10 +40,20 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) 
                 else
                     governingAttribute)
 
-        { model with governingAttributes = attributesToGoverningAttributes attributeStatList toggledGoverningAttributes }
+        let newGoverningAttributes =
+            attributesToGoverningAttributes attributeStatList toggledGoverningAttributes
+
+        { model with
+            governingAttributes = newGoverningAttributes
+            dicePool = vocationToDicePool baseDicePool model.level newGoverningAttributes }
 
     | SetAttributeStatsAndCalculateDicePools ->
-        { model with governingAttributes = attributesToGoverningAttributes attributeStatList model.governingAttributes }
+        let newGoverningAttributes =
+            attributesToGoverningAttributes attributeStatList model.governingAttributes
+
+        { model with
+            governingAttributes = newGoverningAttributes
+            dicePool = vocationToDicePool baseDicePool model.level newGoverningAttributes }
 
 open Feliz
 open Feliz.Bulma
@@ -88,9 +104,7 @@ let view (model: Vocation) (dispatch: Msg -> unit) =
             ]
         ]
         Bulma.column [
-            vocationToDicePool baseDicePool model.level model.governingAttributes
-            |> dicePoolToString
-            |> prop.text
+            prop.text (dicePoolToString model.dicePool)
         ]
         Bulma.column [
             ZeroToFour.view model.level (ZeroToFourStat >> dispatch)
