@@ -10,20 +10,20 @@ type Msg =
 
 let init () : Equipment list = []
 
-let update (itemList: Item list) (msg: Msg) (model: Equipment list) : Equipment list =
+let update (allItemList: Item list) (msg: Msg) (model: Equipment list) : Equipment list =
     match msg with
-    | ModifyEquipmentRow (position, equipmentRowMsg) ->
+    | ModifyEquipmentRow (position, equipmentMsg) ->
         List.mapi
-            (fun index equipmentRow ->
+            (fun index equipment ->
                 if position = index then
-                    Equipment.update itemList equipmentRowMsg equipmentRow
+                    Equipment.update allItemList equipmentMsg equipment
                 else
-                    equipmentRow)
+                    equipment)
             model
     | Insert itemName ->
         { isEquipped = false
           quantity = 1u
-          item = (List.find (fun item -> item.name = itemName) itemList) }
+          item = (List.find (fun item -> item.name = itemName) allItemList) }
         |> List.singleton
         |> List.append model
     | Remove position -> List.removeAt position model

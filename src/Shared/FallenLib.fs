@@ -702,6 +702,9 @@ module WeaponClass =
           areaOfEffect: AreaOfEffect option
           resourceClass: ResourceClass option }
 
+module ContainerClass =
+    type ContainerClass = { name: string; weightCapacity: float }
+
 module ItemTier =
     open Dice
 
@@ -813,12 +816,14 @@ module Item =
     open WeaponClass
     open WeaponResourceClass
     open ConduitClass
+    open ContainerClass
     open ItemEffect
 
     type ItemClass =
         | WeaponClass of WeaponClass
         | ConduitClass of ConduitClass
         | WeaponResourceClass of WeaponResourceClass
+        | ContainerClass of ContainerClass
         | ItemEffect of ItemEffect
 
     type Item =
@@ -835,6 +840,7 @@ module Item =
                 | WeaponClass weaponClass -> weaponClass.name
                 | ConduitClass conduitClass -> conduitClass.name
                 | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
+                | ContainerClass containerClass -> containerClass.name
                 | ItemEffect itemEffect -> itemEffectToString itemEffect)
             itemClasses
         |> String.concat ", "
@@ -877,12 +883,13 @@ module Item =
     let collectSkillAdjustments = collectItemEffectSubTypes collectSkillAdjustment
 
 module Container =
+    open ContainerClass
     open Item
 
     type Container =
         { name: string
-          weightCapacity: float
-          weightContained: float
+          containerClass: ContainerClass
+          isEquipped: bool
           itemList: Item list }
 
 module Equipment =
@@ -933,7 +940,6 @@ module Equipment =
         equipmentList
         |> getEquipedItems
         |> List.collect collectItemNameAndEffect
-
 
 // Character
 

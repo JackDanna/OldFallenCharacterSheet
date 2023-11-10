@@ -238,7 +238,7 @@ Barrel,Misc,Mundane,,70,2 bc,1
 Blanket,Misc,Mundane,,2,50 cc,1
 "Bottle, glass",Misc,Mundane,,2,2 bc,1
 Bucket,Misc,Mundane,,2,5 bc,1
-"Chest (12 ft^3, 300 lb capacity)",Misc,Mundane,,25,5 bc,1
+Chest (12 ft^3),300 lb container,Mundane,,25,5 bc,1
 "Clothes, Common",Misc,Mundane,,3,5 bc,1
 "Clothes, Fine",Misc,Mundane,,6,15 bc,1
 Royal Morraki Attire/Cloak,Misc,Mundane,,6,15 bc,1
@@ -250,7 +250,7 @@ Ladder (10-foot),Misc,Mundane,,25,10 cc,1
 String (10 feet),Misc,Mundane,,0,1 cc,1
 Mess Kit,Misc,Mundane,,1,20 cc,1
 "Pot, Iron",Misc,Mundane,,10,2 bc,1
-"Pouch ( 1/5 ft^3, 6 lb capacity)",Misc,Mundane,,1,50 cc,1
+Pouch (1/5 ft^3),6 lb container,Mundane,,1,50 cc,1
 "Rope, Hempen (50 feet)",Misc,Mundane,,10,1 bc,1
 "Rope, Silk (50 feet)",Misc,Mundane,,5,10 bc,1
 Sack,Misc,Mundane,,0.5,1 cc,1
@@ -266,7 +266,7 @@ Potter's Tools,Misc,Mundane,,3,10 bc,1
 Smith's Tools,Misc,Mundane,,8,20 bc,1
 Weaver's Tools,Misc,Mundane,,5,1 bc,1
 Woodcarver's Tools,Misc,Mundane,,5,1 bc,1
-"Backpack (1 ft^3, 30 lb capacity)",Misc,Mundane,,5,2 bc,1
+Backpack (1 ft^3),30 lb container,Mundane,,5,2 bc,1
 Bedroll,Misc,Mundane,,7,1 bc,1
 Block and Tackle,Misc,Mundane,,5,1 bc,1
 "Case, Crossbow Bolts (capacity: 20 bolts)",Misc,Mundane,,1,1 bc,1
@@ -304,8 +304,8 @@ Arcane Focus - Orb,Misc,Mundane,,3,20 bc,1
 Arcane Focus - Rod,Misc,Mundane,,2,10 bc,1
 Arcane Focus - Staff,Misc,Mundane,,4,5 bc,1
 Arcane Focus - Wand,Misc,Mundane,,1,10 bc,1
-"Satchel ( 2/5 ft^3, 12 lb capacity)",Misc,Mundane,,2,1 bc,1
-"Component Pouch ( 2/5 ft^3, 12 lb capacity)",Misc,Mundane,,2,25 bc,1
+Satchel (2/5 ft^3),12 lb container,Mundane,,2,1 bc,1
+Component Pouch (2/5 ft^3),12 lb container,Mundane,,2,25 bc,1
 Spellbook,Misc,Mundane,,3,50 bc,1
 Fishing Tackle,Misc,Mundane,,4,1 bc,1
 1lb of Fishing Bait,Misc,Mundane,,1,5 cc,1
@@ -502,7 +502,7 @@ Salt (½ Ounce),Misc,Mundane,,0.03,6 cc,1
 Specialty Spice (½ Ounce),Misc,Mundane,,0.03,20 cc,1
 Bandolier,Misc,Mundane,,0.5,8 bc,1
 Belt,Misc,Mundane,,0.5,2 bc,1
-"“Better” Backpack (1.2 ft^3, 35 lb capacity)",Misc,Mundane,,5,4 bc,1
+“Better” Backpack (1.2 ft^3),35 lb container,Mundane,,5,4 bc,1
 Blouse,Misc,Mundane,,0.5,1 bc,1
 Breeches,Misc,Mundane,,1,1 bc,1
 Boots,Misc,Mundane,,1,4 bc,1

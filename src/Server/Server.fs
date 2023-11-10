@@ -31,6 +31,7 @@ module FallenServerData =
     open FallenLib.SkillDiceModificationEffect
     open FallenLib.AttributeStatAdjustmentEffect
     open FallenLib.ItemEffect
+    open FallenLib.ContainerClass
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -214,6 +215,16 @@ module FallenServerData =
         List.map (fun (conduitClass: ConduitClass) -> conduitClass.name, conduitClass) conduitClassData
         |> Map.ofList
 
+    // ContainerClass
+    let containerClassData =
+        makeFallenData "ContainerClassData.csv" (fun row ->
+            { name = string row.["Name"]
+              weightCapacity = float row.["Weight Capacity"] })
+
+    let containerClassMap =
+        List.map (fun (containerClass: ContainerClass) -> containerClass.name, containerClass) containerClassData
+        |> Map.ofList
+
     // DefenseClass
     let defenseClassData: PhysicalDefenseEffect list =
         makeFallenData "PhysicalDefenseEffect.csv" (fun row ->
@@ -316,6 +327,10 @@ module FallenServerData =
             | weaponResourceClassName when weaponResourceClassMap.Keys.Contains weaponResourceClassName ->
                 weaponResourceClassMap.Item weaponResourceClassName
                 |> WeaponResourceClass
+                |> List.singleton
+            | containerClassName when containerClassMap.Keys.Contains containerClassName ->
+                containerClassMap.Item containerClassName
+                |> ContainerClass
                 |> List.singleton
             | itemEffectName when itemEffectDataMap.Keys.Contains itemEffectName ->
                 itemEffectDataMap.Item itemEffectName
