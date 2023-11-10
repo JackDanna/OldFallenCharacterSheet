@@ -2,6 +2,7 @@ module VocationGroupList
 
 open FallenLib.Attribute
 open FallenLib.VocationGroup
+open FallenLib.SkillDiceModificationEffect
 
 type Msg =
     | Modify of int * VocationGroup.Msg
@@ -12,19 +13,29 @@ let init (attributeStatList: AttributeStat List) : VocationGroup list =
     [ VocationGroup.init attributeStatList
       VocationGroup.init attributeStatList ]
 
-let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGroup list) : VocationGroup list =
+let update
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeStatList: AttributeStat List)
+    (msg: Msg)
+    (model: VocationGroup list)
+    : VocationGroup list =
     match msg with
     | Modify (position, vocationTableMsg) ->
         model
         |> List.mapi (fun i vocationTableModel ->
             if i = position then
-                VocationGroup.update attributeStatList vocationTableMsg vocationTableModel
+                VocationGroup.update
+                    skillDiceModificationEffectList
+                    attributeStatList
+                    vocationTableMsg
+                    vocationTableModel
             else
                 vocationTableModel)
     | SetAttributeStatsAndCalculateDicePools ->
         model
         |> List.map (fun vocationTable ->
             VocationGroup.update
+                skillDiceModificationEffectList
                 attributeStatList
                 VocationGroup.Msg.SetAttributeStatsAndCalculateDicePools
                 vocationTable)

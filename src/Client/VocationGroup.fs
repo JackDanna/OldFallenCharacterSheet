@@ -2,6 +2,7 @@ module VocationGroup
 
 open FallenLib.Attribute
 open FallenLib.VocationGroup
+open FallenLib.SkillDiceModificationEffect
 
 type Msg =
     | VocationRowMsg of Vocation.Msg
@@ -16,7 +17,12 @@ let init (attributeStatList: AttributeStat List) : VocationGroup =
     { vocation = vocation
       vocationalSkills = [ VocationalSkill.init vocation.governingAttributes ] }
 
-let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGroup) : VocationGroup =
+let update
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeStatList: AttributeStat List)
+    (msg: Msg)
+    (model: VocationGroup)
+    : VocationGroup =
     match msg with
     | VocationRowMsg vocationRowMsg ->
         let newVocation = Vocation.update attributeStatList vocationRowMsg model.vocation
@@ -27,6 +33,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGr
                 List.map
                     (fun vocationalSkill ->
                         VocationalSkill.update
+                            skillDiceModificationEffectList
                             newVocation.level
                             newVocation.governingAttributes
                             VocationalSkill.Msg.CalculateDicePool
@@ -53,6 +60,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGr
                 |> List.mapi (fun index vocationalSkill ->
                     if position = index then
                         VocationalSkill.update
+                            skillDiceModificationEffectList
                             model.vocation.level
                             model.vocation.governingAttributes
                             msg
@@ -69,6 +77,7 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: VocationGr
                 List.map
                     (fun vocationalSkill ->
                         VocationalSkill.update
+                            skillDiceModificationEffectList
                             newVocation.level
                             newVocation.governingAttributes
                             VocationalSkill.Msg.CalculateDicePool

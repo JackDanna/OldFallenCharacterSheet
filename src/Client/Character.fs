@@ -47,6 +47,7 @@ let update
             coreSkillGroupList = defaultCoreSkillTables
             vocationGroupList =
                 VocationGroupList.update
+                    (collectEquipmentSkillAdjustments model.equipmentList)
                     (coreSkillGroupToAttributeStats defaultCoreSkillTables)
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
@@ -60,6 +61,7 @@ let update
 
         let newVocationTables =
             VocationGroupList.update
+                (collectEquipmentSkillAdjustments model.equipmentList)
                 (coreSkillGroupToAttributeStats newCoreSkillTables)
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
@@ -78,6 +80,7 @@ let update
     | VocationGroupListMsg vocationTableMsg ->
         let newVocationTables =
             VocationGroupList.update
+                (collectEquipmentSkillAdjustments model.equipmentList)
                 (coreSkillGroupToAttributeStats model.coreSkillGroupList)
                 vocationTableMsg
                 model.vocationGroupList
@@ -99,18 +102,26 @@ let update
         let newEquipmentRowList =
             EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
 
+        let newVocationGroupList =
+            VocationGroupList.update
+                (collectEquipmentSkillAdjustments newEquipmentRowList)
+                (coreSkillGroupToAttributeStats model.coreSkillGroupList)
+                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
+                model.vocationGroupList
+
         { model with
             coreSkillGroupList =
                 CoreSkillGroupList.update
                     (collectEquipmentSkillAdjustments newEquipmentRowList)
                     CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                     model.coreSkillGroupList
+            vocationGroupList = newVocationGroupList
             equipmentList = newEquipmentRowList
             combatRollList =
                 loadedCombatRollUpdate
                     newEquipmentRowList
                     (coreSkillGroupToAttributeStats model.coreSkillGroupList)
-                    model.vocationGroupList
+                    newVocationGroupList
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRollList }
 

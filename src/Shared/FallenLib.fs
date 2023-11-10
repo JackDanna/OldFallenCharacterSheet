@@ -1066,11 +1066,11 @@ module VocationGroup =
         | Three -> Neg1To4.Three
         | Four -> Neg1To4.Four
 
-    let vocationalSkillToString baseDice level governingAttributes =
+    let vocationalSkillToDicePool baseDice level governingAttributes skillAdjustmentDiceModList =
         let diceModList =
-            List.append
-                (governingAttributesToDicePoolModification governingAttributes)
-                [ neg1To4ToD6DicePoolModification level ]
+            (governingAttributesToDicePoolModification governingAttributes)
+            @ [ neg1To4ToD6DicePoolModification level ]
+              @ skillAdjustmentDiceModList
 
         modifyDicePoolByModList baseDice diceModList
 
