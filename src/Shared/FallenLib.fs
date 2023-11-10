@@ -994,11 +994,11 @@ module Vocation =
         |> List.filter (fun governingAttribute -> governingAttribute.isGoverning)
         |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolModification governingAttribute.attributeStat.lvl)
 
-    let vocationToDicePool baseDice level governingAttributes =
+    let vocationToDicePool baseDice level governingAttributes skillAdjustmentDiceModList =
         let diceModList =
-            List.append
-                (governingAttributesToDicePoolModification governingAttributes)
-                [ zeroToFourToDicePoolModification level ]
+            (governingAttributesToDicePoolModification governingAttributes)
+            @ [ zeroToFourToDicePoolModification level ]
+              @ skillAdjustmentDiceModList
 
         modifyDicePoolByModList baseDice diceModList
 

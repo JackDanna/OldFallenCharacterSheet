@@ -3,6 +3,7 @@ module Vocation
 open FallenLib.Vocation
 open FallenLib.Attribute
 open FallenLib.Dice
+open FallenLib.SkillDiceModificationEffect
 
 type Msg =
     | SetName of string
@@ -17,9 +18,14 @@ let init (attributeStatList: AttributeStat List) : Vocation =
     { name = ""
       level = lvl
       governingAttributes = governingAttribues
-      dicePool = vocationToDicePool baseDicePool lvl governingAttribues }
+      dicePool = vocationToDicePool baseDicePool lvl governingAttribues [] }
 
-let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) : Vocation =
+let update
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeStatList: AttributeStat List)
+    (msg: Msg)
+    (model: Vocation)
+    : Vocation =
     match msg with
     | SetName newName -> { model with name = newName }
 
@@ -29,7 +35,12 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) 
 
         { model with
             level = newLevel
-            dicePool = vocationToDicePool baseDicePool newLevel model.governingAttributes }
+            dicePool =
+                vocationToDicePool
+                    baseDicePool
+                    newLevel
+                    model.governingAttributes
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
 
     | ToggleGoverningAttribute position ->
         let toggledGoverningAttributes =
@@ -45,7 +56,12 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) 
 
         { model with
             governingAttributes = newGoverningAttributes
-            dicePool = vocationToDicePool baseDicePool model.level newGoverningAttributes }
+            dicePool =
+                vocationToDicePool
+                    baseDicePool
+                    model.level
+                    newGoverningAttributes
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
 
     | SetAttributeStatsAndCalculateDicePools ->
         let newGoverningAttributes =
@@ -53,7 +69,12 @@ let update (attributeStatList: AttributeStat List) (msg: Msg) (model: Vocation) 
 
         { model with
             governingAttributes = newGoverningAttributes
-            dicePool = vocationToDicePool baseDicePool model.level newGoverningAttributes }
+            dicePool =
+                vocationToDicePool
+                    baseDicePool
+                    model.level
+                    newGoverningAttributes
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
 
 open Feliz
 open Feliz.Bulma

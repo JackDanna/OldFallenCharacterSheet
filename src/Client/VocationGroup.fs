@@ -25,7 +25,8 @@ let update
     : VocationGroup =
     match msg with
     | VocationRowMsg vocationRowMsg ->
-        let newVocation = Vocation.update attributeStatList vocationRowMsg model.vocation
+        let newVocation =
+            Vocation.update skillDiceModificationEffectList attributeStatList vocationRowMsg model.vocation
 
         { model with
             vocation = newVocation
@@ -69,7 +70,11 @@ let update
                         vocationalSkill) }
     | SetAttributeStatsAndCalculateDicePools ->
         let newVocation =
-            Vocation.update attributeStatList Vocation.Msg.SetAttributeStatsAndCalculateDicePools model.vocation
+            Vocation.update
+                skillDiceModificationEffectList
+                attributeStatList
+                Vocation.Msg.SetAttributeStatsAndCalculateDicePools
+                model.vocation
 
         { model with
             vocation = newVocation
