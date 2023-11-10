@@ -21,7 +21,7 @@ module FallenServerData =
     open FallenLib.MagicCombat
     open FallenLib.WeaponClass
     open FallenLib.ConduitClass
-    open FallenLib.DefenseClass
+    open FallenLib.PhysicalDefenseEffect
     open FallenLib.WeaponResourceClass
     open FallenLib.ItemTier
     open FallenLib.Item
@@ -215,15 +215,13 @@ module FallenServerData =
         |> Map.ofList
 
     // DefenseClass
-    let defenseClassData: DefenseClass list =
-        makeFallenData "DefenseClassData.csv" (fun row ->
+    let defenseClassData: PhysicalDefenseEffect list =
+        makeFallenData "PhysicalDefenseEffect.csv" (fun row ->
             { name = string row.["desc"]
-              physicalDefense = float row.["physicalDefense"]
-              mentalDefense = float row.["mentalDefense"]
-              spiritualDefense = float row.["spiritualDefense"] })
+              physicalDefense = float row.["physicalDefense"] })
 
     let defenseClassMap =
-        List.map (fun (defenseClass: DefenseClass) -> defenseClass.name, defenseClass) defenseClassData
+        List.map (fun (defenseClass: PhysicalDefenseEffect) -> defenseClass.name, defenseClass) defenseClassData
         |> Map.ofList
 
     // SkillDiceModificationEffect
@@ -239,7 +237,6 @@ module FallenServerData =
         |> Map.ofList
 
     // AttributeStatAdjustmentEffect
-
     let attributeStatAdjustmentEffectData =
         makeFallenData "AttributeStatAdjustmentEffect.csv" (fun row ->
             { name = string row.["Name"]

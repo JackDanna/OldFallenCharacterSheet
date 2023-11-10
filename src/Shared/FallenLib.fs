@@ -712,15 +712,13 @@ module ItemTier =
           baseDice: DicePool
           durabilityMax: uint }
 
-module DefenseClass =
+module PhysicalDefenseEffect =
 
-    type DefenseClass =
+    type PhysicalDefenseEffect =
         { name: string
-          physicalDefense: float
-          mentalDefense: float
-          spiritualDefense: float }
+          physicalDefense: float }
 
-    let defenseClassToEffectString defenseClass =
+    let physicalDefenseEffectToEffectString defenseClass =
         $"{defenseClass.physicalDefense} Physical Defense"
 
 module SkillDiceModificationEffect =
@@ -756,12 +754,12 @@ module ItemEffect =
 
     open SkillDiceModificationEffect
     open AttributeStatAdjustmentEffect
-    open DefenseClass
+    open PhysicalDefenseEffect
 
     type ItemEffect =
         | SkillDiceModificationEffect of SkillDiceModificationEffect
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
-        | DefenseClass of DefenseClass
+        | DefenseClass of PhysicalDefenseEffect
 
     let itemEffectToString itemEffect =
         match itemEffect with
@@ -792,9 +790,9 @@ module ItemEffect =
           duration = "While Equipped"
           source = source }
 
-    let defenseClassToEffectForDisplay (defenseClass: DefenseClass) source =
+    let defenseClassToEffectForDisplay (defenseClass: PhysicalDefenseEffect) source =
         { name = defenseClass.name
-          effect = defenseClassToEffectString defenseClass
+          effect = physicalDefenseEffectToEffectString defenseClass
           duration = "While Equipped"
           source = source }
 
