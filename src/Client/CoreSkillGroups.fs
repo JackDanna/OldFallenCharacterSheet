@@ -39,6 +39,7 @@ let view (model: CoreSkillGroup list) (dispatch: Msg -> unit) =
 
     Bulma.container [
         Bulma.label "Attributes and Core Skills:"
+        |> Bulma.content
         Bulma.columns [
             columns.isCentered
             prop.children [
