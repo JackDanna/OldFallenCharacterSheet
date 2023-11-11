@@ -140,6 +140,20 @@ module ZeroToFour =
         | Three -> 3u
         | Four -> 4u
 
+module ZeroToThree =
+    type ZeroToThree =
+        | Zero
+        | One
+        | Two
+        | Three
+
+    let zeroToThreeToUint zeroToThree =
+        match zeroToThree with
+        | Zero -> 0u
+        | One -> 1u
+        | Two -> 2u
+        | Three -> 3u
+
 module Dice =
 
     open Neg1To4
@@ -1576,6 +1590,7 @@ module Character =
     open Equipment
     open VocationGroup
     open Container
+    open ZeroToThree
 
     type Character =
         { name: string
@@ -1583,4 +1598,5 @@ module Character =
           vocationGroupList: VocationGroup list
           equipmentList: Equipment list
           combatRollList: CombatRoll list
-          containerList: Container list }
+          containerList: Container list
+          destinyPoints: ZeroToThree }

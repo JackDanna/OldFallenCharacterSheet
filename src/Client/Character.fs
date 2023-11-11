@@ -14,6 +14,7 @@ type Msg =
     | SetName of string
     | EquipmentListMsg of EquipmentList.Msg
     | ContainerListMsg of ContainerList.Msg
+    | DestinyPointsMsg of DestinyPoints.Msg
     | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Character =
@@ -24,7 +25,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Character =
       vocationGroupList = VocationGroupList.init attributeStatList
       equipmentList = EquipmentList.init ()
       combatRollList = []
-      containerList = [] }
+      containerList = []
+      destinyPoints = DestinyPoints.init () }
 
 let update
     (defaultCoreSkillTables: CoreSkillGroup list)
@@ -129,6 +131,8 @@ let update
 
     | ContainerListMsg containerListMsg ->
         { model with containerList = ContainerList.update allItemList containerListMsg model.containerList }
+    | DestinyPointsMsg destinyPointsMsg ->
+        { model with destinyPoints = DestinyPoints.update destinyPointsMsg model.destinyPoints }
 
 open Feliz
 open Feliz.Bulma
@@ -153,6 +157,8 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (di
         CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
+
+        DestinyPoints.view model.destinyPoints (DestinyPointsMsg >> dispatch)
 
         ItemEffectList.view (getEquipedEffectItems model.equipmentList)
 

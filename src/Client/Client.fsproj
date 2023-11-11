@@ -11,6 +11,7 @@
     <Compile Include="CoreSkillGroup.fs" />
     <Compile Include="CoreSkillGroups.fs" />
     <None Include="index.html" />
+    <Compile Include="DestinyPoints.fs" />
     <Compile Include="ZeroToFour.fs" />
     <Compile Include="Vocation.fs" />
     <Compile Include="VocationalSkillStat.fs" />
