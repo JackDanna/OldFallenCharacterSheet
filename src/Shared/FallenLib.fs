@@ -919,7 +919,6 @@ module Container =
           isEquipped = false
           itemList = [] }
 
-
 module Equipment =
     open Item
     open ConduitClass
