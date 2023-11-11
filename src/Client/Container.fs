@@ -104,5 +104,8 @@ let view (itemNameList: string list) (model: Container) (dispatch: Msg -> unit) 
             prop.value model.isEquipped
             prop.onCheckedChange (fun isChecked -> dispatch (ToggleIsEquipped isChecked))
         ]
+        Html.div [
+            prop.text $"Container Capacity: {model.containerClass.weightCapacity}"
+        ]
         itemList itemNameList model.itemList (dispatch)
     ]
