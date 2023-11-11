@@ -2,11 +2,17 @@ module Container
 
 open FallenLib.Item
 open FallenLib.Container
+open FallenLib.ContainerClass
 
 type Msg =
     | ToggleIsEquipped of bool
     | ItemListMsg of ItemList.Msg
 
+let init (containerClas: ContainerClass) : Container =
+    { name = ""
+      isEquipped = false
+      itemList = []
+      containerClass = containerClas }
 
 let update (allItemList: Item list) (msg: Msg) (model: Container) : Container =
     match msg with

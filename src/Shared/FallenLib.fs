@@ -866,6 +866,20 @@ module Item =
             | WeaponResourceClass specifiedItemClass -> [ specifiedItemClass ]
             | _ -> [])
 
+    let collectItemNameAndContainerClasses item =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ContainerClass specifiedItemClass -> [ (item.name, specifiedItemClass) ]
+            | _ -> [])
+
+    let collectItemNameWithContainerClasses item =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ContainerClass specifiedItemClass -> [ item.name ]
+            | _ -> [])
+
     let collectItemEffectSubTypes (collectItemEffectSubType) (item: Item) =
         item.itemClasses
         |> List.collect (fun itemClass ->
@@ -891,6 +905,13 @@ module Container =
           containerClass: ContainerClass
           isEquipped: bool
           itemList: Item list }
+
+    let itemNameAndContainerClassToContainer (itemName, containerClass: ContainerClass) =
+        { name = itemName
+          containerClass = containerClass
+          isEquipped = false
+          itemList = [] }
+
 
 module Equipment =
     open Item
@@ -1548,10 +1569,12 @@ module Character =
     open CombatRoll
     open Equipment
     open VocationGroup
+    open Container
 
     type Character =
         { name: string
           coreSkillGroupList: CoreSkillGroup list
           vocationGroupList: VocationGroup list
           equipmentList: Equipment list
-          combatRollList: CombatRoll list }
+          combatRollList: CombatRoll list
+          containerList: Container list }

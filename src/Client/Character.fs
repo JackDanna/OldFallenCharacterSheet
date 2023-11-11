@@ -13,6 +13,7 @@ type Msg =
     | VocationGroupListMsg of VocationGroupList.Msg
     | SetName of string
     | EquipmentListMsg of EquipmentList.Msg
+    | ContainerListMsg of ContainerList.Msg
     | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Character =
@@ -22,7 +23,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Character =
       coreSkillGroupList = coreSkillGroups
       vocationGroupList = VocationGroupList.init attributeStatList
       equipmentList = EquipmentList.init ()
-      combatRollList = [] }
+      combatRollList = []
+      containerList = [] }
 
 let update
     (defaultCoreSkillTables: CoreSkillGroup list)
@@ -125,10 +127,15 @@ let update
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRollList }
 
+    | ContainerListMsg containerListMsg ->
+        { model with containerList = ContainerList.update allItemList containerListMsg model.containerList }
+
 open Feliz
 open Feliz.Bulma
 
 let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (dispatch: Msg -> unit) =
+
+    let allItemNameList = (List.map (fun (item: Item) -> item.name) allItemList)
 
     Bulma.container [
 
@@ -153,14 +160,19 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (di
         |> Bulma.content
         |> Bulma.container
 
-        EquipmentList.view
-            (List.map (fun (item: Item) -> item.name) allItemList)
-            model.equipmentList
-            (EquipmentListMsg >> dispatch)
+        EquipmentList.view allItemNameList model.equipmentList (EquipmentListMsg >> dispatch)
         |> Bulma.content
         |> Bulma.container
 
         CombatRollTable.view model.combatRollList
         |> Bulma.content
         |> Bulma.container
+
+        ContainerList.view
+            (List.collect collectItemNameWithContainerClasses allItemList)
+            allItemNameList
+            model.containerList
+            (ContainerListMsg >> dispatch)
     ]
+    |> Bulma.content
+    |> Bulma.container
