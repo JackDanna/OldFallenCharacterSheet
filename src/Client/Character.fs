@@ -151,22 +151,14 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (di
         |> Bulma.content
 
         CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
-        |> Bulma.container
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
-        |> Bulma.container
 
         ItemEffectList.view (getEquipedEffectItems model.equipmentList)
-        |> Bulma.content
-        |> Bulma.container
 
         EquipmentList.view allItemNameList model.equipmentList (EquipmentListMsg >> dispatch)
-        |> Bulma.content
-        |> Bulma.container
 
         CombatRollTable.view model.combatRollList
-        |> Bulma.content
-        |> Bulma.container
 
         ContainerList.view
             (List.collect collectItemNameWithContainerClasses allItemList)
@@ -174,5 +166,3 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (di
             model.containerList
             (ContainerListMsg >> dispatch)
     ]
-    |> Bulma.content
-    |> Bulma.container

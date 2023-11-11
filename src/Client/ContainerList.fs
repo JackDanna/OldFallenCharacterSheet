@@ -36,8 +36,8 @@ let view
     (model: Container list)
     (dispatch: Msg -> unit)
     =
-
-    (List.mapi
+    [ Bulma.label "Container List:" ]
+    @ (List.mapi
         (fun position container ->
             Html.div [
                 Container.view itemNameList container (fun msg -> dispatch (ContainerMsg(position, msg)))
@@ -47,21 +47,21 @@ let view
                 ]
             ])
         model)
-    @ [ Html.div [
-            Bulma.input.text [
-                prop.list "listId"
-                prop.onTextChange (fun input -> dispatch (Insert input))
-            ]
-            Html.datalist [
-                prop.id "listId"
-                prop.children (
-                    List.map
-                        (fun (containerItemName: string) ->
-                            Html.option [
-                                prop.value containerItemName
-                            ])
-                        containerItemNameList
-                )
-            ]
-        ] ]
+      @ [ Html.div [
+              Bulma.input.text [
+                  prop.list "listId"
+                  prop.onTextChange (fun input -> dispatch (Insert input))
+              ]
+              Html.datalist [
+                  prop.id "listId"
+                  prop.children (
+                      List.map
+                          (fun (containerItemName: string) ->
+                              Html.option [
+                                  prop.value containerItemName
+                              ])
+                          containerItemNameList
+                  )
+              ]
+          ] ]
     |> Bulma.container

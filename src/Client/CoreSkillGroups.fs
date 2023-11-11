@@ -38,10 +38,7 @@ open Feliz.Bulma
 let view (model: CoreSkillGroup list) (dispatch: Msg -> unit) =
 
     Bulma.container [
-        Bulma.label [
-            prop.text "Attributes and Core Skills:"
-        ]
-        |> Bulma.content
+        Bulma.label "Attributes and Core Skills:"
         Bulma.columns [
             columns.isCentered
             prop.children [

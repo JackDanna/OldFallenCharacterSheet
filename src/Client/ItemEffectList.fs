@@ -26,18 +26,23 @@ let view (model: (string * ItemEffect) list) =
           "Duration"
           "Source" ]
 
-    Bulma.table [
-        table.isBordered
-        prop.children [
-            Html.thead [
-                itemEffectForDisplayHeaders
-                |> List.map (fun (thString: string) -> Html.th thString)
-                |> Html.tr
+    Bulma.container [
+
+        Bulma.label "Item Effects:"
+
+        Bulma.table [
+            table.isBordered
+            prop.children [
+                Html.thead [
+                    itemEffectForDisplayHeaders
+                    |> List.map (fun (thString: string) -> Html.th thString)
+                    |> Html.tr
+                ]
+                Html.tableBody (
+                    model
+                    |> List.map (fun (itemName, itemEffect) -> itemEffectToEffectForDisplay itemEffect itemName)
+                    |> List.map itemEffectForDisplayRow
+                )
             ]
-            Html.tableBody (
-                model
-                |> List.map (fun (itemName, itemEffect) -> itemEffectToEffectForDisplay itemEffect itemName)
-                |> List.map itemEffectForDisplayRow
-            )
         ]
     ]

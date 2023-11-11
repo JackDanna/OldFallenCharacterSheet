@@ -53,21 +53,24 @@ let combatRollRow (combatRoll: CombatRoll) =
     ]
 
 let view (model: CombatRoll list) =
-    Bulma.table [
-        table.isBordered
-        prop.children [
-            Html.thead [
-                List.map
-                    (fun (thString: string) -> Html.th thString)
-                    [ "Name"
-                      "Dice Poll"
-                      "Penetration"
-                      "Effective/MaxRange"
-                      "Damage Type"
-                      "EO"
-                      "AOE" ]
-                |> Html.tr
+    Bulma.container [
+        Bulma.label "Combat Rolls:"
+        Bulma.table [
+            table.isBordered
+            prop.children [
+                Html.thead [
+                    List.map
+                        (fun (thString: string) -> Html.th thString)
+                        [ "Name"
+                          "Dice Poll"
+                          "Penetration"
+                          "Effective/MaxRange"
+                          "Damage Type"
+                          "EO"
+                          "AOE" ]
+                    |> Html.tr
+                ]
+                Html.tableBody (List.map combatRollRow model)
             ]
-            Html.tableBody (List.map combatRollRow model)
         ]
     ]
