@@ -29,14 +29,20 @@ let update (allItemList: Item list) (msg: Msg) (model: Container) : Container =
                     else
                         item) }
     | Insert itemName ->
-        { model with
-            itemList =
-                allItemList
-                |> List.find (fun item -> item.name = itemName)
-                |> List.singleton
-                |> List.append model.itemList
+        let item: Item = List.find (fun item -> item.name = itemName) allItemList
+        let currentWeight = List.sumBy (fun item -> item.weight) model.itemList
 
-         }
+        if item.weight + currentWeight > model.containerClass.weightCapacity then
+            model
+        else
+            { model with
+
+                itemList =
+                    item
+                    |> List.singleton
+                    |> List.append model.itemList
+
+             }
     | Remove position -> { model with itemList = List.removeAt position model.itemList }
 
 open Feliz
