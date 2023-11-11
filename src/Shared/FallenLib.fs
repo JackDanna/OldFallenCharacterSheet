@@ -833,6 +833,13 @@ module Item =
           value: string
           weight: float }
 
+    let sumItemListWeight itemList =
+        if List.isEmpty itemList then
+            0.0
+        else
+            List.sumBy (fun item -> item.weight) itemList
+
+
     let itemClassesToString itemClasses =
         List.map
             (fun itemClass ->

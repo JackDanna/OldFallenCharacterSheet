@@ -30,7 +30,7 @@ let update (allItemList: Item list) (msg: Msg) (model: Container) : Container =
                         item) }
     | Insert itemName ->
         let item: Item = List.find (fun item -> item.name = itemName) allItemList
-        let currentWeight = List.sumBy (fun item -> item.weight) model.itemList
+        let currentWeight = sumItemListWeight model.itemList
 
         if item.weight + currentWeight > model.containerClass.weightCapacity then
             model
@@ -105,7 +105,7 @@ let view (itemNameList: string list) (model: Container) (dispatch: Msg -> unit) 
             prop.onCheckedChange (fun isChecked -> dispatch (ToggleIsEquipped isChecked))
         ]
         Html.div [
-            prop.text $"Container Capacity: {model.containerClass.weightCapacity}"
+            prop.text $"Container Capacity: {sumItemListWeight model.itemList}/{model.containerClass.weightCapacity} lb"
         ]
         itemList itemNameList model.itemList (dispatch)
     ]
