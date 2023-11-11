@@ -36,13 +36,10 @@ let update (allItemList: Item list) (msg: Msg) (model: Container) : Container =
             model
         else
             { model with
-
                 itemList =
                     item
                     |> List.singleton
-                    |> List.append model.itemList
-
-             }
+                    |> List.append model.itemList }
     | Remove position -> { model with itemList = List.removeAt position model.itemList }
 
 open Feliz
