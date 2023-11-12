@@ -16,8 +16,11 @@ let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
 
 open Feliz
 
-let view (model: EffectForDisplay) (dispatch: Msg -> unit) =
+let effectForDisplayTableData (model: EffectForDisplay) (dispatch: Msg -> unit) =
     [ StringInputTableData.interactiveView model.name (NameMsg >> dispatch)
       StringInputTableData.interactiveView model.effect (EffectMsg >> dispatch) ]
     @ DurationAndSource.interactiveView model.durationAndSource (DurationAndSourceMsg >> dispatch)
+
+let view (model: EffectForDisplay) (dispatch: Msg -> unit) =
+    effectForDisplayTableData model dispatch
     |> Html.tr

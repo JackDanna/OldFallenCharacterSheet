@@ -16,7 +16,7 @@ let update (msg: Msg) (model: SkillDiceModificationEffectForDisplay) : SkillDice
         let (skillDiceModificationEffect, durationAndSource) = model
         skillDiceModificationEffect, (DurationAndSource.update msg durationAndSource)
 
-let view (model: SkillDiceModificationEffectForDisplay) (dispatch: Msg -> unit) =
+let skillDiceModificationForDisplayTableData (model: SkillDiceModificationEffectForDisplay) (dispatch: Msg -> unit) =
     let (skillDiceModificationEffect, durationAndSource) = model
 
     [ Html.td [
@@ -27,4 +27,7 @@ let view (model: SkillDiceModificationEffectForDisplay) (dispatch: Msg -> unit) 
           |> prop.text
       ] ]
     @ DurationAndSource.interactiveView durationAndSource (DurationAndSourceMsg >> dispatch)
+
+let view (model: SkillDiceModificationEffectForDisplay) (dispatch: Msg -> unit) =
+    skillDiceModificationForDisplayTableData model dispatch
     |> Html.tr

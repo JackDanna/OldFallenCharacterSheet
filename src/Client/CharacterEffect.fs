@@ -31,12 +31,17 @@ let update (msg: Msg) (model: CharacterEffect) : CharacterEffect =
 open Feliz
 open Feliz.Bulma
 
-let view (model: CharacterEffect) (dispatch: Msg -> unit) =
+let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
 
     match model with
-    | EffectForDisplay effectForDisplay -> EffectForDisplay.view effectForDisplay (EffectForDisplayMsg >> dispatch)
+    | EffectForDisplay effectForDisplay ->
+        EffectForDisplay.effectForDisplayTableData effectForDisplay (EffectForDisplayMsg >> dispatch)
     | SkillDiceModificationEffectForDisplay sdmefd ->
-        SkillDiceModificationEffectForDisplay.view
+        SkillDiceModificationEffectForDisplay.skillDiceModificationForDisplayTableData
             sdmefd
             (SkillDiceModificationEffectForDisplayMsg
              >> dispatch)
+
+let view (model: CharacterEffect) (dispatch: Msg -> unit) =
+
+    characterEffectTableData model dispatch |> Html.tr
