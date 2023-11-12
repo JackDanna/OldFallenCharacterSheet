@@ -768,11 +768,12 @@ module AttributeStatAdjustmentEffect =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
 module EffectForDisplay =
+    type DurationAndSource = { duration: string; source: string }
+
     type EffectForDisplay =
         { name: string
           effect: string
-          duration: string
-          source: string }
+          durationAndSource: DurationAndSource }
 
 module ItemEffect =
 
@@ -800,20 +801,23 @@ module ItemEffect =
         =
         { name = skillDiceModificationEffect.name
           effect = skillDiceModificationEffectToEffectString skillDiceModificationEffect
-          duration = "While Equipped"
-          source = source }
+          durationAndSource =
+            { duration = "While Equipped"
+              source = source } }
 
     let attributeStatAdjustmentToEffectForDisplay (attributeStatAdjustment: AttributeStatAdjustmentEffect) source =
         { name = attributeStatAdjustment.name
           effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
-          duration = "While Equipped"
-          source = source }
+          durationAndSource =
+            { duration = "While Equipped"
+              source = source } }
 
     let defenseClassToEffectForDisplay (defenseClass: PhysicalDefenseEffect) source =
         { name = defenseClass.name
           effect = physicalDefenseEffectToEffectString defenseClass
-          duration = "While Equipped"
-          source = source }
+          durationAndSource =
+            { duration = "While Equipped"
+              source = source } }
 
     let itemEffectToEffectForDisplay itemEffect =
         match itemEffect with

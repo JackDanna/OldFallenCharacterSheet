@@ -3,22 +3,14 @@ module ItemEffectList
 open FallenLib.EffectForDisplay
 open FallenLib.ItemEffect
 
-type Msg = Reload
-
-let update (msg: Msg) (model: ItemEffect list) : ItemEffect list =
-    match msg with
-    | Reload -> []
-
 open Feliz
 open Feliz.Bulma
 
 let itemEffectForDisplayRow (itemEffectForDisplay: EffectForDisplay) =
-    Html.tr [
-        Html.td itemEffectForDisplay.name
-        Html.td itemEffectForDisplay.effect
-        Html.td itemEffectForDisplay.duration
-        Html.td itemEffectForDisplay.source
-    ]
+    [ Html.td itemEffectForDisplay.name
+      Html.td itemEffectForDisplay.effect ]
+    @ DurationAndSource.nonInteractiveView itemEffectForDisplay.durationAndSource
+    |> Html.tr
 
 let view (model: (string * ItemEffect) list) =
     let itemEffectForDisplayHeaders =

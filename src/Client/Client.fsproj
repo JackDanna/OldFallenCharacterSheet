@@ -22,11 +22,15 @@
     <Compile Include="Equipment.fs" />
     <Compile Include="EquipmentList.fs" />
     <Compile Include="CombatRollList.fs" />
-    <Compile Include="ItemEffectList.fs" />
     <Compile Include="Container.fs" />
     <Compile Include="ContainerList.fs" />
+    <Compile Include="StringInputTableData.fs" />
+    <Compile Include="DurationAndSource.fs" />
+    <Compile Include="ItemEffectList.fs" />
     <Compile Include="EffectForDisplay.fs" />
+    <Compile Include="SkillDiceModificationForDisplay.fs" />
     <Compile Include="CharacterEffect.fs" />
+    <Compile Include="CharacterEffectList.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
     <Compile Include="Index.fs" />

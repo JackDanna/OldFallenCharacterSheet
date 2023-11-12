@@ -3,44 +3,21 @@ module EffectForDisplay
 open FallenLib.EffectForDisplay
 
 type Msg =
-    | SetName of string
-    | SetEffect of string
-    | SetDuration of string
-    | SetSource of string
+    | NameMsg of StringInputTableData.Msg
+    | EffectMsg of StringInputTableData.Msg
+    | DurationAndSourceMsg of DurationAndSource.Msg
 
 let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
     match msg with
-    | SetName newName -> { model with name = newName }
-    | SetEffect newEffect -> { model with effect = newEffect }
-    | SetDuration newDuration -> { model with duration = newDuration }
-    | SetSource newSource -> { model with source = newSource }
+    | NameMsg msg -> { model with name = StringInputTableData.update msg model.name }
+    | EffectMsg msg -> { model with effect = StringInputTableData.update msg model.effect }
+    | DurationAndSourceMsg msg ->
+        { model with durationAndSource = DurationAndSource.update msg model.durationAndSource }
 
 open Feliz
-open Feliz.Bulma
 
 let view (model: EffectForDisplay) (dispatch: Msg -> unit) =
-    Html.tr [
-        Bulma.input.text [
-            prop.text model.name
-            prop.onChange (fun input -> dispatch (SetName input))
-        ]
-        |> Html.td
-
-        Bulma.input.text [
-            prop.text model.effect
-            prop.onChange (fun input -> dispatch (SetEffect input))
-        ]
-        |> Html.td
-
-        Bulma.input.text [
-            prop.text model.duration
-            prop.onChange (fun input -> dispatch (SetDuration input))
-        ]
-        |> Html.td
-
-        Bulma.input.text [
-            prop.text model.source
-            prop.onChange (fun input -> dispatch (SetSource input))
-        ]
-        |> Html.td
-    ]
+    [ StringInputTableData.interactiveView model.name (NameMsg >> dispatch)
+      StringInputTableData.interactiveView model.effect (EffectMsg >> dispatch) ]
+    @ DurationAndSource.interactiveView model.durationAndSource (DurationAndSourceMsg >> dispatch)
+    |> Html.tr
