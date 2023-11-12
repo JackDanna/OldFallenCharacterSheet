@@ -1,5 +1,6 @@
 module ItemEffectList
 
+open FallenLib.EffectForDisplay
 open FallenLib.ItemEffect
 
 type Msg = Reload

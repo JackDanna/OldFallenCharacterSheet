@@ -25,6 +25,8 @@
     <Compile Include="ItemEffectList.fs" />
     <Compile Include="Container.fs" />
     <Compile Include="ContainerList.fs" />
+    <Compile Include="EffectForDisplay.fs" />
+    <Compile Include="CharacterEffect.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
     <Compile Include="Index.fs" />

@@ -767,11 +767,19 @@ module AttributeStatAdjustmentEffect =
     let attributeStatAdjustmentToEffectString attributeStatAdjustment =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
+module EffectForDisplay =
+    type EffectForDisplay =
+        { name: string
+          effect: string
+          duration: string
+          source: string }
+
 module ItemEffect =
 
     open SkillDiceModificationEffect
     open AttributeStatAdjustmentEffect
     open PhysicalDefenseEffect
+    open EffectForDisplay
 
     type ItemEffect =
         | SkillDiceModificationEffect of SkillDiceModificationEffect
@@ -783,12 +791,6 @@ module ItemEffect =
         | SkillDiceModificationEffect skillDiceModificationEffect -> skillDiceModificationEffect.name
         | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
         | DefenseClass defenseClass -> defenseClass.name
-
-    type EffectForDisplay =
-        { name: string
-          effect: string
-          duration: string
-          source: string }
 
     // _ToEffectForDisplay
 
@@ -824,6 +826,15 @@ module ItemEffect =
         match itemEffect with
         | SkillDiceModificationEffect skillAdjustment -> [ skillAdjustment ]
         | _ -> []
+
+module CharacterEffect =
+
+    open EffectForDisplay
+    open SkillDiceModificationEffect
+
+    type CharacterEffect =
+        | EffectForDisplay of EffectForDisplay
+        | SkillDiceModificationEffect of SkillDiceModificationEffect
 
 module Item =
     open ItemTier
