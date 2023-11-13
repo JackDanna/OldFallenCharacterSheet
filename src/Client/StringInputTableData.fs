@@ -2,6 +2,8 @@ module StringInputTableData
 
 type Msg = SetString of string
 
+let init () : string = ""
+
 let update (msg: Msg) (model: string) : string =
     match msg with
     | SetString newName -> newName
@@ -14,7 +16,7 @@ let nonInteractiveView (model: string) =
 
 let interactiveView (model: string) (dispatch: Msg -> unit) =
     Bulma.input.text [
-        prop.text model
-        prop.onChange (fun input -> dispatch (SetString input))
+        prop.value model
+        prop.onTextChange (fun input -> dispatch (SetString input))
     ]
     |> Html.td

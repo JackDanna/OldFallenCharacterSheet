@@ -18,11 +18,11 @@ let update (characterEffectMap: Map<string, CharacterEffect>) (msg: Msg) (model:
                 CharacterEffect.update msg characterEffect
             else
                 characterEffect)
-    | Insert characterEffectName -> characterEffectMap.Values |> List.ofSeq
+    | Insert characterEffectName ->
 
-    // (characterEffectMap.Item characterEffectName)
-    // |> List.singleton
-    // |> List.append model
+        (characterEffectMap.Item characterEffectName)
+        |> List.singleton
+        |> List.append model
     | Remove position -> List.removeAt position model
 
 open Feliz
