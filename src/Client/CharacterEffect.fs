@@ -2,11 +2,8 @@ module CharacterEffect
 
 open FallenLib.EffectForDisplay
 open FallenLib.SkillDiceModificationEffect
-open SkillDiceModificationEffectForDisplay
 
-type CharacterEffect =
-    | EffectForDisplay of EffectForDisplay
-    | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
+open FallenLib.CharacterEffect
 
 let getCharacterEffectName characterEffect =
     match characterEffect with

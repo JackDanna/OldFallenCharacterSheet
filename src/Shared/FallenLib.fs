@@ -768,12 +768,22 @@ module AttributeStatAdjustmentEffect =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
 module EffectForDisplay =
+    open SkillDiceModificationEffect
+
     type DurationAndSource = { duration: string; source: string }
+
+    type SkillDiceModificationEffectForDisplay = SkillDiceModificationEffect * DurationAndSource
+
+    let skillDiceModificationEffectToForDisplay
+        (sdme: SkillDiceModificationEffect)
+        : SkillDiceModificationEffectForDisplay =
+        sdme, { duration = "?"; source = "?" }
 
     type EffectForDisplay =
         { name: string
           effect: string
           durationAndSource: DurationAndSource }
+
 
 module ItemEffect =
 
@@ -838,7 +848,7 @@ module CharacterEffect =
 
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay
-        | SkillDiceModificationEffect of SkillDiceModificationEffect
+        | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
 
 module Item =
     open ItemTier
@@ -1606,6 +1616,7 @@ module Character =
     open VocationGroup
     open Container
     open ZeroToThree
+    open CharacterEffect
 
     type Character =
         { name: string
@@ -1614,4 +1625,5 @@ module Character =
           equipmentList: Equipment list
           combatRollList: CombatRoll list
           containerList: Container list
-          destinyPoints: ZeroToThree }
+          destinyPoints: ZeroToThree
+          characterEffectList: CharacterEffect list }

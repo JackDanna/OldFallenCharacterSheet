@@ -11,6 +11,7 @@ open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.CoreSkillGroup
 open FallenLib.Character
+open FallenLib.CharacterEffect
 
 type Model =
     { defaultCoreSkillTables: CoreSkillGroup list
@@ -19,6 +20,7 @@ type Model =
       magicCombatMap: Map<string, MagicCombat>
       rangeMap: Map<string, Range>
       combatVocationalSkill: string list
+      characterEffectMap: Map<string, CharacterEffect>
       character: Character }
 
 type Msg =
@@ -29,6 +31,7 @@ type Msg =
         Map<string, MagicSkill> *
         Map<string, MagicCombat> *
         Map<string, Range> *
+        Map<string, CharacterEffect> *
         string list
 
 let fallenDataApi =
@@ -44,6 +47,7 @@ let init () : Model * Cmd<Msg> =
       magicCombatMap = Map.empty
       rangeMap = Map.empty
       combatVocationalSkill = []
+      characterEffectMap = Map.empty
       character = Character.init (List.Empty) },
     Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
 
@@ -58,10 +62,17 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     model.magicSkillMap
                     model.magicCombatMap
                     model.rangeMap
+                    model.characterEffectMap
                     characterMsg
                     model.character },
         Cmd.none
-    | GotInitData (defaultCoreSkillGroups, allItemData, magicSkillMap, magicCombatMap, rangeMap, combatVocationalSkill) ->
+    | GotInitData (defaultCoreSkillGroups,
+                   allItemData,
+                   magicSkillMap,
+                   magicCombatMap,
+                   rangeMap,
+                   characterEffectMap,
+                   combatVocationalSkill) ->
 
         { model with
             defaultCoreSkillTables = defaultCoreSkillGroups
@@ -70,6 +81,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
             magicCombatMap = magicCombatMap
             rangeMap = rangeMap
             combatVocationalSkill = combatVocationalSkill
+            characterEffectMap = characterEffectMap
             character =
                 Character.update
                     defaultCoreSkillGroups
@@ -77,6 +89,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     magicSkillMap
                     magicCombatMap
                     rangeMap
+                    characterEffectMap
                     Character.Msg.SetDefault
                     model.character },
         Cmd.none
@@ -115,7 +128,12 @@ let view (model: Model) (dispatch: Msg -> unit) =
             ]
 
             Bulma.heroBody [
-                Character.view model.combatVocationalSkill model.allItemList model.character (CharacterMsg >> dispatch)
+                Character.view
+                    (model.characterEffectMap.Keys |> List.ofSeq)
+                    model.combatVocationalSkill
+                    model.allItemList
+                    model.character
+                    (CharacterMsg >> dispatch)
             ]
         ]
     ]

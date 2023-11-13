@@ -1,6 +1,6 @@
 module CharacterEffectList
 
-open CharacterEffect
+open FallenLib.CharacterEffect
 
 type Msg =
     | ModifyCharacterEffect of int * CharacterEffect.Msg
@@ -18,10 +18,11 @@ let update (characterEffectMap: Map<string, CharacterEffect>) (msg: Msg) (model:
                 CharacterEffect.update msg characterEffect
             else
                 characterEffect)
-    | Insert characterEffectName ->
-        characterEffectMap.Item characterEffectName
-        |> List.singleton
-        |> List.append model
+    | Insert characterEffectName -> characterEffectMap.Values |> List.ofSeq
+
+    // (characterEffectMap.Item characterEffectName)
+    // |> List.singleton
+    // |> List.append model
     | Remove position -> List.removeAt position model
 
 open Feliz
@@ -45,7 +46,7 @@ let view (characterEffectNameList: string list) (model: CharacterEffect list) (d
                 Html.tableBody (
                     List.mapi
                         (fun position equipmentRow ->
-                            let equipmentRowTableData =
+                            let characterEffect =
                                 (CharacterEffect.characterEffectTableData equipmentRow (fun msg ->
                                     dispatch (ModifyCharacterEffect(position, msg))))
 
@@ -58,9 +59,28 @@ let view (characterEffectNameList: string list) (model: CharacterEffect list) (d
                                 ]
                                 |> List.singleton
 
-                            Html.tr (List.append equipmentRowTableData deleteEquipmentRowButton))
+                            Html.tr (List.append characterEffect deleteEquipmentRowButton))
                         model
                 )
+                Html.tfoot [
+                    Html.div [
+                        Bulma.input.text [
+                            prop.list "re"
+                            prop.onTextChange (fun input -> dispatch (Insert input))
+                        ]
+                        Html.datalist [
+                            prop.id "re"
+                            prop.children (
+                                List.map
+                                    (fun (characterEffect: string) ->
+                                        Html.option [
+                                            prop.value characterEffect
+                                        ])
+                                    characterEffectNameList
+                            )
+                        ]
+                    ]
+                ]
             ]
         ]
     ]

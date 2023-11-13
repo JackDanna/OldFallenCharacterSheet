@@ -32,6 +32,8 @@ module FallenServerData =
     open FallenLib.AttributeStatAdjustmentEffect
     open FallenLib.ItemEffect
     open FallenLib.ContainerClass
+    open FallenLib.EffectForDisplay
+    open FallenLib.CharacterEffect
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -275,6 +277,32 @@ module FallenServerData =
             | DefenseClass dc -> dc.name, DefenseClass dc)
         |> Map.ofList
 
+    // CharacterEffectForDisplay
+    let characterEffectForDisplayData: EffectForDisplay list =
+        makeFallenData "CharacterEffectForDisplayData.csv" (fun row ->
+            { name = string row.["Name"]
+              effect = string row.["Effect"]
+              durationAndSource =
+                { duration = string row.["Duration"]
+                  source = string row.["Source"] } })
+
+    // CharacterEffect
+    let characterEffectData: CharacterEffect list =
+        let skillDiceModificationEffectForDisplayList =
+            List.map skillDiceModificationEffectToForDisplay skillDiceModificationEffectData
+
+        List.map EffectForDisplay characterEffectForDisplayData
+        @ List.map SkillDiceModificationEffectForDisplay skillDiceModificationEffectForDisplayList
+
+    let characterEffectMap: Map<string, CharacterEffect> =
+        characterEffectData
+        |> List.map (fun (characterEffect: CharacterEffect) ->
+            match characterEffect with
+            | EffectForDisplay efd -> efd.name, EffectForDisplay efd
+            | SkillDiceModificationEffectForDisplay (sdme, durationAndSource) ->
+                sdme.name, SkillDiceModificationEffectForDisplay(sdme, durationAndSource))
+        |> Map.ofList
+
     // WeaponResourceClass
     let weaponResourceClassData =
         makeFallenData "WeaponResourceClassData.csv" (fun row ->
@@ -397,6 +425,7 @@ let fallenDataApi: IFallenDataApi =
                      FallenServerData.magicSkillMap,
                      FallenServerData.magicCombatMap,
                      FallenServerData.rangeMap,
+                     FallenServerData.characterEffectMap,
                      FallenServerData.combatVocationalSkill)
             } }
 

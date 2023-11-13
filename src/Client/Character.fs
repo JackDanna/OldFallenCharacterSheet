@@ -7,6 +7,7 @@ open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.Equipment
 open FallenLib.Character
+open FallenLib.CharacterEffect
 
 type Msg =
     | CoreSkillGroupListMsg of CoreSkillGroupList.Msg
@@ -15,6 +16,7 @@ type Msg =
     | EquipmentListMsg of EquipmentList.Msg
     | ContainerListMsg of ContainerList.Msg
     | DestinyPointsMsg of DestinyPoints.Msg
+    | CharacterEffectListMsg of CharacterEffectList.Msg
     | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Character =
@@ -26,7 +28,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Character =
       equipmentList = EquipmentList.init ()
       combatRollList = []
       containerList = []
-      destinyPoints = DestinyPoints.init () }
+      destinyPoints = DestinyPoints.init ()
+      characterEffectList = [] }
 
 let update
     (defaultCoreSkillTables: CoreSkillGroup list)
@@ -34,6 +37,7 @@ let update
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
+    (characterEffectMap: Map<string, CharacterEffect>)
     (msg: Msg)
     (model: Character)
     : Character =
@@ -134,10 +138,19 @@ let update
     | DestinyPointsMsg destinyPointsMsg ->
         { model with destinyPoints = DestinyPoints.update destinyPointsMsg model.destinyPoints }
 
+    | CharacterEffectListMsg msg ->
+        { model with characterEffectList = CharacterEffectList.update characterEffectMap msg model.characterEffectList }
+
 open Feliz
 open Feliz.Bulma
 
-let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (dispatch: Msg -> unit) =
+let view
+    (characterEffectKeyList: string list)
+    (combatVocationalSkill)
+    (allItemList: Item list)
+    (model: Character)
+    (dispatch: Msg -> unit)
+    =
 
     let allItemNameList = (List.map (fun (item: Item) -> item.name) allItemList)
 
@@ -159,6 +172,8 @@ let view (combatVocationalSkill) (allItemList: Item list) (model: Character) (di
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
 
         DestinyPoints.view model.destinyPoints (DestinyPointsMsg >> dispatch)
+
+        CharacterEffectList.view characterEffectKeyList model.characterEffectList (CharacterEffectListMsg >> dispatch)
 
         ItemEffectList.view (getEquipedEffectItems model.equipmentList)
 
