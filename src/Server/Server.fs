@@ -412,12 +412,12 @@ module FallenServerData =
     // CarryWeightCalculation
     let carryWeightCalculationData =
         makeFallenData "CarryWeightCalculationData.csv" (fun row ->
-            (string row.["desc"],
-             uint row.["baseWeight"],
-             string row.["governingAttribute"],
-             uint row.["weightIncreasePerAttribute"],
-             string row.["governingSkill"],
-             uint row.["weightIncreasePerSkill"]))
+            { name = string row.["desc"]
+              baseWeight = uint row.["baseWeight"]
+              governingAttribute = Attribute row.["governingAttribute"]
+              weightIncreasePerAttribute = uint row.["weightIncreasePerAttribute"]
+              governingSkill = string row.["governingSkill"]
+              weightIncreasePerSkill = uint row.["weightIncreasePerSkill"] })
 
     let combatVocationalSkill =
         List.append
