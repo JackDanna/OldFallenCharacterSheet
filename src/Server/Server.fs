@@ -34,6 +34,7 @@ module FallenServerData =
     open FallenLib.ContainerClass
     open FallenLib.EffectForDisplay
     open FallenLib.CharacterEffect
+    open FallenLib.CarryWeightCalculation
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -410,11 +411,13 @@ module FallenServerData =
 
     // WeightClassData
     let weightClassData =
-        makeFallenData "WeightClassData.csv" (fun row ->
-            (string row.["name"],
-             float row.["bottomPercent"],
-             float row.["topPercent"],
-             float row.["percentOfMovementSpeed"]))
+        makeFallenData "AttributeDeterminedDiceModData.csv" (fun row ->
+            { name = row.["name"]
+              bottomPercent = float row.["bottomPercent"]
+              topPercent = float row.["topPercent"]
+              percentOfMovementSpeed = float row.["percentOfMovementSpeed"]
+              attributeDeterminedDiceModEffect =
+                attributeDeterminedDiceModEffectMap.Item row.["attributeDeterminedDiceModEffect"] })
 
     // AttributeDeterminedDiceMod
     let attributeDeterminedDiceModData =
