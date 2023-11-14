@@ -263,9 +263,9 @@ module FallenServerData =
             attributeStatAdjustmentEffect.name, attributeStatAdjustmentEffect)
         |> Map.ofList
 
-    // AttributeDeterminedDiceMod
+    // AttributeDeterminedDiceModEffect
     let attributeDeterminedDiceModEffectData =
-        makeFallenData "AttributeDeterminedDIceModData.csv" (fun row ->
+        makeFallenData "AttributeDeterminedDiceModEffectData.csv" (fun row ->
             { name = row.["name"]
               attributesToEffect = stringToAttributes row.["attributesToEffect"]
               dicePoolModification = stringToDicePoolModification row.["dicePoolModification"] })
@@ -278,7 +278,7 @@ module FallenServerData =
 
     // WeightClass
     let weightClassData =
-        makeFallenData "AttributeDeterminedDiceModData.csv" (fun row ->
+        makeFallenData "WeightClassData.csv" (fun row ->
             { name = row.["name"]
               bottomPercent = float row.["bottomPercent"]
               topPercent = float row.["topPercent"]
@@ -412,7 +412,7 @@ module FallenServerData =
     // CarryWeightCalculation
     let carryWeightCalculationData =
         makeFallenData "CarryWeightCalculationData.csv" (fun row ->
-            { name = string row.["desc"]
+            { name = string row.["name"]
               baseWeight = uint row.["baseWeight"]
               governingAttribute = Attribute row.["governingAttribute"]
               weightIncreasePerAttribute = uint row.["weightIncreasePerAttribute"]
