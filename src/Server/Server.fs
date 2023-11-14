@@ -276,6 +276,16 @@ module FallenServerData =
             attributeDeterminedDiceModEffect.name, attributeDeterminedDiceModEffect)
         |> Map.ofList
 
+    // WeightClass
+    let weightClassData =
+        makeFallenData "AttributeDeterminedDiceModData.csv" (fun row ->
+            { name = row.["name"]
+              bottomPercent = float row.["bottomPercent"]
+              topPercent = float row.["topPercent"]
+              percentOfMovementSpeed = float row.["percentOfMovementSpeed"]
+              attributeDeterminedDiceModEffect =
+                attributeDeterminedDiceModEffectMap.Item row.["attributeDeterminedDiceModEffect"] })
+
     // ItemEffect
     let itemEffectData: ItemEffect list =
         List.map DefenseClass defenseClassData
@@ -409,22 +419,10 @@ module FallenServerData =
              string row.["governingSkill"],
              uint row.["weightIncreasePerSkill"]))
 
-    // WeightClassData
-    let weightClassData =
-        makeFallenData "AttributeDeterminedDiceModData.csv" (fun row ->
-            { name = row.["name"]
-              bottomPercent = float row.["bottomPercent"]
-              topPercent = float row.["topPercent"]
-              percentOfMovementSpeed = float row.["percentOfMovementSpeed"]
-              attributeDeterminedDiceModEffect =
-                attributeDeterminedDiceModEffectMap.Item row.["attributeDeterminedDiceModEffect"] })
-
     let combatVocationalSkill =
         List.append
             (List.map (fun (weaponClassData: WeaponClass) -> weaponClassData.name) weaponClassData)
             (List.map (fun (magicSkill: MagicSkill) -> magicSkill.name) magicSkillData)
-
-
 
 let fallenDataApi: IFallenDataApi =
     { getInitData =
