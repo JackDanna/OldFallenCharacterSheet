@@ -262,6 +262,19 @@ module FallenServerData =
             attributeStatAdjustmentEffect.name, attributeStatAdjustmentEffect)
         |> Map.ofList
 
+    // AttributeDeterminedDiceMod
+    let attributeDeterminedDiceModEffectData =
+        makeFallenData "AttributeDeterminedDIceModData.csv" (fun row ->
+            { name = row.["name"]
+              attributesToEffect = stringToAttributes row.["attributesToEffect"]
+              dicePoolModification = stringToDicePoolModification row.["dicePoolModification"] })
+
+    let attributeDeterminedDiceModEffectMap =
+        attributeDeterminedDiceModEffectData
+        |> List.map (fun (attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect) ->
+            attributeDeterminedDiceModEffect.name, attributeDeterminedDiceModEffect)
+        |> Map.ofList
+
     // ItemEffect
     let itemEffectData: ItemEffect list =
         List.map DefenseClass defenseClassData

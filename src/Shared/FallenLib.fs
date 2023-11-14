@@ -373,7 +373,7 @@ module Attribute =
         determineAttributeLvl attributeList attributeStatList
         |> intToDicePoolModification
 
-    type AttributeDeterminedDiceMod =
+    type AttributeDeterminedDiceModEffect =
         { name: string
           attributesToEffect: Attribute list
           dicePoolModification: DicePoolModification }
@@ -784,7 +784,6 @@ module EffectForDisplay =
           effect: string
           durationAndSource: DurationAndSource }
 
-
 module ItemEffect =
 
     open SkillDiceModificationEffect
@@ -840,6 +839,44 @@ module ItemEffect =
         match itemEffect with
         | SkillDiceModificationEffect skillAdjustment -> [ skillAdjustment ]
         | _ -> []
+
+module MovementSpeedCalculation =
+
+    open Attribute
+    open Neg1To4
+
+    type MovementSpeedCalculation =
+        { name: string
+          baseMovementSpeed: uint
+          governingAttributes: Attribute list
+          feetPerAttributeLvl: uint
+          governingSkill: string
+          feetPerSkillLvl: uint }
+
+    let calculateMovementSpeed movementSpeedCalculation (attributeLvl: Neg1To4) (skillLvl: Neg1To4) =
+        let attributeMod =
+            neg1To4ToInt attributeLvl
+            * int movementSpeedCalculation.feetPerAttributeLvl
+
+        let skillMod =
+            neg1To4ToInt skillLvl
+            * int movementSpeedCalculation.feetPerSkillLvl
+
+        match (int movementSpeedCalculation.baseMovementSpeed
+               + attributeMod
+               + skillMod)
+            with
+        | n when n >= 0 -> uint n
+        | _ -> 0u
+
+    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
+        let decimalPlaces = 0
+
+        let movementSpeed =
+            calculateMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
+
+        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
+        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
 
 module CharacterEffect =
 
@@ -1319,7 +1356,7 @@ module CombatRoll =
         (magicSkill: MagicSkill)
         (magicCombatType: MagicCombat)
         (rangeMap: Map<string, Range>)
-        (attributeDeterminedDiceModArray: list<AttributeDeterminedDiceMod>)
+        (attributeDeterminedDiceModArray: list<AttributeDeterminedDiceModEffect>)
         (combatRollGoverningAttributes: Attribute list)
         : CombatRoll =
 
@@ -1502,7 +1539,7 @@ module CombatRoll =
         (magicCombatMap: Map<string, MagicCombat>)
         (rangeMap: Map<string, Range>)
         (combatRollGoverningAttributeList: Attribute list)
-        (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
+        (attributeDeterminedDiceModList: AttributeDeterminedDiceModEffect list)
         (equipmentList: Equipment list)
         (attributeStatList: AttributeStat list)
         (vocationGroupList: VocationGroup list)
@@ -1543,7 +1580,8 @@ module CarryWeightCalculation =
         { name: string
           bottomPercent: float
           topPercent: float
-          percentOfMovementSpeed: float }
+          percentOfMovementSpeed: float
+          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
     let calculateMaxCarryWeight
         (maxCarryWeightCalculation: CarryWeightCalculation)
@@ -1559,54 +1597,11 @@ module CarryWeightCalculation =
             |> neg1To4ToInt
 
         int maxCarryWeightCalculation.baseWeight
-        |> (+)
-            (
-                attributeLevel
-                * int maxCarryWeightCalculation.weightIncreasePerAttribute
-            )
-        |> (+)
-            (
-                skillLevel
-                * int maxCarryWeightCalculation.weightIncreasePerSkill
-            )
+        + (attributeLevel
+           * int maxCarryWeightCalculation.weightIncreasePerAttribute)
+        + (skillLevel
+           * int maxCarryWeightCalculation.weightIncreasePerSkill)
         |> float
-
-module MovementSpeedCalculation =
-
-    open Attribute
-
-    type MovementSpeedCalculation =
-        { name: string
-          baseMovementSpeed: uint
-          governingAttributes: Attribute list
-          feetPerAttributeLvl: uint
-          governingSkill: string
-          feetPerSkillLvl: uint }
-
-    let calculateMovementSpeed movementSpeedCalculation (attributeLvl: int) (skillLvl: int) =
-        let attributeMod =
-            attributeLvl
-            * int movementSpeedCalculation.feetPerAttributeLvl
-
-        let skillMod =
-            skillLvl
-            * int movementSpeedCalculation.feetPerSkillLvl
-
-        match (int movementSpeedCalculation.baseMovementSpeed
-               + attributeMod
-               + skillMod)
-            with
-        | n when n >= 0 -> uint n
-        | _ -> 0u
-
-    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
-        let decimalPlaces = 0
-
-        let movementSpeed =
-            calculateMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
-
-        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
-        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
 
 module Character =
 

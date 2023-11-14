@@ -4,7 +4,7 @@ Medium Injury (Lvl 2),"STR,RFX,INT",-2
 Serious Injury (Lvl 3),"STR,RFX,INT",-3
 Fatal Injury (Lvl 4),"STR,RFX,INT",-4
 Death Blow Injury (Lvl 5),"STR,RFX,INT",-5
-"Light Weight, 100% speed","STR,RFX",-0
-"Med. Weight -1d STR/RFX, 80% speed","STR,RFX",-1
-"Heavy Weight -2d STR/RFX, 50% speed","STR,RFX",-2
-"Overencumberd -4d STR/RFX, 0% speed","STR,RFX",-4
+Light Weight,"STR,RFX",-0
+Med. Weight,"STR,RFX",-1
+Heavy Weight,"STR,RFX",-2
+Overencumberd,"STR,RFX",-4

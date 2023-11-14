@@ -18,7 +18,7 @@ let update
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
     (combatRollGoverningAttributeList: Attribute list)
-    (attributeDeterminedDiceModList: AttributeDeterminedDiceMod list)
+    (attributeDeterminedDiceModList: AttributeDeterminedDiceModEffect list)
     (equipmentList: Equipment list)
     (attributeStatList: AttributeStat list)
     (vocationGroupList: VocationGroup list)
