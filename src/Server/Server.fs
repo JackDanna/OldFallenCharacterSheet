@@ -419,11 +419,6 @@ module FallenServerData =
               attributeDeterminedDiceModEffect =
                 attributeDeterminedDiceModEffectMap.Item row.["attributeDeterminedDiceModEffect"] })
 
-    // AttributeDeterminedDiceMod
-    let attributeDeterminedDiceModData =
-        makeFallenData "AttributeDeterminedDiceModData.csv" (fun row ->
-            (string row.["name"], string row.["attributesToEffect"], string row.["dicePoolModification"]))
-
     let combatVocationalSkill =
         List.append
             (List.map (fun (weaponClassData: WeaponClass) -> weaponClassData.name) weaponClassData)
