@@ -769,6 +769,7 @@ module AttributeStatAdjustmentEffect =
 
 module EffectForDisplay =
     open SkillDiceModificationEffect
+    open Attribute
 
     type DurationAndSource = { duration: string; source: string }
 
@@ -877,15 +878,6 @@ module MovementSpeedCalculation =
 
         let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
         sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
-
-module CharacterEffect =
-
-    open EffectForDisplay
-    open SkillDiceModificationEffect
-
-    type CharacterEffect =
-        | EffectForDisplay of EffectForDisplay
-        | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
 
 module Item =
     open ItemTier
@@ -1562,11 +1554,12 @@ module CombatRoll =
                 attributeDeterminedDiceModList
                 combatRollGoverningAttributeList)
 
-module CarryWeightCalculation =
+module CarryWeightEffect =
     open Attribute
     open SkillStat
     open VocationGroup
     open Neg1To4
+    open EffectForDisplay
 
     type CarryWeightCalculation =
         { name: string
@@ -1582,6 +1575,11 @@ module CarryWeightCalculation =
           topPercent: float
           percentOfMovementSpeed: float
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
+
+    type CalculatedCarryWeightEffectForDisplay =
+        { carryWeightCalculationEffect: CarryWeightCalculation
+          attributeDeterminedDiceMod: AttributeDeterminedDiceModEffect
+          durationAndSource: DurationAndSource }
 
     let calculateMaxCarryWeight
         (maxCarryWeightCalculation: CarryWeightCalculation)
@@ -1602,6 +1600,18 @@ module CarryWeightCalculation =
         + (skillLevel
            * int maxCarryWeightCalculation.weightIncreasePerSkill)
         |> float
+
+
+
+module CharacterEffect =
+
+    open EffectForDisplay
+    open SkillDiceModificationEffect
+    open CarryWeightEffect
+
+    type CharacterEffect =
+        | EffectForDisplay of EffectForDisplay
+        | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
 
 module Character =
 
