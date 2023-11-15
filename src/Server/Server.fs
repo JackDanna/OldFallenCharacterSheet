@@ -34,7 +34,7 @@ module FallenServerData =
     open FallenLib.ContainerClass
     open FallenLib.EffectForDisplay
     open FallenLib.CharacterEffect
-    open FallenLib.CarryWeightCalculation
+    open FallenLib.CarryWeightEffect
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
