@@ -28,7 +28,9 @@ let init () : Model * Cmd<Msg> =
           magicCombatMap = Map.empty
           rangeMap = Map.empty
           combatVocationalSkill = []
-          characterEffectMap = Map.empty }
+          characterEffectMap = Map.empty
+          carryWeightCalculationMap = Map.empty
+          weightClassList = [] }
       character = Character.init (List.Empty) },
 
     Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData

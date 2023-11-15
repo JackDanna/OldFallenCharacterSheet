@@ -440,7 +440,9 @@ let fallenDataApi: IFallenDataApi =
                       magicCombatMap = FallenServerData.magicCombatMap
                       rangeMap = FallenServerData.rangeMap
                       combatVocationalSkill = FallenServerData.combatVocationalSkill
-                      characterEffectMap = FallenServerData.characterEffectMap }
+                      characterEffectMap = FallenServerData.characterEffectMap
+                      carryWeightCalculationMap = FallenServerData.carryWeightCalculationMap
+                      weightClassList = FallenServerData.weightClassData }
             } }
 
 let webApp =
