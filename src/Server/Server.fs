@@ -419,6 +419,11 @@ module FallenServerData =
               governingSkill = string row.["governingSkill"]
               weightIncreasePerSkill = uint row.["weightIncreasePerSkill"] })
 
+    let carryWeightCalculationMap =
+        carryWeightCalculationData
+        |> List.map (fun carryWeightCalculation -> carryWeightCalculation.name, carryWeightCalculation)
+        |> Map.ofList
+
     let combatVocationalSkill =
         List.append
             (List.map (fun (weaponClassData: WeaponClass) -> weaponClassData.name) weaponClassData)
@@ -429,15 +434,14 @@ let fallenDataApi: IFallenDataApi =
         fun () ->
             async {
                 return
-                    (FallenServerData.coreSkillGroupData,
-                     FallenServerData.itemData,
-                     FallenServerData.magicSkillMap,
-                     FallenServerData.magicCombatMap,
-                     FallenServerData.rangeMap,
-                     FallenServerData.characterEffectMap,
-                     FallenServerData.combatVocationalSkill)
+                    { defaultCoreSkillGroupList = FallenServerData.coreSkillGroupData
+                      allItemList = FallenServerData.itemData
+                      magicSkillMap = FallenServerData.magicSkillMap
+                      magicCombatMap = FallenServerData.magicCombatMap
+                      rangeMap = FallenServerData.rangeMap
+                      combatVocationalSkill = FallenServerData.combatVocationalSkill
+                      characterEffectMap = FallenServerData.characterEffectMap }
             } }
-
 
 let webApp =
     Remoting.createApi ()

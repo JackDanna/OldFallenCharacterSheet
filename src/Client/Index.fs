@@ -5,34 +5,15 @@ open Elmish
 open Fable.Remoting.Client
 open Shared
 
-open FallenLib.Item
-open FallenLib.MagicSkill
-open FallenLib.MagicCombat
-open FallenLib.Range
-open FallenLib.CoreSkillGroup
 open FallenLib.Character
-open FallenLib.CharacterEffect
 
 type Model =
-    { defaultCoreSkillTables: CoreSkillGroup list
-      allItemList: Item list
-      magicSkillMap: Map<string, MagicSkill>
-      magicCombatMap: Map<string, MagicCombat>
-      rangeMap: Map<string, Range>
-      combatVocationalSkill: string list
-      characterEffectMap: Map<string, CharacterEffect>
+    { fallenData: FallenData
       character: Character }
 
 type Msg =
     | CharacterMsg of Character.Msg
-    | GotInitData of
-        CoreSkillGroup list *
-        Item list *
-        Map<string, MagicSkill> *
-        Map<string, MagicCombat> *
-        Map<string, Range> *
-        Map<string, CharacterEffect> *
-        string list
+    | GotInitData of FallenData
 
 let fallenDataApi =
     Remoting.createApi ()
@@ -40,56 +21,46 @@ let fallenDataApi =
     |> Remoting.buildProxy<IFallenDataApi>
 
 let init () : Model * Cmd<Msg> =
-
-    { defaultCoreSkillTables = []
-      allItemList = []
-      magicSkillMap = Map.empty
-      magicCombatMap = Map.empty
-      rangeMap = Map.empty
-      combatVocationalSkill = []
-      characterEffectMap = Map.empty
+    { fallenData =
+        { defaultCoreSkillGroupList = []
+          allItemList = []
+          magicSkillMap = Map.empty
+          magicCombatMap = Map.empty
+          rangeMap = Map.empty
+          combatVocationalSkill = []
+          characterEffectMap = Map.empty }
       character = Character.init (List.Empty) },
+
     Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
 
 let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
     match msg with
     | CharacterMsg characterMsg ->
+
         { model with
             character =
                 Character.update
-                    model.defaultCoreSkillTables
-                    model.allItemList
-                    model.magicSkillMap
-                    model.magicCombatMap
-                    model.rangeMap
-                    model.characterEffectMap
+                    model.fallenData.defaultCoreSkillGroupList
+                    model.fallenData.allItemList
+                    model.fallenData.magicSkillMap
+                    model.fallenData.magicCombatMap
+                    model.fallenData.rangeMap
+                    model.fallenData.characterEffectMap
                     characterMsg
                     model.character },
         Cmd.none
-    | GotInitData (defaultCoreSkillGroups,
-                   allItemData,
-                   magicSkillMap,
-                   magicCombatMap,
-                   rangeMap,
-                   characterEffectMap,
-                   combatVocationalSkill) ->
+    | GotInitData newFallenData ->
 
         { model with
-            defaultCoreSkillTables = defaultCoreSkillGroups
-            allItemList = allItemData
-            magicSkillMap = magicSkillMap
-            magicCombatMap = magicCombatMap
-            rangeMap = rangeMap
-            combatVocationalSkill = combatVocationalSkill
-            characterEffectMap = characterEffectMap
+            fallenData = newFallenData
             character =
                 Character.update
-                    defaultCoreSkillGroups
-                    allItemData
-                    magicSkillMap
-                    magicCombatMap
-                    rangeMap
-                    characterEffectMap
+                    newFallenData.defaultCoreSkillGroupList
+                    newFallenData.allItemList
+                    newFallenData.magicSkillMap
+                    newFallenData.magicCombatMap
+                    newFallenData.rangeMap
+                    newFallenData.characterEffectMap
                     Character.Msg.SetDefault
                     model.character },
         Cmd.none
@@ -129,9 +100,9 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
             Bulma.heroBody [
                 Character.view
-                    (model.characterEffectMap.Keys |> List.ofSeq)
-                    model.combatVocationalSkill
-                    model.allItemList
+                    (List.ofSeq model.fallenData.characterEffectMap.Keys)
+                    model.fallenData.combatVocationalSkill
+                    model.fallenData.allItemList
                     model.character
                     (CharacterMsg >> dispatch)
             ]

@@ -11,6 +11,14 @@ module Route =
     let builder typeName methodName =
         sprintf "/api/%s/%s" typeName methodName
 
+type FallenData =
+    { defaultCoreSkillGroupList: CoreSkillGroup list
+      allItemList: Item list
+      magicSkillMap: Map<string, MagicSkill>
+      magicCombatMap: Map<string, MagicCombat>
+      rangeMap: Map<string, Range>
+      combatVocationalSkill: string list
+      characterEffectMap: Map<string, CharacterEffect> }
+
 type IFallenDataApi =
-    { getInitData: unit
-        -> Async<CoreSkillGroup list * Item list * Map<string, MagicSkill> * Map<string, MagicCombat> * Map<string, Range> * Map<string, CharacterEffect> * string list> }
+    { getInitData: unit -> Async<FallenData> }
