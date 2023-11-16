@@ -12,7 +12,6 @@ let update (msg: Msg) (model: DurationAndSource) : DurationAndSource =
     | SourceMsg msg -> { model with source = StringInputTableData.update msg model.source }
 
 open Feliz
-open Feliz.Bulma
 
 let nonInteractiveView (model: DurationAndSource) =
     [ Html.td [ prop.text model.duration ]
