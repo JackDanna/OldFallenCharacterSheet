@@ -8,6 +8,7 @@ type Msg =
     | ModifyCharacterEffect of int * CharacterEffect.Msg
     | Insert of string
     | Remove of int
+    | RecalculateCarryWeightAndMovementSpeed
 
 let init () : CharacterEffect list = []
 
@@ -43,6 +44,21 @@ let update
         else
             model
     | Remove position -> List.removeAt position model
+    | RecalculateCarryWeightAndMovementSpeed ->
+        model
+        |> List.map (fun characterEffect ->
+            match characterEffect with
+            | CalculatedCarryWeightEffectForDisplay calculatedCarryWeightEffectForDisplay ->
+                CarryWeightEffectForDisplay.update
+                    (coreSkillGroupList: CoreSkillGroup list)
+                    (inventoryWeight: float)
+                    (weightClassList: WeightClass list)
+                    calculatedCarryWeightEffectForDisplay
+                |> CalculatedCarryWeightEffectForDisplay
+            | _ -> characterEffect
+
+
+        )
 
 open Feliz
 open Feliz.Bulma
