@@ -16,12 +16,10 @@ let getCharacterEffectName characterEffect =
 type Msg =
     | EffectForDisplayMsg of EffectForDisplay.Msg
     | SkillDiceModificationEffectForDisplayMsg of SkillDiceModificationEffectForDisplay.Msg
-    | CalculatedCarryWeightEffectForDisplayMsg of CarryWeightEffectForDisplay.Msg
 
 let update
     (coreSkillGroupList: CoreSkillGroup list)
     (inventoryWeight: float)
-    (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
     (weightClassList: WeightClass list)
     (msg: Msg)
     (model: CharacterEffect)
@@ -33,12 +31,11 @@ let update
     | SkillDiceModificationEffectForDisplayMsg msg, SkillDiceModificationEffectForDisplay (sdmew, das) ->
         SkillDiceModificationEffectForDisplay.update msg (sdmew, das)
         |> SkillDiceModificationEffectForDisplay
-    | CalculatedCarryWeightEffectForDisplayMsg msg, CalculatedCarryWeightEffectForDisplay ccwefd ->
+    | _, CalculatedCarryWeightEffectForDisplay ccwefd ->
         CarryWeightEffectForDisplay.update
             (coreSkillGroupList: CoreSkillGroup list)
             (inventoryWeight: float)
             (weightClassList: WeightClass list)
-            msg
             ccwefd
         |> CalculatedCarryWeightEffectForDisplay
     | _ -> model

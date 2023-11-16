@@ -25,13 +25,7 @@ let update
         model
         |> List.mapi (fun index characterEffect ->
             if position = index then
-                CharacterEffect.update
-                    coreSkillGroupList
-                    inventoryWeight
-                    carryWeightCalculationMap
-                    weightClassList
-                    msg
-                    characterEffect
+                CharacterEffect.update coreSkillGroupList inventoryWeight weightClassList msg characterEffect
             else
                 characterEffect)
     | Insert characterEffectName ->
