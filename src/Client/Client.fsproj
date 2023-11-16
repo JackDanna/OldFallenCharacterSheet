@@ -29,7 +29,7 @@
     <Compile Include="ItemEffectList.fs" />
     <Compile Include="EffectForDisplay.fs" />
     <Compile Include="SkillDiceModificationForDisplay.fs" />
-    <Compile Include="CarryWeightCalculationForDisplay.fs" />
+    <Compile Include="CarryWeightEffectForDisplay.fs" />
     <Compile Include="CharacterEffect.fs" />
     <Compile Include="CharacterEffectList.fs" />
     <Compile Include="Character.fs" />

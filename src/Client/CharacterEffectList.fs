@@ -1,6 +1,8 @@
 module CharacterEffectList
 
 open FallenLib.CharacterEffect
+open FallenLib.CarryWeightEffect
+open FallenLib.CoreSkillGroup
 
 type Msg =
     | ModifyCharacterEffect of int * CharacterEffect.Msg
@@ -9,20 +11,43 @@ type Msg =
 
 let init () : CharacterEffect list = []
 
-let update (characterEffectMap: Map<string, CharacterEffect>) (msg: Msg) (model: CharacterEffect list) =
+let update
+    (coreSkillGroupList: CoreSkillGroup list)
+    (inventoryWeight: float)
+    (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
+    (weightClassList: WeightClass list)
+    (characterEffectMap: Map<string, CharacterEffect>)
+    (msg: Msg)
+    (model: CharacterEffect list)
+    : CharacterEffect list =
     match msg with
     | ModifyCharacterEffect (position, msg) ->
         model
         |> List.mapi (fun index characterEffect ->
             if position = index then
-                CharacterEffect.update msg characterEffect
+                CharacterEffect.update
+                    coreSkillGroupList
+                    inventoryWeight
+                    carryWeightCalculationMap
+                    weightClassList
+                    msg
+                    characterEffect
             else
                 characterEffect)
     | Insert characterEffectName ->
+        if carryWeightCalculationMap.ContainsKey characterEffectName then
+            (carryWeightCalculationMap.Item characterEffectName)
+            |> determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList
+            |> CalculatedCarryWeightEffectForDisplay
+            |> List.singleton
+            |> List.append model
 
-        (characterEffectMap.Item characterEffectName)
-        |> List.singleton
-        |> List.append model
+        elif characterEffectMap.ContainsKey characterEffectName then
+            (characterEffectMap.Item characterEffectName)
+            |> List.singleton
+            |> List.append model
+        else
+            model
     | Remove position -> List.removeAt position model
 
 open Feliz

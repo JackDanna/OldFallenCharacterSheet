@@ -11,9 +11,12 @@ let update (msg: Msg) (model: DurationAndSource) : DurationAndSource =
     | DurationMsg msg -> { model with duration = StringInputTableData.update msg model.duration }
     | SourceMsg msg -> { model with source = StringInputTableData.update msg model.source }
 
+open Feliz
+open Feliz.Bulma
+
 let nonInteractiveView (model: DurationAndSource) =
-    [ StringInputTableData.nonInteractiveView model.duration
-      StringInputTableData.nonInteractiveView model.duration ]
+    [ Html.td [ prop.text model.duration ]
+      Html.td [ prop.text model.source ] ]
 
 let interactiveView (model: DurationAndSource) (dispatch: Msg -> unit) =
     [ StringInputTableData.interactiveView model.duration (DurationMsg >> dispatch)

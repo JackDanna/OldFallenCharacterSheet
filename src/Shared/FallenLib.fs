@@ -1066,12 +1066,19 @@ module CoreSkillGroup =
                 [ neg1To4ToD6DicePoolModification lvl
                   neg1To4ToD6DicePoolModification attributeLvl ])
 
-    let coreSkillGroupToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
+    let coreSkillGroupListToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
         List.map (fun coreSkillGroup -> coreSkillGroup.attributeStat) coreSkillGroups
 
-    let coreSkillGroupToAttributes coreSkillGroupData =
-        coreSkillGroupToAttributeStats coreSkillGroupData
+    let coreSkillGroupListToAttributes coreSkillGroupData =
+        coreSkillGroupListToAttributeStats coreSkillGroupData
         |> List.map (fun attributeStat -> attributeStat.attribute)
+
+    let coreSkillGroupListToSkillStats (coreSkillGroupList: CoreSkillGroup list) =
+        coreSkillGroupList
+        |> List.collect (fun coreSkillGroup -> coreSkillGroup.coreSkillList)
+
+    let coreSkillGroupListToAttributeStatsAndSkillStats (coreSkillGroupList: CoreSkillGroup list) =
+        coreSkillGroupListToAttributeStats coreSkillGroupList, coreSkillGroupListToSkillStats coreSkillGroupList
 
 module Vocation =
     open ZeroToFour
@@ -1556,10 +1563,10 @@ module CombatRoll =
 
 module CarryWeightEffect =
     open Attribute
-    open SkillStat
     open VocationGroup
     open Neg1To4
     open EffectForDisplay
+    open CoreSkillGroup
 
     type CarryWeightCalculation =
         { name: string
@@ -1577,15 +1584,14 @@ module CarryWeightEffect =
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
     type CalculatedCarryWeightEffectForDisplay =
-        { carryWeightCalculationEffect: CarryWeightCalculation
-          attributeDeterminedDiceMod: AttributeDeterminedDiceModEffect
+        { carryWeightCalculation: CarryWeightCalculation
+          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
           durationAndSource: DurationAndSource }
 
-    let calculateMaxCarryWeight
-        (maxCarryWeightCalculation: CarryWeightCalculation)
-        (attributeStatList: AttributeStat list)
-        (coreSkillList: SkillStat list)
-        =
+    let calculateCarryWeight (maxCarryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
+
+        let (attributeStatList, coreSkillList) =
+            coreSkillGroupListToAttributeStatsAndSkillStats coreSkillGroupList
 
         let attributeLevel =
             determineAttributeLvl [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
@@ -1601,17 +1607,46 @@ module CarryWeightEffect =
            * int maxCarryWeightCalculation.weightIncreasePerSkill)
         |> float
 
+    let determineWeightClass (maxCarryWeight: float) (inventoryWeight: float) (weightClassList: WeightClass list) =
 
+        let percentOfMaxCarryWeight = maxCarryWeight / inventoryWeight
+
+        List.find
+            (fun weightClass ->
+                (weightClass.topPercent >= percentOfMaxCarryWeight)
+                && (percentOfMaxCarryWeight
+                    >= weightClass.bottomPercent))
+            weightClassList
+
+    let determineCarryWeightCalculationForDisplay
+        (coreSkillGroupList: CoreSkillGroup list)
+        (inventoryWeight: float)
+        (weightClassList: WeightClass list)
+        (carryWeightCalculation: CarryWeightCalculation)
+        : CalculatedCarryWeightEffectForDisplay =
+
+        let maxCarryWeight = calculateCarryWeight carryWeightCalculation coreSkillGroupList
+
+        let weightClass =
+            determineWeightClass maxCarryWeight inventoryWeight weightClassList
+
+        let durationAndSource =
+            { duration = "Indefinite"
+              source = $"{inventoryWeight}/{maxCarryWeight} lb" }
+
+        { carryWeightCalculation = carryWeightCalculation
+          attributeDeterminedDiceModEffect = weightClass.attributeDeterminedDiceModEffect
+          durationAndSource = durationAndSource }
 
 module CharacterEffect =
 
     open EffectForDisplay
-    open SkillDiceModificationEffect
     open CarryWeightEffect
 
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay
         | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
+        | CalculatedCarryWeightEffectForDisplay of CalculatedCarryWeightEffectForDisplay
 
 module Character =
 

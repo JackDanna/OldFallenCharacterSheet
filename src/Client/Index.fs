@@ -48,6 +48,8 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     model.fallenData.magicCombatMap
                     model.fallenData.rangeMap
                     model.fallenData.characterEffectMap
+                    model.fallenData.carryWeightCalculationMap
+                    model.fallenData.weightClassList
                     characterMsg
                     model.character },
         Cmd.none
@@ -63,6 +65,8 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     newFallenData.magicCombatMap
                     newFallenData.rangeMap
                     newFallenData.characterEffectMap
+                    newFallenData.carryWeightCalculationMap
+                    newFallenData.weightClassList
                     Character.Msg.SetDefault
                     model.character },
         Cmd.none
@@ -102,7 +106,9 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
             Bulma.heroBody [
                 Character.view
-                    (List.ofSeq model.fallenData.characterEffectMap.Keys)
+                    (List.append
+                        (List.ofSeq model.fallenData.characterEffectMap.Keys)
+                        (List.ofSeq model.fallenData.carryWeightCalculationMap.Keys))
                     model.fallenData.combatVocationalSkill
                     model.fallenData.allItemList
                     model.character

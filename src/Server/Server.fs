@@ -133,7 +133,7 @@ module FallenServerData =
                   lvl = Zero }
               coreSkillList = skillStatList })
 
-    let attributeData = coreSkillGroupToAttributes coreSkillGroupData
+    let attributeData = coreSkillGroupListToAttributes coreSkillGroupData
 
     let attributeMap = stringListToTypeMap attributeData
 
@@ -324,7 +324,9 @@ module FallenServerData =
             match characterEffect with
             | EffectForDisplay efd -> efd.name, EffectForDisplay efd
             | SkillDiceModificationEffectForDisplay (sdme, durationAndSource) ->
-                sdme.name, SkillDiceModificationEffectForDisplay(sdme, durationAndSource))
+                sdme.name, SkillDiceModificationEffectForDisplay(sdme, durationAndSource)
+            | CalculatedCarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
+                ccwefd.carryWeightCalculation.name, CalculatedCarryWeightEffectForDisplay ccwefd)
         |> Map.ofList
 
     // WeaponResourceClass

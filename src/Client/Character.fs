@@ -8,6 +8,7 @@ open FallenLib.Range
 open FallenLib.Equipment
 open FallenLib.Character
 open FallenLib.CharacterEffect
+open FallenLib.CarryWeightEffect
 
 type Msg =
     | CoreSkillGroupListMsg of CoreSkillGroupList.Msg
@@ -20,7 +21,7 @@ type Msg =
     | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Character =
-    let attributeStatList = coreSkillGroupToAttributeStats coreSkillGroups
+    let attributeStatList = coreSkillGroupListToAttributeStats coreSkillGroups
 
     { name = ""
       coreSkillGroupList = coreSkillGroups
@@ -38,6 +39,8 @@ let update
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
     (characterEffectMap: Map<string, CharacterEffect>)
+    (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
+    (weightClassList: WeightClass list)
     (msg: Msg)
     (model: Character)
     : Character =
@@ -46,7 +49,7 @@ let update
             magicSkillMap
             magicCombatMap
             rangeMap
-            (coreSkillGroupToAttributes defaultCoreSkillTables)
+            (coreSkillGroupListToAttributes defaultCoreSkillTables)
             []
 
     match msg with
@@ -56,7 +59,7 @@ let update
             vocationGroupList =
                 VocationGroupList.update
                     (collectEquipmentSkillAdjustments model.equipmentList)
-                    (coreSkillGroupToAttributeStats defaultCoreSkillTables)
+                    (coreSkillGroupListToAttributeStats defaultCoreSkillTables)
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
 
@@ -70,7 +73,7 @@ let update
         let newVocationTables =
             VocationGroupList.update
                 (collectEquipmentSkillAdjustments model.equipmentList)
-                (coreSkillGroupToAttributeStats newCoreSkillTables)
+                (coreSkillGroupListToAttributeStats newCoreSkillTables)
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
 
@@ -80,7 +83,7 @@ let update
             combatRollList =
                 loadedCombatRollUpdate
                     model.equipmentList
-                    (coreSkillGroupToAttributeStats newCoreSkillTables)
+                    (coreSkillGroupListToAttributeStats newCoreSkillTables)
                     newVocationTables
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRollList }
@@ -89,7 +92,7 @@ let update
         let newVocationTables =
             VocationGroupList.update
                 (collectEquipmentSkillAdjustments model.equipmentList)
-                (coreSkillGroupToAttributeStats model.coreSkillGroupList)
+                (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                 vocationTableMsg
                 model.vocationGroupList
 
@@ -99,7 +102,7 @@ let update
             combatRollList =
                 loadedCombatRollUpdate
                     model.equipmentList
-                    (coreSkillGroupToAttributeStats model.coreSkillGroupList)
+                    (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationTables
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRollList }
@@ -113,7 +116,7 @@ let update
         let newVocationGroupList =
             VocationGroupList.update
                 (collectEquipmentSkillAdjustments newEquipmentRowList)
-                (coreSkillGroupToAttributeStats model.coreSkillGroupList)
+                (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
 
@@ -128,7 +131,7 @@ let update
             combatRollList =
                 loadedCombatRollUpdate
                     newEquipmentRowList
-                    (coreSkillGroupToAttributeStats model.coreSkillGroupList)
+                    (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationGroupList
                     (CombatRollTable.Msg.RecalculateCombatRolls)
                     model.combatRollList }
@@ -139,7 +142,16 @@ let update
         { model with destinyPoints = DestinyPoints.update destinyPointsMsg model.destinyPoints }
 
     | CharacterEffectListMsg msg ->
-        { model with characterEffectList = CharacterEffectList.update characterEffectMap msg model.characterEffectList }
+        { model with
+            characterEffectList =
+                CharacterEffectList.update
+                    model.coreSkillGroupList
+                    4.0
+                    carryWeightCalculationMap
+                    weightClassList
+                    characterEffectMap
+                    msg
+                    model.characterEffectList }
 
 open Feliz
 open Feliz.Bulma
