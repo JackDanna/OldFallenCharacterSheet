@@ -22,7 +22,6 @@ let update
             model.carryWeightCalculation
 
 open Feliz
-open Feliz.Bulma
 
 let carryWeightEffectForDisplay (model: CalculatedCarryWeightEffectForDisplay) =
     [ Html.td [
