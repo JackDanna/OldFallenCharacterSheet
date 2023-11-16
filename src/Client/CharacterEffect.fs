@@ -40,7 +40,6 @@ let update
         |> CalculatedCarryWeightEffectForDisplay
     | _ -> model
 
-
 open Feliz
 
 let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =

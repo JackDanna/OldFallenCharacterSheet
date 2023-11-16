@@ -80,7 +80,7 @@ let update
         let newCharacterEffectList =
             CharacterEffectList.update
                 newCoreSkillTables
-                4.0
+                (calculateCharacterWeight model.equipmentList model.containerList)
                 carryWeightCalculationMap
                 weightClassList
                 characterEffectMap
@@ -157,7 +157,7 @@ let update
             characterEffectList =
                 CharacterEffectList.update
                     model.coreSkillGroupList
-                    4.0
+                    (calculateCharacterWeight model.equipmentList model.containerList)
                     carryWeightCalculationMap
                     weightClassList
                     characterEffectMap

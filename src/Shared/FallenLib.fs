@@ -997,6 +997,11 @@ module Container =
           isEquipped = false
           itemList = [] }
 
+    let sumContainerListWeight (containerList: Container list) =
+        containerList
+        |> List.map (fun container -> sumItemListWeight container.itemList)
+        |> List.sum
+
 module Equipment =
     open Item
     open ConduitClass
@@ -1667,6 +1672,10 @@ module Character =
     open Container
     open ZeroToThree
     open CharacterEffect
+
+    let calculateCharacterWeight equipmentList containerList =
+        calculateEquipmentListWeight equipmentList
+        + sumContainerListWeight containerList
 
     type Character =
         { name: string
