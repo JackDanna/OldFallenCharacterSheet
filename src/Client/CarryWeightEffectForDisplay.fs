@@ -2,7 +2,7 @@ module CarryWeightEffectForDisplay
 
 open FallenLib.CarryWeightEffect
 open FallenLib.CoreSkillGroup
-open FallenLib.Dice
+open FallenLib.Attribute
 
 type Msg = | Recalculate
 
@@ -28,8 +28,8 @@ let carryWeightEffectForDisplay (model: CalculatedCarryWeightEffectForDisplay) =
           prop.text model.carryWeightCalculation.name
       ]
       Html.td [
-          model.attributeDeterminedDiceModEffect.dicePoolModification
-          |> dicePoolModificationToString
+          model.attributeDeterminedDiceModEffect
+          |> attributeDeterminedDiceModEffectToEffectString
           |> prop.text
       ] ]
     @ DurationAndSource.nonInteractiveView model.durationAndSource

@@ -378,6 +378,16 @@ module Attribute =
           attributesToEffect: Attribute list
           dicePoolModification: DicePoolModification }
 
+    let attributeDeterminedDiceModEffectToEffectString attributeDeterminedDiceModEffect =
+        let attributesString =
+            String.concat "," attributeDeterminedDiceModEffect.attributesToEffect
+
+        let dicePoolModificationString =
+            dicePoolModificationToString attributeDeterminedDiceModEffect.dicePoolModification
+
+        $"{dicePoolModificationString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
+
+
     let determineAttributeDeterminedDiceMod governingAttributeOfSkill attributeDeterminedDiceModList =
         attributeDeterminedDiceModList
         |> List.filter (fun attributeDeterminedDiceMod ->
@@ -1609,7 +1619,7 @@ module CarryWeightEffect =
 
     let determineWeightClass (maxCarryWeight: float) (inventoryWeight: float) (weightClassList: WeightClass list) =
 
-        let percentOfMaxCarryWeight = maxCarryWeight / inventoryWeight
+        let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
 
         List.find
             (fun weightClass ->
