@@ -42,7 +42,6 @@ let update
 
 
 open Feliz
-open Feliz.Bulma
 
 let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
 
