@@ -171,7 +171,7 @@ let view
         Bulma.input.text [
             prop.value model.name
             prop.placeholder "Character Name"
-            prop.onChange (SetName >> dispatch)
+            prop.onTextChange (SetName >> dispatch)
             prop.classes [
                 "is-large"
                 "has-text-centered"
