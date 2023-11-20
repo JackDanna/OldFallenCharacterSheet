@@ -152,14 +152,15 @@ let update
     | SetName newName -> { model with name = newName }
 
     | EquipmentListMsg equipmentRowListMsg ->
+
+        let newEquipmentList =
+            EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
+
         let newSkillAdjustments =
-            collectSkillAdjustments model.equipmentList model.characterEffectList
+            collectSkillAdjustments newEquipmentList model.characterEffectList
 
         let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
-
-        let newEquipmentRowList =
-            EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
+            collectAttributeDeterminedDiceModEffects newEquipmentList model.characterEffectList
 
         let newVocationGroupList =
             VocationGroupList.update
@@ -169,22 +170,33 @@ let update
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
 
+        let coreSkillGroupList =
+            CoreSkillGroupList.update
+                newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
+                CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
+                model.coreSkillGroupList
+
         { model with
-            coreSkillGroupList =
-                CoreSkillGroupList.update
-                    newSkillAdjustments
-                    newAttributeDeterminedDiceModEffects
-                    CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
-                    model.coreSkillGroupList
+            coreSkillGroupList = coreSkillGroupList
             vocationGroupList = newVocationGroupList
-            equipmentList = newEquipmentRowList
+            equipmentList = newEquipmentList
             combatRollList =
                 loadedCombatRollUpdate
-                    newEquipmentRowList
+                    newEquipmentList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationGroupList
                     CombatRollTable.Msg.RecalculateCombatRolls
-                    model.combatRollList }
+                    model.combatRollList
+            characterEffectList =
+                CharacterEffectList.update
+                    coreSkillGroupList
+                    (calculateCharacterWeight newEquipmentList model.containerList)
+                    carryWeightCalculationMap
+                    weightClassList
+                    characterEffectMap
+                    CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
+                    model.characterEffectList }
 
     | ContainerListMsg containerListMsg ->
         { model with containerList = ContainerList.update allItemList containerListMsg model.containerList }
