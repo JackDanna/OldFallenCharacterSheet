@@ -114,9 +114,13 @@ let update
             characterEffectList = newCharacterEffectList }
 
     | VocationGroupListMsg vocationTableMsg ->
+        let newSkillAdjustments =
+            collectEquipmentSkillAdjustments model.equipmentList
+            @ collectCharacterSkillDiceModifications model.characterEffectList
+
         let newVocationTables =
             VocationGroupList.update
-                (collectEquipmentSkillAdjustments model.equipmentList)
+                newSkillAdjustments
                 (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                 vocationTableMsg
                 model.vocationGroupList
@@ -129,7 +133,7 @@ let update
                     model.equipmentList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationTables
-                    (CombatRollTable.Msg.RecalculateCombatRolls)
+                    CombatRollTable.Msg.RecalculateCombatRolls
                     model.combatRollList }
 
     | SetName name -> { model with name = name }
@@ -188,17 +192,15 @@ let update
                 CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 model.coreSkillGroupList
 
-        let newVocationGroupList =
-            VocationGroupList.update
-                newSkillAdjustments
-                (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
-                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                model.vocationGroupList
-
         { model with
             characterEffectList = newCharacterEffectList
             coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
-            vocationGroupList = newVocationGroupList }
+            vocationGroupList =
+                VocationGroupList.update
+                    newSkillAdjustments
+                    (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
+                    VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
+                    model.vocationGroupList }
 
 open Feliz
 open Feliz.Bulma
