@@ -188,9 +188,17 @@ let update
                 CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 model.coreSkillGroupList
 
+        let newVocationGroupList =
+            VocationGroupList.update
+                newSkillAdjustments
+                (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
+                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
+                model.vocationGroupList
+
         { model with
             characterEffectList = newCharacterEffectList
-            coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments }
+            coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
+            vocationGroupList = newVocationGroupList }
 
 open Feliz
 open Feliz.Bulma
