@@ -55,11 +55,15 @@ let update
 
     match msg with
     | SetDefault ->
+        let newSkillAdjustments =
+            collectEquipmentSkillAdjustments model.equipmentList
+            @ collectCharacterSkillDiceModifications model.characterEffectList
+
         { model with
             coreSkillGroupList = defaultCoreSkillTables
             vocationGroupList =
                 VocationGroupList.update
-                    (collectEquipmentSkillAdjustments model.equipmentList)
+                    newSkillAdjustments
                     (coreSkillGroupListToAttributeStats defaultCoreSkillTables)
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
@@ -139,12 +143,17 @@ let update
     | SetName name -> { model with name = name }
 
     | EquipmentListMsg equipmentRowListMsg ->
+
+        let newSkillAdjustments =
+            collectEquipmentSkillAdjustments model.equipmentList
+            @ collectCharacterSkillDiceModifications model.characterEffectList
+
         let newEquipmentRowList =
             EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
 
         let newVocationGroupList =
             VocationGroupList.update
-                (collectEquipmentSkillAdjustments newEquipmentRowList)
+                newSkillAdjustments
                 (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
@@ -152,7 +161,7 @@ let update
         { model with
             coreSkillGroupList =
                 CoreSkillGroupList.update
-                    (collectEquipmentSkillAdjustments newEquipmentRowList)
+                    newSkillAdjustments
                     CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                     model.coreSkillGroupList
             vocationGroupList = newVocationGroupList
