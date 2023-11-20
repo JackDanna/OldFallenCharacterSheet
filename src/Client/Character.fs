@@ -75,7 +75,7 @@ let update
 
         // 1nd, update the core skill stats without factoring in the skillDiceModification list since we update coreSkillTables again in step 4
         let newCoreSkillTables =
-            CoreSkillGroupList.update [] coreSkillTableMsg model.coreSkillGroupList
+            CoreSkillGroupList.update [] [] coreSkillTableMsg model.coreSkillGroupList
 
         // 2rd, update the character effects based on the new skill stats
         let newCharacterEffectList =
@@ -99,6 +99,7 @@ let update
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
                 newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
                 CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 newCoreSkillTables
 
@@ -172,6 +173,7 @@ let update
             coreSkillGroupList =
                 CoreSkillGroupList.update
                     newSkillAdjustments
+                    newAttributeDeterminedDiceModEffects
                     CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                     model.coreSkillGroupList
             vocationGroupList = newVocationGroupList
@@ -210,6 +212,7 @@ let update
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
                 newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
                 CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 model.coreSkillGroupList
 

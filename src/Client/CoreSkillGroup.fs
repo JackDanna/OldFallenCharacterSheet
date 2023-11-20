@@ -2,20 +2,26 @@ module CoreSkillGroup
 
 open FallenLib.CoreSkillGroup
 open FallenLib.SkillDiceModificationEffect
+open FallenLib.Attribute
 
 type Msg =
     | AttributeMsg of AttributeStat.Msg
     | ModifyCoreSkill of int * CoreSkill.Msg
     | RecalculateCoreSkillGroup
 
-let init (skillDiceModificationEffectList: SkillDiceModificationEffect list) : CoreSkillGroup =
+let init
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+    : CoreSkillGroup =
     let attributeStat = AttributeStat.init ()
 
     { attributeStat = attributeStat
-      coreSkillList = [ CoreSkill.init skillDiceModificationEffectList attributeStat.lvl ] }
+      coreSkillList =
+        [ CoreSkill.init skillDiceModificationEffectList attributeDeterminedDiceModEffectList attributeStat ] }
 
 let update
     (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (msg: Msg)
     (model: CoreSkillGroup)
     : CoreSkillGroup =
@@ -30,7 +36,8 @@ let update
                     (fun coreSkill ->
                         CoreSkill.update
                             skillDiceModificationEffectList
-                            newAttributeStat.lvl
+                            attributeDeterminedDiceModEffectList
+                            newAttributeStat
                             CoreSkill.CalculateDicePool
                             coreSkill)
                     model.coreSkillList }
@@ -43,7 +50,8 @@ let update
                     if position = i then
                         CoreSkill.update
                             skillDiceModificationEffectList
-                            model.attributeStat.lvl
+                            attributeDeterminedDiceModEffectList
+                            model.attributeStat
                             skillRowMsg
                             skillRowModel
                     else
@@ -55,7 +63,8 @@ let update
                 |> List.map (fun coreSkill ->
                     CoreSkill.update
                         skillDiceModificationEffectList
-                        model.attributeStat.lvl
+                        attributeDeterminedDiceModEffectList
+                        model.attributeStat
                         CoreSkill.CalculateDicePool
                         coreSkill) }
 

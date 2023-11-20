@@ -2,6 +2,7 @@ module CoreSkillGroupList
 
 open FallenLib.SkillDiceModificationEffect
 open FallenLib.CoreSkillGroup
+open FallenLib.Attribute
 
 type Msg =
     | Modify of int * CoreSkillGroup.Msg
@@ -11,6 +12,7 @@ let init () : CoreSkillGroup list = []
 
 let update
     (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (msg: Msg)
     (model: CoreSkillGroup list)
     : CoreSkillGroup list =
@@ -19,7 +21,11 @@ let update
         List.mapi
             (fun i coreSkilTableModel ->
                 if i = position then
-                    CoreSkillGroup.update skillDiceModificationEffectList coreSkillTableMsg coreSkilTableModel
+                    CoreSkillGroup.update
+                        skillDiceModificationEffectList
+                        attributeDeterminedDiceModEffectList
+                        coreSkillTableMsg
+                        coreSkilTableModel
                 else
                     coreSkilTableModel)
             model
@@ -28,6 +34,7 @@ let update
             (fun coreSkillGroup ->
                 CoreSkillGroup.update
                     skillDiceModificationEffectList
+                    attributeDeterminedDiceModEffectList
                     CoreSkillGroup.Msg.RecalculateCoreSkillGroup
                     coreSkillGroup)
             model

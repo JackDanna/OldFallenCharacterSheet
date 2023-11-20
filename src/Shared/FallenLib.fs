@@ -1105,14 +1105,21 @@ module CoreSkillGroup =
         { attributeStat: AttributeStat
           coreSkillList: SkillStat list }
 
-    let coreSkillToDicePool baseDice lvl attributeLvl skillAdjustmentDiceModList =
+    let coreSkillToDicePool
+        baseDice
+        lvl
+        (attributeStat: AttributeStat)
+        skillAdjustmentDiceModList
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        =
 
-        modifyDicePoolByModList
-            baseDice
-            (List.append
-                skillAdjustmentDiceModList
-                [ neg1To4ToD6DicePoolModification lvl
-                  neg1To4ToD6DicePoolModification attributeLvl ])
+        let dicePoolModifications =
+            skillAdjustmentDiceModList
+            @ [ neg1To4ToD6DicePoolModification lvl
+                neg1To4ToD6DicePoolModification attributeStat.lvl ]
+              @ determineAttributeDeterminedDiceMod [ attributeStat.attribute ] attributeDeterminedDiceModEffectList
+
+        modifyDicePoolByModList baseDice dicePoolModifications
 
     let coreSkillGroupListToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
         List.map (fun coreSkillGroup -> coreSkillGroup.attributeStat) coreSkillGroups

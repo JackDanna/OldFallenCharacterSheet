@@ -4,13 +4,17 @@ open FallenLib.CoreSkillGroup
 open FallenLib.Dice
 open FallenLib.SkillStat
 open FallenLib.SkillDiceModificationEffect
-open FallenLib.Neg1To4
+open FallenLib.Attribute
 
 type Msg =
     | Neg1To4Msg of Neg1To4.Msg
     | CalculateDicePool
 
-let init (skillDiceModificationEffectList: SkillDiceModificationEffect list) (attributeLvl: Neg1To4) =
+let init
+    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+    (attributeStat: AttributeStat)
+    =
     let lvl = Neg1To4.init ()
 
     let name = ""
@@ -21,12 +25,14 @@ let init (skillDiceModificationEffectList: SkillDiceModificationEffect list) (at
         coreSkillToDicePool
             baseDicePool
             lvl
-            attributeLvl
-            (collectSkillAdjustmentDiceMods name skillDiceModificationEffectList) }
+            attributeStat
+            (collectSkillAdjustmentDiceMods name skillDiceModificationEffectList)
+            attributeDeterminedDiceModEffectList }
 
 let update
     (skillDiceModificationEffectList: SkillDiceModificationEffect list)
-    (attributeLvl: Neg1To4)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+    (attributeStat: AttributeStat)
     (msg: Msg)
     (model: SkillStat)
     : SkillStat =
@@ -41,16 +47,18 @@ let update
                 coreSkillToDicePool
                     baseDicePool
                     newLvl
-                    attributeLvl
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
+                    attributeStat
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    attributeDeterminedDiceModEffectList }
     | CalculateDicePool ->
         { model with
             dicePool =
                 coreSkillToDicePool
                     baseDicePool
                     model.lvl
-                    attributeLvl
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
+                    attributeStat
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    attributeDeterminedDiceModEffectList }
 
 open Feliz
 open Feliz.Bulma

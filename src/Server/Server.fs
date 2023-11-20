@@ -110,6 +110,11 @@ module FallenServerData =
     // AttributeAndCoreSkill
     let coreSkillGroupData: CoreSkillGroup list =
         makeFallenData "AttributeAndCoreSkillData.csv" (fun row ->
+
+            let attributeStat =
+                { attribute = Attribute row.["desc"]
+                  lvl = Zero }
+
             let skillStatList: SkillStat list =
                 List.collect
                     (fun (coreSkillString: string) ->
@@ -120,7 +125,7 @@ module FallenServerData =
 
                             { name = coreSkillString
                               lvl = lvl
-                              dicePool = coreSkillToDicePool baseDicePool lvl Zero [] }
+                              dicePool = coreSkillToDicePool baseDicePool lvl attributeStat [] [] }
                             |> List.singleton)
                     [ (string row.["Core Skill 1"])
                       (string row.["Core Skill 2"])
@@ -128,9 +133,7 @@ module FallenServerData =
                       (string row.["Core Skill 4"])
                       (string row.["Core Skill 5"]) ]
 
-            { attributeStat =
-                { attribute = Attribute row.["desc"]
-                  lvl = Zero }
+            { attributeStat = attributeStat
               coreSkillList = skillStatList })
 
     let attributeData = coreSkillGroupListToAttributes coreSkillGroupData
