@@ -1744,6 +1744,8 @@ module CharacterEffect =
             match characterEffect with
             | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
                 [ carryWeightEffectForDisplay.attributeDeterminedDiceModEffect ]
+            | AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectToForDisplay ->
+                [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
             | _ -> [])
 
     let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =

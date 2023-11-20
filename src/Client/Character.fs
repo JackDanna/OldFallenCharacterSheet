@@ -204,10 +204,10 @@ let update
                 model.characterEffectList
 
         let newSkillAdjustments =
-            collectSkillAdjustments model.equipmentList model.characterEffectList
+            collectSkillAdjustments model.equipmentList newCharacterEffectList
 
         let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
+            collectAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
