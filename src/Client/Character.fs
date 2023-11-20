@@ -69,7 +69,6 @@ let update
                     model.vocationGroupList }
 
     | CoreSkillGroupListMsg coreSkillTableMsg ->
-
         // 1nd, update the core skill stats without factoring in the skillDiceModification list since we update coreSkillTables again in step 4
         let newCoreSkillTables =
             CoreSkillGroupList.update [] coreSkillTableMsg model.coreSkillGroupList
@@ -143,7 +142,6 @@ let update
     | SetName name -> { model with name = name }
 
     | EquipmentListMsg equipmentRowListMsg ->
-
         let newSkillAdjustments =
             collectEquipmentSkillAdjustments model.equipmentList
             @ collectCharacterSkillDiceModifications model.characterEffectList
@@ -176,11 +174,11 @@ let update
 
     | ContainerListMsg containerListMsg ->
         { model with containerList = ContainerList.update allItemList containerListMsg model.containerList }
+
     | DestinyPointsMsg destinyPointsMsg ->
         { model with destinyPoints = DestinyPoints.update destinyPointsMsg model.destinyPoints }
 
     | CharacterEffectListMsg msg ->
-
         let newCharacterEffectList =
             CharacterEffectList.update
                 model.coreSkillGroupList
