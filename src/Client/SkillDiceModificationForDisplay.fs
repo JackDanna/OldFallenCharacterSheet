@@ -7,7 +7,7 @@ type Msg = DurationAndSourceMsg of DurationAndSource.Msg
 
 open Feliz
 
-let update (msg: Msg) (model: SkillDiceModificationEffectForDisplay) : SkillDiceModificationEffect * DurationAndSource =
+let update (msg: Msg) (model: SkillDiceModificationEffectForDisplay) : SkillDiceModificationEffectForDisplay =
     match msg with
     | DurationAndSourceMsg msg ->
         let (skillDiceModificationEffect, durationAndSource) = model
