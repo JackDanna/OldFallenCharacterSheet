@@ -6,7 +6,6 @@ open FallenLib.EffectForDisplay
 type Msg = DurationAndSourceMsg of DurationAndSource.Msg
 
 open Feliz
-open Feliz.Bulma
 
 let update (msg: Msg) (model: SkillDiceModificationEffectForDisplay) : SkillDiceModificationEffect * DurationAndSource =
     match msg with
