@@ -841,11 +841,19 @@ module ItemEffect =
             { duration = "While Equipped"
               source = source } }
 
+    let attributeDeterminedDiceModEffect (temp) source =
+        { name = temp.name
+          effect = attributeDeterminedDiceModEffectToEffectString temp
+          durationAndSource =
+            { duration = "While Equipped"
+              source = source } }
+
     let itemEffectToEffectForDisplay itemEffect =
         match itemEffect with
         | SkillDiceModificationEffect sdme -> skillDiceModificationEffectToEffectForDisplay sdme
         | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa
         | DefenseClass dc -> defenseClassToEffectForDisplay dc
+        | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme
 
     // Collects
     let collectSkillAdjustment (itemEffect: ItemEffect) =
