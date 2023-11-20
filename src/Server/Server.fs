@@ -298,7 +298,8 @@ module FallenServerData =
             match itemEffect with
             | SkillDiceModificationEffect sdme -> sdme.name, SkillDiceModificationEffect sdme
             | AttributeStatAdjustmentEffect asae -> asae.name, AttributeStatAdjustmentEffect asae
-            | DefenseClass dc -> dc.name, DefenseClass dc)
+            | DefenseClass dc -> dc.name, DefenseClass dc
+            | AttributeDeterminedDiceModEffect addme -> addme.name, AttributeDeterminedDiceModEffect addme)
         |> Map.ofList
 
     // CharacterEffectForDisplay
@@ -315,8 +316,12 @@ module FallenServerData =
         let skillDiceModificationEffectForDisplayList =
             List.map skillDiceModificationEffectToForDisplay skillDiceModificationEffectData
 
+        let attributeDeterminedDiceModEffectForDisplayList =
+            List.map attributeDeterminedDiceModEffectToForDisplay attributeDeterminedDiceModEffectData
+
         List.map EffectForDisplay characterEffectForDisplayData
         @ List.map SkillDiceModificationEffectForDisplay skillDiceModificationEffectForDisplayList
+          @ List.map AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectForDisplayList
 
     let characterEffectMap: Map<string, CharacterEffect> =
         characterEffectData
@@ -326,7 +331,9 @@ module FallenServerData =
             | SkillDiceModificationEffectForDisplay (sdme, durationAndSource) ->
                 sdme.name, SkillDiceModificationEffectForDisplay(sdme, durationAndSource)
             | CarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
-                ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd)
+                ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd
+            | AttributeDeterminedDiceModEffectForDisplay addme ->
+                addme.attributeDeterminedDiceModEffect.name, AttributeDeterminedDiceModEffectForDisplay addme)
         |> Map.ofList
 
     // WeaponResourceClass

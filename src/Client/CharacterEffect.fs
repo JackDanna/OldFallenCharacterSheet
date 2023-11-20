@@ -12,10 +12,12 @@ let getCharacterEffectName characterEffect =
     | EffectForDisplay effectForDisplay -> effectForDisplay.name
     | SkillDiceModificationEffectForDisplay (sdmew, _) -> sdmew.name
     | CarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightCalculation.name
+    | AttributeDeterminedDiceModEffectForDisplay addmefd -> addmefd.attributeDeterminedDiceModEffect.name
 
 type Msg =
     | EffectForDisplayMsg of EffectForDisplay.Msg
     | SkillDiceModificationEffectForDisplayMsg of SkillDiceModificationEffectForDisplay.Msg
+    | AttributeDeterminedDiceModEffectForDisplayMsg of AttributeDeterminedDiceModEffectForDisplay.Msg
 
 let update
     (coreSkillGroupList: CoreSkillGroup list)
@@ -53,7 +55,11 @@ let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
             (SkillDiceModificationEffectForDisplayMsg
              >> dispatch)
     | CarryWeightEffectForDisplay ccwefd -> CarryWeightEffectForDisplay.carryWeightEffectForDisplay ccwefd
+    | AttributeDeterminedDiceModEffectForDisplay addmefd ->
+        AttributeDeterminedDiceModEffectForDisplay.attributeDeterminedDiceModEffectForDisplay
+            addmefd
+            (AttributeDeterminedDiceModEffectForDisplayMsg
+             >> dispatch)
 
 let view (model: CharacterEffect) (dispatch: Msg -> unit) =
-
     characterEffectTableData model dispatch |> Html.tr

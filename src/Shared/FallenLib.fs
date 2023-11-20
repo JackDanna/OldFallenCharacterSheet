@@ -779,15 +779,26 @@ module AttributeStatAdjustmentEffect =
 
 module EffectForDisplay =
     open SkillDiceModificationEffect
+    open Attribute
 
     type DurationAndSource = { duration: string; source: string }
 
     type SkillDiceModificationEffectForDisplay = SkillDiceModificationEffect * DurationAndSource
 
+    type AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
+          durationAndSource: DurationAndSource }
+
     let skillDiceModificationEffectToForDisplay
         (sdme: SkillDiceModificationEffect)
         : SkillDiceModificationEffectForDisplay =
         sdme, { duration = "?"; source = "?" }
+
+    let attributeDeterminedDiceModEffectToForDisplay
+        (addme: AttributeDeterminedDiceModEffect)
+        : AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect = addme
+          durationAndSource = { duration = "?"; source = "?" } }
 
     type EffectForDisplay =
         { name: string
@@ -1705,6 +1716,7 @@ module CharacterEffect =
         | EffectForDisplay of EffectForDisplay
         | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
         | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
+        | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
 
     let collectCharacterSkillDiceModifications (characterEffectList: CharacterEffect list) =
         characterEffectList
