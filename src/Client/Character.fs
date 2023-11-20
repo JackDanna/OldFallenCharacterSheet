@@ -167,16 +167,30 @@ let update
         { model with destinyPoints = DestinyPoints.update destinyPointsMsg model.destinyPoints }
 
     | CharacterEffectListMsg msg ->
+
+        let newCharacterEffectList =
+            CharacterEffectList.update
+                model.coreSkillGroupList
+                (calculateCharacterWeight model.equipmentList model.containerList)
+                carryWeightCalculationMap
+                weightClassList
+                characterEffectMap
+                msg
+                model.characterEffectList
+
+        let newSkillAdjustments =
+            collectEquipmentSkillAdjustments model.equipmentList
+            @ collectCharacterSkillDiceModifications newCharacterEffectList
+
+        let newCoreSkillTablesWithSkillAdjustments =
+            CoreSkillGroupList.update
+                newSkillAdjustments
+                CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
+                model.coreSkillGroupList
+
         { model with
-            characterEffectList =
-                CharacterEffectList.update
-                    model.coreSkillGroupList
-                    (calculateCharacterWeight model.equipmentList model.containerList)
-                    carryWeightCalculationMap
-                    weightClassList
-                    characterEffectMap
-                    msg
-                    model.characterEffectList }
+            characterEffectList = newCharacterEffectList
+            coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments }
 
 open Feliz
 open Feliz.Bulma
