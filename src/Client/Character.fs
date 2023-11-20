@@ -130,7 +130,6 @@ let update
 
         { model with
             vocationGroupList = newVocationTables
-
             combatRollList =
                 loadedCombatRollUpdate
                     model.equipmentList
@@ -139,7 +138,7 @@ let update
                     CombatRollTable.Msg.RecalculateCombatRolls
                     model.combatRollList }
 
-    | SetName name -> { model with name = name }
+    | SetName newName -> { model with name = newName }
 
     | EquipmentListMsg equipmentRowListMsg ->
         let newSkillAdjustments =
