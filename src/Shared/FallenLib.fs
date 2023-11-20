@@ -819,41 +819,41 @@ module ItemEffect =
 
     let skillDiceModificationEffectToEffectForDisplay
         (skillDiceModificationEffect: SkillDiceModificationEffect)
+        duration
         source
         =
         { name = skillDiceModificationEffect.name
           effect = skillDiceModificationEffectToEffectString skillDiceModificationEffect
-          durationAndSource =
-            { duration = "While Equipped"
-              source = source } }
+          durationAndSource = { duration = duration; source = source } }
 
-    let attributeStatAdjustmentToEffectForDisplay (attributeStatAdjustment: AttributeStatAdjustmentEffect) source =
+    let attributeStatAdjustmentToEffectForDisplay
+        (attributeStatAdjustment: AttributeStatAdjustmentEffect)
+        duration
+        source
+        =
         { name = attributeStatAdjustment.name
           effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
-          durationAndSource =
-            { duration = "While Equipped"
-              source = source } }
+          durationAndSource = { duration = duration; source = source } }
 
-    let defenseClassToEffectForDisplay (defenseClass: PhysicalDefenseEffect) source =
+    let defenseClassToEffectForDisplay (defenseClass: PhysicalDefenseEffect) duration source =
         { name = defenseClass.name
           effect = physicalDefenseEffectToEffectString defenseClass
-          durationAndSource =
-            { duration = "While Equipped"
-              source = source } }
+          durationAndSource = { duration = duration; source = source } }
 
-    let attributeDeterminedDiceModEffect (temp) source =
+    let attributeDeterminedDiceModEffect (temp) duration source =
         { name = temp.name
           effect = attributeDeterminedDiceModEffectToEffectString temp
-          durationAndSource =
-            { duration = "While Equipped"
-              source = source } }
+          durationAndSource = { duration = duration; source = source } }
 
     let itemEffectToEffectForDisplay itemEffect =
+
+        let duration = "While equiped"
+
         match itemEffect with
-        | SkillDiceModificationEffect sdme -> skillDiceModificationEffectToEffectForDisplay sdme
-        | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa
-        | DefenseClass dc -> defenseClassToEffectForDisplay dc
-        | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme
+        | SkillDiceModificationEffect sdme -> skillDiceModificationEffectToEffectForDisplay sdme duration
+        | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa duration
+        | DefenseClass dc -> defenseClassToEffectForDisplay dc duration
+        | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme duration
 
     // Collects
     let collectSkillAdjustment (itemEffect: ItemEffect) =
