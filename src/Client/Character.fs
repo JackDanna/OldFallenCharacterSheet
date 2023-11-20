@@ -168,7 +168,7 @@ let update
                     newEquipmentRowList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationGroupList
-                    (CombatRollTable.Msg.RecalculateCombatRolls)
+                    CombatRollTable.Msg.RecalculateCombatRolls
                     model.combatRollList }
 
     | ContainerListMsg containerListMsg ->
