@@ -44,6 +44,7 @@ let update
     (msg: Msg)
     (model: Character)
     : Character =
+
     let loadedCombatRollUpdate =
         CombatRollTable.update
             magicSkillMap
@@ -64,19 +65,12 @@ let update
                     model.vocationGroupList }
 
     | CoreSkillGroupListMsg coreSkillTableMsg ->
+
+        // 1nd, update the core skill stats without factoring in the skillDiceModification list since we update coreSkillTables again in step 4
         let newCoreSkillTables =
-            CoreSkillGroupList.update
-                (collectEquipmentSkillAdjustments model.equipmentList)
-                coreSkillTableMsg
-                model.coreSkillGroupList
+            CoreSkillGroupList.update [] coreSkillTableMsg model.coreSkillGroupList
 
-        let newVocationTables =
-            VocationGroupList.update
-                (collectEquipmentSkillAdjustments model.equipmentList)
-                (coreSkillGroupListToAttributeStats newCoreSkillTables)
-                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                model.vocationGroupList
-
+        // 2rd, update the character effects based on the new skill stats
         let newCharacterEffectList =
             CharacterEffectList.update
                 newCoreSkillTables
@@ -87,15 +81,35 @@ let update
                 CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
                 model.characterEffectList
 
+        // 3th, grab the new skillAdjustments from both the itms and character effects
+        let newSkillAdjustments =
+            collectEquipmentSkillAdjustments model.equipmentList
+            @ collectCharacterSkillDiceModifications model.characterEffectList
+
+        // 4th, with the new CharacterEffects, update the skill Dice pools
+        let newCoreSkillTablesWithSkillAdjustments =
+            CoreSkillGroupList.update
+                newSkillAdjustments
+                CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
+                newCoreSkillTables
+
+        // 5th, update the Vocation tables, which only needs the Attribute Stats
+        let newVocationTables =
+            VocationGroupList.update
+                newSkillAdjustments
+                (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
+                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
+                model.vocationGroupList
+
         { model with
-            coreSkillGroupList = newCoreSkillTables
+            coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
             vocationGroupList = newVocationTables
             combatRollList =
                 loadedCombatRollUpdate
                     model.equipmentList
-                    (coreSkillGroupListToAttributeStats newCoreSkillTables)
+                    (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
                     newVocationTables
-                    (CombatRollTable.Msg.RecalculateCombatRolls)
+                    CombatRollTable.Msg.RecalculateCombatRolls
                     model.combatRollList
             characterEffectList = newCharacterEffectList }
 

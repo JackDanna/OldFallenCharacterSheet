@@ -779,7 +779,6 @@ module AttributeStatAdjustmentEffect =
 
 module EffectForDisplay =
     open SkillDiceModificationEffect
-    open Attribute
 
     type DurationAndSource = { duration: string; source: string }
 
@@ -1662,6 +1661,15 @@ module CharacterEffect =
         | EffectForDisplay of EffectForDisplay
         | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
         | CalculatedCarryWeightEffectForDisplay of CalculatedCarryWeightEffectForDisplay
+
+    let collectCharacterSkillDiceModifications (characterEffectList: CharacterEffect list) =
+        characterEffectList
+        |> List.collect (fun characterEffect ->
+            match characterEffect with
+            | SkillDiceModificationEffectForDisplay sdmefd ->
+                let (skillDiceModificationEffect, duratoinAndSource) = sdmefd
+                [ skillDiceModificationEffect ]
+            | _ -> [])
 
 module Character =
 
