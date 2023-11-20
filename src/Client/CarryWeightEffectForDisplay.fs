@@ -8,8 +8,8 @@ let update
     (coreSkillGroupList: CoreSkillGroup list)
     (inventoryWeight: float)
     (weightClassList: WeightClass list)
-    (model: CalculatedCarryWeightEffectForDisplay)
-    : CalculatedCarryWeightEffectForDisplay =
+    (model: CarryWeightEffectForDisplay)
+    : CarryWeightEffectForDisplay =
     determineCarryWeightCalculationForDisplay
         coreSkillGroupList
         inventoryWeight
@@ -18,7 +18,7 @@ let update
 
 open Feliz
 
-let carryWeightEffectForDisplay (model: CalculatedCarryWeightEffectForDisplay) =
+let carryWeightEffectForDisplay (model: CarryWeightEffectForDisplay) =
     [ Html.td [
           prop.text model.carryWeightCalculation.name
       ]

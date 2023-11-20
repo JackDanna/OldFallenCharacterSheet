@@ -325,8 +325,8 @@ module FallenServerData =
             | EffectForDisplay efd -> efd.name, EffectForDisplay efd
             | SkillDiceModificationEffectForDisplay (sdme, durationAndSource) ->
                 sdme.name, SkillDiceModificationEffectForDisplay(sdme, durationAndSource)
-            | CalculatedCarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
-                ccwefd.carryWeightCalculation.name, CalculatedCarryWeightEffectForDisplay ccwefd)
+            | CarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
+                ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd)
         |> Map.ofList
 
     // WeaponResourceClass

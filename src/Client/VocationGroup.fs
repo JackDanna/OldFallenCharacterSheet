@@ -19,6 +19,7 @@ let init (attributeStatList: AttributeStat List) : VocationGroup =
 
 let update
     (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStatList: AttributeStat List)
     (msg: Msg)
     (model: VocationGroup)
@@ -26,7 +27,12 @@ let update
     match msg with
     | VocationRowMsg vocationRowMsg ->
         let newVocation =
-            Vocation.update skillDiceModificationEffectList attributeStatList vocationRowMsg model.vocation
+            Vocation.update
+                skillDiceModificationEffectList
+                attributeDeterminedDiceModEffectList
+                attributeStatList
+                vocationRowMsg
+                model.vocation
 
         { model with
             vocation = newVocation
@@ -35,6 +41,7 @@ let update
                     (fun vocationalSkill ->
                         VocationalSkill.update
                             skillDiceModificationEffectList
+                            attributeDeterminedDiceModEffectList
                             newVocation.level
                             newVocation.governingAttributes
                             VocationalSkill.Msg.CalculateDicePool
@@ -62,6 +69,7 @@ let update
                     if position = index then
                         VocationalSkill.update
                             skillDiceModificationEffectList
+                            attributeDeterminedDiceModEffectList
                             model.vocation.level
                             model.vocation.governingAttributes
                             msg
@@ -72,6 +80,7 @@ let update
         let newVocation =
             Vocation.update
                 skillDiceModificationEffectList
+                attributeDeterminedDiceModEffectList
                 attributeStatList
                 Vocation.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocation
@@ -83,6 +92,7 @@ let update
                     (fun vocationalSkill ->
                         VocationalSkill.update
                             skillDiceModificationEffectList
+                            attributeDeterminedDiceModEffectList
                             newVocation.level
                             newVocation.governingAttributes
                             VocationalSkill.Msg.CalculateDicePool

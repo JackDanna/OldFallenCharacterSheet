@@ -22,6 +22,7 @@ let init (attributeStatList: AttributeStat List) : Vocation =
 
 let update
     (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStatList: AttributeStat List)
     (msg: Msg)
     (model: Vocation)

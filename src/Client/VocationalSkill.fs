@@ -6,6 +6,7 @@ open FallenLib.Dice
 open FallenLib.SkillStat
 open FallenLib.ZeroToFour
 open FallenLib.SkillDiceModificationEffect
+open FallenLib.Attribute
 
 type Msg =
     | SetName of string
@@ -17,11 +18,12 @@ let init (governingAttribute: GoverningAttribute list) : SkillStat =
 
     { name = ""
       lvl = lvl
-      dicePool = vocationalSkillToDicePool baseDicePool lvl governingAttribute [] }
+      dicePool = vocationalSkillToDicePool baseDicePool lvl governingAttribute [] [] }
 
 
 let update
     (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (levelCap: ZeroToFour)
     (governingAttributeList: GoverningAttribute list)
     (msg: Msg)
@@ -39,7 +41,8 @@ let update
                     baseDicePool
                     lvl
                     governingAttributeList
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    attributeDeterminedDiceModEffectList }
     | CalculateDicePool ->
         let newLvl =
             VocationalSkillStat.update levelCap VocationalSkillStat.Msg.CheckIfLevelCapExceeded model.lvl
@@ -51,7 +54,8 @@ let update
                     baseDicePool
                     newLvl
                     governingAttributeList
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    attributeDeterminedDiceModEffectList }
 
 open Feliz
 open Feliz.Bulma

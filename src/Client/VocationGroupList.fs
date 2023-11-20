@@ -15,6 +15,7 @@ let init (attributeStatList: AttributeStat List) : VocationGroup list =
 
 let update
     (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStatList: AttributeStat List)
     (msg: Msg)
     (model: VocationGroup list)
@@ -26,6 +27,7 @@ let update
             if i = position then
                 VocationGroup.update
                     skillDiceModificationEffectList
+                    attributeDeterminedDiceModEffectList
                     attributeStatList
                     vocationTableMsg
                     vocationTableModel
@@ -36,6 +38,7 @@ let update
         |> List.map (fun vocationTable ->
             VocationGroup.update
                 skillDiceModificationEffectList
+                attributeDeterminedDiceModEffectList
                 attributeStatList
                 VocationGroup.Msg.SetAttributeStatsAndCalculateDicePools
                 vocationTable)

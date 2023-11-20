@@ -56,19 +56,23 @@ let update
     match msg with
     | SetDefault ->
         let newSkillAdjustments =
-            collectEquipmentSkillAdjustments model.equipmentList
-            @ collectCharacterSkillDiceModifications model.characterEffectList
+            collectSkillAdjustments model.equipmentList model.characterEffectList
+
+        let newAttributeDeterminedDiceModEffects =
+            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         { model with
             coreSkillGroupList = defaultCoreSkillTables
             vocationGroupList =
                 VocationGroupList.update
                     newSkillAdjustments
+                    newAttributeDeterminedDiceModEffects
                     (coreSkillGroupListToAttributeStats defaultCoreSkillTables)
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
 
     | CoreSkillGroupListMsg coreSkillTableMsg ->
+
         // 1nd, update the core skill stats without factoring in the skillDiceModification list since we update coreSkillTables again in step 4
         let newCoreSkillTables =
             CoreSkillGroupList.update [] coreSkillTableMsg model.coreSkillGroupList
@@ -86,8 +90,10 @@ let update
 
         // 3th, grab the new skillAdjustments from both the itms and character effects
         let newSkillAdjustments =
-            collectEquipmentSkillAdjustments model.equipmentList
-            @ collectCharacterSkillDiceModifications model.characterEffectList
+            collectSkillAdjustments model.equipmentList model.characterEffectList
+
+        let newAttributeDeterminedDiceModEffects =
+            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         // 4th, with the new CharacterEffects, update the skill Dice pools
         let newCoreSkillTablesWithSkillAdjustments =
@@ -100,6 +106,7 @@ let update
         let newVocationTables =
             VocationGroupList.update
                 newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
                 (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
@@ -118,12 +125,15 @@ let update
 
     | VocationGroupListMsg vocationTableMsg ->
         let newSkillAdjustments =
-            collectEquipmentSkillAdjustments model.equipmentList
-            @ collectCharacterSkillDiceModifications model.characterEffectList
+            collectSkillAdjustments model.equipmentList model.characterEffectList
+
+        let newAttributeDeterminedDiceModEffects =
+            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         let newVocationTables =
             VocationGroupList.update
                 newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
                 (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                 vocationTableMsg
                 model.vocationGroupList
@@ -142,8 +152,10 @@ let update
 
     | EquipmentListMsg equipmentRowListMsg ->
         let newSkillAdjustments =
-            collectEquipmentSkillAdjustments model.equipmentList
-            @ collectCharacterSkillDiceModifications model.characterEffectList
+            collectSkillAdjustments model.equipmentList model.characterEffectList
+
+        let newAttributeDeterminedDiceModEffects =
+            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         let newEquipmentRowList =
             EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
@@ -151,6 +163,7 @@ let update
         let newVocationGroupList =
             VocationGroupList.update
                 newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
                 (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
@@ -189,8 +202,10 @@ let update
                 model.characterEffectList
 
         let newSkillAdjustments =
-            collectEquipmentSkillAdjustments model.equipmentList
-            @ collectCharacterSkillDiceModifications newCharacterEffectList
+            collectSkillAdjustments model.equipmentList model.characterEffectList
+
+        let newAttributeDeterminedDiceModEffects =
+            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
@@ -204,6 +219,7 @@ let update
             vocationGroupList =
                 VocationGroupList.update
                     newSkillAdjustments
+                    newAttributeDeterminedDiceModEffects
                     (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
@@ -249,7 +265,7 @@ let view
         CombatRollTable.view model.combatRollList
 
         ContainerList.view
-            (List.collect collectItemNameWithContainerClasses allItemList)
+            (List.collect collectContainerClassItemName allItemList)
             allItemNameList
             model.containerList
             (ContainerListMsg >> dispatch)

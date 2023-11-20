@@ -800,17 +800,20 @@ module ItemEffect =
     open AttributeStatAdjustmentEffect
     open PhysicalDefenseEffect
     open EffectForDisplay
+    open Attribute
 
     type ItemEffect =
         | SkillDiceModificationEffect of SkillDiceModificationEffect
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
         | DefenseClass of PhysicalDefenseEffect
+        | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
 
     let itemEffectToString itemEffect =
         match itemEffect with
         | SkillDiceModificationEffect skillDiceModificationEffect -> skillDiceModificationEffect.name
         | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
         | DefenseClass defenseClass -> defenseClass.name
+        | AttributeDeterminedDiceModEffect addme -> addme.name
 
     // _ToEffectForDisplay
 
@@ -848,6 +851,11 @@ module ItemEffect =
     let collectSkillAdjustment (itemEffect: ItemEffect) =
         match itemEffect with
         | SkillDiceModificationEffect skillAdjustment -> [ skillAdjustment ]
+        | _ -> []
+
+    let collectAttributeDeterminedDiceModEffect (itemEffect: ItemEffect) =
+        match itemEffect with
+        | AttributeDeterminedDiceModEffect addme -> [ addme ]
         | _ -> []
 
 module MovementSpeedCalculation =
@@ -916,7 +924,6 @@ module Item =
         else
             List.sumBy (fun item -> item.weight) itemList
 
-
     let itemClassesToString itemClasses =
         List.map
             (fun itemClass ->
@@ -957,11 +964,11 @@ module Item =
             | ContainerClass specifiedItemClass -> [ (item.name, specifiedItemClass) ]
             | _ -> [])
 
-    let collectItemNameWithContainerClasses item =
+    let collectContainerClassItemName item =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
-            | ContainerClass specifiedItemClass -> [ item.name ]
+            | ContainerClass _ -> [ item.name ]
             | _ -> [])
 
     let collectItemEffectSubTypes (collectItemEffectSubType) (item: Item) =
@@ -979,6 +986,9 @@ module Item =
             | _ -> [])
 
     let collectSkillAdjustments = collectItemEffectSubTypes collectSkillAdjustment
+
+    let collectAttributeDeterminedDiceModEffects =
+        collectItemEffectSubTypes collectAttributeDeterminedDiceModEffect
 
 module Container =
     open ContainerClass
@@ -1045,6 +1055,11 @@ module Equipment =
         |> getEquipedItems
         |> List.collect collectSkillAdjustments
 
+    let collectEquipedEquipmentAttributeDeterminedDiceModEffects equipmentList =
+        equipmentList
+        |> getEquipedItems
+        |> List.collect collectAttributeDeterminedDiceModEffects
+
     let getEquipedEffectItems equipmentList =
         equipmentList
         |> getEquipedItems
@@ -1103,6 +1118,15 @@ module Vocation =
         { isGoverning: bool
           attributeStat: AttributeStat }
 
+    let collectGovernedAttributes governingAttributes =
+        List.collect
+            (fun governingAttribute ->
+                if governingAttribute.isGoverning then
+                    [ governingAttribute.attributeStat.attribute ]
+                else
+                    [])
+            governingAttributes
+
     type Vocation =
         { name: string
           level: ZeroToFour
@@ -1153,6 +1177,7 @@ module VocationGroup =
     open SkillStat
     open Vocation
     open Dice
+    open Attribute
 
     type VocationGroup =
         { vocation: Vocation
@@ -1161,11 +1186,11 @@ module VocationGroup =
     let findVocationalSkillLvlWithDefault skillName (defaultLvl: Neg1To4) (skillStatList: SkillStat list) =
         skillStatList
         |> List.filter (fun skill -> skill.name = skillName)
-        |> (fun list ->
+        |> (fun (list: SkillStat list) ->
             if list.Length = 0 then
                 defaultLvl
             else
-                List.maxBy (fun skill -> skill.lvl) list
+                List.maxBy (fun (skill: SkillStat) -> skill.lvl) list
                 |> (fun skillList -> skillList.lvl))
 
     let findVocationalSkillLvl
@@ -1186,11 +1211,21 @@ module VocationGroup =
         | Three -> Neg1To4.Three
         | Four -> Neg1To4.Four
 
-    let vocationalSkillToDicePool baseDice level governingAttributes skillAdjustmentDiceModList =
+    let vocationalSkillToDicePool
+        baseDice
+        level
+        governingAttributes
+        skillAdjustmentDiceModList
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        =
+
         let diceModList =
             (governingAttributesToDicePoolModification governingAttributes)
             @ [ neg1To4ToD6DicePoolModification level ]
               @ skillAdjustmentDiceModList
+                @ determineAttributeDeterminedDiceMod
+                    (collectGovernedAttributes governingAttributes)
+                    attributeDeterminedDiceModEffectList
 
         modifyDicePoolByModList baseDice diceModList
 
@@ -1597,7 +1632,7 @@ module CarryWeightEffect =
           percentOfMovementSpeed: float
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
-    type CalculatedCarryWeightEffectForDisplay =
+    type CarryWeightEffectForDisplay =
         { carryWeightCalculation: CarryWeightCalculation
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
           durationAndSource: DurationAndSource }
@@ -1637,7 +1672,7 @@ module CarryWeightEffect =
         (inventoryWeight: float)
         (weightClassList: WeightClass list)
         (carryWeightCalculation: CarryWeightCalculation)
-        : CalculatedCarryWeightEffectForDisplay =
+        : CarryWeightEffectForDisplay =
 
         let maxCarryWeight = calculateCarryWeight carryWeightCalculation coreSkillGroupList
 
@@ -1656,11 +1691,12 @@ module CharacterEffect =
 
     open EffectForDisplay
     open CarryWeightEffect
+    open Equipment
 
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay
         | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
-        | CalculatedCarryWeightEffectForDisplay of CalculatedCarryWeightEffectForDisplay
+        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
 
     let collectCharacterSkillDiceModifications (characterEffectList: CharacterEffect list) =
         characterEffectList
@@ -1670,6 +1706,22 @@ module CharacterEffect =
                 let (skillDiceModificationEffect, duratoinAndSource) = sdmefd
                 [ skillDiceModificationEffect ]
             | _ -> [])
+
+    let collectSkillAdjustments equipmentList characterEffectList =
+        collectEquipmentSkillAdjustments equipmentList
+        @ collectCharacterSkillDiceModifications characterEffectList
+
+    let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: CharacterEffect list) =
+        characterEffectList
+        |> List.collect (fun characterEffect ->
+            match characterEffect with
+            | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
+                [ carryWeightEffectForDisplay.attributeDeterminedDiceModEffect ]
+            | _ -> [])
+
+    let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =
+        collectEquipedEquipmentAttributeDeterminedDiceModEffects equipmentList
+        @ collectCharacterAttributeDeterminedDiceModEffects characterEffectList
 
 module Character =
 

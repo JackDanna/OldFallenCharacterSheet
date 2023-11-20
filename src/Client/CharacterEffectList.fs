@@ -33,7 +33,7 @@ let update
         if carryWeightCalculationMap.ContainsKey characterEffectName then
             (carryWeightCalculationMap.Item characterEffectName)
             |> determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList
-            |> CalculatedCarryWeightEffectForDisplay
+            |> CarryWeightEffectForDisplay
             |> List.singleton
             |> List.append model
 
@@ -48,13 +48,13 @@ let update
         model
         |> List.map (fun characterEffect ->
             match characterEffect with
-            | CalculatedCarryWeightEffectForDisplay calculatedCarryWeightEffectForDisplay ->
+            | CarryWeightEffectForDisplay calculatedCarryWeightEffectForDisplay ->
                 CarryWeightEffectForDisplay.update
                     (coreSkillGroupList: CoreSkillGroup list)
                     (inventoryWeight: float)
                     (weightClassList: WeightClass list)
                     calculatedCarryWeightEffectForDisplay
-                |> CalculatedCarryWeightEffectForDisplay
+                |> CarryWeightEffectForDisplay
             | _ -> characterEffect
 
 

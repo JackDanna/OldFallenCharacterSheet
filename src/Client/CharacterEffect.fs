@@ -11,7 +11,7 @@ let getCharacterEffectName characterEffect =
     match characterEffect with
     | EffectForDisplay effectForDisplay -> effectForDisplay.name
     | SkillDiceModificationEffectForDisplay (sdmew, _) -> sdmew.name
-    | CalculatedCarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightCalculation.name
+    | CarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightCalculation.name
 
 type Msg =
     | EffectForDisplayMsg of EffectForDisplay.Msg
@@ -31,13 +31,13 @@ let update
     | SkillDiceModificationEffectForDisplayMsg msg, SkillDiceModificationEffectForDisplay (sdmew, das) ->
         SkillDiceModificationEffectForDisplay.update msg (sdmew, das)
         |> SkillDiceModificationEffectForDisplay
-    | _, CalculatedCarryWeightEffectForDisplay ccwefd ->
+    | _, CarryWeightEffectForDisplay ccwefd ->
         CarryWeightEffectForDisplay.update
             (coreSkillGroupList: CoreSkillGroup list)
             (inventoryWeight: float)
             (weightClassList: WeightClass list)
             ccwefd
-        |> CalculatedCarryWeightEffectForDisplay
+        |> CarryWeightEffectForDisplay
     | _ -> model
 
 open Feliz
@@ -52,7 +52,7 @@ let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
             sdmefd
             (SkillDiceModificationEffectForDisplayMsg
              >> dispatch)
-    | CalculatedCarryWeightEffectForDisplay ccwefd -> CarryWeightEffectForDisplay.carryWeightEffectForDisplay ccwefd
+    | CarryWeightEffectForDisplay ccwefd -> CarryWeightEffectForDisplay.carryWeightEffectForDisplay ccwefd
 
 let view (model: CharacterEffect) (dispatch: Msg -> unit) =
 
