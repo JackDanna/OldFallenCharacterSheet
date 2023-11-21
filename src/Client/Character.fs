@@ -199,7 +199,43 @@ let update
                     model.characterEffectList }
 
     | ContainerListMsg containerListMsg ->
-        { model with containerList = ContainerList.update allItemList containerListMsg model.containerList }
+        let newContainerList =
+            ContainerList.update allItemList containerListMsg model.containerList
+
+        let newCharacterEffectList =
+            CharacterEffectList.update
+                model.coreSkillGroupList
+                (calculateCharacterWeight model.equipmentList newContainerList)
+                carryWeightCalculationMap
+                weightClassList
+                characterEffectMap
+                CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
+                model.characterEffectList
+
+        let newSkillAdjustments =
+            collectSkillAdjustments model.equipmentList newCharacterEffectList
+
+        let newAttributeDeterminedDiceModEffects =
+            collectAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
+
+        let newCoreSkillTablesWithSkillAdjustments =
+            CoreSkillGroupList.update
+                newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
+                CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
+                model.coreSkillGroupList
+
+        { model with
+            containerList = newContainerList
+            characterEffectList = newCharacterEffectList
+            coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
+            vocationGroupList =
+                VocationGroupList.update
+                    newSkillAdjustments
+                    newAttributeDeterminedDiceModEffects
+                    (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
+                    VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
+                    model.vocationGroupList }
 
     | DestinyPointsMsg destinyPointsMsg ->
         { model with destinyPoints = DestinyPoints.update destinyPointsMsg model.destinyPoints }
