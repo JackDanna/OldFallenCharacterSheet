@@ -1762,9 +1762,12 @@ module Character =
     open ZeroToThree
     open CharacterEffect
 
-    let calculateCharacterWeight equipmentList containerList =
-        calculateEquipmentListWeight equipmentList
-        + sumContainerListWeight containerList
+    let calculateCharacterWeight equipmentList (containerList: Container list) =
+        containerList
+        |> List.filter (fun container -> container.isEquipped)
+        |> sumContainerListWeight
+        |> (+) (calculateEquipmentListWeight equipmentList)
+
 
     type Character =
         { name: string
