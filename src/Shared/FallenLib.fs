@@ -899,12 +899,16 @@ module MovementSpeedCalculation =
             neg1To4ToInt skillLvl
             * int movementSpeedCalculation.feetPerSkillLvl
 
-        match (int movementSpeedCalculation.baseMovementSpeed
-               + attributeMod
-               + skillMod)
-            with
-        | n when n >= 0 -> uint n
-        | _ -> 0u
+        let movementSpeed =
+            int movementSpeedCalculation.baseMovementSpeed
+            + attributeMod
+            + skillMod
+
+        if movementSpeed >= 0 then
+            uint movementSpeed
+        else
+            0u
+
 
     let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
         let decimalPlaces = 0
