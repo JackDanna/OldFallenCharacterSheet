@@ -416,10 +416,15 @@ module FallenServerData =
         makeFallenData "MovementSpeedCalculationData.csv" (fun row ->
             { name = string row.["desc"]
               baseMovementSpeed = uint row.["baseMovementSpeed"]
-              governingAttributes = stringToAttributes row.["governingAttributes"]
+              governingAttribute = attributeMap.Item row.["governingAttributes"]
               feetPerAttributeLvl = uint row.["feetPerAttributeLvl"]
               governingSkill = string row.["governingSkill"]
               feetPerSkillLvl = uint row.["feetPerSkillLvl"] })
+
+    let movementSpeedCalculationMap =
+        movementSpeedCalculationData
+        |> List.map (fun movementSpeedCalculationData -> movementSpeedCalculationData.name, movementSpeedCalculationData)
+        |> Map.ofList
 
     // CarryWeightCalculation
     let carryWeightCalculationData =
@@ -454,7 +459,8 @@ let fallenDataApi: IFallenDataApi =
                       combatVocationalSkill = FallenServerData.combatVocationalSkill
                       characterEffectMap = FallenServerData.characterEffectMap
                       carryWeightCalculationMap = FallenServerData.carryWeightCalculationMap
-                      weightClassList = FallenServerData.weightClassData }
+                      weightClassList = FallenServerData.weightClassData
+                      movementSpeedCalculationMap = FallenServerData.movementSpeedCalculationMap }
             } }
 
 let webApp =

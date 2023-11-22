@@ -7,6 +7,7 @@ open FallenLib.Range
 open FallenLib.CoreSkillGroup
 open FallenLib.CharacterEffect
 open FallenLib.CarryWeightEffect
+open FallenLib.MovementSpeedCalculation
 
 module Route =
     let builder typeName methodName =
@@ -21,7 +22,8 @@ type FallenData =
       combatVocationalSkill: string list
       characterEffectMap: Map<string, CharacterEffect>
       carryWeightCalculationMap: Map<string, CarryWeightCalculation>
-      weightClassList: WeightClass List }
+      weightClassList: WeightClass List
+      movementSpeedCalculationMap: Map<string, MovementSpeedCalculation> }
 
 type IFallenDataApi =
     { getInitData: unit -> Async<FallenData> }

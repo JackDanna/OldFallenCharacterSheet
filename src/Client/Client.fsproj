@@ -31,6 +31,7 @@
     <Compile Include="SkillDiceModificationEffectForDisplay.fs" />
     <Compile Include="AttributeDeterminedDiceModEffectForDisplay.fs" />
     <Compile Include="CarryWeightEffectForDisplay.fs" />
+    <Compile Include="MovementSpeedEffectForDisplay.fs" />
     <Compile Include="CharacterEffect.fs" />
     <Compile Include="CharacterEffectList.fs" />
     <Compile Include="Character.fs" />

@@ -3,6 +3,7 @@ module CharacterEffectList
 open FallenLib.CharacterEffect
 open FallenLib.CarryWeightEffect
 open FallenLib.CoreSkillGroup
+open FallenLib.MovementSpeedCalculation
 
 type Msg =
     | ModifyCharacterEffect of int * CharacterEffect.Msg
@@ -18,6 +19,7 @@ let update
     (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
     (weightClassList: WeightClass list)
     (characterEffectMap: Map<string, CharacterEffect>)
+    (movementSpeedCalculationMap: Map<string, MovementSpeedCalculation>)
     (msg: Msg)
     (model: CharacterEffect list)
     : CharacterEffect list =
@@ -36,9 +38,14 @@ let update
             |> CarryWeightEffectForDisplay
             |> List.singleton
             |> List.append model
-
         elif characterEffectMap.ContainsKey characterEffectName then
             (characterEffectMap.Item characterEffectName)
+            |> List.singleton
+            |> List.append model
+        elif movementSpeedCalculationMap.ContainsKey characterEffectName then
+            (movementSpeedCalculationMap.Item characterEffectName)
+            |> determineMovementSpeedEffectForDisplay coreSkillGroupList 1.00
+            |> MovementSpeedEffectForDisplay
             |> List.singleton
             |> List.append model
         else

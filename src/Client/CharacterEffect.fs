@@ -7,13 +7,6 @@ open FallenLib.CoreSkillGroup
 
 open FallenLib.CharacterEffect
 
-let getCharacterEffectName characterEffect =
-    match characterEffect with
-    | EffectForDisplay effectForDisplay -> effectForDisplay.name
-    | SkillDiceModificationEffectForDisplay (sdmew, _) -> sdmew.name
-    | CarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightCalculation.name
-    | AttributeDeterminedDiceModEffectForDisplay addmefd -> addmefd.attributeDeterminedDiceModEffect.name
-
 type Msg =
     | EffectForDisplayMsg of EffectForDisplay.Msg
     | SkillDiceModificationEffectForDisplayMsg of SkillDiceModificationEffectForDisplay.Msg
@@ -60,6 +53,9 @@ let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
             addmefd
             (AttributeDeterminedDiceModEffectForDisplayMsg
              >> dispatch)
+    | MovementSpeedEffectForDisplay msefd -> MovementSpeedEffectForDisplay.movementSpeedEffectForDisplay msefd
+
+
 
 let view (model: CharacterEffect) (dispatch: Msg -> unit) =
     characterEffectTableData model dispatch |> Html.tr

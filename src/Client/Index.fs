@@ -30,7 +30,8 @@ let init () : Model * Cmd<Msg> =
           combatVocationalSkill = []
           characterEffectMap = Map.empty
           carryWeightCalculationMap = Map.empty
-          weightClassList = [] }
+          weightClassList = []
+          movementSpeedCalculationMap = Map.empty }
       character = Character.init (List.Empty) },
 
     Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
@@ -50,6 +51,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     model.fallenData.characterEffectMap
                     model.fallenData.carryWeightCalculationMap
                     model.fallenData.weightClassList
+                    model.fallenData.movementSpeedCalculationMap
                     characterMsg
                     model.character },
         Cmd.none
@@ -67,6 +69,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     newFallenData.characterEffectMap
                     newFallenData.carryWeightCalculationMap
                     newFallenData.weightClassList
+                    model.fallenData.movementSpeedCalculationMap
                     Character.Msg.SetDefault
                     model.character },
         Cmd.none
@@ -106,9 +109,9 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
             Bulma.heroBody [
                 Character.view
-                    (List.append
-                        (List.ofSeq model.fallenData.characterEffectMap.Keys)
-                        (List.ofSeq model.fallenData.carryWeightCalculationMap.Keys))
+                    ((List.ofSeq model.fallenData.characterEffectMap.Keys)
+                     @ (List.ofSeq model.fallenData.carryWeightCalculationMap.Keys)
+                       @ (List.ofSeq model.fallenData.movementSpeedCalculationMap.Keys))
                     model.fallenData.combatVocationalSkill
                     model.fallenData.allItemList
                     model.character

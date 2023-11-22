@@ -9,6 +9,7 @@ open FallenLib.Equipment
 open FallenLib.Character
 open FallenLib.CharacterEffect
 open FallenLib.CarryWeightEffect
+open FallenLib.MovementSpeedCalculation
 
 type Msg =
     | CoreSkillGroupListMsg of CoreSkillGroupList.Msg
@@ -41,6 +42,7 @@ let update
     (characterEffectMap: Map<string, CharacterEffect>)
     (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
     (weightClassList: WeightClass list)
+    (movementSpeedCalculationMap: Map<string, MovementSpeedCalculation>)
     (msg: Msg)
     (model: Character)
     : Character =
@@ -85,6 +87,7 @@ let update
                 carryWeightCalculationMap
                 weightClassList
                 characterEffectMap
+                movementSpeedCalculationMap
                 CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
                 model.characterEffectList
 
@@ -195,6 +198,7 @@ let update
                     carryWeightCalculationMap
                     weightClassList
                     characterEffectMap
+                    movementSpeedCalculationMap
                     CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
                     model.characterEffectList }
 
@@ -209,6 +213,7 @@ let update
                 carryWeightCalculationMap
                 weightClassList
                 characterEffectMap
+                movementSpeedCalculationMap
                 CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
                 model.characterEffectList
 
@@ -248,6 +253,7 @@ let update
                 carryWeightCalculationMap
                 weightClassList
                 characterEffectMap
+                movementSpeedCalculationMap
                 msg
                 model.characterEffectList
 

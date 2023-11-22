@@ -877,48 +877,6 @@ module ItemEffect =
         | AttributeDeterminedDiceModEffect addme -> [ addme ]
         | _ -> []
 
-module MovementSpeedCalculation =
-
-    open Attribute
-    open Neg1To4
-
-    type MovementSpeedCalculation =
-        { name: string
-          baseMovementSpeed: uint
-          governingAttributes: Attribute list
-          feetPerAttributeLvl: uint
-          governingSkill: string
-          feetPerSkillLvl: uint }
-
-    let calculateMovementSpeed movementSpeedCalculation (attributeLvl: Neg1To4) (skillLvl: Neg1To4) =
-        let attributeMod =
-            neg1To4ToInt attributeLvl
-            * int movementSpeedCalculation.feetPerAttributeLvl
-
-        let skillMod =
-            neg1To4ToInt skillLvl
-            * int movementSpeedCalculation.feetPerSkillLvl
-
-        let movementSpeed =
-            int movementSpeedCalculation.baseMovementSpeed
-            + attributeMod
-            + skillMod
-
-        if movementSpeed >= 0 then
-            uint movementSpeed
-        else
-            0u
-
-
-    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
-        let decimalPlaces = 0
-
-        let movementSpeed =
-            calculateMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
-
-        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
-        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
-
 module Item =
     open ItemTier
     open WeaponClass
@@ -1664,7 +1622,7 @@ module CarryWeightEffect =
 
     type CarryWeightEffectForDisplay =
         { carryWeightCalculation: CarryWeightCalculation
-          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
+          weightClass: WeightClass
           durationAndSource: DurationAndSource }
 
     let calculateCarryWeight (maxCarryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
@@ -1714,20 +1672,107 @@ module CarryWeightEffect =
               source = $"{inventoryWeight}/{maxCarryWeight} lb" }
 
         { carryWeightCalculation = carryWeightCalculation
-          attributeDeterminedDiceModEffect = weightClass.attributeDeterminedDiceModEffect
+          weightClass = weightClass
           durationAndSource = durationAndSource }
+
+
+module MovementSpeedCalculation =
+
+    open Attribute
+    open Neg1To4
+    open CoreSkillGroup
+    open EffectForDisplay
+
+    type MovementSpeedCalculation =
+        { name: string
+          baseMovementSpeed: uint
+          governingAttribute: Attribute
+          feetPerAttributeLvl: uint
+          governingSkill: string
+          feetPerSkillLvl: uint }
+
+    type MovementSpeedEffectForDisplay =
+        { movementSpeedCalculation: MovementSpeedCalculation
+          movementSpeed: float
+          durationAndSource: DurationAndSource }
+
+    let calculateMovementSpeed
+        percentOfMovementSpeed
+        movementSpeedCalculation
+        (attributeLvl: Neg1To4)
+        (skillLvl: Neg1To4)
+        =
+        let attributeMod =
+            neg1To4ToInt attributeLvl
+            * int movementSpeedCalculation.feetPerAttributeLvl
+
+        let skillMod =
+            neg1To4ToInt skillLvl
+            * int movementSpeedCalculation.feetPerSkillLvl
+
+        let movementSpeed =
+            (float movementSpeedCalculation.baseMovementSpeed
+             + float attributeMod
+             + float skillMod)
+            * percentOfMovementSpeed
+
+        if movementSpeed >= 0.0 then
+            movementSpeed
+        else
+            0.0
+
+    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
+        let decimalPlaces = 0
+
+        let movementSpeed =
+            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
+
+        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
+        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
+
+    let determineMovementSpeedEffectForDisplay
+        (coreSkillGroupList: CoreSkillGroup list)
+        (percentOfMovementSpeed: float)
+        (movementSpeedCalculation: MovementSpeedCalculation)
+        : MovementSpeedEffectForDisplay =
+
+        let attributeLevel =
+            coreSkillGroupList
+            |> List.tryFind (fun coreSkillGroup ->
+                coreSkillGroup.attributeStat.attribute = movementSpeedCalculation.governingAttribute)
+            |> (fun attributeLevelOption ->
+                match attributeLevelOption with
+                | Some coreSkillGroup -> coreSkillGroup.attributeStat.lvl
+                | None -> Neg1To4.Zero)
+
+
+        let skillLevel =
+            coreSkillGroupList
+            |> List.collect (fun coreSkillGroupList -> coreSkillGroupList.coreSkillList)
+            |> List.tryFind (fun skillStat -> skillStat.name = movementSpeedCalculation.governingSkill)
+            |> (fun skillStatOption ->
+                match skillStatOption with
+                | Some skillStat -> skillStat.lvl
+                | None -> Neg1To4.Zero)
+
+        { movementSpeedCalculation = movementSpeedCalculation
+          movementSpeed =
+            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel skillLevel
+          durationAndSource = { duration = ""; source = "" } }
 
 module CharacterEffect =
 
     open EffectForDisplay
     open CarryWeightEffect
     open Equipment
+    open MovementSpeedCalculation
 
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay
         | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
         | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
+        | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
 
     let collectCharacterSkillDiceModifications (characterEffectList: CharacterEffect list) =
         characterEffectList
@@ -1747,7 +1792,7 @@ module CharacterEffect =
         |> List.collect (fun characterEffect ->
             match characterEffect with
             | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
-                [ carryWeightEffectForDisplay.attributeDeterminedDiceModEffect ]
+                [ carryWeightEffectForDisplay.weightClass.attributeDeterminedDiceModEffect ]
             | AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectToForDisplay ->
                 [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
             | _ -> [])

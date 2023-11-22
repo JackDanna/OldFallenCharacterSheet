@@ -23,7 +23,7 @@ let carryWeightEffectForDisplay (model: CarryWeightEffectForDisplay) =
           prop.text model.carryWeightCalculation.name
       ]
       Html.td [
-          attributeDeterminedDiceModEffectToEffectString model.attributeDeterminedDiceModEffect
+          attributeDeterminedDiceModEffectToEffectString model.weightClass.attributeDeterminedDiceModEffect
           |> prop.text
       ] ]
     @ DurationAndSource.nonInteractiveView model.durationAndSource
