@@ -34,7 +34,6 @@
     <Compile Include="MovementSpeedEffectForDisplay.fs" />
     <Compile Include="CharacterEffect.fs" />
     <Compile Include="CharacterEffectList.fs" />
-    <Compile Include="TextInputModal.fs" />
     <Compile Include="CharacterInformation.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
