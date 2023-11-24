@@ -311,6 +311,19 @@ let view
         ]
         |> Bulma.content
 
+        Bulma.image [
+            Html.img [
+                prop.style [
+                    style.height 500
+                    style.width 500
+                ]
+                prop.classes [ "center" ]
+
+                prop.src "https://i.pinimg.com/736x/b2/ae/d9/b2aed9f239dd5b408ee553185bac6058.jpg"
+            ]
+        ]
+        |> Bulma.content
+
         //CharacterInformation.view
 
         CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
