@@ -1822,9 +1822,16 @@ module Character =
         |> sumContainerListWeight
         |> (+) (calculateEquipmentListWeight equipmentList)
 
+    type CharacterInformation =
+        { backstory: string
+          notes: string
+          beliefsAndMorality: string
+          goalsAndAspirations: string
+          disposition: string }
 
     type Character =
         { name: string
+          characterInformation: CharacterInformation
           coreSkillGroupList: CoreSkillGroup list
           vocationGroupList: VocationGroup list
           equipmentList: Equipment list

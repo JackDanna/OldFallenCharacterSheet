@@ -19,6 +19,7 @@ type Msg =
     | ContainerListMsg of ContainerList.Msg
     | DestinyPointsMsg of DestinyPoints.Msg
     | CharacterEffectListMsg of CharacterEffectList.Msg
+    | CharacterInformationMsg of CharacterInformation.Msg
     | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Character =
@@ -31,7 +32,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Character =
       combatRollList = []
       containerList = []
       destinyPoints = DestinyPoints.init ()
-      characterEffectList = [] }
+      characterEffectList = []
+      characterInformation = CharacterInformation.init () }
 
 let update
     (defaultCoreSkillTables: CoreSkillGroup list)
@@ -280,6 +282,8 @@ let update
                     (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
+    | CharacterInformationMsg msg ->
+        { model with characterInformation = CharacterInformation.update msg model.characterInformation }
 
 open Feliz
 open Feliz.Bulma
@@ -307,6 +311,8 @@ let view
         ]
         |> Bulma.content
 
+        //CharacterInformation.view
+
         CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
@@ -326,4 +332,6 @@ let view
             allItemNameList
             model.containerList
             (ContainerListMsg >> dispatch)
+
+        CharacterInformation.view model.characterInformation (CharacterInformationMsg >> dispatch)
     ]
