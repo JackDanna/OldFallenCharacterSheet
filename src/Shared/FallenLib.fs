@@ -1730,6 +1730,9 @@ module MovementSpeedCalculation =
         let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
         sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
 
+    let movementSpeedCalculationToDurationForDisplay movementSpeedCalculation =
+        $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
+
     let determineMovementSpeedEffectForDisplay
         (coreSkillGroupList: CoreSkillGroup list)
         (percentOfMovementSpeed: float)
@@ -1758,7 +1761,9 @@ module MovementSpeedCalculation =
         { movementSpeedCalculation = movementSpeedCalculation
           movementSpeed =
             calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel skillLevel
-          durationAndSource = { duration = ""; source = "" } }
+          durationAndSource =
+            { duration = "Indefinite"
+              source = movementSpeedCalculationToDurationForDisplay movementSpeedCalculation } }
 
 module CharacterEffect =
 
