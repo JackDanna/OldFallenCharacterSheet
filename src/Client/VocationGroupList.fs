@@ -7,6 +7,8 @@ open FallenLib.SkillDiceModificationEffect
 type Msg =
     | Modify of int * VocationGroup.Msg
     | SetAttributeStatsAndCalculateDicePools
+    | Insert
+    | Remove of int
 
 let init (attributeStatList: AttributeStat List) : VocationGroup list =
 
@@ -42,6 +44,9 @@ let update
                 attributeStatList
                 VocationGroup.Msg.SetAttributeStatsAndCalculateDicePools
                 vocationTable)
+    | Insert -> model @ [ VocationGroup.init attributeStatList ]
+    | Remove position -> List.removeAt position model
+
 
 open Feliz
 open Feliz.Bulma
@@ -53,6 +58,10 @@ let view (combatVocationalSkills: string list) (model: VocationGroup list) (disp
             prop.text "Vocations and Vocational Skills:"
         ]
         |> Bulma.content
+        Bulma.button.button [
+            prop.onClick (fun _ -> dispatch Insert)
+            prop.text "+"
+        ]
         Bulma.columns [
             columns.isCentered
             prop.children [
@@ -61,6 +70,11 @@ let view (combatVocationalSkills: string list) (model: VocationGroup list) (disp
                     Bulma.column [
                         VocationGroup.view combatVocationalSkills vocationTable (fun msg ->
                             dispatch (Modify(position, msg)))
+
+                        Bulma.button.button [
+                            prop.onClick (fun _ -> dispatch (Remove position))
+                            prop.text "-"
+                        ]
                     ])
                 |> Bulma.columns
             ]
