@@ -18,6 +18,9 @@
     };
   in 
   {
+    packages.${system}.default = pkgs.writeShellScriptBin "run" ''
+      nix develop -c -- code .
+    '';
 
     devShells.${system}.default = pkgs.mkShell rec {
       name = "FCS";
