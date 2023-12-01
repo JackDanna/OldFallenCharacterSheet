@@ -18,9 +18,19 @@
     };
   in 
   {
-    packages.${system}.default = pkgs.writeShellScriptBin "run" ''
-      nix develop -c -- code .
-    '';
+    packages.${system} = {
+
+      default = pkgs.writeShellScriptBin "run" ''
+        nix develop -c -- code .
+      '';
+      
+      test = pkgs.writeShellScriptBin "fa" ''
+
+        ${pkgs.figlet}/bin/figlet "Fallen is awesome!"
+      '';
+
+    };
+    
 
     devShells.${system}.default = pkgs.mkShell rec {
       name = "FCS";
