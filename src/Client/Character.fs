@@ -125,8 +125,7 @@ let update
                     model.equipmentList
                     (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
                     newVocationTables
-                    CombatRollTable.Msg.RecalculateCombatRolls
-                    model.combatRollList
+
             characterEffectList = newCharacterEffectList }
 
     | VocationGroupListMsg vocationTableMsg ->
@@ -150,9 +149,7 @@ let update
                 loadedCombatRollUpdate
                     model.equipmentList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
-                    newVocationTables
-                    CombatRollTable.Msg.RecalculateCombatRolls
-                    model.combatRollList }
+                    newVocationTables }
 
     | SetName newName -> { model with name = newName }
 
@@ -191,8 +188,7 @@ let update
                     newEquipmentList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationGroupList
-                    CombatRollTable.Msg.RecalculateCombatRolls
-                    model.combatRollList
+
             characterEffectList =
                 CharacterEffectList.update
                     coreSkillGroupList

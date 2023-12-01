@@ -11,8 +11,6 @@ open FallenLib.VocationGroup
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 
-type Msg = RecalculateCombatRolls
-
 let update
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
@@ -22,21 +20,17 @@ let update
     (equipmentList: Equipment list)
     (attributeStatList: AttributeStat list)
     (vocationGroupList: VocationGroup list)
-    (msg: Msg)
-    (model: CombatRoll list)
     : CombatRoll list =
 
-    match msg with
-    | RecalculateCombatRolls ->
-        createCombatRolls
-            magicSkillMap
-            magicCombatMap
-            rangeMap
-            combatRollGoverningAttributeList
-            attributeDeterminedDiceModList
-            equipmentList
-            attributeStatList
-            vocationGroupList
+    createCombatRolls
+        magicSkillMap
+        magicCombatMap
+        rangeMap
+        combatRollGoverningAttributeList
+        attributeDeterminedDiceModList
+        equipmentList
+        attributeStatList
+        vocationGroupList
 
 open Feliz
 open Feliz.Bulma
