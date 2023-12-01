@@ -6,6 +6,15 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
+      config = {
+        permittedInsecurePackages = [
+          "nodejs-16.20.2"
+        ];
+        allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+          "vscode-with-extensions"
+          "vscode"
+        ];
+      };
     };
   in 
   {
