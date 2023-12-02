@@ -40,6 +40,10 @@
         bashInteractive
         dotnet-sdk
 
+        (pkgs.writeShellScriptBin "iDontKnow" ''
+          ${pkgs.figlet}/bin/figlet "IDontKnow"
+        '')
+
         (vscode-with-extensions.override  {
           vscode = pkgs.vscode;
           vscodeExtensions = with pkgs.vscode-extensions; [
