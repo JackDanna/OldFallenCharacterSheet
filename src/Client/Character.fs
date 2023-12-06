@@ -315,7 +315,7 @@ let view
                 ]
                 prop.classes [ "center" ]
 
-                prop.src "https://i.pinimg.com/736x/b2/ae/d9/b2aed9f239dd5b408ee553185bac6058.jpg"
+                prop.src "https://cogentroleplaycommunity.github.io/Fallen/src/Characters/PC/JavkWick/Javk-Wick.png"
             ]
         ]
         |> Bulma.content
