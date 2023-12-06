@@ -172,7 +172,7 @@ let update
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
 
-        let coreSkillGroupList =
+        let newCoreSkillGroupList =
             CoreSkillGroupList.update
                 newSkillAdjustments
                 newAttributeDeterminedDiceModEffects
@@ -180,7 +180,7 @@ let update
                 model.coreSkillGroupList
 
         { model with
-            coreSkillGroupList = coreSkillGroupList
+            coreSkillGroupList = newCoreSkillGroupList
             vocationGroupList = newVocationGroupList
             equipmentList = newEquipmentList
             combatRollList =
@@ -191,7 +191,7 @@ let update
 
             characterEffectList =
                 CharacterEffectList.update
-                    coreSkillGroupList
+                    newCoreSkillGroupList
                     (calculateCharacterWeight newEquipmentList model.containerList)
                     carryWeightCalculationMap
                     weightClassList
