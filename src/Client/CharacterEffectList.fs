@@ -62,6 +62,12 @@ let update
                     (weightClassList: WeightClass list)
                     calculatedCarryWeightEffectForDisplay
                 |> CarryWeightEffectForDisplay
+            | MovementSpeedEffectForDisplay movementSpeedEffectForDisplay ->
+                MovementSpeedEffectForDisplay.update
+                    coreSkillGroupList
+                    1.0
+                    movementSpeedEffectForDisplay.movementSpeedCalculation
+                |> MovementSpeedEffectForDisplay
             | _ -> characterEffect
 
 
