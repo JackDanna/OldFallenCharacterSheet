@@ -336,7 +336,9 @@ module FallenServerData =
             | CarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
                 ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd
             | AttributeDeterminedDiceModEffectForDisplay addme ->
-                addme.attributeDeterminedDiceModEffect.name, AttributeDeterminedDiceModEffectForDisplay addme)
+                addme.attributeDeterminedDiceModEffect.name, AttributeDeterminedDiceModEffectForDisplay addme
+            | MovementSpeedEffectForDisplay msefd ->
+                msefd.movementSpeedCalculation.name, MovementSpeedEffectForDisplay msefd)
         |> Map.ofList
 
     // WeaponResourceClass
