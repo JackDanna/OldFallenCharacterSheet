@@ -1839,3 +1839,7 @@ module Character =
           containerList: Container list
           destinyPoints: ZeroToThree
           characterEffectList: CharacterEffect list }
+
+    let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentList characterEffectList =
+        (collectSkillAdjustments equipmentList characterEffectList,
+         collectAttributeDeterminedDiceModEffects equipmentList characterEffectList)

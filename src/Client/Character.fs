@@ -59,11 +59,9 @@ let update
 
     match msg with
     | SetDefault ->
-        let newSkillAdjustments =
-            collectSkillAdjustments model.equipmentList model.characterEffectList
 
-        let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
+        let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         { model with
             coreSkillGroupList = defaultCoreSkillTables
@@ -94,11 +92,8 @@ let update
                 model.characterEffectList
 
         // 3th, grab the new skillAdjustments from both the itms and character effects
-        let newSkillAdjustments =
-            collectSkillAdjustments model.equipmentList model.characterEffectList
-
-        let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
+        let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         // 4th, with the new CharacterEffects, update the skill Dice pools
         let newCoreSkillTablesWithSkillAdjustments =
@@ -129,11 +124,8 @@ let update
             characterEffectList = newCharacterEffectList }
 
     | VocationGroupListMsg vocationTableMsg ->
-        let newSkillAdjustments =
-            collectSkillAdjustments model.equipmentList model.characterEffectList
-
-        let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
+        let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
 
         let newVocationTables =
             VocationGroupList.update
@@ -158,11 +150,8 @@ let update
         let newEquipmentList =
             EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
 
-        let newSkillAdjustments =
-            collectSkillAdjustments newEquipmentList model.characterEffectList
-
-        let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects newEquipmentList model.characterEffectList
+        let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects newEquipmentList model.characterEffectList
 
         let newVocationGroupList =
             VocationGroupList.update
@@ -215,11 +204,8 @@ let update
                 CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
                 model.characterEffectList
 
-        let newSkillAdjustments =
-            collectSkillAdjustments model.equipmentList newCharacterEffectList
-
-        let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
+        let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
@@ -255,11 +241,8 @@ let update
                 msg
                 model.characterEffectList
 
-        let newSkillAdjustments =
-            collectSkillAdjustments model.equipmentList newCharacterEffectList
-
-        let newAttributeDeterminedDiceModEffects =
-            collectAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
+        let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
