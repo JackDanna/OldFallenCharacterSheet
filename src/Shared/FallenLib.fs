@@ -1781,19 +1781,17 @@ module CharacterEffect =
 
     let findPercentageOfMovementSpeed characterEffectList =
         characterEffectList
-        |> List.tryFind ( fun characterEffect ->
+        |> List.tryFind (fun characterEffect ->
             match characterEffect with
             | CarryWeightEffectForDisplay _ -> true
-            | _ -> false
-        )
-        |> ( fun carryWeightCharacterEffectForDisplayOption ->
+            | _ -> false)
+        |> (fun carryWeightCharacterEffectForDisplayOption ->
             match carryWeightCharacterEffectForDisplayOption with
             | Some carryWeightEffectForDisplay ->
                 match carryWeightEffectForDisplay with
                 | CarryWeightEffectForDisplay cwefd -> cwefd.weightClass.percentOfMovementSpeed
                 | _ -> 1.00
-            | None -> 1.00
-        )
+            | None -> 1.00)
 
     let collectCharacterSkillDiceModifications (characterEffectList: CharacterEffect list) =
         characterEffectList
