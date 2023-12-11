@@ -44,7 +44,7 @@ let update
             |> List.append model
         elif movementSpeedCalculationMap.ContainsKey characterEffectName then
             (movementSpeedCalculationMap.Item characterEffectName)
-            |> determineMovementSpeedEffectForDisplay coreSkillGroupList 1.00
+            |> determineMovementSpeedEffectForDisplay coreSkillGroupList (findPercentageOfMovementSpeed model)
             |> MovementSpeedEffectForDisplay
             |> List.singleton
             |> List.append model
@@ -62,16 +62,21 @@ let update
                     (weightClassList: WeightClass list)
                     calculatedCarryWeightEffectForDisplay
                 |> CarryWeightEffectForDisplay
-            | MovementSpeedEffectForDisplay movementSpeedEffectForDisplay ->
-                MovementSpeedEffectForDisplay.update
-                    coreSkillGroupList
-                    1.0
-                    movementSpeedEffectForDisplay.movementSpeedCalculation
-                |> MovementSpeedEffectForDisplay
-            | _ -> characterEffect
+            | _ -> characterEffect)
+        |> (fun characterEffectList ->
+            let percentageMovementSpeed = findPercentageOfMovementSpeed characterEffectList
 
+            characterEffectList
+            |> List.map (fun characterEffect ->
+                match characterEffect with
+                | MovementSpeedEffectForDisplay movementSpeedEffectForDisplay ->
+                    MovementSpeedEffectForDisplay.update
+                        coreSkillGroupList
+                        percentageMovementSpeed
+                        movementSpeedEffectForDisplay.movementSpeedCalculation
+                    |> MovementSpeedEffectForDisplay
+                | _ -> characterEffect))
 
-        )
 
 open Feliz
 open Feliz.Bulma
