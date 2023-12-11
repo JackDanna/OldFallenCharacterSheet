@@ -303,8 +303,6 @@ let view
         ]
         |> Bulma.content
 
-        //CharacterInformation.view
-
         CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
