@@ -18,6 +18,6 @@ let movementSpeedEffectForDisplay (model: MovementSpeedEffectForDisplay) =
           prop.text model.movementSpeedCalculation.name
       ]
       Html.td [
-          string model.movementSpeed |> prop.text
+          $"{model.movementSpeed} ft" |> prop.text
       ] ]
     @ DurationAndSource.nonInteractiveView model.durationAndSource
