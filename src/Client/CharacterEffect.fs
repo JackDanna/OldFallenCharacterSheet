@@ -25,11 +25,7 @@ let update
         SkillDiceModificationEffectForDisplay.update msg (sdmew, das)
         |> SkillDiceModificationEffectForDisplay
     | _, CarryWeightEffectForDisplay ccwefd ->
-        CarryWeightEffectForDisplay.update
-            (coreSkillGroupList: CoreSkillGroup list)
-            (inventoryWeight: float)
-            (weightClassList: WeightClass list)
-            ccwefd
+        CarryWeightEffectForDisplay.update coreSkillGroupList inventoryWeight weightClassList ccwefd
         |> CarryWeightEffectForDisplay
     | _ -> model
 
