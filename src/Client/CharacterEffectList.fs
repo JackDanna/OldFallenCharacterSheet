@@ -64,15 +64,13 @@ let update
                 |> CarryWeightEffectForDisplay
             | _ -> characterEffect)
         |> (fun characterEffectList ->
-            let percentageMovementSpeed = findPercentageOfMovementSpeed characterEffectList
-
             characterEffectList
             |> List.map (fun characterEffect ->
                 match characterEffect with
                 | MovementSpeedEffectForDisplay movementSpeedEffectForDisplay ->
                     MovementSpeedEffectForDisplay.update
                         coreSkillGroupList
-                        percentageMovementSpeed
+                        (findPercentageOfMovementSpeed characterEffectList)
                         movementSpeedEffectForDisplay.movementSpeedCalculation
                     |> MovementSpeedEffectForDisplay
                 | _ -> characterEffect))
