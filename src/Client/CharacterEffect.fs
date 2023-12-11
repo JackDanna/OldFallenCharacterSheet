@@ -1,7 +1,5 @@
 module CharacterEffect
 
-open FallenLib.EffectForDisplay
-open FallenLib.SkillDiceModificationEffect
 open FallenLib.CarryWeightEffect
 open FallenLib.CoreSkillGroup
 
