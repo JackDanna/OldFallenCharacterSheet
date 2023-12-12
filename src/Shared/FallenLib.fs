@@ -715,7 +715,7 @@ module WeaponResourceClass =
           damageTypes: DamageType list
           areaOfEffect: AreaOfEffect option }
 
-    let prepareWeaponResourceClassOptionForUse (resource: WeaponResourceClass option) =
+    let weaponResourceClassOptionToWeaponResourceClass (resource: WeaponResourceClass option) =
         match resource with
         | Some resource ->
             (" (" + resource.name + ")",
@@ -1286,7 +1286,7 @@ module CombatRoll =
         : CombatRoll =
 
         let (resourceDesc, resourceDice, resourcePenetration, resourceRange, resourceDamageTypes, resourceAreaOfEffect) =
-            prepareWeaponResourceClassOptionForUse resource
+            weaponResourceClassOptionToWeaponResourceClass resource
 
         let dicePool =
             collectAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray // These are injuries, weight penalties, ect...
