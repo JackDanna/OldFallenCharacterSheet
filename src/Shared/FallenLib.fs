@@ -358,15 +358,13 @@ module Attribute =
 
     type AttributeStat = { attribute: Attribute; lvl: Neg1To4 }
 
-    let determineAttributeLvl attributeList attributeStatList =
-        List.map
-            (fun attributeStat ->
-                if List.contains attributeStat.attribute attributeList then
-                    attributeStat.lvl
-                else
-                    Zero)
-            attributeStatList
-        |> List.map neg1To4ToInt
+    let sumAttributesLevels attributeList attributeStatList =
+        attributeStatList
+        |> List.map (fun attributeStat ->
+            if List.contains attributeStat.attribute attributeList then
+                neg1To4ToInt attributeStat.lvl
+            else
+                0)
         |> List.sum
 
     let determineAttributeDiceMod attributeList attributeStatList =
