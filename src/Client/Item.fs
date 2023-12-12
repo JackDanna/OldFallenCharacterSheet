@@ -29,7 +29,7 @@ let itemRowColumns (itemNameList: string list) (model: Item) (dispatch: Msg -> u
     [ itemInput model.name itemNameList (fun input -> dispatch (SetItem input))
       |> Html.td
       Html.td (itemClassesToString model.itemClasses)
-      Html.td model.itemTier.name
+      Html.td $"{model.itemTier.name} ({model.itemTier.level})"
       Html.td model.weight
       Html.td model.value ]
 
