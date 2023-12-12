@@ -4,7 +4,7 @@ open FallenLib.CombatRoll
 open FallenLib.Dice
 open FallenLib.Range
 open FallenLib.DamageType
-open FallenLib.Shape
+open FallenLib.CalculatedAOE
 open FallenLib.Equipment
 open FallenLib.Attribute
 open FallenLib.VocationGroup
@@ -44,7 +44,7 @@ let combatRollRow (combatRoll: CombatRoll) =
         Html.td (calculatedRangeToString combatRoll.calculatedRange)
         Html.td (damageTypesToString combatRoll.damageTypes)
         Html.td (int combatRoll.engageableOpponents)
-        Html.td (shapeOptionToString combatRoll.areaOfEffectShape)
+        Html.td (calculatedAOEOptionToString combatRoll.areaOfEffectShape)
     ]
 
 let view (model: CombatRoll list) =

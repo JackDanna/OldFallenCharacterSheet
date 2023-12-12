@@ -400,6 +400,9 @@ module AttributeDeterminedDiceModEffect =
             |> List.exists (fun attribute -> List.contains attribute governingAttributesOfSkill))
         |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolModification)
 
+module BattleMapUOM =
+    let feetPerBattleMapUOM = 5u
+
 module Range =
 
     open System
@@ -424,7 +427,6 @@ module Range =
 
     let calculatedRangeToString calculatedRange =
         sprintf "%u/%u" calculatedRange.effectiveRange calculatedRange.maxRange
-
 
     let calculateRange numDice rangeCalculation =
         { name = rangeCalculation.name
@@ -478,7 +480,7 @@ module Range =
             rangeCalculationList
         |> Map.ofList
 
-    let createRangeMap (calculatedRanges: CalculatedRange list) rangeCalculations : Map<string, Range> =
+    let createRangeMap calculatedRanges rangeCalculations : Map<string, Range> =
         Map.fold
             (fun acc key value -> Map.add key value acc)
             (calculatedRangeListToRangeMap calculatedRanges)
@@ -503,46 +505,55 @@ module AreaOfEffect =
               ("Sphere", Some Sphere)
               ("None", None) ]
 
-module Shape =
+module CalculatedAOE =
     open System
-
     open AreaOfEffect
+    open BattleMapUOM
 
-    type ConeShape =
+    type CalculatedCone =
         { area: float
           distance: uint
           angle: float }
 
-    type SphereShape = { area: float; radius: float }
+    type CalculatedSphere = { area: float; radius: float }
 
-    type Shape =
-        | ConeToConeShape of ConeShape
-        | SphereToSphereShape of SphereShape
+    type CalculatedAOE =
+        | ConeToCalculatedCone of CalculatedCone
+        | SphereToCalculatedSphere of CalculatedSphere
 
-    let shapeToString shape =
+    let calculatedConeToString decimalPlaces (calculatedCone: CalculatedCone) =
+        let decimalLimitedArea =
+            calculatedCone.area.ToString("F" + decimalPlaces.ToString())
+
+        let decimalLimitedAngle =
+            calculatedCone.angle.ToString("F" + decimalPlaces.ToString())
+
+        sprintf
+            "area: %s ft^2, distance: %u ft, angle: %s θ"
+            decimalLimitedArea
+            calculatedCone.distance
+            decimalLimitedAngle
+
+    let calculatedSphereToString decimalPlaces calculatedSphere =
+        let decimalLimitedArea =
+            calculatedSphere.area.ToString("F" + decimalPlaces.ToString())
+
+        let decimalLimitedRadius =
+            calculatedSphere.radius.ToString("F" + decimalPlaces.ToString())
+
+        sprintf "area: %s ft^2, radius: %s ft" decimalLimitedArea decimalLimitedRadius
+
+    let calculatedAOEToString calculatedAOE =
         let decimalPlaces = 1
 
-        match shape with
-        | ConeToConeShape coneShape ->
-            let decimalLimitedArea = coneShape.area.ToString("F" + decimalPlaces.ToString())
-            let decimalLimitedAngle = coneShape.angle.ToString("F" + decimalPlaces.ToString())
+        match calculatedAOE with
+        | ConeToCalculatedCone calculatedCone -> calculatedConeToString decimalPlaces calculatedCone
+        | SphereToCalculatedSphere sphereShape -> calculatedSphereToString decimalPlaces sphereShape
 
-            sprintf
-                "area: %s ft^2, distance: %u ft, angle: %s θ"
-                decimalLimitedArea
-                coneShape.distance
-                decimalLimitedAngle
-        | SphereToSphereShape sphereShape ->
-            let decimalLimitedArea = sphereShape.area.ToString("F" + decimalPlaces.ToString())
 
-            let decimalLimitedRadius =
-                sphereShape.radius.ToString("F" + decimalPlaces.ToString())
-
-            sprintf "area: %s ft^2, radius: %s ft" decimalLimitedArea decimalLimitedRadius
-
-    let shapeOptionToString shapeOption =
+    let calculatedAOEOptionToString shapeOption =
         match shapeOption with
-        | Some shape -> shapeToString shape
+        | Some shape -> calculatedAOEToString shape
         | None -> ""
 
     let calcConeArea (distance: uint) (angle: float) : float =
@@ -556,38 +567,38 @@ module Shape =
         2.
         * Math.Atan(Math.Sqrt(float area / float (distance * distance)))
 
-    let calcCone (numDice: uint) : ConeShape =
-        let distance = numDice * 5u
+    let calcCone (numDice: uint) : CalculatedCone =
+        let distance = numDice * feetPerBattleMapUOM
         let angle = 53.0
 
         { area = calcConeArea distance angle
           distance = distance
           angle = angle }
 
-    let calcCircle (numDice: uint) : SphereShape =
+    let calcCircle (numDice: uint) : CalculatedSphere =
         let radius: float = 2.5 * float numDice
 
         { area = 2.0 * Math.PI * (radius ** 2)
           radius = radius }
 
-    let calcShape (numDice: uint) (aoe: AreaOfEffect) : Shape =
+    let calcShape (numDice: uint) (aoe: AreaOfEffect) : CalculatedAOE =
         match aoe with
-        | Cone -> ConeToConeShape(calcCone numDice)
-        | Sphere -> SphereToSphereShape(calcCircle numDice)
+        | Cone -> ConeToCalculatedCone(calcCone numDice)
+        | Sphere -> SphereToCalculatedSphere(calcCircle numDice)
 
-    let determineAOE numDice aoe =
+    let determineAOEShapeOption numDice aoe =
         match aoe with
         | Some aoe -> Some(calcShape numDice aoe)
         | None -> None
 
-    let compareAndDetermineAOE
+    let compareAndDetermineAOEShapeOption
         (numDice: uint)
         (aoe: AreaOfEffect option)
         (resourceAOE: AreaOfEffect option)
-        : Shape option =
+        : CalculatedAOE option =
         match resourceAOE with
         | Some resourceAOE -> Some(calcShape numDice resourceAOE)
-        | None -> determineAOE numDice aoe
+        | None -> determineAOEShapeOption numDice aoe
 
 module ResourceClass =
     type ResourceClass = string
@@ -1225,7 +1236,7 @@ module VocationGroup =
 module CombatRoll =
     open Dice
     open DamageType
-    open Shape
+    open CalculatedAOE
     open Range
     open EngageableOpponents
     open Penetration
@@ -1251,7 +1262,7 @@ module CombatRoll =
           calculatedRange: CalculatedRange
           penetration: Penetration
           damageTypes: DamageType list
-          areaOfEffectShape: Shape option
+          areaOfEffectShape: CalculatedAOE option
           engageableOpponents: CalculatedEngageableOpponents }
 
     // Weapon CombatRoll
@@ -1287,7 +1298,7 @@ module CombatRoll =
           calculatedRange = determineGreatestRange numDice weaponClass.range resourceRange
           penetration = weaponClass.penetration + resourcePenetration
           damageTypes = List.append weaponClass.damageTypes resourceDamageTypes
-          areaOfEffectShape = compareAndDetermineAOE numDice weaponClass.areaOfEffect resourceAreaOfEffect
+          areaOfEffectShape = compareAndDetermineAOEShapeOption numDice weaponClass.areaOfEffect resourceAreaOfEffect
           engageableOpponents = determineEngageableOpponents numDice weaponClass.engageableOpponents }
 
     let createHandedVariationsWeaponCombatRolls
@@ -1421,7 +1432,7 @@ module CombatRoll =
           calculatedRange = rangeToCalculatedRange numDice range
           penetration = magicCombatType.penetration
           damageTypes = magicSkill.damageTypes
-          areaOfEffectShape = determineAOE numDice magicCombatType.areaOfEffect
+          areaOfEffectShape = determineAOEShapeOption numDice magicCombatType.areaOfEffect
           engageableOpponents = determineEngageableOpponents numDice magicCombatType.engageableOpponents }
 
     let createMagicCombatRollWithConduit
@@ -1472,7 +1483,8 @@ module CombatRoll =
           calculatedRange = rangeToCalculatedRange numDice range
           penetration = magicCombatType.penetration + conduit.penetration
           damageTypes = damageTypes
-          areaOfEffectShape = compareAndDetermineAOE numDice magicCombatType.areaOfEffect conduit.areaOfEffect
+          areaOfEffectShape =
+            compareAndDetermineAOEShapeOption numDice magicCombatType.areaOfEffect conduit.areaOfEffect
           engageableOpponents = determineEngageableOpponents numDice engageableOpponents }
 
 
