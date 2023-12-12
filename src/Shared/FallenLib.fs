@@ -18,15 +18,16 @@ module MathUtils =
         | true -> Math.Floor floatCalculation |> uint
         | false -> Math.Ceiling floatCalculation |> uint
 
-    let divideUintsThenCompareToMaxThenRound (numerator: uint) (divisor: uint) (maxEO: uint option) roundDown =
+    let divideUintsThenCompareToMaxThenRound
+        (numerator: uint)
+        (divisor: uint)
+        (maxAllowableValue: uint option)
+        roundDown
+        =
         let result = divideUintByUintThenRound numerator divisor roundDown
 
-        match maxEO with
-        | Some maxEO ->
-            if (maxEO < result) then
-                maxEO
-            else
-                result
+        match maxAllowableValue with
+        | Some max -> if (max < result) then max else result
         | None -> result
 
 module TypeUtils =
@@ -45,7 +46,7 @@ module DamageType =
 
     let damageTypesToString (damageTypes: DamageType list) = String.concat ", " damageTypes
 
-    let stringAndMapToDamageTypeArray (damageTypeMap: Map<string, DamageType>) (damageTypesString: string) =
+    let stringToDamageTypeList (damageTypeMap: Map<string, DamageType>) (damageTypesString: string) =
         if damageTypesString.Length = 0 then
             []
         else
@@ -63,8 +64,9 @@ module EngageableOpponents =
           combatRollDivisor: uint
           maxEO: uint option }
 
-    let eoCalculationListToMap calculatedRangeList =
-        List.map (fun (eoCalculation) -> eoCalculation.name, eoCalculation) calculatedRangeList
+    let eoCalculationListToMap eoCalculationList =
+        eoCalculationList
+        |> List.map (fun (eoCalculation) -> eoCalculation.name, eoCalculation)
         |> Map.ofList
 
     type CalculatedEngageableOpponents = uint
@@ -79,13 +81,15 @@ module EngageableOpponents =
         | Calculation eoCalculation ->
             divideUintsThenCompareToMaxThenRound numDice eoCalculation.combatRollDivisor eoCalculation.maxEO true
 
-    let mapMaxEO input =
+
+    //Todo: this needs to only parse uints
+    let parseMaxEngageableOpponentsString input =
         if isNumeric input then
             uint input |> Some
         else
             None
 
-    let eoMap eoCalculationMap input =
+    let parseEngaeableOpponentsString eoCalculationMap input =
         if isNumeric input then
             uint input |> Calculated
         elif Map.containsKey input eoCalculationMap then
@@ -102,7 +106,7 @@ module Neg1To4 =
         | Three
         | Four
 
-    let createNeg1To4 num : Neg1To4 option =
+    let createNeg1To4Option num : Neg1To4 option =
         match num with
         | -1 -> Some NegOne
         | 0 -> Some Zero
@@ -121,7 +125,8 @@ module Neg1To4 =
         | Three -> 3
         | Four -> 4
 
-    let intToNeg1To4 num = defaultArg (createNeg1To4 num) NegOne
+    let intToNeg1To4 num =
+        defaultArg (createNeg1To4Option num) NegOne
 
 module ZeroToFour =
 
@@ -169,7 +174,7 @@ module Dice =
 
     type DicePoolPenalty = uint // always should deduct the dice with the fewest faces first (i.e. d4, then d6, then d8...)
 
-    type DicePoolModification =
+    type DicePoolMod =
         | AddDice of DicePool
         | RemoveDice of DicePoolPenalty
 
@@ -251,12 +256,12 @@ module Dice =
           d12 = d12
           d20 = d20 }
 
-    let modifyDicePool (dicePool: DicePool) (dicePoolModification: DicePoolModification) : DicePool =
+    let modifyDicePool (dicePool: DicePool) (dicePoolModification: DicePoolMod) : DicePool =
         match dicePoolModification with
         | AddDice diceToAdd -> combineDicePools [ dicePool; diceToAdd ]
         | RemoveDice diceToRemove -> removeDiceFromDicePool dicePool diceToRemove
 
-    let sumDicePool (dicePool: DicePool) =
+    let dicePoolToNumDice (dicePool: DicePool) =
         let { d4 = d4
               d6 = d6
               d8 = d8
@@ -267,7 +272,7 @@ module Dice =
 
         d4 + d6 + d8 + d10 + d12 + d20
 
-    let modifyDicePoolByModList dicePool dicePoolModifications =
+    let modifyDicePoolByDicePoolModList dicePool dicePoolModifications =
 
         let combinedDicePoolPenalty =
             List.fold
@@ -291,23 +296,21 @@ module Dice =
         // Does the subtractions only at the end after combining
         modifyDicePool combinedPositiveDicePool combinedDicePoolPenalty
 
-    let intToDicePoolModification (num: int) =
+    let intToD6DicePoolMod (num: int) =
         if num < 0 then
             RemoveDice(uint (abs num))
         else
             createD6DicePoolMod (uint num)
 
-    let neg1To4ToD6DicePoolModification neg1To4 =
-        neg1To4
-        |> neg1To4ToInt
-        |> intToDicePoolModification
+    let neg1To4ToD6DicePoolMod neg1To4 =
+        neg1To4 |> neg1To4ToInt |> intToD6DicePoolMod
 
-    let zeroToFourToDicePoolModification zeroToFour =
+    let zeroToFourToDicePoolMod zeroToFour =
         zeroToFour
         |> zeroToFourToUint
         |> createD6DicePoolMod
 
-    let createDicePoolModification (numDiceStr: string) (diceType: string) =
+    let createDicePoolMod (numDiceStr: string) (diceType: string) =
         let numDice = uint numDiceStr
 
         match diceType with
@@ -319,20 +322,20 @@ module Dice =
         | "20" -> { emptyDicePool with d20 = numDice }
         | _ -> emptyDicePool
 
-    let stringToDicePool (str: string) =
-        str.Split ", "
+    let parseDicePoolString (dicePoolString: string) =
+        dicePoolString.Split ", "
         |> List.ofArray
         |> List.map (fun (diceStr) ->
             let diceNumAndDiceType = diceStr.Split "d"
-            createDicePoolModification diceNumAndDiceType[0] diceNumAndDiceType[1])
+            createDicePoolMod diceNumAndDiceType[0] diceNumAndDiceType[1])
         |> combineDicePools
 
-    let stringToDicePoolModification (dicePoolJSONString: string) : DicePoolModification =
-        if dicePoolJSONString.Contains("+") then
-            let str = dicePoolJSONString.Replace("+", "")
-            AddDice <| stringToDicePool str
-        elif dicePoolJSONString.Contains("-") then
-            let removeDiceString = dicePoolJSONString.Replace("-", "")
+    let parseDicePoolModString (dicePoolModString: string) : DicePoolMod =
+        if dicePoolModString.Contains("+") then
+            let str = dicePoolModString.Replace("+", "")
+            AddDice <| parseDicePoolString str
+        elif dicePoolModString.Contains("-") then
+            let removeDiceString = dicePoolModString.Replace("-", "")
 
             match System.UInt32.TryParse(removeDiceString) with
             | (true, result) -> RemoveDice result
@@ -340,12 +343,12 @@ module Dice =
         else
             RemoveDice 0u
 
-    let stringToDicePoolModificationOption (dicePoolJSONString: string) : DicePoolModification option =
+    let parseDicePoolModOptionString (dicePoolJSONString: string) : DicePoolMod option =
         match dicePoolJSONString with
         | "None" -> None
-        | modString -> Some <| stringToDicePoolModification modString
+        | modString -> Some <| parseDicePoolModString modString
 
-    let dicePoolModificationToString dicePoolModification =
+    let dicePoolModToString dicePoolModification =
         match dicePoolModification with
         | RemoveDice removeDice -> $"-{uint removeDice}d"
         | AddDice addDice -> dicePoolToString addDice
@@ -367,21 +370,21 @@ module Attribute =
                 0)
         |> List.sum
 
-    let determineAttributeDiceMod attributeList attributeStatList =
-        determineAttributeLvl attributeList attributeStatList
-        |> intToDicePoolModification
+    let sumAttributesD6DiceMods attributeList attributeStatList =
+        sumAttributesLevels attributeList attributeStatList
+        |> intToD6DicePoolMod
 
     type AttributeDeterminedDiceModEffect =
         { name: string
           attributesToEffect: Attribute list
-          dicePoolModification: DicePoolModification }
+          dicePoolModification: DicePoolMod }
 
     let attributeDeterminedDiceModEffectToEffectString attributeDeterminedDiceModEffect =
         let attributesString =
             String.concat "," attributeDeterminedDiceModEffect.attributesToEffect
 
         let dicePoolModificationString =
-            dicePoolModificationToString attributeDeterminedDiceModEffect.dicePoolModification
+            dicePoolModToString attributeDeterminedDiceModEffect.dicePoolModification
 
         $"{dicePoolModificationString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
 
@@ -628,7 +631,7 @@ module MagicCombat =
     type MagicCombat =
         { name: string
           lvlRequirment: Neg1To4
-          diceModification: DicePoolModification
+          diceModification: DicePoolMod
           penetration: Penetration
           range: Range
           engageableOpponents: EngageableOpponents
@@ -663,13 +666,13 @@ module ConduitClass =
 
     type ConduitClass =
         { name: string
-          oneHandedDice: DicePoolModification option
-          twoHandedDice: DicePoolModification
+          oneHandedDice: DicePoolMod option
+          twoHandedDice: DicePoolMod
           penetration: Penetration
           rangeAdjustment: RangeAdjustment
           damageTypes: DamageType list
           engageableOpponents: EngageableOpponents option
-          dualWieldableBonus: DicePoolModification option
+          dualWieldableBonus: DicePoolMod option
           areaOfEffect: AreaOfEffect option
           resourceClass: ResourceClass option
           effectedMagicSkills: MagicSkill list }
@@ -686,7 +689,7 @@ module WeaponResourceClass =
     type WeaponResourceClass =
         { name: string
           resourceClass: ResourceClass
-          resourceDice: DicePoolModification
+          resourceDice: DicePoolMod
           penetration: Penetration
           range: Range option
           damageTypes: DamageType list
@@ -714,13 +717,13 @@ module WeaponClass =
 
     type WeaponClass =
         { name: string
-          oneHandedWeaponDice: DicePoolModification option
-          twoHandedWeaponDice: DicePoolModification
+          oneHandedWeaponDice: DicePoolMod option
+          twoHandedWeaponDice: DicePoolMod
           penetration: Penetration
           range: Range
           damageTypes: DamageType list
           engageableOpponents: EngageableOpponents
-          dualWieldableBonus: DicePoolModification option
+          dualWieldableBonus: DicePoolMod option
           areaOfEffect: AreaOfEffect option
           resourceClass: ResourceClass option }
 
@@ -753,10 +756,10 @@ module SkillDiceModificationEffect =
     type SkillDiceModificationEffect =
         { name: string
           skill: string
-          diceMod: DicePoolModification }
+          diceMod: DicePoolMod }
 
     let skillDiceModificationEffectToEffectString skillDiceModificationEffect =
-        $"{dicePoolModificationToString skillDiceModificationEffect.diceMod} {skillDiceModificationEffect.skill}"
+        $"{dicePoolModToString skillDiceModificationEffect.diceMod} {skillDiceModificationEffect.skill}"
 
     let collectSkillAdjustmentDiceMods skillName skillAdjustmentList =
         skillAdjustmentList
@@ -1075,11 +1078,11 @@ module CoreSkillGroup =
 
         let dicePoolModifications =
             skillAdjustmentDiceModList
-            @ [ neg1To4ToD6DicePoolModification lvl
-                neg1To4ToD6DicePoolModification attributeStat.lvl ]
+            @ [ neg1To4ToD6DicePoolMod lvl
+                neg1To4ToD6DicePoolMod attributeStat.lvl ]
               @ determineAttributeDeterminedDiceMod [ attributeStat.attribute ] attributeDeterminedDiceModEffectList
 
-        modifyDicePoolByModList baseDice dicePoolModifications
+        modifyDicePoolByDicePoolModList baseDice dicePoolModifications
 
     let coreSkillGroupListToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
         List.map (fun coreSkillGroup -> coreSkillGroup.attributeStat) coreSkillGroups
@@ -1122,15 +1125,15 @@ module Vocation =
     let governingAttributesToDicePoolModification governingAttributes =
         governingAttributes
         |> List.filter (fun governingAttribute -> governingAttribute.isGoverning)
-        |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolModification governingAttribute.attributeStat.lvl)
+        |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolMod governingAttribute.attributeStat.lvl)
 
     let vocationToDicePool baseDice level governingAttributes skillAdjustmentDiceModList =
         let diceModList =
             (governingAttributesToDicePoolModification governingAttributes)
-            @ [ zeroToFourToDicePoolModification level ]
+            @ [ zeroToFourToDicePoolMod level ]
               @ skillAdjustmentDiceModList
 
-        modifyDicePoolByModList baseDice diceModList
+        modifyDicePoolByDicePoolModList baseDice diceModList
 
     let attributesToGoverningAttributesInit attributes =
         List.map
@@ -1207,13 +1210,13 @@ module VocationGroup =
 
         let diceModList =
             (governingAttributesToDicePoolModification governingAttributes)
-            @ [ neg1To4ToD6DicePoolModification level ]
+            @ [ neg1To4ToD6DicePoolMod level ]
               @ skillAdjustmentDiceModList
                 @ determineAttributeDeterminedDiceMod
                     (collectGovernedAttributes governingAttributes)
                     attributeDeterminedDiceModEffectList
 
-        modifyDicePoolByModList baseDice diceModList
+        modifyDicePoolByDicePoolModList baseDice diceModList
 
 module CombatRoll =
     open Dice
@@ -1267,14 +1270,12 @@ module CombatRoll =
             determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray // These are injuries, weight penalties, ect...
             |> List.append wieldingDiceMods
             |> List.append [ attributeStats
-                             |> determineAttributeDiceMod combatRollGoverningAttributes
-                             skillStatLvl
-                             |> neg1To4ToInt
-                             |> intToDicePoolModification
+                             |> sumAttributesD6DiceMods combatRollGoverningAttributes
+                             skillStatLvl |> neg1To4ToInt |> intToD6DicePoolMod
                              resourceDice ]
-            |> modifyDicePoolByModList weaponTierBaseDice
+            |> modifyDicePoolByDicePoolModList weaponTierBaseDice
 
-        let numDice = sumDicePool dicePool
+        let numDice = dicePoolToNumDice dicePool
 
         { name = name + resourceDesc + descSuffix
           dicePool = dicePool
@@ -1285,9 +1286,9 @@ module CombatRoll =
           engageableOpponents = determineEngageableOpponents numDice weaponClass.engageableOpponents }
 
     let createHandedVariationsWeaponCombatRolls
-        (twoHandedWeaponDice: DicePoolModification)
-        (oneHandedWeaponDiceOption: DicePoolModification Option)
-        (dualWieldableBonusOption: DicePoolModification Option)
+        (twoHandedWeaponDice: DicePoolMod)
+        (oneHandedWeaponDiceOption: DicePoolMod Option)
+        (dualWieldableBonusOption: DicePoolMod Option)
         preloadedCreateCombatRoll
         : CombatRoll list =
 
@@ -1401,15 +1402,14 @@ module CombatRoll =
 
         let diceMods =
             determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
-            |> List.append [ determineAttributeDiceMod combatRollGoverningAttributes attributeStats
-                             neg1To4ToInt skillStat.lvl
-                             |> intToDicePoolModification
+            |> List.append [ sumAttributesD6DiceMods combatRollGoverningAttributes attributeStats
+                             neg1To4ToInt skillStat.lvl |> intToD6DicePoolMod
                              magicCombatType.diceModification
                              resourceDice ]
 
-        let combatRoll = modifyDicePoolByModList baseDicePool diceMods
+        let combatRoll = modifyDicePoolByDicePoolModList baseDicePool diceMods
 
-        let numDice = sumDicePool combatRoll
+        let numDice = dicePoolToNumDice combatRoll
 
         { name = sprintf "%s %s %s" magicSkill.name magicCombatType.name resourceName
           dicePool = combatRoll
@@ -1453,13 +1453,13 @@ module CombatRoll =
             determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
             |> List.append wieldingDiceMods
             |> List.append [ attributeStats
-                             |> determineAttributeDiceMod combatRollGoverningAttributes
-                             skillStatLvlAsInt |> intToDicePoolModification
+                             |> sumAttributesD6DiceMods combatRollGoverningAttributes
+                             skillStatLvlAsInt |> intToD6DicePoolMod
                              magicCombatType.diceModification
                              resourceDice ]
-            |> modifyDicePoolByModList conduitTierBaseDice
+            |> modifyDicePoolByDicePoolModList conduitTierBaseDice
 
-        let numDice = sumDicePool dicePool
+        let numDice = dicePoolToNumDice dicePool
 
         { name =
             sprintf "%s %s with %s %s %s" magicSkill.name magicCombatType.name conduitItemDesc resourceDesc descSuffix
@@ -1629,7 +1629,7 @@ module CarryWeightEffect =
             coreSkillGroupListToAttributeStatsAndSkillStats coreSkillGroupList
 
         let attributeLevel =
-            determineAttributeLvl [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
+            sumAttributesLevels [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
 
         let skillLevel =
             findVocationalSkillLvlWithDefault maxCarryWeightCalculation.governingSkill Zero coreSkillList

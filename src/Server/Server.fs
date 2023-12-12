@@ -62,17 +62,17 @@ module FallenServerData =
     let stringToDamageTypeList =
         damageTypeData
         |> stringListToTypeMap
-        |> stringAndMapToDamageTypeArray
+        |> stringToDamageTypeList
 
     // EngageableOpponents
     let engageableOpponentsCalculationData =
         makeFallenData "EngageableOpponentsCalculationData.csv" (fun row ->
             { name = string row.["desc"]
               combatRollDivisor = uint row.["combatRollDivisor"]
-              maxEO = mapMaxEO row.["maxEO"] })
+              maxEO = parseMaxEngageableOpponentsString row.["maxEO"] })
 
     let engageableOpponentsMap =
-        eoMap (eoCalculationListToMap engageableOpponentsCalculationData)
+        parseEngaeableOpponentsString (eoCalculationListToMap engageableOpponentsCalculationData)
 
     // Range
     let calculatedRangeData =
@@ -166,7 +166,7 @@ module FallenServerData =
         makeFallenData "MagicCombatData.csv" (fun row ->
             { name = string row.["Description"]
               lvlRequirment = int row.["Lvl Requirment"] |> intToNeg1To4
-              diceModification = stringToDicePoolModification row.["Dice Modification"]
+              diceModification = parseDicePoolModString row.["Dice Modification"]
               penetration = uint row.["Penetration"]
               range = rangeMap.Item(string row.["Range"])
               engageableOpponents = engageableOpponentsMap row.["Engageable Opponents"]
@@ -181,13 +181,13 @@ module FallenServerData =
     let weaponClassData =
         makeFallenData "WeaponClassData.csv" (fun row ->
             { name = string row.["desc"]
-              oneHandedWeaponDice = stringToDicePoolModificationOption row.["oneHandedWeaponDice"]
-              twoHandedWeaponDice = stringToDicePoolModification row.["twoHandedWeaponDice"]
+              oneHandedWeaponDice = parseDicePoolModOptionString row.["oneHandedWeaponDice"]
+              twoHandedWeaponDice = parseDicePoolModString row.["twoHandedWeaponDice"]
               penetration = uint row.["penetration"]
               range = rangeMap.Item row.["range"]
               damageTypes = stringToDamageTypeList row.["damageTypes"]
               engageableOpponents = engageableOpponentsMap row.["engageableOpponents"]
-              dualWieldableBonus = stringToDicePoolModificationOption row.["dualWieldableBonus"]
+              dualWieldableBonus = parseDicePoolModOptionString row.["dualWieldableBonus"]
               areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
               resourceClass = resourceClassOptionMap row.["resourceClass"] })
 
@@ -200,8 +200,8 @@ module FallenServerData =
         makeFallenData "ConduitClassData.csv" (fun row ->
 
             { name = string row.["desc"]
-              oneHandedDice = stringToDicePoolModificationOption row.["oneHandedDice"]
-              twoHandedDice = stringToDicePoolModification row.["twoHandedDice"]
+              oneHandedDice = parseDicePoolModOptionString row.["oneHandedDice"]
+              twoHandedDice = parseDicePoolModString row.["twoHandedDice"]
               penetration = uint row.["penetration"]
               rangeAdjustment = int row.["rangeAdjustment"]
               damageTypes = stringToDamageTypeList row.["damageTypes"]
@@ -209,7 +209,7 @@ module FallenServerData =
                 match row.["engageableOpponents"] with
                 | "None" -> None
                 | something -> Some(engageableOpponentsMap something)
-              dualWieldableBonus = stringToDicePoolModificationOption row.["dualWieldableBonus"]
+              dualWieldableBonus = parseDicePoolModOptionString row.["dualWieldableBonus"]
               areaOfEffect = AreaOfEffectOptionMap.Item row.["areaOfEffect"]
               resourceClass = resourceClassOptionMap row.["resourceClass"]
               effectedMagicSkills =
@@ -246,7 +246,7 @@ module FallenServerData =
         makeFallenData "SkillDiceModificationEffect.csv" (fun row ->
             { name = string row.["Name"]
               skill = string row.["Skill"]
-              diceMod = stringToDicePoolModification row.["Dice Modification"] })
+              diceMod = parseDicePoolModString row.["Dice Modification"] })
 
     let skillDiceModificationEffectMap =
         skillDiceModificationEffectData
@@ -271,7 +271,7 @@ module FallenServerData =
         makeFallenData "AttributeDeterminedDiceModEffectData.csv" (fun row ->
             { name = row.["name"]
               attributesToEffect = stringToAttributes row.["attributesToEffect"]
-              dicePoolModification = stringToDicePoolModification row.["dicePoolModification"] })
+              dicePoolModification = parseDicePoolModString row.["dicePoolModification"] })
 
     let attributeDeterminedDiceModEffectMap =
         attributeDeterminedDiceModEffectData
@@ -346,7 +346,7 @@ module FallenServerData =
         makeFallenData "WeaponResourceClassData.csv" (fun row ->
             { name = string row.["desc"]
               resourceClass = resourceClassMap.Item row.["resourceClass"]
-              resourceDice = stringToDicePoolModification row.["resourceDice"]
+              resourceDice = parseDicePoolModString row.["resourceDice"]
               penetration = uint row.["penetration"]
               range = rangeOptionMap row.["range"]
               damageTypes = stringToDamageTypeList row.["damageTypes"]
@@ -364,7 +364,7 @@ module FallenServerData =
             { name = string row.["desc"]
               level = int row.["level"]
               runeSlots = uint row.["runeSlots"]
-              baseDice = stringToDicePool row.["baseDice"]
+              baseDice = parseDicePoolString row.["baseDice"]
               durabilityMax = uint row.["durabilityMax"] })
 
     let itemTierMap =
