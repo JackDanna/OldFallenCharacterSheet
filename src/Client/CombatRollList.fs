@@ -10,6 +10,7 @@ open FallenLib.Attribute
 open FallenLib.VocationGroup
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
+open FallenLib.AttributeDeterminedDiceModEffect
 
 let update
     (magicSkillMap: Map<string, MagicSkill>)

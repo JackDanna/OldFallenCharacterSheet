@@ -6,7 +6,7 @@ open FallenLib.Dice
 open FallenLib.SkillStat
 open FallenLib.ZeroToFour
 open FallenLib.SkillDiceModificationEffect
-open FallenLib.Attribute
+open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
     | SetName of string

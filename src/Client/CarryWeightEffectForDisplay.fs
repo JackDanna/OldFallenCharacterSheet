@@ -2,7 +2,7 @@ module CarryWeightEffectForDisplay
 
 open FallenLib.CarryWeightEffect
 open FallenLib.CoreSkillGroup
-open FallenLib.Attribute
+open FallenLib.AttributeDeterminedDiceModEffect
 
 let update
     (coreSkillGroupList: CoreSkillGroup list)

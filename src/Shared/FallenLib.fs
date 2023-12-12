@@ -374,6 +374,10 @@ module Attribute =
         sumAttributesLevels attributeList attributeStatList
         |> intToD6DicePoolMod
 
+module AttributeDeterminedDiceModEffect =
+    open Attribute
+    open Dice
+
     type AttributeDeterminedDiceModEffect =
         { name: string
           attributesToEffect: Attribute list
@@ -389,12 +393,11 @@ module Attribute =
         $"{dicePoolModificationString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
 
 
-    let determineAttributeDeterminedDiceMod governingAttributeOfSkill attributeDeterminedDiceModList =
+    let collectAttributeDeterminedDiceMod governingAttributesOfSkill attributeDeterminedDiceModList =
         attributeDeterminedDiceModList
         |> List.filter (fun attributeDeterminedDiceMod ->
-            List.exists
-                (fun attribute -> List.contains attribute governingAttributeOfSkill)
-                attributeDeterminedDiceMod.attributesToEffect)
+            attributeDeterminedDiceMod.attributesToEffect
+            |> List.exists (fun attribute -> List.contains attribute governingAttributesOfSkill))
         |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolModification)
 
 module Range =
@@ -780,7 +783,7 @@ module AttributeStatAdjustmentEffect =
 
 module EffectForDisplay =
     open SkillDiceModificationEffect
-    open Attribute
+    open AttributeDeterminedDiceModEffect
 
     type DurationAndSource = { duration: string; source: string }
 
@@ -812,7 +815,7 @@ module ItemEffect =
     open AttributeStatAdjustmentEffect
     open PhysicalDefenseEffect
     open EffectForDisplay
-    open Attribute
+    open AttributeDeterminedDiceModEffect
 
     type ItemEffect =
         | SkillDiceModificationEffect of SkillDiceModificationEffect
@@ -1063,6 +1066,7 @@ module CoreSkillGroup =
     open Attribute
     open SkillStat
     open Dice
+    open AttributeDeterminedDiceModEffect
 
     type CoreSkillGroup =
         { attributeStat: AttributeStat
@@ -1080,7 +1084,7 @@ module CoreSkillGroup =
             skillAdjustmentDiceModList
             @ [ neg1To4ToD6DicePoolMod lvl
                 neg1To4ToD6DicePoolMod attributeStat.lvl ]
-              @ determineAttributeDeterminedDiceMod [ attributeStat.attribute ] attributeDeterminedDiceModEffectList
+              @ collectAttributeDeterminedDiceMod [ attributeStat.attribute ] attributeDeterminedDiceModEffectList
 
         modifyDicePoolByDicePoolModList baseDice dicePoolModifications
 
@@ -1166,7 +1170,7 @@ module VocationGroup =
     open SkillStat
     open Vocation
     open Dice
-    open Attribute
+    open AttributeDeterminedDiceModEffect
 
     type VocationGroup =
         { vocation: Vocation
@@ -1212,7 +1216,7 @@ module VocationGroup =
             (governingAttributesToDicePoolModification governingAttributes)
             @ [ neg1To4ToD6DicePoolMod level ]
               @ skillAdjustmentDiceModList
-                @ determineAttributeDeterminedDiceMod
+                @ collectAttributeDeterminedDiceMod
                     (collectGovernedAttributes governingAttributes)
                     attributeDeterminedDiceModEffectList
 
@@ -1239,6 +1243,7 @@ module CombatRoll =
     open MagicSkill
     open MagicCombat
     open ConduitClass
+    open AttributeDeterminedDiceModEffect
 
     type CombatRoll =
         { name: string
@@ -1267,7 +1272,7 @@ module CombatRoll =
             prepareWeaponResourceClassOptionForUse resource
 
         let dicePool =
-            determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray // These are injuries, weight penalties, ect...
+            collectAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray // These are injuries, weight penalties, ect...
             |> List.append wieldingDiceMods
             |> List.append [ attributeStats
                              |> sumAttributesD6DiceMods combatRollGoverningAttributes
@@ -1401,7 +1406,7 @@ module CombatRoll =
             determineMagicRange rangeMap magicCombatType.name (neg1To4ToInt skillStat.lvl)
 
         let diceMods =
-            determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
+            collectAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
             |> List.append [ sumAttributesD6DiceMods combatRollGoverningAttributes attributeStats
                              neg1To4ToInt skillStat.lvl |> intToD6DicePoolMod
                              magicCombatType.diceModification
@@ -1450,7 +1455,7 @@ module CombatRoll =
             | None -> magicCombatType.engageableOpponents
 
         let dicePool =
-            determineAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
+            collectAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
             |> List.append wieldingDiceMods
             |> List.append [ attributeStats
                              |> sumAttributesD6DiceMods combatRollGoverningAttributes
@@ -1602,6 +1607,7 @@ module CarryWeightEffect =
     open Neg1To4
     open EffectForDisplay
     open CoreSkillGroup
+    open AttributeDeterminedDiceModEffect
 
     type CarryWeightCalculation =
         { name: string

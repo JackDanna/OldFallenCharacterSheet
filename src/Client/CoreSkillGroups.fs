@@ -2,7 +2,7 @@ module CoreSkillGroupList
 
 open FallenLib.SkillDiceModificationEffect
 open FallenLib.CoreSkillGroup
-open FallenLib.Attribute
+open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
     | Modify of int * CoreSkillGroup.Msg

@@ -5,6 +5,7 @@ open FallenLib.Dice
 open FallenLib.SkillStat
 open FallenLib.SkillDiceModificationEffect
 open FallenLib.Attribute
+open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
     | Neg1To4Msg of Neg1To4.Msg

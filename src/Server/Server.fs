@@ -35,6 +35,7 @@ module FallenServerData =
     open FallenLib.EffectForDisplay
     open FallenLib.CharacterEffect
     open FallenLib.CarryWeightEffect
+    open FallenLib.AttributeDeterminedDiceModEffect
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName

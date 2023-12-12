@@ -3,6 +3,7 @@ module VocationGroup
 open FallenLib.Attribute
 open FallenLib.VocationGroup
 open FallenLib.SkillDiceModificationEffect
+open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
     | VocationRowMsg of Vocation.Msg
