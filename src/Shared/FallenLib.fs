@@ -605,23 +605,28 @@ module ResourceClass =
 
 // Magic
 
-module MagicResource =
-
-    open Dice
+module ResourcePool =
     open ResourceClass
-
-    type MagicResource =
-        { magicResouceClass: ResourceClass
-          numMagicResourceDice: uint }
-
-    let determineMagicResource (resource: MagicResource) =
-        sprintf "( %u %s )" resource.numMagicResourceDice resource.magicResouceClass,
-        createD6DicePoolMod resource.numMagicResourceDice
 
     type ResourcePool =
         { name: ResourceClass
           remainingResources: uint
           poolMax: uint }
+
+module MagicResourceForCombatCalculation =
+
+    open Dice
+    open ResourceClass
+
+    type MagicResourceForCombatCalculation =
+        { magicResouceClass: ResourceClass
+          numMagicResourceDice: uint }
+
+    let magicResourceForCombatToResourceDesc resource =
+        $"( {resource.numMagicResourceDice} {resource.magicResouceClass})"
+
+    let magicResourceForCombatToResourceDescAndD6DicePoolMod (resource: MagicResourceForCombatCalculation) =
+        magicResourceForCombatToResourceDesc resource, createD6DicePoolMod resource.numMagicResourceDice
 
 module MagicSkill =
     open DamageType
@@ -1250,7 +1255,7 @@ module CombatRoll =
     open WeaponClass
 
     open SkillStat
-    open MagicResource
+    open MagicResourceForCombatCalculation
     open MagicSkill
     open MagicCombat
     open ConduitClass
@@ -1401,7 +1406,7 @@ module CombatRoll =
         | _ -> determineMagicRangedClass rangeMap lvl
 
     let createMagicCombatRoll
-        (magicResource: MagicResource)
+        (magicResource: MagicResourceForCombatCalculation)
         (attributeStats: AttributeStat list)
         (skillStat: SkillStat)
         (magicSkill: MagicSkill)
@@ -1411,7 +1416,8 @@ module CombatRoll =
         (combatRollGoverningAttributes: Attribute list)
         : CombatRoll =
 
-        let (resourceName, resourceDice) = determineMagicResource magicResource
+        let (resourceName, resourceDice) =
+            magicResourceForCombatToResourceDescAndD6DicePoolMod magicResource
 
         let range =
             determineMagicRange rangeMap magicCombatType.name (neg1To4ToInt skillStat.lvl)
@@ -1451,7 +1457,8 @@ module CombatRoll =
         wieldingDiceMods
         : CombatRoll =
 
-        let (resourceDesc, resourceDice) = determineMagicResource magicResource
+        let (resourceDesc, resourceDice) =
+            magicResourceForCombatToResourceDescAndD6DicePoolMod magicResource
 
         let skillStatLvlAsInt = neg1To4ToInt skillStatLvl
 
@@ -1546,7 +1553,7 @@ module CombatRoll =
 
                     let equipedConduits = getEquipedConduitItemsWithSkillName equipment skillStat.name
 
-                    let magicResource: MagicResource =
+                    let magicResource: MagicResourceForCombatCalculation =
                         { magicResouceClass = magicSkill.magicResourceClass
                           numMagicResourceDice = magicCombatType.minResourceRequirment }
 
