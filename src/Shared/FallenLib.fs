@@ -631,13 +631,14 @@ module MagicResourceForCombatCalculation =
 module MagicSkill =
     open DamageType
     open ResourceClass
+    open Range
 
     type MagicSkill =
         { name: string
           damageTypes: DamageType list
-          rangeAdjustment: int
+          rangeAdjustment: RangeAdjustment
           isMeleeCapable: bool
-          magicResourceClass: ResourceClass }
+          resourceClass: ResourceClass }
 
 module MagicCombat =
     open Range
@@ -1554,7 +1555,7 @@ module CombatRoll =
                     let equipedConduits = getEquipedConduitItemsWithSkillName equipment skillStat.name
 
                     let magicResource: MagicResourceForCombatCalculation =
-                        { magicResouceClass = magicSkill.magicResourceClass
+                        { magicResouceClass = magicSkill.resourceClass
                           numMagicResourceDice = magicCombatType.minResourceRequirment }
 
                     if equipedConduits.Length > 0 then

@@ -156,7 +156,7 @@ module FallenServerData =
               damageTypes = stringToDamageTypeList (string row.["damageTypes"])
               rangeAdjustment = int row.["rangeAdjustment"]
               isMeleeCapable = Bool row.["meleeCapable"]
-              magicResourceClass = string row.["magicResourceClass"] })
+              resourceClass = string row.["magicResourceClass"] })
 
     let magicSkillMap =
         List.map (fun (magicSkill: MagicSkill) -> magicSkill.name, magicSkill) magicSkillData
