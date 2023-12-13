@@ -1798,6 +1798,8 @@ module CharacterEffect =
         | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
 
     let findPercentageOfMovementSpeed characterEffectList =
+        let fullMovementSpeedPercent = 1.00
+
         characterEffectList
         |> List.tryFind (fun characterEffect ->
             match characterEffect with
@@ -1808,8 +1810,8 @@ module CharacterEffect =
             | Some carryWeightEffectForDisplay ->
                 match carryWeightEffectForDisplay with
                 | CarryWeightEffectForDisplay cwefd -> cwefd.weightClass.percentOfMovementSpeed
-                | _ -> 1.00
-            | None -> 1.00)
+                | _ -> fullMovementSpeedPercent
+            | None -> fullMovementSpeedPercent)
 
     let characterEffectsToSkillDiceModEffects (characterEffectList: CharacterEffect list) =
         characterEffectList
