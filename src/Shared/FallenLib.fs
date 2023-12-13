@@ -374,32 +374,6 @@ module Attribute =
         sumAttributesLevels attributeList attributeStatList
         |> intToD6DicePoolMod
 
-module AttributeDeterminedDiceModEffect =
-    open Attribute
-    open Dice
-
-    type AttributeDeterminedDiceModEffect =
-        { name: string
-          attributesToEffect: Attribute list
-          dicePoolMod: DicePoolMod }
-
-    let attributeDeterminedDiceModEffectToEffectString attributeDeterminedDiceModEffect =
-        let attributesString =
-            String.concat "," attributeDeterminedDiceModEffect.attributesToEffect
-
-        let dicePoolModString =
-            dicePoolModToString attributeDeterminedDiceModEffect.dicePoolMod
-
-        $"{dicePoolModString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
-
-
-    let collectAttributeDeterminedDiceMod governingAttributesOfSkill attributeDeterminedDiceModList =
-        attributeDeterminedDiceModList
-        |> List.filter (fun attributeDeterminedDiceMod ->
-            attributeDeterminedDiceMod.attributesToEffect
-            |> List.exists (fun attribute -> List.contains attribute governingAttributesOfSkill))
-        |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolMod)
-
 module BattleMapUOM =
     let feetPerBattleMapUOM = 5u
 
@@ -759,6 +733,32 @@ module ItemTier =
           runeSlots: uint
           baseDice: DicePool
           durabilityMax: uint }
+
+module AttributeDeterminedDiceModEffect =
+    open Attribute
+    open Dice
+
+    type AttributeDeterminedDiceModEffect =
+        { name: string
+          attributesToEffect: Attribute list
+          dicePoolMod: DicePoolMod }
+
+    let attributeDeterminedDiceModEffectToEffectString attributeDeterminedDiceModEffect =
+        let attributesString =
+            String.concat "," attributeDeterminedDiceModEffect.attributesToEffect
+
+        let dicePoolModString =
+            dicePoolModToString attributeDeterminedDiceModEffect.dicePoolMod
+
+        $"{dicePoolModString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
+
+
+    let collectAttributeDeterminedDiceMod governingAttributesOfSkill attributeDeterminedDiceModList =
+        attributeDeterminedDiceModList
+        |> List.filter (fun attributeDeterminedDiceMod ->
+            attributeDeterminedDiceMod.attributesToEffect
+            |> List.exists (fun attribute -> List.contains attribute governingAttributesOfSkill))
+        |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolMod)
 
 module PhysicalDefenseEffect =
 
