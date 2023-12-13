@@ -256,8 +256,8 @@ module Dice =
           d12 = d12
           d20 = d20 }
 
-    let modifyDicePool (dicePool: DicePool) (dicePoolModification: DicePoolMod) : DicePool =
-        match dicePoolModification with
+    let modifyDicePool (dicePool: DicePool) (dicePoolMod: DicePoolMod) : DicePool =
+        match dicePoolMod with
         | AddDice diceToAdd -> combineDicePools [ dicePool; diceToAdd ]
         | RemoveDice diceToRemove -> removeDiceFromDicePool dicePool diceToRemove
 
@@ -272,7 +272,7 @@ module Dice =
 
         d4 + d6 + d8 + d10 + d12 + d20
 
-    let modifyDicePoolByDicePoolModList dicePool dicePoolModifications =
+    let modifyDicePoolByDicePoolModList dicePool dicePoolMods =
 
         let combinedDicePoolPenalty =
             List.fold
@@ -281,7 +281,7 @@ module Dice =
                     | RemoveDice dicePoolPenalty -> acc + dicePoolPenalty
                     | _ -> acc)
                 0u
-                dicePoolModifications
+                dicePoolMods
             |> RemoveDice
 
         let combinedPositiveDicePool =
@@ -291,7 +291,7 @@ module Dice =
                     | AddDice dicePool -> combineDicePools [ acc; dicePool ]
                     | _ -> acc)
                 dicePool
-                dicePoolModifications
+                dicePoolMods
 
         // Does the subtractions only at the end after combining
         modifyDicePool combinedPositiveDicePool combinedDicePoolPenalty
@@ -348,8 +348,8 @@ module Dice =
         | "None" -> None
         | modString -> Some <| parseDicePoolModString modString
 
-    let dicePoolModToString dicePoolModification =
-        match dicePoolModification with
+    let dicePoolModToString dicePoolMod =
+        match dicePoolMod with
         | RemoveDice removeDice -> $"-{uint removeDice}d"
         | AddDice addDice -> dicePoolToString addDice
 
@@ -381,16 +381,16 @@ module AttributeDeterminedDiceModEffect =
     type AttributeDeterminedDiceModEffect =
         { name: string
           attributesToEffect: Attribute list
-          dicePoolModification: DicePoolMod }
+          dicePoolMod: DicePoolMod }
 
     let attributeDeterminedDiceModEffectToEffectString attributeDeterminedDiceModEffect =
         let attributesString =
             String.concat "," attributeDeterminedDiceModEffect.attributesToEffect
 
-        let dicePoolModificationString =
-            dicePoolModToString attributeDeterminedDiceModEffect.dicePoolModification
+        let dicePoolModString =
+            dicePoolModToString attributeDeterminedDiceModEffect.dicePoolMod
 
-        $"{dicePoolModificationString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
+        $"{dicePoolModString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
 
 
     let collectAttributeDeterminedDiceMod governingAttributesOfSkill attributeDeterminedDiceModList =
@@ -398,7 +398,7 @@ module AttributeDeterminedDiceModEffect =
         |> List.filter (fun attributeDeterminedDiceMod ->
             attributeDeterminedDiceMod.attributesToEffect
             |> List.exists (fun attribute -> List.contains attribute governingAttributesOfSkill))
-        |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolModification)
+        |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolMod)
 
 module BattleMapUOM =
     let feetPerBattleMapUOM = 5u
@@ -651,7 +651,7 @@ module MagicCombat =
     type MagicCombat =
         { name: string
           lvlRequirment: Neg1To4
-          diceModification: DicePoolMod
+          dicePoolMod: DicePoolMod
           penetration: Penetration
           range: Range
           engageableOpponents: EngageableOpponents
@@ -835,27 +835,23 @@ module ItemEffect =
     open AttributeDeterminedDiceModEffect
 
     type ItemEffect =
-        | SkillDiceModificationEffect of SkillDiceModEffect
+        | SkillDiceModEffect of SkillDiceModEffect
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
         | DefenseClass of PhysicalDefenseEffect
         | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
 
     let itemEffectToString itemEffect =
         match itemEffect with
-        | SkillDiceModificationEffect skillDiceModificationEffect -> skillDiceModificationEffect.name
+        | SkillDiceModEffect skillDiceModEffect -> skillDiceModEffect.name
         | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
         | DefenseClass defenseClass -> defenseClass.name
         | AttributeDeterminedDiceModEffect addme -> addme.name
 
     // _ToEffectForDisplay
 
-    let skillDiceModificationEffectToEffectForDisplay
-        (skillDiceModificationEffect: SkillDiceModEffect)
-        duration
-        source
-        =
-        { name = skillDiceModificationEffect.name
-          effect = skillDiceModEffectToEffectString skillDiceModificationEffect
+    let skillDiceModEffectToEffectForDisplay (skillDiceModEffect: SkillDiceModEffect) duration source =
+        { name = skillDiceModEffect.name
+          effect = skillDiceModEffectToEffectString skillDiceModEffect
           durationAndSource = { duration = duration; source = source } }
 
     let attributeStatAdjustmentToEffectForDisplay
@@ -882,7 +878,7 @@ module ItemEffect =
         let duration = "While equiped"
 
         match itemEffect with
-        | SkillDiceModificationEffect sdme -> skillDiceModificationEffectToEffectForDisplay sdme duration
+        | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay sdme duration
         | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa duration
         | DefenseClass dc -> defenseClassToEffectForDisplay dc duration
         | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme duration
@@ -890,7 +886,7 @@ module ItemEffect =
     // Collects
     let collectSkillAdjustment (itemEffect: ItemEffect) =
         match itemEffect with
-        | SkillDiceModificationEffect skillAdjustment -> [ skillAdjustment ]
+        | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
         | _ -> []
 
     let collectAttributeDeterminedDiceModEffect (itemEffect: ItemEffect) =
@@ -1097,13 +1093,13 @@ module CoreSkillGroup =
         (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
         =
 
-        let dicePoolModifications =
+        let dicePoolMods =
             skillAdjustmentDiceModList
             @ [ neg1To4ToD6DicePoolMod lvl
                 neg1To4ToD6DicePoolMod attributeStat.lvl ]
               @ collectAttributeDeterminedDiceMod [ attributeStat.attribute ] attributeDeterminedDiceModEffectList
 
-        modifyDicePoolByDicePoolModList baseDice dicePoolModifications
+        modifyDicePoolByDicePoolModList baseDice dicePoolMods
 
     let coreSkillGroupListToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
         List.map (fun coreSkillGroup -> coreSkillGroup.attributeStat) coreSkillGroups
@@ -1143,14 +1139,14 @@ module Vocation =
           governingAttributes: GoverningAttribute list
           dicePool: DicePool }
 
-    let governingAttributesToDicePoolModification governingAttributes =
+    let governingAttributesToDicePoolMod governingAttributes =
         governingAttributes
         |> List.filter (fun governingAttribute -> governingAttribute.isGoverning)
         |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolMod governingAttribute.attributeStat.lvl)
 
     let vocationToDicePool baseDice level governingAttributes skillAdjustmentDiceModList =
         let diceModList =
-            (governingAttributesToDicePoolModification governingAttributes)
+            (governingAttributesToDicePoolMod governingAttributes)
             @ [ zeroToFourToDicePoolMod level ]
               @ skillAdjustmentDiceModList
 
@@ -1230,7 +1226,7 @@ module VocationGroup =
         =
 
         let diceModList =
-            (governingAttributesToDicePoolModification governingAttributes)
+            (governingAttributesToDicePoolMod governingAttributes)
             @ [ neg1To4ToD6DicePoolMod level ]
               @ skillAdjustmentDiceModList
                 @ collectAttributeDeterminedDiceMod
@@ -1427,7 +1423,7 @@ module CombatRoll =
             collectAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
             |> List.append [ sumAttributesD6DiceMods combatRollGoverningAttributes attributeStats
                              neg1To4ToInt skillStat.lvl |> intToD6DicePoolMod
-                             magicCombatType.diceModification
+                             magicCombatType.dicePoolMod
                              resourceDice ]
 
         let combatRoll = modifyDicePoolByDicePoolModList baseDicePool diceMods
@@ -1479,7 +1475,7 @@ module CombatRoll =
             |> List.append [ attributeStats
                              |> sumAttributesD6DiceMods combatRollGoverningAttributes
                              skillStatLvlAsInt |> intToD6DicePoolMod
-                             magicCombatType.diceModification
+                             magicCombatType.dicePoolMod
                              resourceDice ]
             |> modifyDicePoolByDicePoolModList conduitTierBaseDice
 
@@ -1792,7 +1788,7 @@ module CharacterEffect =
 
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay
-        | SkillDiceModificationEffectForDisplay of SkillDiceModEffectForDisplay
+        | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
         | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
         | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
@@ -1811,18 +1807,18 @@ module CharacterEffect =
                 | _ -> 1.00
             | None -> 1.00)
 
-    let collectCharacterSkillDiceModifications (characterEffectList: CharacterEffect list) =
+    let collectCharacterSkillDiceMods (characterEffectList: CharacterEffect list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
             match characterEffect with
-            | SkillDiceModificationEffectForDisplay sdmefd ->
-                let (skillDiceModificationEffect, duratoinAndSource) = sdmefd
-                [ skillDiceModificationEffect ]
+            | SkillDiceModEffectForDisplay sdmefd ->
+                let (skillDiceModEffect, duratoinAndSource) = sdmefd
+                [ skillDiceModEffect ]
             | _ -> [])
 
     let collectSkillAdjustments equipmentList characterEffectList =
         collectEquipmentSkillAdjustments equipmentList
-        @ collectCharacterSkillDiceModifications characterEffectList
+        @ collectCharacterSkillDiceMods characterEffectList
 
     let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: CharacterEffect list) =
         characterEffectList

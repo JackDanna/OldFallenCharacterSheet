@@ -167,7 +167,7 @@ module FallenServerData =
         makeFallenData "MagicCombatData.csv" (fun row ->
             { name = string row.["Description"]
               lvlRequirment = int row.["Lvl Requirment"] |> intToNeg1To4
-              diceModification = parseDicePoolModString row.["Dice Modification"]
+              dicePoolMod = parseDicePoolModString row.["Dice Modification"]
               penetration = uint row.["Penetration"]
               range = rangeMap.Item(string row.["Range"])
               engageableOpponents = engageableOpponentsMap row.["Engageable Opponents"]
@@ -272,7 +272,7 @@ module FallenServerData =
         makeFallenData "AttributeDeterminedDiceModEffectData.csv" (fun row ->
             { name = row.["name"]
               attributesToEffect = stringToAttributes row.["attributesToEffect"]
-              dicePoolModification = parseDicePoolModString row.["dicePoolModification"] })
+              dicePoolMod = parseDicePoolModString row.["dicePoolModification"] })
 
     let attributeDeterminedDiceModEffectMap =
         attributeDeterminedDiceModEffectData
@@ -293,14 +293,14 @@ module FallenServerData =
     // ItemEffect
     let itemEffectData: ItemEffect list =
         List.map DefenseClass defenseClassData
-        @ List.map SkillDiceModificationEffect skillDiceModificationEffectData
+        @ List.map SkillDiceModEffect skillDiceModificationEffectData
           @ List.map AttributeStatAdjustmentEffect attributeStatAdjustmentEffectData
 
     let itemEffectDataMap =
         itemEffectData
         |> List.map (fun (itemEffect: ItemEffect) ->
             match itemEffect with
-            | SkillDiceModificationEffect sdme -> sdme.name, SkillDiceModificationEffect sdme
+            | SkillDiceModEffect sdme -> sdme.name, SkillDiceModEffect sdme
             | AttributeStatAdjustmentEffect asae -> asae.name, AttributeStatAdjustmentEffect asae
             | DefenseClass dc -> dc.name, DefenseClass dc
             | AttributeDeterminedDiceModEffect addme -> addme.name, AttributeDeterminedDiceModEffect addme)
@@ -324,7 +324,7 @@ module FallenServerData =
             List.map attributeDeterminedDiceModEffectToForDisplay attributeDeterminedDiceModEffectData
 
         List.map EffectForDisplay characterEffectForDisplayData
-        @ List.map SkillDiceModificationEffectForDisplay skillDiceModificationEffectForDisplayList
+        @ List.map SkillDiceModEffectForDisplay skillDiceModificationEffectForDisplayList
           @ List.map AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectForDisplayList
 
     let characterEffectMap: Map<string, CharacterEffect> =
@@ -332,8 +332,8 @@ module FallenServerData =
         |> List.map (fun (characterEffect: CharacterEffect) ->
             match characterEffect with
             | EffectForDisplay efd -> efd.name, EffectForDisplay efd
-            | SkillDiceModificationEffectForDisplay (sdme, durationAndSource) ->
-                sdme.name, SkillDiceModificationEffectForDisplay(sdme, durationAndSource)
+            | SkillDiceModEffectForDisplay (sdme, durationAndSource) ->
+                sdme.name, SkillDiceModEffectForDisplay(sdme, durationAndSource)
             | CarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
                 ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd
             | AttributeDeterminedDiceModEffectForDisplay addme ->

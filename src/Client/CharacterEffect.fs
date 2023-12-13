@@ -21,9 +21,9 @@ let update
     | EffectForDisplayMsg msg, EffectForDisplay effectForDisplay ->
         EffectForDisplay.update msg effectForDisplay
         |> EffectForDisplay
-    | SkillDiceModificationEffectForDisplayMsg msg, SkillDiceModificationEffectForDisplay (sdmew, das) ->
+    | SkillDiceModificationEffectForDisplayMsg msg, SkillDiceModEffectForDisplay (sdmew, das) ->
         SkillDiceModificationEffectForDisplay.update msg (sdmew, das)
-        |> SkillDiceModificationEffectForDisplay
+        |> SkillDiceModEffectForDisplay
     | _, CarryWeightEffectForDisplay ccwefd ->
         CarryWeightEffectForDisplay.update coreSkillGroupList inventoryWeight weightClassList ccwefd
         |> CarryWeightEffectForDisplay
@@ -36,7 +36,7 @@ let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
     match model with
     | EffectForDisplay effectForDisplay ->
         EffectForDisplay.effectForDisplayTableData effectForDisplay (EffectForDisplayMsg >> dispatch)
-    | SkillDiceModificationEffectForDisplay sdmefd ->
+    | SkillDiceModEffectForDisplay sdmefd ->
         SkillDiceModificationEffectForDisplay.skillDiceModificationForDisplayTableData
             sdmefd
             (SkillDiceModificationEffectForDisplayMsg
