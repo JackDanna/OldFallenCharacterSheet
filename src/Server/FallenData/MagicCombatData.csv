@@ -1,4 +1,4 @@
-Description,Lvl Requirment,Dice Modification,Penetration,Range,Engageable Opponents,Resource Requirment,Area Of Effect
+Description,Lvl Requirment,Dice Mod,Penetration,Range,Engageable Opponents,Resource Requirment,Area Of Effect
 Melee Trick,-1,+0d6,0,Melee,Rapid,0,None
 Ranged Trick,-1,+0d6,0,Close,Standard,0,None
 Melee,0,+0d6,2,Melee,Rapid,1,None

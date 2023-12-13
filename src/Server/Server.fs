@@ -167,7 +167,7 @@ module FallenServerData =
         makeFallenData "MagicCombatData.csv" (fun row ->
             { name = string row.["Description"]
               lvlRequirment = int row.["Lvl Requirment"] |> intToNeg1To4
-              dicePoolMod = parseDicePoolModString row.["Dice Modification"]
+              dicePoolMod = parseDicePoolModString row.["Dice Mod"]
               penetration = uint row.["Penetration"]
               range = rangeMap.Item(string row.["Range"])
               engageableOpponents = engageableOpponentsMap row.["Engageable Opponents"]
@@ -243,14 +243,14 @@ module FallenServerData =
         |> Map.ofList
 
     // SkillDiceModEffect
-    let skillDiceModificationEffectData: SkillDiceModEffect list =
-        makeFallenData "SkillDiceModificationEffect.csv" (fun row ->
+    let skillDiceModEffectData: SkillDiceModEffect list =
+        makeFallenData "SkillDiceModEffect.csv" (fun row ->
             { name = string row.["Name"]
               skillToEffect = string row.["Skill"]
-              diceMod = parseDicePoolModString row.["Dice Modification"] })
+              diceMod = parseDicePoolModString row.["Dice Mod"] })
 
-    let skillDiceModificationEffectMap =
-        skillDiceModificationEffectData
+    let skillDiceModEffectMap =
+        skillDiceModEffectData
         |> List.map (fun (skillAdjustment: SkillDiceModEffect) -> skillAdjustment.name, skillAdjustment)
         |> Map.ofList
 
@@ -272,7 +272,7 @@ module FallenServerData =
         makeFallenData "AttributeDeterminedDiceModEffectData.csv" (fun row ->
             { name = row.["name"]
               attributesToEffect = stringToAttributes row.["attributesToEffect"]
-              dicePoolMod = parseDicePoolModString row.["dicePoolModification"] })
+              dicePoolMod = parseDicePoolModString row.["dicePoolMod"] })
 
     let attributeDeterminedDiceModEffectMap =
         attributeDeterminedDiceModEffectData
@@ -293,7 +293,7 @@ module FallenServerData =
     // ItemEffect
     let itemEffectData: ItemEffect list =
         List.map DefenseClass defenseClassData
-        @ List.map SkillDiceModEffect skillDiceModificationEffectData
+        @ List.map SkillDiceModEffect skillDiceModEffectData
           @ List.map AttributeStatAdjustmentEffect attributeStatAdjustmentEffectData
 
     let itemEffectDataMap =
@@ -317,14 +317,14 @@ module FallenServerData =
 
     // CharacterEffect
     let characterEffectData: CharacterEffect list =
-        let skillDiceModificationEffectForDisplayList =
-            List.map skillDiceModEffectToForDisplay skillDiceModificationEffectData
+        let skillDiceModEffectForDisplayList =
+            List.map skillDiceModEffectToForDisplay skillDiceModEffectData
 
         let attributeDeterminedDiceModEffectForDisplayList =
             List.map attributeDeterminedDiceModEffectToForDisplay attributeDeterminedDiceModEffectData
 
         List.map EffectForDisplay characterEffectForDisplayData
-        @ List.map SkillDiceModEffectForDisplay skillDiceModificationEffectForDisplayList
+        @ List.map SkillDiceModEffectForDisplay skillDiceModEffectForDisplayList
           @ List.map AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectForDisplayList
 
     let characterEffectMap: Map<string, CharacterEffect> =
