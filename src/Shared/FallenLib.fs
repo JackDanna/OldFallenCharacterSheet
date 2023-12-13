@@ -846,6 +846,7 @@ module SkillDiceModEffectForDisplay =
 module AttributeStatAdjustmentEffect =
 
     open Attribute
+    open EffectForDisplay
 
     type AttributeStatAdjustmentEffect =
         { name: string
@@ -854,6 +855,15 @@ module AttributeStatAdjustmentEffect =
 
     let attributeStatAdjustmentToEffectString attributeStatAdjustment =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
+
+    let attributeStatAdjustmentEffectToEffectForDisplayForItem
+        (attributeStatAdjustment: AttributeStatAdjustmentEffect)
+        duration
+        source
+        =
+        { name = attributeStatAdjustment.name
+          effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
+          durationAndSource = { duration = duration; source = source } }
 
 module ItemEffect =
     open SkillDiceModEffect
@@ -894,22 +904,14 @@ module ItemEffectForDisplay =
     open EffectForDisplay
     open AttributeDeterminedDiceModEffectForDisplay
 
-    let attributeStatAdjustmentEffectToEffectForDisplay
-        (attributeStatAdjustment: AttributeStatAdjustmentEffect)
-        duration
-        source
-        =
-        { name = attributeStatAdjustment.name
-          effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
-          durationAndSource = { duration = duration; source = source } }
-
     let itemEffectToEffectForDisplay itemEffect source =
 
         let duration = "While equiped"
 
         match itemEffect with
         | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay (skillDiceModEffectToForDisplay sdme)
-        | AttributeStatAdjustmentEffect asae -> attributeStatAdjustmentEffectToEffectForDisplay asae duration source
+        | AttributeStatAdjustmentEffect asae ->
+            attributeStatAdjustmentEffectToEffectForDisplayForItem asae duration source
         | PhysicalDefenseEffect dc -> physicalDefenseEffectToEffectForDisplay dc duration source
         | AttributeDeterminedDiceModEffect addme ->
             attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source
