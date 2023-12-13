@@ -2,7 +2,7 @@ module VocationGroupList
 
 open FallenLib.Attribute
 open FallenLib.VocationGroup
-open FallenLib.SkillDiceModificationEffect
+open FallenLib.SkillDiceModEffect
 open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
@@ -17,7 +17,7 @@ let init (attributeStatList: AttributeStat List) : VocationGroup list =
       VocationGroup.init attributeStatList ]
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStatList: AttributeStat List)
     (msg: Msg)

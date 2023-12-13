@@ -5,7 +5,7 @@ open FallenLib.Vocation
 open FallenLib.Dice
 open FallenLib.SkillStat
 open FallenLib.ZeroToFour
-open FallenLib.SkillDiceModificationEffect
+open FallenLib.SkillDiceModEffect
 open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
@@ -22,7 +22,7 @@ let init (governingAttribute: GoverningAttribute list) : SkillStat =
 
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (levelCap: ZeroToFour)
     (governingAttributeList: GoverningAttribute list)

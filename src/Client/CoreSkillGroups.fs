@@ -1,6 +1,6 @@
 module CoreSkillGroupList
 
-open FallenLib.SkillDiceModificationEffect
+open FallenLib.SkillDiceModEffect
 open FallenLib.CoreSkillGroup
 open FallenLib.AttributeDeterminedDiceModEffect
 
@@ -11,7 +11,7 @@ type Msg =
 let init () : CoreSkillGroup list = []
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (msg: Msg)
     (model: CoreSkillGroup list)

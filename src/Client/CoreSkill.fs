@@ -3,7 +3,7 @@ module CoreSkill
 open FallenLib.CoreSkillGroup
 open FallenLib.Dice
 open FallenLib.SkillStat
-open FallenLib.SkillDiceModificationEffect
+open FallenLib.SkillDiceModEffect
 open FallenLib.Attribute
 open FallenLib.AttributeDeterminedDiceModEffect
 
@@ -12,7 +12,7 @@ type Msg =
     | CalculateDicePool
 
 let init
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStat: AttributeStat)
     =
@@ -31,7 +31,7 @@ let init
             attributeDeterminedDiceModEffectList }
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStat: AttributeStat)
     (msg: Msg)

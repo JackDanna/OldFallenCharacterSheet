@@ -22,7 +22,7 @@ let update (allItemList: Item list) (msg: Msg) (model: Container list) : Contain
     | Insert itemContainerName ->
         allItemList
         |> List.find (fun item -> item.name = itemContainerName)
-        |> collectItemNameAndContainerClasses
+        |> itemToItemNameAndContainerClasses
         |> List.map itemNameAndContainerClassToContainer
         |> List.append model
     | Remove position -> List.removeAt position model

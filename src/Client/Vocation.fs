@@ -3,7 +3,7 @@ module Vocation
 open FallenLib.Vocation
 open FallenLib.Attribute
 open FallenLib.Dice
-open FallenLib.SkillDiceModificationEffect
+open FallenLib.SkillDiceModEffect
 open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
@@ -22,7 +22,7 @@ let init (attributeStatList: AttributeStat List) : Vocation =
       dicePool = vocationToDicePool baseDicePool lvl governingAttribues [] }
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStatList: AttributeStat List)
     (msg: Msg)

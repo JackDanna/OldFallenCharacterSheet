@@ -1,7 +1,7 @@
 module CoreSkillGroup
 
 open FallenLib.CoreSkillGroup
-open FallenLib.SkillDiceModificationEffect
+open FallenLib.SkillDiceModEffect
 open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
@@ -10,7 +10,7 @@ type Msg =
     | RecalculateCoreSkillGroup
 
 let init
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     : CoreSkillGroup =
     let attributeStat = AttributeStat.init ()
@@ -20,7 +20,7 @@ let init
         [ CoreSkill.init skillDiceModificationEffectList attributeDeterminedDiceModEffectList attributeStat ] }
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModificationEffect list)
+    (skillDiceModificationEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (msg: Msg)
     (model: CoreSkillGroup)

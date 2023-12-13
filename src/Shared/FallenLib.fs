@@ -769,17 +769,17 @@ module PhysicalDefenseEffect =
     let physicalDefenseEffectToEffectString defenseClass =
         $"{defenseClass.physicalDefense} Physical Defense"
 
-module SkillDiceModificationEffect =
+module SkillDiceModEffect =
 
     open Dice
 
-    type SkillDiceModificationEffect =
+    type SkillDiceModEffect =
         { name: string
           skillToEffect: string
           diceMod: DicePoolMod }
 
-    let skillDiceModificationEffectToEffectString skillDiceModificationEffect =
-        $"{dicePoolModToString skillDiceModificationEffect.diceMod} {skillDiceModificationEffect.skillToEffect}"
+    let skillDiceModEffectToEffectString skillDiceModEffect =
+        $"{dicePoolModToString skillDiceModEffect.diceMod} {skillDiceModEffect.skillToEffect}"
 
     let collectSkillAdjustmentDiceMods skillName skillAdjustmentList =
         skillAdjustmentList
@@ -799,12 +799,12 @@ module AttributeStatAdjustmentEffect =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
 module EffectForDisplay =
-    open SkillDiceModificationEffect
+    open SkillDiceModEffect
     open AttributeDeterminedDiceModEffect
 
     type DurationAndSource = { duration: string; source: string }
 
-    type SkillDiceModificationEffectForDisplay = SkillDiceModificationEffect * DurationAndSource
+    type SkillDiceModEffectForDisplay = SkillDiceModEffect * DurationAndSource
 
     type AttributeDeterminedDiceModEffectForDisplay =
         { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
@@ -812,9 +812,7 @@ module EffectForDisplay =
 
     let indefiniteStringForDuration = "Indefinite"
 
-    let skillDiceModificationEffectToForDisplay
-        (sdme: SkillDiceModificationEffect)
-        : SkillDiceModificationEffectForDisplay =
+    let skillDiceModEffectToForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
         sdme, { duration = "?"; source = "?" }
 
     let attributeDeterminedDiceModEffectToForDisplay
@@ -830,14 +828,14 @@ module EffectForDisplay =
 
 module ItemEffect =
 
-    open SkillDiceModificationEffect
+    open SkillDiceModEffect
     open AttributeStatAdjustmentEffect
     open PhysicalDefenseEffect
     open EffectForDisplay
     open AttributeDeterminedDiceModEffect
 
     type ItemEffect =
-        | SkillDiceModificationEffect of SkillDiceModificationEffect
+        | SkillDiceModificationEffect of SkillDiceModEffect
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
         | DefenseClass of PhysicalDefenseEffect
         | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
@@ -852,12 +850,12 @@ module ItemEffect =
     // _ToEffectForDisplay
 
     let skillDiceModificationEffectToEffectForDisplay
-        (skillDiceModificationEffect: SkillDiceModificationEffect)
+        (skillDiceModificationEffect: SkillDiceModEffect)
         duration
         source
         =
         { name = skillDiceModificationEffect.name
-          effect = skillDiceModificationEffectToEffectString skillDiceModificationEffect
+          effect = skillDiceModEffectToEffectString skillDiceModificationEffect
           durationAndSource = { duration = duration; source = source } }
 
     let attributeStatAdjustmentToEffectForDisplay
@@ -940,59 +938,59 @@ module Item =
             itemClasses
         |> String.concat ", "
 
-    let collectWeaponItemClasses item =
+    let itemToWeaponClasses item =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
             | WeaponClass specifiedItemClass -> [ specifiedItemClass ]
             | _ -> [])
 
-    let collectConduitClasses item =
+    let itemToConduitClasses item =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
             | ConduitClass specifiedItemClass -> [ specifiedItemClass ]
             | _ -> [])
 
-    let collectWeaponResourceItemClasses item =
+    let itemToWeaponResourceClasses item =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
             | WeaponResourceClass specifiedItemClass -> [ specifiedItemClass ]
             | _ -> [])
 
-    let collectItemNameAndContainerClasses item =
+    let itemToItemNameAndContainerClasses item =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
             | ContainerClass specifiedItemClass -> [ (item.name, specifiedItemClass) ]
             | _ -> [])
 
-    let collectContainerClassItemName item =
+    let itemToContainerClassNames item =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
             | ContainerClass _ -> [ item.name ]
             | _ -> [])
 
-    let collectItemEffectSubTypes (collectItemEffectSubType) (item: Item) =
+    let itemToItemEffectSubTypes (itemEffectToItemEffectSubType) (item: Item) =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
-            | ItemEffect itemEffect -> collectItemEffectSubType itemEffect
+            | ItemEffect itemEffect -> itemEffectToItemEffectSubType itemEffect
             | _ -> [])
 
-    let collectItemNameAndEffect (item: Item) =
+    let itemToItemNameAndItemEffectList (item: Item) =
         item.itemClasses
         |> List.collect (fun itemClass ->
             match itemClass with
             | ItemEffect itemEffect -> [ (item.name, itemEffect) ]
             | _ -> [])
 
-    let collectSkillAdjustments = collectItemEffectSubTypes collectSkillAdjustment
+    let itemToSkillAdjustments = itemToItemEffectSubTypes collectSkillAdjustment
 
-    let collectAttributeDeterminedDiceModEffects =
-        collectItemEffectSubTypes collectAttributeDeterminedDiceModEffect
+    let itemToAttributeDeterminedDiceModEffects =
+        itemToItemEffectSubTypes collectAttributeDeterminedDiceModEffect
 
 module Container =
     open ContainerClass
@@ -1049,7 +1047,7 @@ module Equipment =
         |> getEquipedItems
         |> List.filter (fun (item) ->
             item
-            |> collectConduitClasses
+            |> itemToConduitClasses
             |> List.filter (fun conduitClass -> doesConduitEffectMagicSkill conduitClass skillName)
             |> List.isEmpty
             |> not)
@@ -1057,17 +1055,17 @@ module Equipment =
     let collectEquipmentSkillAdjustments equipmentList =
         equipmentList
         |> getEquipedItems
-        |> List.collect collectSkillAdjustments
+        |> List.collect itemToSkillAdjustments
 
     let collectEquipedEquipmentAttributeDeterminedDiceModEffects equipmentList =
         equipmentList
         |> getEquipedItems
-        |> List.collect collectAttributeDeterminedDiceModEffects
+        |> List.collect itemToAttributeDeterminedDiceModEffects
 
     let getEquipedEffectItems equipmentList =
         equipmentList
         |> getEquipedItems
-        |> List.collect collectItemNameAndEffect
+        |> List.collect itemToItemNameAndItemEffectList
 
 // Character
 
@@ -1355,7 +1353,7 @@ module CombatRoll =
         |> getEquipedItems
         |> List.collect (fun weaponItem ->
             weaponItem
-            |> collectWeaponItemClasses
+            |> itemToWeaponClasses
             |> List.collect (fun weaponClass ->
 
                 let preloadedCreateCombatRoll =
@@ -1379,7 +1377,7 @@ module CombatRoll =
                     equipmentList
                     |> getEquipedItems
                     |> List.collect (fun item ->
-                        collectWeaponResourceItemClasses item
+                        itemToWeaponResourceClasses item
                         |> List.filter (fun weaponResourceItem -> weaponResourceItem.resourceClass = resourceClass)
                         |> List.collect (fun weaponResourceClass ->
                             Some weaponResourceClass
@@ -1563,7 +1561,7 @@ module CombatRoll =
                     if equipedConduits.Length > 0 then
                         List.collect
                             (fun (conduitItem: Item) ->
-                                collectConduitClasses conduitItem
+                                itemToConduitClasses conduitItem
                                 |> List.collect (fun conduitClass ->
                                     let preloadedCreatMagicCombatRollWithConduit =
                                         createMagicCombatRollWithConduit
@@ -1794,7 +1792,7 @@ module CharacterEffect =
 
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay
-        | SkillDiceModificationEffectForDisplay of SkillDiceModificationEffectForDisplay
+        | SkillDiceModificationEffectForDisplay of SkillDiceModEffectForDisplay
         | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
         | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay

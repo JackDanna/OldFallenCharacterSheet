@@ -28,7 +28,7 @@ module FallenServerData =
     open FallenLib.MovementSpeedCalculation
     open FallenLib.CoreSkillGroup
     open FallenLib.SkillStat
-    open FallenLib.SkillDiceModificationEffect
+    open FallenLib.SkillDiceModEffect
     open FallenLib.AttributeStatAdjustmentEffect
     open FallenLib.ItemEffect
     open FallenLib.ContainerClass
@@ -243,7 +243,7 @@ module FallenServerData =
         |> Map.ofList
 
     // SkillDiceModificationEffect
-    let skillDiceModificationEffectData: SkillDiceModificationEffect list =
+    let skillDiceModificationEffectData: SkillDiceModEffect list =
         makeFallenData "SkillDiceModificationEffect.csv" (fun row ->
             { name = string row.["Name"]
               skillToEffect = string row.["Skill"]
@@ -251,7 +251,7 @@ module FallenServerData =
 
     let skillDiceModificationEffectMap =
         skillDiceModificationEffectData
-        |> List.map (fun (skillAdjustment: SkillDiceModificationEffect) -> skillAdjustment.name, skillAdjustment)
+        |> List.map (fun (skillAdjustment: SkillDiceModEffect) -> skillAdjustment.name, skillAdjustment)
         |> Map.ofList
 
     // AttributeStatAdjustmentEffect
@@ -318,7 +318,7 @@ module FallenServerData =
     // CharacterEffect
     let characterEffectData: CharacterEffect list =
         let skillDiceModificationEffectForDisplayList =
-            List.map skillDiceModificationEffectToForDisplay skillDiceModificationEffectData
+            List.map skillDiceModEffectToForDisplay skillDiceModificationEffectData
 
         let attributeDeterminedDiceModEffectForDisplayList =
             List.map attributeDeterminedDiceModEffectToForDisplay attributeDeterminedDiceModEffectData

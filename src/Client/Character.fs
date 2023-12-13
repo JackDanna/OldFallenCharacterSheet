@@ -318,7 +318,7 @@ let view
         CombatRollTable.view model.combatRollList
 
         ContainerList.view
-            (List.collect collectContainerClassItemName allItemList)
+            (List.collect itemToContainerClassNames allItemList)
             allItemNameList
             model.containerList
             (ContainerListMsg >> dispatch)
