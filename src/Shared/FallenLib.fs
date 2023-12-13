@@ -1806,7 +1806,6 @@ module MovementSpeedEffect =
           effect = $"{msefd.movementSpeed} ft"
           durationAndSource = msefd.durationAndSource }
 
-
 module CharacterEffect =
 
     open EffectForDisplay

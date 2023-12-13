@@ -2,8 +2,6 @@ module ItemEffectList
 
 open FallenLib.EffectForDisplay
 open FallenLib.ItemEffect
-open FallenLib.ItemEffectForDisplay
-
 
 open Feliz
 open Feliz.Bulma
