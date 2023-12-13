@@ -871,6 +871,9 @@ module ItemEffect =
     open PhysicalDefenseEffect
     open AttributeDeterminedDiceModEffect
 
+    open SkillDiceModEffectForDisplay
+    open AttributeDeterminedDiceModEffectForDisplay
+
     type ItemEffect =
         | SkillDiceModEffect of SkillDiceModEffect
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
@@ -894,16 +897,6 @@ module ItemEffect =
         | AttributeDeterminedDiceModEffect addme -> [ addme ]
         | _ -> []
 
-module ItemEffectForDisplay =
-
-    open ItemEffect
-
-    open SkillDiceModEffectForDisplay
-    open AttributeStatAdjustmentEffect
-    open PhysicalDefenseEffect
-    open EffectForDisplay
-    open AttributeDeterminedDiceModEffectForDisplay
-
     let itemEffectToEffectForDisplay itemEffect source =
 
         let duration = "While equiped"
@@ -915,7 +908,6 @@ module ItemEffectForDisplay =
         | PhysicalDefenseEffect dc -> physicalDefenseEffectToEffectForDisplay dc duration source
         | AttributeDeterminedDiceModEffect addme ->
             attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source
-
 
 module Item =
     open ItemTier
