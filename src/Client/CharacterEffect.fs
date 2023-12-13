@@ -39,14 +39,13 @@ let update
         { addme with durationAndSource = newEffectForDisplay.durationAndSource }
         |> AttributeDeterminedDiceModEffectForDisplay
 
-    | _, CarryWeightEffectForDisplay ccwefd ->
-
-        determineCarryWeightCalculationForDisplay
-            coreSkillGroupList
-            inventoryWeight
-            weightClassList
-            ccwefd.carryWeightCalculation
-        |> CarryWeightEffectForDisplay
+    // | _, CarryWeightEffectForDisplay ccwefd ->
+    //     determineCarryWeightCalculationForDisplay
+    //         coreSkillGroupList
+    //         inventoryWeight
+    //         weightClassList
+    //         ccwefd.carryWeightCalculation
+    //     |> CarryWeightEffectForDisplay
     // | _, MovementSpeedEffectForDisplay msefd ->
     //     determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed movementSpeedCalculation
     //     |> MovementSpeedEffectForDisplay
