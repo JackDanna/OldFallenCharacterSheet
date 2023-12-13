@@ -1688,16 +1688,11 @@ module CarryWeightEffect =
 
         let maxCarryWeight = calculateCarryWeight carryWeightCalculation coreSkillGroupList
 
-        let weightClass =
-            determineWeightClass maxCarryWeight inventoryWeight weightClassList
-
-        let durationAndSource =
-            { duration = "Indefinite"
-              source = $"{inventoryWeight}/{maxCarryWeight} lb" }
-
         { carryWeightCalculation = carryWeightCalculation
-          weightClass = weightClass
-          durationAndSource = durationAndSource }
+          weightClass = determineWeightClass maxCarryWeight inventoryWeight weightClassList
+          durationAndSource =
+            { duration = "Indefinite"
+              source = $"{inventoryWeight}/{maxCarryWeight} lb" } }
 
 
 module MovementSpeedCalculation =
