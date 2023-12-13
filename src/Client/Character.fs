@@ -75,7 +75,7 @@ let update
 
     | CoreSkillGroupListMsg coreSkillTableMsg ->
 
-        // 1nd, update the core skill stats without factoring in the skillDiceModification list since we update coreSkillTables again in step 4
+        // 1nd, update the core skill stats without factoring in the skillDiceMod list since we update coreSkillTables again in step 4
         let newCoreSkillTables =
             CoreSkillGroupList.update [] [] coreSkillTableMsg model.coreSkillGroupList
 

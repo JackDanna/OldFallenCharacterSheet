@@ -12,7 +12,7 @@ type Msg =
     | CalculateDicePool
 
 let init
-    (skillDiceModificationEffectList: SkillDiceModEffect list)
+    (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStat: AttributeStat)
     =
@@ -27,11 +27,11 @@ let init
             baseDicePool
             lvl
             attributeStat
-            (collectSkillAdjustmentDiceMods name skillDiceModificationEffectList)
+            (collectSkillAdjustmentDiceMods name skillDiceModEffectList)
             attributeDeterminedDiceModEffectList }
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModEffect list)
+    (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStat: AttributeStat)
     (msg: Msg)
@@ -49,7 +49,7 @@ let update
                     baseDicePool
                     newLvl
                     attributeStat
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList)
                     attributeDeterminedDiceModEffectList }
     | CalculateDicePool ->
         { model with
@@ -58,7 +58,7 @@ let update
                     baseDicePool
                     model.lvl
                     attributeStat
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList)
                     attributeDeterminedDiceModEffectList }
 
 open Feliz

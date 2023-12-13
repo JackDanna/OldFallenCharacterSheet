@@ -22,7 +22,7 @@ let init (governingAttribute: GoverningAttribute list) : SkillStat =
 
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModEffect list)
+    (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (levelCap: ZeroToFour)
     (governingAttributeList: GoverningAttribute list)
@@ -41,7 +41,7 @@ let update
                     baseDicePool
                     lvl
                     governingAttributeList
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList)
                     attributeDeterminedDiceModEffectList }
     | CalculateDicePool ->
         let newLvl =
@@ -54,7 +54,7 @@ let update
                     baseDicePool
                     newLvl
                     governingAttributeList
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList)
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList)
                     attributeDeterminedDiceModEffectList }
 
 open Feliz

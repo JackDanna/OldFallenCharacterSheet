@@ -242,7 +242,7 @@ module FallenServerData =
         List.map (fun (defenseClass: PhysicalDefenseEffect) -> defenseClass.name, defenseClass) defenseClassData
         |> Map.ofList
 
-    // SkillDiceModificationEffect
+    // SkillDiceModEffect
     let skillDiceModificationEffectData: SkillDiceModEffect list =
         makeFallenData "SkillDiceModificationEffect.csv" (fun row ->
             { name = string row.["Name"]

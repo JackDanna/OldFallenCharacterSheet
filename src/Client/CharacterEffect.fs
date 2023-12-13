@@ -7,7 +7,7 @@ open FallenLib.CharacterEffect
 
 type Msg =
     | EffectForDisplayMsg of EffectForDisplay.Msg
-    | SkillDiceModificationEffectForDisplayMsg of SkillDiceModificationEffectForDisplay.Msg
+    | SkillDiceModEffectForDisplayMsg of SkillDiceModEffectForDisplay.Msg
     | AttributeDeterminedDiceModEffectForDisplayMsg of AttributeDeterminedDiceModEffectForDisplay.Msg
 
 let update
@@ -21,8 +21,8 @@ let update
     | EffectForDisplayMsg msg, EffectForDisplay effectForDisplay ->
         EffectForDisplay.update msg effectForDisplay
         |> EffectForDisplay
-    | SkillDiceModificationEffectForDisplayMsg msg, SkillDiceModEffectForDisplay (sdmew, das) ->
-        SkillDiceModificationEffectForDisplay.update msg (sdmew, das)
+    | SkillDiceModEffectForDisplayMsg msg, SkillDiceModEffectForDisplay (sdmew, das) ->
+        SkillDiceModEffectForDisplay.update msg (sdmew, das)
         |> SkillDiceModEffectForDisplay
     | _, CarryWeightEffectForDisplay ccwefd ->
         CarryWeightEffectForDisplay.update coreSkillGroupList inventoryWeight weightClassList ccwefd
@@ -37,10 +37,9 @@ let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
     | EffectForDisplay effectForDisplay ->
         EffectForDisplay.effectForDisplayTableData effectForDisplay (EffectForDisplayMsg >> dispatch)
     | SkillDiceModEffectForDisplay sdmefd ->
-        SkillDiceModificationEffectForDisplay.skillDiceModificationForDisplayTableData
+        SkillDiceModEffectForDisplay.skillDiceModForDisplayTableData
             sdmefd
-            (SkillDiceModificationEffectForDisplayMsg
-             >> dispatch)
+            (SkillDiceModEffectForDisplayMsg >> dispatch)
     | CarryWeightEffectForDisplay ccwefd -> CarryWeightEffectForDisplay.carryWeightEffectForDisplay ccwefd
     | AttributeDeterminedDiceModEffectForDisplay addmefd ->
         AttributeDeterminedDiceModEffectForDisplay.attributeDeterminedDiceModEffectForDisplay

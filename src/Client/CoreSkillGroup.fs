@@ -10,17 +10,16 @@ type Msg =
     | RecalculateCoreSkillGroup
 
 let init
-    (skillDiceModificationEffectList: SkillDiceModEffect list)
+    (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     : CoreSkillGroup =
     let attributeStat = AttributeStat.init ()
 
     { attributeStat = attributeStat
-      coreSkillList =
-        [ CoreSkill.init skillDiceModificationEffectList attributeDeterminedDiceModEffectList attributeStat ] }
+      coreSkillList = [ CoreSkill.init skillDiceModEffectList attributeDeterminedDiceModEffectList attributeStat ] }
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModEffect list)
+    (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (msg: Msg)
     (model: CoreSkillGroup)
@@ -35,7 +34,7 @@ let update
                 List.map
                     (fun coreSkill ->
                         CoreSkill.update
-                            skillDiceModificationEffectList
+                            skillDiceModEffectList
                             attributeDeterminedDiceModEffectList
                             newAttributeStat
                             CoreSkill.CalculateDicePool
@@ -49,7 +48,7 @@ let update
                 |> List.mapi (fun i skillRowModel ->
                     if position = i then
                         CoreSkill.update
-                            skillDiceModificationEffectList
+                            skillDiceModEffectList
                             attributeDeterminedDiceModEffectList
                             model.attributeStat
                             skillRowMsg
@@ -62,7 +61,7 @@ let update
                 model.coreSkillList
                 |> List.map (fun coreSkill ->
                     CoreSkill.update
-                        skillDiceModificationEffectList
+                        skillDiceModEffectList
                         attributeDeterminedDiceModEffectList
                         model.attributeStat
                         CoreSkill.CalculateDicePool

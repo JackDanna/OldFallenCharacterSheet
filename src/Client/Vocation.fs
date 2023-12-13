@@ -22,7 +22,7 @@ let init (attributeStatList: AttributeStat List) : Vocation =
       dicePool = vocationToDicePool baseDicePool lvl governingAttribues [] }
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModEffect list)
+    (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (attributeStatList: AttributeStat List)
     (msg: Msg)
@@ -42,7 +42,7 @@ let update
                     baseDicePool
                     newLevel
                     model.governingAttributes
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList) }
 
     | ToggleGoverningAttribute position ->
         let toggledGoverningAttributes =
@@ -63,7 +63,7 @@ let update
                     baseDicePool
                     model.level
                     newGoverningAttributes
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList) }
 
     | SetAttributeStatsAndCalculateDicePools ->
         let newGoverningAttributes =
@@ -76,7 +76,7 @@ let update
                     baseDicePool
                     model.level
                     newGoverningAttributes
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModificationEffectList) }
+                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList) }
 
 open Feliz
 open Feliz.Bulma

@@ -11,7 +11,7 @@ type Msg =
 let init () : CoreSkillGroup list = []
 
 let update
-    (skillDiceModificationEffectList: SkillDiceModEffect list)
+    (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     (msg: Msg)
     (model: CoreSkillGroup list)
@@ -22,7 +22,7 @@ let update
             (fun i coreSkilTableModel ->
                 if i = position then
                     CoreSkillGroup.update
-                        skillDiceModificationEffectList
+                        skillDiceModEffectList
                         attributeDeterminedDiceModEffectList
                         coreSkillTableMsg
                         coreSkilTableModel
@@ -33,7 +33,7 @@ let update
         List.map
             (fun coreSkillGroup ->
                 CoreSkillGroup.update
-                    skillDiceModificationEffectList
+                    skillDiceModEffectList
                     attributeDeterminedDiceModEffectList
                     CoreSkillGroup.Msg.RecalculateCoreSkillGroup
                     coreSkillGroup)
