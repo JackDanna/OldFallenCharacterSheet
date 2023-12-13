@@ -21,8 +21,8 @@ let update
     | EffectForDisplayMsg msg, EffectForDisplay effectForDisplay ->
         EffectForDisplay.update msg effectForDisplay
         |> EffectForDisplay
-    | SkillDiceModEffectForDisplayMsg msg, SkillDiceModEffectForDisplay (sdmew, das) ->
-        SkillDiceModEffectForDisplay.update msg (sdmew, das)
+    | SkillDiceModEffectForDisplayMsg msg, SkillDiceModEffectForDisplay sdmefd ->
+        SkillDiceModEffectForDisplay.update msg sdmefd
         |> SkillDiceModEffectForDisplay
     | _, CarryWeightEffectForDisplay ccwefd ->
         CarryWeightEffectForDisplay.update coreSkillGroupList inventoryWeight weightClassList ccwefd

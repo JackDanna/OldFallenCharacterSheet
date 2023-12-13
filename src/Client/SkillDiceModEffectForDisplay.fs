@@ -10,20 +10,18 @@ open Feliz
 let update (msg: Msg) (model: SkillDiceModEffectForDisplay) : SkillDiceModEffectForDisplay =
     match msg with
     | DurationAndSourceMsg msg ->
-        let (skillDiceModEffect, durationAndSource) = model
-        skillDiceModEffect, (DurationAndSource.update msg durationAndSource)
+        { model with durationAndSource = (DurationAndSource.update msg model.durationAndSource) }
 
 let skillDiceModForDisplayTableData (model: SkillDiceModEffectForDisplay) (dispatch: Msg -> unit) =
-    let (skillDiceModEffect, durationAndSource) = model
 
     [ Html.td [
-          prop.text skillDiceModEffect.name
+          prop.text model.skillDiceModEffect.name
       ]
       Html.td [
-          skillDiceModEffectToEffectString skillDiceModEffect
+          skillDiceModEffectToEffectString model.skillDiceModEffect
           |> prop.text
       ] ]
-    @ DurationAndSource.interactiveView durationAndSource (DurationAndSourceMsg >> dispatch)
+    @ DurationAndSource.interactiveView model.durationAndSource (DurationAndSourceMsg >> dispatch)
 
 let view (model: SkillDiceModEffectForDisplay) (dispatch: Msg -> unit) =
     skillDiceModForDisplayTableData model dispatch

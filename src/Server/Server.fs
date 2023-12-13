@@ -332,8 +332,7 @@ module FallenServerData =
         |> List.map (fun (characterEffect: CharacterEffect) ->
             match characterEffect with
             | EffectForDisplay efd -> efd.name, EffectForDisplay efd
-            | SkillDiceModEffectForDisplay (sdme, durationAndSource) ->
-                sdme.name, SkillDiceModEffectForDisplay(sdme, durationAndSource)
+            | SkillDiceModEffectForDisplay sdmefd -> sdmefd.skillDiceModEffect.name, SkillDiceModEffectForDisplay sdmefd
             | CarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
                 ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd
             | AttributeDeterminedDiceModEffectForDisplay addme ->

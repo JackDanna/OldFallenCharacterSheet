@@ -804,7 +804,9 @@ module EffectForDisplay =
 
     type DurationAndSource = { duration: string; source: string }
 
-    type SkillDiceModEffectForDisplay = SkillDiceModEffect * DurationAndSource
+    type SkillDiceModEffectForDisplay =
+        { skillDiceModEffect: SkillDiceModEffect
+          durationAndSource: DurationAndSource }
 
     type AttributeDeterminedDiceModEffectForDisplay =
         { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
@@ -813,7 +815,8 @@ module EffectForDisplay =
     let indefiniteStringForDuration = "Indefinite"
 
     let skillDiceModEffectToForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
-        sdme, { duration = "?"; source = "?" }
+        { skillDiceModEffect = sdme
+          durationAndSource = { duration = "?"; source = "?" } }
 
     let attributeDeterminedDiceModEffectToForDisplay
         (addme: AttributeDeterminedDiceModEffect)
@@ -1808,18 +1811,16 @@ module CharacterEffect =
                 | _ -> 1.00
             | None -> 1.00)
 
-    let collectCharacterSkillDiceMods (characterEffectList: CharacterEffect list) =
+    let collectCharacterSkillDiceModEffects (characterEffectList: CharacterEffect list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
             match characterEffect with
-            | SkillDiceModEffectForDisplay sdmefd ->
-                let (skillDiceModEffect, duratoinAndSource) = sdmefd
-                [ skillDiceModEffect ]
+            | SkillDiceModEffectForDisplay sdmefd -> [ sdmefd.skillDiceModEffect ]
             | _ -> [])
 
     let collectSkillAdjustments equipmentList characterEffectList =
         collectEquipmentSkillAdjustments equipmentList
-        @ collectCharacterSkillDiceMods characterEffectList
+        @ collectCharacterSkillDiceModEffects characterEffectList
 
     let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: CharacterEffect list) =
         characterEffectList
