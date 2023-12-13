@@ -75,7 +75,6 @@ let update
                     |> MovementSpeedEffectForDisplay
                 | _ -> characterEffect))
 
-
 open Feliz
 open Feliz.Bulma
 
