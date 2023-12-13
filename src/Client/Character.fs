@@ -9,7 +9,7 @@ open FallenLib.Equipment
 open FallenLib.Character
 open FallenLib.CharacterEffect
 open FallenLib.CarryWeightEffect
-open FallenLib.MovementSpeedCalculation
+open FallenLib.MovementSpeedEffect
 
 type Msg =
     | CoreSkillGroupListMsg of CoreSkillGroupList.Msg

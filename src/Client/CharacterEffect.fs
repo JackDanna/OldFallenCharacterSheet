@@ -2,13 +2,10 @@ module CharacterEffect
 
 open FallenLib.CarryWeightEffect
 open FallenLib.CoreSkillGroup
-
 open FallenLib.CharacterEffect
-
 open FallenLib.SkillDiceModEffectForDisplay
 open FallenLib.AttributeDeterminedDiceModEffectForDisplay
-
-open FallenLib.MovementSpeedCalculation
+open FallenLib.MovementSpeedEffect
 
 type Msg =
     | EffectForDisplayMsg of InteractiveEffectForDisplay.Msg

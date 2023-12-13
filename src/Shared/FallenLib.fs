@@ -789,7 +789,14 @@ module AttributeDeterminedDiceModEffectForDisplay =
           effect = attributeDeterminedDiceModEffectToEffectString addmefd.attributeDeterminedDiceModEffect
           durationAndSource = addmefd.durationAndSource }
 
+    let attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source =
+        { name = addme.name
+          effect = attributeDeterminedDiceModEffectToEffectString addme
+          durationAndSource = { duration = duration; source = source } }
+
 module PhysicalDefenseEffect =
+
+    open EffectForDisplay
 
     type PhysicalDefenseEffect =
         { name: string
@@ -797,6 +804,11 @@ module PhysicalDefenseEffect =
 
     let physicalDefenseEffectToEffectString defenseClass =
         $"{defenseClass.physicalDefense} Physical Defense"
+
+    let physicalDefenseEffectToEffectForDisplay (physicalDefenseEffect: PhysicalDefenseEffect) duration source =
+        { name = physicalDefenseEffect.name
+          effect = physicalDefenseEffectToEffectString physicalDefenseEffect
+          durationAndSource = { duration = duration; source = source } }
 
 module SkillDiceModEffect =
     open Dice
@@ -844,13 +856,9 @@ module AttributeStatAdjustmentEffect =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
 module ItemEffect =
-
-    open SkillDiceModEffectForDisplay
-
     open SkillDiceModEffect
     open AttributeStatAdjustmentEffect
     open PhysicalDefenseEffect
-    open EffectForDisplay
     open AttributeDeterminedDiceModEffect
 
     type ItemEffect =
@@ -866,37 +874,6 @@ module ItemEffect =
         | PhysicalDefenseEffect defenseClass -> defenseClass.name
         | AttributeDeterminedDiceModEffect addme -> addme.name
 
-    // _ToEffectForDisplay
-
-    let attributeStatAdjustmentToEffectForDisplay
-        (attributeStatAdjustment: AttributeStatAdjustmentEffect)
-        duration
-        source
-        =
-        { name = attributeStatAdjustment.name
-          effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
-          durationAndSource = { duration = duration; source = source } }
-
-    let defenseClassToEffectForDisplay (defenseClass: PhysicalDefenseEffect) duration source =
-        { name = defenseClass.name
-          effect = physicalDefenseEffectToEffectString defenseClass
-          durationAndSource = { duration = duration; source = source } }
-
-    let attributeDeterminedDiceModEffect (temp) duration source =
-        { name = temp.name
-          effect = attributeDeterminedDiceModEffectToEffectString temp
-          durationAndSource = { duration = duration; source = source } }
-
-    let itemEffectToEffectForDisplay itemEffect source =
-
-        let duration = "While equiped"
-
-        match itemEffect with
-        | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay (skillDiceModEffectToForDisplay sdme)
-        | AttributeStatAdjustmentEffect asae -> attributeStatAdjustmentToEffectForDisplay asae duration source
-        | PhysicalDefenseEffect dc -> defenseClassToEffectForDisplay dc duration source
-        | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme duration source
-
     let itemEffectToSkillDiceModEffects (itemEffect: ItemEffect) =
         match itemEffect with
         | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
@@ -906,6 +883,37 @@ module ItemEffect =
         match itemEffect with
         | AttributeDeterminedDiceModEffect addme -> [ addme ]
         | _ -> []
+
+module ItemEffectForDisplay =
+
+    open ItemEffect
+
+    open SkillDiceModEffectForDisplay
+    open AttributeStatAdjustmentEffect
+    open PhysicalDefenseEffect
+    open EffectForDisplay
+    open AttributeDeterminedDiceModEffectForDisplay
+
+    let attributeStatAdjustmentEffectToEffectForDisplay
+        (attributeStatAdjustment: AttributeStatAdjustmentEffect)
+        duration
+        source
+        =
+        { name = attributeStatAdjustment.name
+          effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
+          durationAndSource = { duration = duration; source = source } }
+
+    let itemEffectToEffectForDisplay itemEffect source =
+
+        let duration = "While equiped"
+
+        match itemEffect with
+        | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay (skillDiceModEffectToForDisplay sdme)
+        | AttributeStatAdjustmentEffect asae -> attributeStatAdjustmentEffectToEffectForDisplay asae duration source
+        | PhysicalDefenseEffect dc -> physicalDefenseEffectToEffectForDisplay dc duration source
+        | AttributeDeterminedDiceModEffect addme ->
+            attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source
+
 
 module Item =
     open ItemTier
@@ -1709,7 +1717,7 @@ module CarryWeightEffect =
           effect = attributeDeterminedDiceModEffectToEffectString cwefd.weightClass.attributeDeterminedDiceModEffect
           durationAndSource = cwefd.durationAndSource }
 
-module MovementSpeedCalculation =
+module MovementSpeedEffect =
 
     open Attribute
     open Neg1To4
@@ -1812,7 +1820,7 @@ module CharacterEffect =
     open AttributeDeterminedDiceModEffectForDisplay
     open CarryWeightEffect
     open Equipment
-    open MovementSpeedCalculation
+    open MovementSpeedEffect
 
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay

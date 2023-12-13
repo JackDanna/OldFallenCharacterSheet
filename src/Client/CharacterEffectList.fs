@@ -3,7 +3,7 @@ module CharacterEffectList
 open FallenLib.CharacterEffect
 open FallenLib.CarryWeightEffect
 open FallenLib.CoreSkillGroup
-open FallenLib.MovementSpeedCalculation
+open FallenLib.MovementSpeedEffect
 
 type Msg =
     | ModifyCharacterEffect of int * CharacterEffect.Msg

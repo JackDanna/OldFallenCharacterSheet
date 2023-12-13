@@ -25,7 +25,7 @@ module FallenServerData =
     open FallenLib.WeaponResourceClass
     open FallenLib.ItemTier
     open FallenLib.Item
-    open FallenLib.MovementSpeedCalculation
+    open FallenLib.MovementSpeedEffect
     open FallenLib.CoreSkillGroup
     open FallenLib.SkillStat
     open FallenLib.SkillDiceModEffect

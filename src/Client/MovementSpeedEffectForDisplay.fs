@@ -1,7 +1,7 @@
 module MovementSpeedEffectForDisplay
 
 open FallenLib.CoreSkillGroup
-open FallenLib.MovementSpeedCalculation
+open FallenLib.MovementSpeedEffect
 
 let update
     (coreSkillGroupList: CoreSkillGroup list)
