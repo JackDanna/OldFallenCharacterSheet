@@ -1,4 +1,4 @@
-module EffectForDisplay
+module InteractiveEffectForDisplay
 
 open FallenLib.EffectForDisplay
 

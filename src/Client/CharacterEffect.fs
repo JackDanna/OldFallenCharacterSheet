@@ -5,10 +5,15 @@ open FallenLib.CoreSkillGroup
 
 open FallenLib.CharacterEffect
 
+open FallenLib.SkillDiceModEffectForDisplay
+open FallenLib.AttributeDeterminedDiceModEffectForDisplay
+
+open FallenLib.MovementSpeedCalculation
+
 type Msg =
-    | EffectForDisplayMsg of EffectForDisplay.Msg
-    | SkillDiceModEffectForDisplayMsg of SkillDiceModEffectForDisplay.Msg
-    | AttributeDeterminedDiceModEffectForDisplayMsg of AttributeDeterminedDiceModEffectForDisplay.Msg
+    | EffectForDisplayMsg of InteractiveEffectForDisplay.Msg
+    | SkillDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
+    | AttributeDeterminedDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
 
 let update
     (coreSkillGroupList: CoreSkillGroup list)
@@ -17,16 +22,37 @@ let update
     (msg: Msg)
     (model: CharacterEffect)
     : CharacterEffect =
+
     match msg, model with
     | EffectForDisplayMsg msg, EffectForDisplay effectForDisplay ->
-        EffectForDisplay.update msg effectForDisplay
+        InteractiveEffectForDisplay.update msg effectForDisplay
         |> EffectForDisplay
+
     | SkillDiceModEffectForDisplayMsg msg, SkillDiceModEffectForDisplay sdmefd ->
-        SkillDiceModEffectForDisplay.update msg sdmefd
+        let newEffectForDisplay =
+            PartiallyInteractiveEffectForDisplay.update msg (skillDiceModEffectToEffectForDisplay sdmefd)
+
+        { sdmefd with durationAndSource = newEffectForDisplay.durationAndSource }
         |> SkillDiceModEffectForDisplay
+
+    | AttributeDeterminedDiceModEffectForDisplayMsg msg, AttributeDeterminedDiceModEffectForDisplay addme ->
+        let newEffectForDisplay =
+            PartiallyInteractiveEffectForDisplay.update msg (attributeDeterminedDiceModEffectToEffectForDisplay addme)
+
+        { addme with durationAndSource = newEffectForDisplay.durationAndSource }
+        |> AttributeDeterminedDiceModEffectForDisplay
+
     | _, CarryWeightEffectForDisplay ccwefd ->
-        CarryWeightEffectForDisplay.update coreSkillGroupList inventoryWeight weightClassList ccwefd
+
+        determineCarryWeightCalculationForDisplay
+            coreSkillGroupList
+            inventoryWeight
+            weightClassList
+            ccwefd.carryWeightCalculation
         |> CarryWeightEffectForDisplay
+    // | _, MovementSpeedEffectForDisplay msefd ->
+    //     determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed movementSpeedCalculation
+    //     |> MovementSpeedEffectForDisplay
     | _ -> model
 
 open Feliz
@@ -35,20 +61,22 @@ let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
 
     match model with
     | EffectForDisplay effectForDisplay ->
-        EffectForDisplay.effectForDisplayTableData effectForDisplay (EffectForDisplayMsg >> dispatch)
+        InteractiveEffectForDisplay.interactiveEffectForDisplayTableData
+            effectForDisplay
+            (EffectForDisplayMsg >> dispatch)
     | SkillDiceModEffectForDisplay sdmefd ->
-        SkillDiceModEffectForDisplay.skillDiceModForDisplayTableData
-            sdmefd
+        PartiallyInteractiveEffectForDisplay.view
+            (skillDiceModEffectToEffectForDisplay sdmefd)
             (SkillDiceModEffectForDisplayMsg >> dispatch)
-    | CarryWeightEffectForDisplay ccwefd -> CarryWeightEffectForDisplay.carryWeightEffectForDisplay ccwefd
     | AttributeDeterminedDiceModEffectForDisplay addmefd ->
-        AttributeDeterminedDiceModEffectForDisplay.attributeDeterminedDiceModEffectForDisplay
-            addmefd
+        PartiallyInteractiveEffectForDisplay.view
+            (attributeDeterminedDiceModEffectToEffectForDisplay addmefd)
             (AttributeDeterminedDiceModEffectForDisplayMsg
              >> dispatch)
-    | MovementSpeedEffectForDisplay msefd -> MovementSpeedEffectForDisplay.movementSpeedEffectForDisplay msefd
-
-
+    | CarryWeightEffectForDisplay ccwefd ->
+        NonInteractiveEffectForDisplay.view (carryWeightEffectForDisplayToEffectForDisplay ccwefd)
+    | MovementSpeedEffectForDisplay msefd ->
+        NonInteractiveEffectForDisplay.view (movementSpeedEffectForDisplayToEffectForDisplay msefd)
 
 let view (model: CharacterEffect) (dispatch: Msg -> unit) =
     characterEffectTableData model dispatch |> Html.tr

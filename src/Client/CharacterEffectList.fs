@@ -56,11 +56,11 @@ let update
         |> List.map (fun characterEffect ->
             match characterEffect with
             | CarryWeightEffectForDisplay calculatedCarryWeightEffectForDisplay ->
-                CarryWeightEffectForDisplay.update
+                determineCarryWeightCalculationForDisplay
                     (coreSkillGroupList: CoreSkillGroup list)
                     (inventoryWeight: float)
                     (weightClassList: WeightClass list)
-                    calculatedCarryWeightEffectForDisplay
+                    calculatedCarryWeightEffectForDisplay.carryWeightCalculation
                 |> CarryWeightEffectForDisplay
             | _ -> characterEffect)
         |> (fun characterEffectList ->

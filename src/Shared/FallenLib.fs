@@ -784,6 +784,11 @@ module AttributeDeterminedDiceModEffectForDisplay =
         { attributeDeterminedDiceModEffect = addme
           durationAndSource = { duration = "?"; source = "?" } }
 
+    let attributeDeterminedDiceModEffectToEffectForDisplay (addmefd: AttributeDeterminedDiceModEffectForDisplay) =
+        { name = addmefd.attributeDeterminedDiceModEffect.name
+          effect = attributeDeterminedDiceModEffectToEffectString addmefd.attributeDeterminedDiceModEffect
+          durationAndSource = addmefd.durationAndSource }
+
 module PhysicalDefenseEffect =
 
     type PhysicalDefenseEffect =
@@ -821,6 +826,11 @@ module SkillDiceModEffectForDisplay =
         { skillDiceModEffect = sdme
           durationAndSource = { duration = "?"; source = "?" } }
 
+    let skillDiceModEffectToEffectForDisplay (sdmefd: SkillDiceModEffectForDisplay) =
+        { name = sdmefd.skillDiceModEffect.name
+          effect = skillDiceModEffectToEffectString sdmefd.skillDiceModEffect
+          durationAndSource = sdmefd.durationAndSource }
+
 module AttributeStatAdjustmentEffect =
 
     open Attribute
@@ -834,6 +844,8 @@ module AttributeStatAdjustmentEffect =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
 module ItemEffect =
+
+    open SkillDiceModEffectForDisplay
 
     open SkillDiceModEffect
     open AttributeStatAdjustmentEffect
@@ -856,11 +868,6 @@ module ItemEffect =
 
     // _ToEffectForDisplay
 
-    let skillDiceModEffectToEffectForDisplay (skillDiceModEffect: SkillDiceModEffect) duration source =
-        { name = skillDiceModEffect.name
-          effect = skillDiceModEffectToEffectString skillDiceModEffect
-          durationAndSource = { duration = duration; source = source } }
-
     let attributeStatAdjustmentToEffectForDisplay
         (attributeStatAdjustment: AttributeStatAdjustmentEffect)
         duration
@@ -880,15 +887,15 @@ module ItemEffect =
           effect = attributeDeterminedDiceModEffectToEffectString temp
           durationAndSource = { duration = duration; source = source } }
 
-    let itemEffectToEffectForDisplay itemEffect =
+    let itemEffectToEffectForDisplay itemEffect source =
 
         let duration = "While equiped"
 
         match itemEffect with
-        | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay sdme duration
-        | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa duration
-        | DefenseClass dc -> defenseClassToEffectForDisplay dc duration
-        | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme duration
+        | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay (skillDiceModEffectToForDisplay sdme)
+        | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa duration source
+        | DefenseClass dc -> defenseClassToEffectForDisplay dc duration source
+        | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme duration source
 
     // Collects
     let itemEffectToSkillDiceModEffects (itemEffect: ItemEffect) =
@@ -1698,6 +1705,11 @@ module CarryWeightEffect =
             { duration = indefiniteStringForDuration
               source = $"{inventoryWeight}/{maxCarryWeight} lb" } }
 
+    let carryWeightEffectForDisplayToEffectForDisplay (cwefd: CarryWeightEffectForDisplay) =
+        { name = cwefd.carryWeightCalculation.name
+          effect = attributeDeterminedDiceModEffectToEffectString cwefd.weightClass.attributeDeterminedDiceModEffect
+          durationAndSource = cwefd.durationAndSource }
+
 module MovementSpeedCalculation =
 
     open Attribute
@@ -1787,6 +1799,13 @@ module MovementSpeedCalculation =
             { duration = indefiniteStringForDuration
               source = movementSpeedCalculationToSourceForDisplay movementSpeedCalculation } }
 
+    let movementSpeedEffectForDisplayToEffectForDisplay (msefd: MovementSpeedEffectForDisplay) =
+
+        { name = msefd.movementSpeedCalculation.name
+          effect = $"{msefd.movementSpeed} ft"
+          durationAndSource = msefd.durationAndSource }
+
+
 module CharacterEffect =
 
     open EffectForDisplay
@@ -1799,8 +1818,8 @@ module CharacterEffect =
     type CharacterEffect =
         | EffectForDisplay of EffectForDisplay
         | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
-        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
+        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
         | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
 
     let findPercentageOfMovementSpeed characterEffectList =

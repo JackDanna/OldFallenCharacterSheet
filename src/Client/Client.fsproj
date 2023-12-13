@@ -27,10 +27,9 @@
     <Compile Include="StringInputTableData.fs" />
     <Compile Include="DurationAndSource.fs" />
     <Compile Include="ItemEffectList.fs" />
-    <Compile Include="EffectForDisplay.fs" />
-    <Compile Include="SkillDiceModEffectForDisplay.fs" />
-    <Compile Include="AttributeDeterminedDiceModEffectForDisplay.fs" />
-    <Compile Include="CarryWeightEffectForDisplay.fs" />
+    <Compile Include="NonInteractiveEffectForDisplay.fs" />
+    <Compile Include="PartiallyInteractiveEffectForDisplay.fs" />
+    <Compile Include="InteractiveEffectForDisplay.fs" />
     <Compile Include="MovementSpeedEffectForDisplay.fs" />
     <Compile Include="CharacterEffect.fs" />
     <Compile Include="CharacterEffectList.fs" />
