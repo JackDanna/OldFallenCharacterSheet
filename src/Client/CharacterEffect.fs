@@ -53,7 +53,7 @@ let update
 
 open Feliz
 
-let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
+let viewTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
 
     match model with
     | EffectForDisplay effectForDisplay ->
@@ -73,6 +73,3 @@ let characterEffectTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
         NonInteractiveEffectForDisplay.view (carryWeightEffectForDisplayToEffectForDisplay ccwefd)
     | MovementSpeedEffectForDisplay msefd ->
         NonInteractiveEffectForDisplay.view (movementSpeedEffectForDisplayToEffectForDisplay msefd)
-
-let view (model: CharacterEffect) (dispatch: Msg -> unit) =
-    characterEffectTableData model dispatch |> Html.tr

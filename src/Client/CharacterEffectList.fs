@@ -98,7 +98,7 @@ let view (characterEffectNameList: string list) (model: CharacterEffect list) (d
                     List.mapi
                         (fun position equipmentRow ->
                             let characterEffect =
-                                (CharacterEffect.characterEffectTableData equipmentRow (fun msg ->
+                                (CharacterEffect.viewTableData equipmentRow (fun msg ->
                                     dispatch (ModifyCharacterEffect(position, msg))))
 
                             let deleteEquipmentRowButton =
