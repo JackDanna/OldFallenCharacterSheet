@@ -884,12 +884,12 @@ module ItemEffect =
         | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme duration
 
     // Collects
-    let collectSkillAdjustment (itemEffect: ItemEffect) =
+    let itemEffectToSkillDiceModEffects (itemEffect: ItemEffect) =
         match itemEffect with
         | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
         | _ -> []
 
-    let collectAttributeDeterminedDiceModEffect (itemEffect: ItemEffect) =
+    let itemEffectToAttributeDeterminedDiceModEffects (itemEffect: ItemEffect) =
         match itemEffect with
         | AttributeDeterminedDiceModEffect addme -> [ addme ]
         | _ -> []
@@ -983,10 +983,11 @@ module Item =
             | ItemEffect itemEffect -> [ (item.name, itemEffect) ]
             | _ -> [])
 
-    let itemToSkillAdjustments = itemToItemEffectSubTypes collectSkillAdjustment
+    let itemToSkillDiceModEffects =
+        itemToItemEffectSubTypes itemEffectToSkillDiceModEffects
 
     let itemToAttributeDeterminedDiceModEffects =
-        itemToItemEffectSubTypes collectAttributeDeterminedDiceModEffect
+        itemToItemEffectSubTypes itemEffectToAttributeDeterminedDiceModEffects
 
 module Container =
     open ContainerClass
@@ -1051,7 +1052,7 @@ module Equipment =
     let collectEquipmentSkillAdjustments equipmentList =
         equipmentList
         |> getEquipedItems
-        |> List.collect itemToSkillAdjustments
+        |> List.collect itemToSkillDiceModEffects
 
     let collectEquipedEquipmentAttributeDeterminedDiceModEffects equipmentList =
         equipmentList
