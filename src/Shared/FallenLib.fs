@@ -775,15 +775,15 @@ module SkillDiceModificationEffect =
 
     type SkillDiceModificationEffect =
         { name: string
-          skill: string
+          skillToEffect: string
           diceMod: DicePoolMod }
 
     let skillDiceModificationEffectToEffectString skillDiceModificationEffect =
-        $"{dicePoolModToString skillDiceModificationEffect.diceMod} {skillDiceModificationEffect.skill}"
+        $"{dicePoolModToString skillDiceModificationEffect.diceMod} {skillDiceModificationEffect.skillToEffect}"
 
     let collectSkillAdjustmentDiceMods skillName skillAdjustmentList =
         skillAdjustmentList
-        |> List.filter (fun skillAdjustment -> skillAdjustment.skill = skillName)
+        |> List.filter (fun skillAdjustment -> skillAdjustment.skillToEffect = skillName)
         |> List.map (fun skillAdjustment -> skillAdjustment.diceMod)
 
 module AttributeStatAdjustmentEffect =

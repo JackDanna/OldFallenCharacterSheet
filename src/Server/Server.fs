@@ -246,7 +246,7 @@ module FallenServerData =
     let skillDiceModificationEffectData: SkillDiceModificationEffect list =
         makeFallenData "SkillDiceModificationEffect.csv" (fun row ->
             { name = string row.["Name"]
-              skill = string row.["Skill"]
+              skillToEffect = string row.["Skill"]
               diceMod = parseDicePoolModString row.["Dice Modification"] })
 
     let skillDiceModificationEffectMap =
