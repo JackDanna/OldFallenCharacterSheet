@@ -1694,7 +1694,6 @@ module CarryWeightEffect =
             { duration = "Indefinite"
               source = $"{inventoryWeight}/{maxCarryWeight} lb" } }
 
-
 module MovementSpeedCalculation =
 
     open Attribute
@@ -1749,7 +1748,7 @@ module MovementSpeedCalculation =
         let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
         sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
 
-    let movementSpeedCalculationToDurationForDisplay movementSpeedCalculation =
+    let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
         $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
 
     let determineMovementSpeedEffectForDisplay
@@ -1782,7 +1781,7 @@ module MovementSpeedCalculation =
             calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel skillLevel
           durationAndSource =
             { duration = "Indefinite"
-              source = movementSpeedCalculationToDurationForDisplay movementSpeedCalculation } }
+              source = movementSpeedCalculationToSourceForDisplay movementSpeedCalculation } }
 
 module CharacterEffect =
 
