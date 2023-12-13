@@ -856,14 +856,14 @@ module ItemEffect =
     type ItemEffect =
         | SkillDiceModEffect of SkillDiceModEffect
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
-        | DefenseClass of PhysicalDefenseEffect
+        | PhysicalDefenseEffect of PhysicalDefenseEffect
         | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
 
     let itemEffectToString itemEffect =
         match itemEffect with
         | SkillDiceModEffect skillDiceModEffect -> skillDiceModEffect.name
         | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
-        | DefenseClass defenseClass -> defenseClass.name
+        | PhysicalDefenseEffect defenseClass -> defenseClass.name
         | AttributeDeterminedDiceModEffect addme -> addme.name
 
     // _ToEffectForDisplay
@@ -893,11 +893,10 @@ module ItemEffect =
 
         match itemEffect with
         | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay (skillDiceModEffectToForDisplay sdme)
-        | AttributeStatAdjustmentEffect asa -> attributeStatAdjustmentToEffectForDisplay asa duration source
-        | DefenseClass dc -> defenseClassToEffectForDisplay dc duration source
+        | AttributeStatAdjustmentEffect asae -> attributeStatAdjustmentToEffectForDisplay asae duration source
+        | PhysicalDefenseEffect dc -> defenseClassToEffectForDisplay dc duration source
         | AttributeDeterminedDiceModEffect addme -> attributeDeterminedDiceModEffect addme duration source
 
-    // Collects
     let itemEffectToSkillDiceModEffects (itemEffect: ItemEffect) =
         match itemEffect with
         | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]

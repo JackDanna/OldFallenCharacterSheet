@@ -235,13 +235,14 @@ module FallenServerData =
         |> Map.ofList
 
     // DefenseClass
-    let defenseClassData: PhysicalDefenseEffect list =
+    let physicalDefenseEffectData: PhysicalDefenseEffect list =
         makeFallenData "PhysicalDefenseEffect.csv" (fun row ->
             { name = string row.["desc"]
               physicalDefense = float row.["physicalDefense"] })
 
-    let defenseClassMap =
-        List.map (fun (defenseClass: PhysicalDefenseEffect) -> defenseClass.name, defenseClass) defenseClassData
+    let physicalDefenseEffectMap =
+        physicalDefenseEffectData
+        |> List.map (fun (defenseClass: PhysicalDefenseEffect) -> defenseClass.name, defenseClass)
         |> Map.ofList
 
     // SkillDiceModEffect
@@ -294,7 +295,7 @@ module FallenServerData =
 
     // ItemEffect
     let itemEffectData: ItemEffect list =
-        List.map DefenseClass defenseClassData
+        List.map PhysicalDefenseEffect physicalDefenseEffectData
         @ List.map SkillDiceModEffect skillDiceModEffectData
           @ List.map AttributeStatAdjustmentEffect attributeStatAdjustmentEffectData
 
@@ -304,7 +305,7 @@ module FallenServerData =
             match itemEffect with
             | SkillDiceModEffect sdme -> sdme.name, SkillDiceModEffect sdme
             | AttributeStatAdjustmentEffect asae -> asae.name, AttributeStatAdjustmentEffect asae
-            | DefenseClass dc -> dc.name, DefenseClass dc
+            | PhysicalDefenseEffect dc -> dc.name, PhysicalDefenseEffect dc
             | AttributeDeterminedDiceModEffect addme -> addme.name, AttributeDeterminedDiceModEffect addme)
         |> Map.ofList
 
