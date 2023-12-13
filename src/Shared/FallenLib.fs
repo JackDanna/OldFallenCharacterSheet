@@ -810,6 +810,8 @@ module EffectForDisplay =
         { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
           durationAndSource: DurationAndSource }
 
+    let indefiniteStringForDuration = "Indefinite"
+
     let skillDiceModificationEffectToForDisplay
         (sdme: SkillDiceModificationEffect)
         : SkillDiceModificationEffectForDisplay =
@@ -1691,7 +1693,7 @@ module CarryWeightEffect =
         { carryWeightCalculation = carryWeightCalculation
           weightClass = determineWeightClass maxCarryWeight inventoryWeight weightClassList
           durationAndSource =
-            { duration = "Indefinite"
+            { duration = indefiniteStringForDuration
               source = $"{inventoryWeight}/{maxCarryWeight} lb" } }
 
 module MovementSpeedCalculation =
@@ -1780,7 +1782,7 @@ module MovementSpeedCalculation =
           movementSpeed =
             calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel skillLevel
           durationAndSource =
-            { duration = "Indefinite"
+            { duration = indefiniteStringForDuration
               source = movementSpeedCalculationToSourceForDisplay movementSpeedCalculation } }
 
 module CharacterEffect =
