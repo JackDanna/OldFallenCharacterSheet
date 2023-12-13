@@ -28,7 +28,7 @@
     <Compile Include="DurationAndSource.fs" />
     <Compile Include="ItemEffectList.fs" />
     <Compile Include="EffectForDisplay.fs" />
-    <Compile Include="SkillDiceModificationEffectForDisplay.fs" />
+    <Compile Include="SkillDiceModEffectForDisplay.fs" />
     <Compile Include="AttributeDeterminedDiceModEffectForDisplay.fs" />
     <Compile Include="CarryWeightEffectForDisplay.fs" />
     <Compile Include="MovementSpeedEffectForDisplay.fs" />
