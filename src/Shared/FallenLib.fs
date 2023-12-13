@@ -1052,17 +1052,17 @@ module Equipment =
             |> List.isEmpty
             |> not)
 
-    let collectEquipmentSkillAdjustments equipmentList =
+    let equipmentListToSkillDiceModEffects equipmentList =
         equipmentList
         |> getEquipedItems
         |> List.collect itemToSkillDiceModEffects
 
-    let collectEquipedEquipmentAttributeDeterminedDiceModEffects equipmentList =
+    let equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList =
         equipmentList
         |> getEquipedItems
         |> List.collect itemToAttributeDeterminedDiceModEffects
 
-    let getEquipedEffectItems equipmentList =
+    let equipmentToEquipedEffectItems equipmentList =
         equipmentList
         |> getEquipedItems
         |> List.collect itemToItemNameAndItemEffectList
@@ -1811,7 +1811,7 @@ module CharacterEffect =
                 | _ -> 1.00
             | None -> 1.00)
 
-    let collectCharacterSkillDiceModEffects (characterEffectList: CharacterEffect list) =
+    let characterEffectsToSkillDiceModEffects (characterEffectList: CharacterEffect list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
             match characterEffect with
@@ -1819,8 +1819,8 @@ module CharacterEffect =
             | _ -> [])
 
     let collectSkillAdjustments equipmentList characterEffectList =
-        collectEquipmentSkillAdjustments equipmentList
-        @ collectCharacterSkillDiceModEffects characterEffectList
+        equipmentListToSkillDiceModEffects equipmentList
+        @ characterEffectsToSkillDiceModEffects characterEffectList
 
     let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: CharacterEffect list) =
         characterEffectList
@@ -1833,7 +1833,7 @@ module CharacterEffect =
             | _ -> [])
 
     let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =
-        collectEquipedEquipmentAttributeDeterminedDiceModEffects equipmentList
+        equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList
         @ collectCharacterAttributeDeterminedDiceModEffects characterEffectList
 
 module Character =

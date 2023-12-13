@@ -311,7 +311,7 @@ let view
 
         CharacterEffectList.view characterEffectKeyList model.characterEffectList (CharacterEffectListMsg >> dispatch)
 
-        ItemEffectList.view (getEquipedEffectItems model.equipmentList)
+        ItemEffectList.view (equipmentToEquipedEffectItems model.equipmentList)
 
         EquipmentList.view allItemNameList model.equipmentList (EquipmentListMsg >> dispatch)
 
