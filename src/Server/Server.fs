@@ -29,6 +29,7 @@ module FallenServerData =
     open FallenLib.CoreSkillGroup
     open FallenLib.SkillStat
     open FallenLib.SkillDiceModEffect
+    open FallenLib.SkillDiceModEffectForDisplay
     open FallenLib.AttributeStatAdjustmentEffect
     open FallenLib.ItemEffect
     open FallenLib.ContainerClass
@@ -36,6 +37,7 @@ module FallenServerData =
     open FallenLib.CharacterEffect
     open FallenLib.CarryWeightEffect
     open FallenLib.AttributeDeterminedDiceModEffect
+    open FallenLib.AttributeDeterminedDiceModEffectForDisplay
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName

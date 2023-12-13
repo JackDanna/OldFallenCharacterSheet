@@ -1,7 +1,7 @@
 module AttributeDeterminedDiceModEffectForDisplay
 
 open FallenLib.AttributeDeterminedDiceModEffect
-open FallenLib.EffectForDisplay
+open FallenLib.AttributeDeterminedDiceModEffectForDisplay
 
 type Msg = DurationAndSourceMsg of DurationAndSource.Msg
 

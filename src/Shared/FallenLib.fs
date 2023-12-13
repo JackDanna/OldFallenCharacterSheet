@@ -734,6 +734,17 @@ module ItemTier =
           baseDice: DicePool
           durabilityMax: uint }
 
+module EffectForDisplay =
+
+    type DurationAndSource = { duration: string; source: string }
+
+    type EffectForDisplay =
+        { name: string
+          effect: string
+          durationAndSource: DurationAndSource }
+
+    let indefiniteStringForDuration = "Indefinite"
+
 module AttributeDeterminedDiceModEffect =
     open Attribute
     open Dice
@@ -752,13 +763,26 @@ module AttributeDeterminedDiceModEffect =
 
         $"{dicePoolModString} {attributesString} ({attributeDeterminedDiceModEffect.name})"
 
-
     let collectAttributeDeterminedDiceMod governingAttributesOfSkill attributeDeterminedDiceModList =
         attributeDeterminedDiceModList
         |> List.filter (fun attributeDeterminedDiceMod ->
             attributeDeterminedDiceMod.attributesToEffect
             |> List.exists (fun attribute -> List.contains attribute governingAttributesOfSkill))
         |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolMod)
+
+module AttributeDeterminedDiceModEffectForDisplay =
+    open EffectForDisplay
+    open AttributeDeterminedDiceModEffect
+
+    type AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
+          durationAndSource: DurationAndSource }
+
+    let attributeDeterminedDiceModEffectToForDisplay
+        (addme: AttributeDeterminedDiceModEffect)
+        : AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect = addme
+          durationAndSource = { duration = "?"; source = "?" } }
 
 module PhysicalDefenseEffect =
 
@@ -770,7 +794,6 @@ module PhysicalDefenseEffect =
         $"{defenseClass.physicalDefense} Physical Defense"
 
 module SkillDiceModEffect =
-
     open Dice
 
     type SkillDiceModEffect =
@@ -786,6 +809,18 @@ module SkillDiceModEffect =
         |> List.filter (fun skillAdjustment -> skillAdjustment.skillToEffect = skillName)
         |> List.map (fun skillAdjustment -> skillAdjustment.diceMod)
 
+module SkillDiceModEffectForDisplay =
+    open SkillDiceModEffect
+    open EffectForDisplay
+
+    type SkillDiceModEffectForDisplay =
+        { skillDiceModEffect: SkillDiceModEffect
+          durationAndSource: DurationAndSource }
+
+    let skillDiceModEffectToForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
+        { skillDiceModEffect = sdme
+          durationAndSource = { duration = "?"; source = "?" } }
+
 module AttributeStatAdjustmentEffect =
 
     open Attribute
@@ -797,37 +832,6 @@ module AttributeStatAdjustmentEffect =
 
     let attributeStatAdjustmentToEffectString attributeStatAdjustment =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
-
-module EffectForDisplay =
-    open SkillDiceModEffect
-    open AttributeDeterminedDiceModEffect
-
-    type DurationAndSource = { duration: string; source: string }
-
-    type SkillDiceModEffectForDisplay =
-        { skillDiceModEffect: SkillDiceModEffect
-          durationAndSource: DurationAndSource }
-
-    type AttributeDeterminedDiceModEffectForDisplay =
-        { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
-          durationAndSource: DurationAndSource }
-
-    let indefiniteStringForDuration = "Indefinite"
-
-    let skillDiceModEffectToForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
-        { skillDiceModEffect = sdme
-          durationAndSource = { duration = "?"; source = "?" } }
-
-    let attributeDeterminedDiceModEffectToForDisplay
-        (addme: AttributeDeterminedDiceModEffect)
-        : AttributeDeterminedDiceModEffectForDisplay =
-        { attributeDeterminedDiceModEffect = addme
-          durationAndSource = { duration = "?"; source = "?" } }
-
-    type EffectForDisplay =
-        { name: string
-          effect: string
-          durationAndSource: DurationAndSource }
 
 module ItemEffect =
 
@@ -1786,6 +1790,8 @@ module MovementSpeedCalculation =
 module CharacterEffect =
 
     open EffectForDisplay
+    open SkillDiceModEffectForDisplay
+    open AttributeDeterminedDiceModEffectForDisplay
     open CarryWeightEffect
     open Equipment
     open MovementSpeedCalculation

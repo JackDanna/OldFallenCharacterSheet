@@ -1,7 +1,7 @@
 module SkillDiceModEffectForDisplay
 
 open FallenLib.SkillDiceModEffect
-open FallenLib.EffectForDisplay
+open FallenLib.SkillDiceModEffectForDisplay
 
 type Msg = DurationAndSourceMsg of DurationAndSource.Msg
 
