@@ -5,6 +5,7 @@ open FallenLib.CarryWeightEffect
 open FallenLib.CarryWeightEffectForDisplay
 open FallenLib.CoreSkillGroup
 open FallenLib.MovementSpeedEffect
+open FallenLib.MovementSpeedEffectForDisplay
 
 type Msg =
     | ModifyCharacterEffect of int * CharacterEffect.Msg

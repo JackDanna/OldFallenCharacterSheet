@@ -1201,7 +1201,6 @@ module MovementSpeedEffect =
 
     open Attribute
     open Neg1To4
-    open CoreSkillGroup
     open TextEffectForDisplay
 
     type MovementSpeedCalculation =
@@ -1253,6 +1252,12 @@ module MovementSpeedEffect =
 
     let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
         $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
+
+module MovementSpeedEffectForDisplay =
+
+    open MovementSpeedEffect
+    open CoreSkillGroup
+    open TextEffectForDisplay
 
     let determineMovementSpeedEffectForDisplay
         (coreSkillGroupList: CoreSkillGroup list)
@@ -1333,8 +1338,16 @@ module Effect =
     open AttributeStatAdjustmentEffectForDisplay
     open PhysicalDefenseEffectForDisplay
     open CarryWeightEffectForDisplay
+    open MovementSpeedEffectForDisplay
 
-    let effectFromItemToTextEffectForDisplay coreSkillGroup inventoryWeight weightClassList effect source =
+    let effectFromItemToTextEffectForDisplay
+        percentOfMovementSpeed
+        coreSkillGroupList
+        inventoryWeight
+        weightClassList
+        effect
+        source
+        =
 
         let durationAndSource =
             { duration = "While equiped"
@@ -1358,8 +1371,11 @@ module Effect =
               durationAndSource = durationAndSource }
             |> attributeDeterminedDiceModEffectToTextEffectForDisplay
         | CarryWeightCalculation cwc ->
-            determineCarryWeightCalculationForDisplay coreSkillGroup inventoryWeight weightClassList cwc
+            determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList cwc
             |> carryWeightEffectForDisplayToEffectForDisplay
+        | MovementSpeedCalculation msc ->
+            determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msc
+            |> movementSpeedEffectForDisplayToEffectForDisplay
 
 
 // Item stuff

@@ -6,7 +6,7 @@ open FallenLib.CoreSkillGroup
 open FallenLib.CharacterEffect
 open FallenLib.SkillDiceModEffectForDisplay
 open FallenLib.AttributeDeterminedDiceModEffectForDisplay
-open FallenLib.MovementSpeedEffect
+open FallenLib.MovementSpeedEffectForDisplay
 
 type Msg =
     | EffectForDisplayMsg of InteractiveEffectForDisplay.Msg
