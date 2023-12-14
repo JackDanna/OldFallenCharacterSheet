@@ -68,7 +68,7 @@ let update
             |> List.map (fun characterEffect ->
                 match characterEffect with
                 | MovementSpeedEffectForDisplay movementSpeedEffectForDisplay ->
-                    MovementSpeedEffectForDisplay.update
+                    determineMovementSpeedEffectForDisplay
                         coreSkillGroupList
                         (findPercentageOfMovementSpeed characterEffectList)
                         movementSpeedEffectForDisplay.movementSpeedCalculation

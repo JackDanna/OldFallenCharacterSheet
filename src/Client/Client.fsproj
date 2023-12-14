@@ -30,7 +30,6 @@
     <Compile Include="NonInteractiveEffectForDisplay.fs" />
     <Compile Include="PartiallyInteractiveEffectForDisplay.fs" />
     <Compile Include="InteractiveEffectForDisplay.fs" />
-    <Compile Include="MovementSpeedEffectForDisplay.fs" />
     <Compile Include="CharacterEffect.fs" />
     <Compile Include="CharacterEffectList.fs" />
     <Compile Include="CharacterInformation.fs" />
