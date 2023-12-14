@@ -9,7 +9,7 @@ open FallenLib.AttributeDeterminedDiceModEffectForDisplay
 open FallenLib.MovementSpeedEffectForDisplay
 
 type Msg =
-    | EffectForDisplayMsg of InteractiveEffectForDisplay.Msg
+    | TextForDisplayMsg of InteractiveEffectForDisplay.Msg
     | SkillDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
     | AttributeDeterminedDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
     | RecalculateCarryWeight of (CoreSkillGroup list * float * WeightClass list)
@@ -18,7 +18,7 @@ type Msg =
 let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
 
     match msg, model with
-    | EffectForDisplayMsg msg, TextEffectForDisplay effectForDisplay ->
+    | TextForDisplayMsg msg, TextEffectForDisplay effectForDisplay ->
         InteractiveEffectForDisplay.update msg effectForDisplay
         |> TextEffectForDisplay
 
@@ -58,7 +58,7 @@ let viewTableData (model: EffectForDisplay) (dispatch: Msg -> unit) =
     | TextEffectForDisplay effectForDisplay ->
         InteractiveEffectForDisplay.interactiveEffectForDisplayTableData
             effectForDisplay
-            (EffectForDisplayMsg >> dispatch)
+            (TextForDisplayMsg >> dispatch)
     | SkillDiceModEffectForDisplay sdmefd ->
         PartiallyInteractiveEffectForDisplay.view
             (skillDiceModEffectForDisplayToTextEffectForDisplay sdmefd)

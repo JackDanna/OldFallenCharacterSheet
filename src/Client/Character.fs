@@ -18,7 +18,7 @@ type Msg =
     | EquipmentListMsg of EquipmentList.Msg
     | ContainerListMsg of ContainerList.Msg
     | DestinyPointsMsg of DestinyPoints.Msg
-    | CharacterEffectListMsg of CharacterEffectList.Msg
+    | CharacterEffectListMsg of EffectForDisplayList.Msg
     | CharacterInformationMsg of CharacterInformation.Msg
     | SetDefault
 
@@ -81,14 +81,14 @@ let update
 
         // 2rd, update the character effects based on the new skill stats
         let newCharacterEffectList =
-            CharacterEffectList.update
+            EffectForDisplayList.update
                 newCoreSkillTables
                 (calculateCharacterWeight model.equipmentList model.containerList)
                 carryWeightCalculationMap
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
-                CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
+                EffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
                 model.characterEffectList
 
         // 3th, grab the new skillAdjustments from both the itms and character effects
@@ -179,14 +179,14 @@ let update
                     newVocationGroupList
 
             characterEffectList =
-                CharacterEffectList.update
+                EffectForDisplayList.update
                     newCoreSkillGroupList
                     (calculateCharacterWeight newEquipmentList model.containerList)
                     carryWeightCalculationMap
                     weightClassList
                     characterEffectMap
                     movementSpeedCalculationMap
-                    CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
+                    EffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
                     model.characterEffectList }
 
     | ContainerListMsg containerListMsg ->
@@ -194,14 +194,14 @@ let update
             ContainerList.update allItemList containerListMsg model.containerList
 
         let newCharacterEffectList =
-            CharacterEffectList.update
+            EffectForDisplayList.update
                 model.coreSkillGroupList
                 (calculateCharacterWeight model.equipmentList newContainerList)
                 carryWeightCalculationMap
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
-                CharacterEffectList.Msg.RecalculateCarryWeightAndMovementSpeed
+                EffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
                 model.characterEffectList
 
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
@@ -231,7 +231,7 @@ let update
 
     | CharacterEffectListMsg msg ->
         let newCharacterEffectList =
-            CharacterEffectList.update
+            EffectForDisplayList.update
                 model.coreSkillGroupList
                 (calculateCharacterWeight model.equipmentList model.containerList)
                 carryWeightCalculationMap
@@ -309,7 +309,7 @@ let view
 
         DestinyPoints.view model.destinyPoints (DestinyPointsMsg >> dispatch)
 
-        CharacterEffectList.view characterEffectKeyList model.characterEffectList (CharacterEffectListMsg >> dispatch)
+        EffectForDisplayList.view characterEffectKeyList model.characterEffectList (CharacterEffectListMsg >> dispatch)
 
         EquipmentList.view allItemNameList model.equipmentList (EquipmentListMsg >> dispatch)
 

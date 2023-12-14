@@ -30,7 +30,7 @@
     <Compile Include="PartiallyInteractiveEffectForDisplay.fs" />
     <Compile Include="InteractiveEffectForDisplay.fs" />
     <Compile Include="CharacterEffect.fs" />
-    <Compile Include="CharacterEffectList.fs" />
+    <Compile Include="EffectForDisplayList.fs" />
     <Compile Include="CharacterInformation.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
