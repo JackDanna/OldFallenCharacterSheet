@@ -46,7 +46,7 @@ module DamageType =
 
     let damageTypesToString (damageTypes: DamageType list) = String.concat ", " damageTypes
 
-    let stringToDamageTypeList (damageTypeMap: Map<string, DamageType>) (damageTypesString: string) =
+    let stringAndMapToDamageTypeList (damageTypeMap: Map<string, DamageType>) (damageTypesString: string) =
         if damageTypesString.Length = 0 then
             []
         else

@@ -65,7 +65,7 @@ module FallenServerData =
     let stringToDamageTypeList =
         damageTypeData
         |> stringListToTypeMap
-        |> stringToDamageTypeList
+        |> stringAndMapToDamageTypeList
 
     // EngageableOpponents
     let engageableOpponentsCalculationData =
