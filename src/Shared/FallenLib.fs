@@ -1806,6 +1806,22 @@ module MovementSpeedEffect =
           effect = $"{msefd.movementSpeed} ft"
           durationAndSource = msefd.durationAndSource }
 
+module Effect =
+    open SkillDiceModEffect
+    open AttributeDeterminedDiceModEffect
+    open AttributeStatAdjustmentEffect
+    open PhysicalDefenseEffect
+    open CarryWeightEffect
+    open MovementSpeedEffect
+
+    type ItemEffect =
+        | SkillDiceModEffect of SkillDiceModEffect
+        | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
+        | PhysicalDefenseEffect of PhysicalDefenseEffect
+        | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
+        | CarryWeightCalculation of CarryWeightCalculation
+        | MovementSpeedCalculation of MovementSpeedCalculation
+
 module CharacterEffect =
 
     open EffectForDisplay
