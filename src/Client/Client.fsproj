@@ -26,7 +26,6 @@
     <Compile Include="ContainerList.fs" />
     <Compile Include="StringInputTableData.fs" />
     <Compile Include="DurationAndSource.fs" />
-    <Compile Include="ItemEffectList.fs" />
     <Compile Include="NonInteractiveEffectForDisplay.fs" />
     <Compile Include="PartiallyInteractiveEffectForDisplay.fs" />
     <Compile Include="InteractiveEffectForDisplay.fs" />

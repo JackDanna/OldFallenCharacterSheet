@@ -891,53 +891,6 @@ module SkillDiceModEffectForDisplay =
           effect = skillDiceModEffectToEffectString sdmefd.skillDiceModEffect
           durationAndSource = sdmefd.durationAndSource }
 
-module ItemEffect =
-    open SkillDiceModEffect
-    open AttributeStatAdjustmentEffect
-    open PhysicalDefenseEffect
-    open AttributeDeterminedDiceModEffect
-
-    open SkillDiceModEffectForDisplay
-    open AttributeDeterminedDiceModEffectForDisplay
-    open PhysicalDefenseEffectForDisplay
-    open AttributeStatAdjustmentEffectForDisplay
-
-    type ItemEffect =
-        | SkillDiceModEffect of SkillDiceModEffect
-        | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
-        | PhysicalDefenseEffect of PhysicalDefenseEffect
-        | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
-
-    let itemEffectToString itemEffect =
-        match itemEffect with
-        | SkillDiceModEffect skillDiceModEffect -> skillDiceModEffect.name
-        | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
-        | PhysicalDefenseEffect defenseClass -> defenseClass.name
-        | AttributeDeterminedDiceModEffect addme -> addme.name
-
-    let itemEffectToSkillDiceModEffects (itemEffect: ItemEffect) =
-        match itemEffect with
-        | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
-        | _ -> []
-
-    let itemEffectToAttributeDeterminedDiceModEffects (itemEffect: ItemEffect) =
-        match itemEffect with
-        | AttributeDeterminedDiceModEffect addme -> [ addme ]
-        | _ -> []
-
-    let itemEffectToEffectForDisplay itemEffect source =
-
-        let duration = "While equiped"
-
-        match itemEffect with
-        | SkillDiceModEffect sdme ->
-            skillDiceModEffectForDisplayToTextEffectForDisplay (skillDiceModEffectToSkillDiceModEffectForDisplay sdme)
-        | AttributeStatAdjustmentEffect asae ->
-            attributeStatAdjustmentEffectToEffectForDisplayForItem asae duration source
-        | PhysicalDefenseEffect dc -> physicalDefenseEffectToEffectForDisplay dc duration source
-        | AttributeDeterminedDiceModEffect addme ->
-            attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source
-
 // Character Stats
 
 module SkillStat =
@@ -1322,12 +1275,12 @@ module Effect =
         | CarryWeightCalculation cwc -> cwc.name
         | MovementSpeedCalculation msc -> msc.name
 
-    let effectToSkillDiceModEffect (effect: Effect) =
+    let effectToSkillDiceModEffectList (effect: Effect) =
         match effect with
         | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
         | _ -> []
 
-    let effectToAttributeDeterminedDiceModEffects (effect: Effect) =
+    let effectToAttributeDeterminedDiceModEffectList (effect: Effect) =
         match effect with
         | AttributeDeterminedDiceModEffect addme -> [ addme ]
         | _ -> []
@@ -1340,14 +1293,14 @@ module Item =
     open WeaponResourceClass
     open ConduitClass
     open ContainerClass
-    open ItemEffect
+    open Effect
 
     type ItemClass =
         | WeaponClass of WeaponClass
         | ConduitClass of ConduitClass
         | WeaponResourceClass of WeaponResourceClass
         | ContainerClass of ContainerClass
-        | ItemEffect of ItemEffect
+        | ItemEffect of Effect
 
     type Item =
         { name: string
@@ -1370,7 +1323,7 @@ module Item =
                 | ConduitClass conduitClass -> conduitClass.name
                 | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
                 | ContainerClass containerClass -> containerClass.name
-                | ItemEffect itemEffect -> itemEffectToString itemEffect)
+                | ItemEffect itemEffect -> effectToEffectName itemEffect)
             itemClasses
         |> String.concat ", "
 
@@ -1424,10 +1377,10 @@ module Item =
             | _ -> [])
 
     let itemToSkillDiceModEffects =
-        itemToItemEffectSubTypes itemEffectToSkillDiceModEffects
+        itemToItemEffectSubTypes effectToSkillDiceModEffectList
 
     let itemToAttributeDeterminedDiceModEffects =
-        itemToItemEffectSubTypes itemEffectToAttributeDeterminedDiceModEffects
+        itemToItemEffectSubTypes effectToAttributeDeterminedDiceModEffectList
 
 module Container =
     open ContainerClass
@@ -1524,10 +1477,20 @@ module EffectForDisplay =
 
     type EffectForDisplay =
         | TextEffectForDisplay of TextEffectForDisplay
+        | AttributeStatAdjustmentEffectForDisplay of AttributeStatAdjustmentEffectForDisplay
         | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
         | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
         | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
+
+    let effectForDiplayToName (effectForDisplay: EffectForDisplay) =
+        match effectForDisplay with
+        | TextEffectForDisplay tefd -> tefd.name
+        | AttributeStatAdjustmentEffectForDisplay asaefd -> asaefd.attributeStatAdjustmentEffect.name
+        | SkillDiceModEffectForDisplay sdmefd -> sdmefd.skillDiceModEffect.name
+        | CarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightCalculation.name
+        | AttributeDeterminedDiceModEffectForDisplay addme -> addme.attributeDeterminedDiceModEffect.name
+        | MovementSpeedEffectForDisplay msefd -> msefd.movementSpeedCalculation.name
 
     let findPercentageOfMovementSpeed characterEffectList =
         let fullMovementSpeedPercent = 1.00

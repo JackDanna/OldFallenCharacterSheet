@@ -28,7 +28,7 @@ let init () : Model * Cmd<Msg> =
           magicCombatMap = Map.empty
           rangeMap = Map.empty
           combatVocationalSkill = []
-          characterEffectMap = Map.empty
+          effectForDisplayMap = Map.empty
           carryWeightCalculationMap = Map.empty
           weightClassList = []
           movementSpeedCalculationMap = Map.empty }
@@ -48,7 +48,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     model.fallenData.magicSkillMap
                     model.fallenData.magicCombatMap
                     model.fallenData.rangeMap
-                    model.fallenData.characterEffectMap
+                    model.fallenData.effectForDisplayMap
                     model.fallenData.carryWeightCalculationMap
                     model.fallenData.weightClassList
                     model.fallenData.movementSpeedCalculationMap
@@ -66,7 +66,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                     newFallenData.magicSkillMap
                     newFallenData.magicCombatMap
                     newFallenData.rangeMap
-                    newFallenData.characterEffectMap
+                    newFallenData.effectForDisplayMap
                     newFallenData.carryWeightCalculationMap
                     newFallenData.weightClassList
                     model.fallenData.movementSpeedCalculationMap
@@ -109,7 +109,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
             Bulma.heroBody [
                 Character.view
-                    ((List.ofSeq model.fallenData.characterEffectMap.Keys)
+                    ((List.ofSeq model.fallenData.effectForDisplayMap.Keys)
                      @ (List.ofSeq model.fallenData.carryWeightCalculationMap.Keys)
                        @ (List.ofSeq model.fallenData.movementSpeedCalculationMap.Keys))
                     model.fallenData.combatVocationalSkill

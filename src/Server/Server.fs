@@ -31,7 +31,7 @@ module FallenServerData =
     open FallenLib.SkillDiceModEffect
     open FallenLib.SkillDiceModEffectForDisplay
     open FallenLib.AttributeStatAdjustmentEffect
-    open FallenLib.ItemEffect
+    open FallenLib.Effect
     open FallenLib.ContainerClass
     open FallenLib.TextEffectForDisplay
     open FallenLib.EffectForDisplay
@@ -293,24 +293,52 @@ module FallenServerData =
               attributeDeterminedDiceModEffect =
                 attributeDeterminedDiceModEffectMap.Item row.["attributeDeterminedDiceModEffect"] })
 
-    // ItemEffect
-    let itemEffectData: ItemEffect list =
-        List.map PhysicalDefenseEffect physicalDefenseEffectData
-        @ List.map SkillDiceModEffect skillDiceModEffectData
-          @ List.map AttributeStatAdjustmentEffect attributeStatAdjustmentEffectData
+    // MovementSpeedCalculation
+    let movementSpeedCalculationData =
+        makeFallenData "MovementSpeedCalculationData.csv" (fun row ->
+            { name = string row.["desc"]
+              baseMovementSpeed = uint row.["baseMovementSpeed"]
+              governingAttribute = attributeMap.Item row.["governingAttributes"]
+              feetPerAttributeLvl = uint row.["feetPerAttributeLvl"]
+              governingSkill = string row.["governingSkill"]
+              feetPerSkillLvl = uint row.["feetPerSkillLvl"] })
 
-    let itemEffectDataMap =
-        itemEffectData
-        |> List.map (fun (itemEffect: ItemEffect) ->
-            match itemEffect with
-            | SkillDiceModEffect sdme -> sdme.name, SkillDiceModEffect sdme
-            | AttributeStatAdjustmentEffect asae -> asae.name, AttributeStatAdjustmentEffect asae
-            | PhysicalDefenseEffect dc -> dc.name, PhysicalDefenseEffect dc
-            | AttributeDeterminedDiceModEffect addme -> addme.name, AttributeDeterminedDiceModEffect addme)
+    let movementSpeedCalculationMap =
+        movementSpeedCalculationData
+        |> List.map (fun movementSpeedCalculationData -> movementSpeedCalculationData.name, movementSpeedCalculationData)
         |> Map.ofList
 
-    // CharacterEffectForDisplay
-    let characterEffectForDisplayData: TextEffectForDisplay list =
+    // CarryWeightCalculation
+    let carryWeightCalculationData =
+        makeFallenData "CarryWeightCalculationData.csv" (fun row ->
+            { name = string row.["name"]
+              baseWeight = uint row.["baseWeight"]
+              governingAttribute = Attribute row.["governingAttribute"]
+              weightIncreasePerAttribute = uint row.["weightIncreasePerAttribute"]
+              governingSkill = string row.["governingSkill"]
+              weightIncreasePerSkill = uint row.["weightIncreasePerSkill"] })
+
+    let carryWeightCalculationMap =
+        carryWeightCalculationData
+        |> List.map (fun carryWeightCalculation -> carryWeightCalculation.name, carryWeightCalculation)
+        |> Map.ofList
+
+    // Effect
+    let effectData: Effect list =
+        List.map SkillDiceModEffect skillDiceModEffectData
+        @ List.map AttributeStatAdjustmentEffect attributeStatAdjustmentEffectData
+          @ List.map PhysicalDefenseEffect physicalDefenseEffectData
+            @ List.map AttributeDeterminedDiceModEffect attributeDeterminedDiceModEffectData
+              @ List.map CarryWeightCalculation carryWeightCalculationData
+                @ List.map MovementSpeedCalculation movementSpeedCalculationData
+
+    let effectDataMap =
+        effectData
+        |> List.map (fun (effect: Effect) -> effectToEffectName effect, effect)
+        |> Map.ofList
+
+    // TextEffectForDisplay
+    let textEffectForDisplayData: TextEffectForDisplay list =
         makeFallenData "CharacterEffectForDisplayData.csv" (fun row ->
             { name = string row.["Name"]
               effect = string row.["Effect"]
@@ -318,30 +346,21 @@ module FallenServerData =
                 { duration = string row.["Duration"]
                   source = string row.["Source"] } })
 
-    // CharacterEffect
-    let characterEffectData: EffectForDisplay list =
+    // EffectForDisplay
+    let effectForDisplayData: EffectForDisplay list =
         let skillDiceModEffectForDisplayList =
             List.map skillDiceModEffectToSkillDiceModEffectForDisplay skillDiceModEffectData
 
         let attributeDeterminedDiceModEffectForDisplayList =
             List.map attributeDeterminedDiceModEffectToForDisplay attributeDeterminedDiceModEffectData
 
-        List.map TextEffectForDisplay characterEffectForDisplayData
+        List.map TextEffectForDisplay textEffectForDisplayData
         @ List.map SkillDiceModEffectForDisplay skillDiceModEffectForDisplayList
           @ List.map AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectForDisplayList
 
-    let characterEffectMap: Map<string, EffectForDisplay> =
-        characterEffectData
-        |> List.map (fun (characterEffect: EffectForDisplay) ->
-            match characterEffect with
-            | TextEffectForDisplay efd -> efd.name, TextEffectForDisplay efd
-            | SkillDiceModEffectForDisplay sdmefd -> sdmefd.skillDiceModEffect.name, SkillDiceModEffectForDisplay sdmefd
-            | CarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
-                ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd
-            | AttributeDeterminedDiceModEffectForDisplay addme ->
-                addme.attributeDeterminedDiceModEffect.name, AttributeDeterminedDiceModEffectForDisplay addme
-            | MovementSpeedEffectForDisplay msefd ->
-                msefd.movementSpeedCalculation.name, MovementSpeedEffectForDisplay msefd)
+    let effectForDisplayMap: Map<string, EffectForDisplay> =
+        effectForDisplayData
+        |> List.map (fun (characterEffect: EffectForDisplay) -> effectForDiplayToName characterEffect, characterEffect)
         |> Map.ofList
 
     // WeaponResourceClass
@@ -401,8 +420,8 @@ module FallenServerData =
                 containerClassMap.Item containerClassName
                 |> ContainerClass
                 |> List.singleton
-            | itemEffectName when itemEffectDataMap.Keys.Contains itemEffectName ->
-                itemEffectDataMap.Item itemEffectName
+            | itemEffectName when effectDataMap.Keys.Contains itemEffectName ->
+                effectDataMap.Item itemEffectName
                 |> ItemEffect
                 |> List.singleton
             | _ -> [])
@@ -416,35 +435,7 @@ module FallenServerData =
               value = string row.["value"]
               weight = float row.["weight"] })
 
-    // MovementSpeedCalculation
-    let movementSpeedCalculationData =
-        makeFallenData "MovementSpeedCalculationData.csv" (fun row ->
-            { name = string row.["desc"]
-              baseMovementSpeed = uint row.["baseMovementSpeed"]
-              governingAttribute = attributeMap.Item row.["governingAttributes"]
-              feetPerAttributeLvl = uint row.["feetPerAttributeLvl"]
-              governingSkill = string row.["governingSkill"]
-              feetPerSkillLvl = uint row.["feetPerSkillLvl"] })
-
-    let movementSpeedCalculationMap =
-        movementSpeedCalculationData
-        |> List.map (fun movementSpeedCalculationData -> movementSpeedCalculationData.name, movementSpeedCalculationData)
-        |> Map.ofList
-
-    // CarryWeightCalculation
-    let carryWeightCalculationData =
-        makeFallenData "CarryWeightCalculationData.csv" (fun row ->
-            { name = string row.["name"]
-              baseWeight = uint row.["baseWeight"]
-              governingAttribute = Attribute row.["governingAttribute"]
-              weightIncreasePerAttribute = uint row.["weightIncreasePerAttribute"]
-              governingSkill = string row.["governingSkill"]
-              weightIncreasePerSkill = uint row.["weightIncreasePerSkill"] })
-
-    let carryWeightCalculationMap =
-        carryWeightCalculationData
-        |> List.map (fun carryWeightCalculation -> carryWeightCalculation.name, carryWeightCalculation)
-        |> Map.ofList
+    // CombatVocationSkills
 
     let combatVocationalSkill =
         List.append
@@ -462,7 +453,7 @@ let fallenDataApi: IFallenDataApi =
                       magicCombatMap = FallenServerData.magicCombatMap
                       rangeMap = FallenServerData.rangeMap
                       combatVocationalSkill = FallenServerData.combatVocationalSkill
-                      characterEffectMap = FallenServerData.characterEffectMap
+                      effectForDisplayMap = FallenServerData.effectForDisplayMap
                       carryWeightCalculationMap = FallenServerData.carryWeightCalculationMap
                       weightClassList = FallenServerData.weightClassData
                       movementSpeedCalculationMap = FallenServerData.movementSpeedCalculationMap }

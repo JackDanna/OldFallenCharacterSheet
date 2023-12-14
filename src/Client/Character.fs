@@ -311,8 +311,6 @@ let view
 
         CharacterEffectList.view characterEffectKeyList model.characterEffectList (CharacterEffectListMsg >> dispatch)
 
-        ItemEffectList.view (equipmentToEquipedEffectItems model.equipmentList)
-
         EquipmentList.view allItemNameList model.equipmentList (EquipmentListMsg >> dispatch)
 
         CombatRollTable.view model.combatRollList

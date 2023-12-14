@@ -20,7 +20,7 @@ type FallenData =
       magicCombatMap: Map<string, MagicCombat>
       rangeMap: Map<string, Range>
       combatVocationalSkill: string list
-      characterEffectMap: Map<string, EffectForDisplay>
+      effectForDisplayMap: Map<string, EffectForDisplay>
       carryWeightCalculationMap: Map<string, CarryWeightCalculation>
       weightClassList: WeightClass List
       movementSpeedCalculationMap: Map<string, MovementSpeedCalculation> }
