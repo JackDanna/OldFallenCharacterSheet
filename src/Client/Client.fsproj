@@ -29,7 +29,7 @@
     <Compile Include="NonInteractiveEffectForDisplay.fs" />
     <Compile Include="PartiallyInteractiveEffectForDisplay.fs" />
     <Compile Include="InteractiveEffectForDisplay.fs" />
-    <Compile Include="CharacterEffect.fs" />
+    <Compile Include="CharacterEffectForDisplay.fs" />
     <Compile Include="EffectForDisplayList.fs" />
     <Compile Include="CharacterInformation.fs" />
     <Compile Include="Character.fs" />

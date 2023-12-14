@@ -1,4 +1,4 @@
-module CharacterEffect
+module ItemEffectForDisplay
 
 open FallenLib.CarryWeightEffect
 open FallenLib.CarryWeightEffectForDisplay

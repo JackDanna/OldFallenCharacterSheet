@@ -8,7 +8,7 @@ open FallenLib.MovementSpeedEffect
 open FallenLib.MovementSpeedEffectForDisplay
 
 type Msg =
-    | ModifyCharacterEffect of int * CharacterEffect.Msg
+    | ModifyCharacterEffect of int * CharacterEffectForDisplay.Msg
     | Insert of string
     | Remove of int
     | RecalculateCarryWeightAndMovementSpeed
@@ -30,7 +30,7 @@ let update
         model
         |> List.mapi (fun index characterEffect ->
             if position = index then
-                CharacterEffect.update msg characterEffect
+                CharacterEffectForDisplay.update msg characterEffect
             else
                 characterEffect)
     | Insert characterEffectName ->
@@ -56,14 +56,18 @@ let update
     | RecalculateCarryWeightAndMovementSpeed ->
         model
         |> List.map (fun characterEffect ->
-            CharacterEffect.update
-                (CharacterEffect.Msg.RecalculateCarryWeight(coreSkillGroupList, inventoryWeight, weightClassList))
+            CharacterEffectForDisplay.update
+                (CharacterEffectForDisplay.Msg.RecalculateCarryWeight(
+                    coreSkillGroupList,
+                    inventoryWeight,
+                    weightClassList
+                ))
                 characterEffect)
         |> (fun characterEffectList ->
             characterEffectList
             |> List.map (fun characterEffect ->
-                CharacterEffect.update
-                    (CharacterEffect.Msg.RecalculateMovementSpeed(
+                CharacterEffectForDisplay.update
+                    (CharacterEffectForDisplay.Msg.RecalculateMovementSpeed(
                         coreSkillGroupList,
                         (findPercentageOfMovementSpeed characterEffectList)
                     ))
@@ -91,7 +95,7 @@ let view (characterEffectNameList: string list) (model: EffectForDisplay list) (
                     List.mapi
                         (fun position equipmentRow ->
                             let characterEffect =
-                                (CharacterEffect.viewTableData equipmentRow (fun msg ->
+                                (CharacterEffectForDisplay.viewTableData equipmentRow (fun msg ->
                                     dispatch (ModifyCharacterEffect(position, msg))))
 
                             let deleteEquipmentRowButton =
