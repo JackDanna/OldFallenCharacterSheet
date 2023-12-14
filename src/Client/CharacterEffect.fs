@@ -11,14 +11,10 @@ type Msg =
     | EffectForDisplayMsg of InteractiveEffectForDisplay.Msg
     | SkillDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
     | AttributeDeterminedDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
+    | RecalculateCarryWeight of (CoreSkillGroup list * float * WeightClass list)
+    | RecalculateMovementSpeed of (CoreSkillGroup list * float)
 
-let update
-    (coreSkillGroupList: CoreSkillGroup list)
-    (inventoryWeight: float)
-    (weightClassList: WeightClass list)
-    (msg: Msg)
-    (model: CharacterEffect)
-    : CharacterEffect =
+let update (msg: Msg) (model: CharacterEffect) : CharacterEffect =
 
     match msg, model with
     | EffectForDisplayMsg msg, EffectForDisplay effectForDisplay ->
@@ -39,16 +35,16 @@ let update
         { addme with durationAndSource = newEffectForDisplay.durationAndSource }
         |> AttributeDeterminedDiceModEffectForDisplay
 
-    // | _, CarryWeightEffectForDisplay ccwefd ->
-    //     determineCarryWeightCalculationForDisplay
-    //         coreSkillGroupList
-    //         inventoryWeight
-    //         weightClassList
-    //         ccwefd.carryWeightCalculation
-    //     |> CarryWeightEffectForDisplay
-    // | _, MovementSpeedEffectForDisplay msefd ->
-    //     determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed movementSpeedCalculation
-    //     |> MovementSpeedEffectForDisplay
+    | RecalculateCarryWeight (coreSkillGroupList, inventoryWeight, weightClassList), CarryWeightEffectForDisplay cwefd ->
+        determineCarryWeightCalculationForDisplay
+            coreSkillGroupList
+            inventoryWeight
+            weightClassList
+            cwefd.carryWeightCalculation
+        |> CarryWeightEffectForDisplay
+    | RecalculateMovementSpeed (coreSkillGroupList, percentOfMovementSpeed), MovementSpeedEffectForDisplay msefd ->
+        determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msefd.movementSpeedCalculation
+        |> MovementSpeedEffectForDisplay
     | _ -> model
 
 open Feliz

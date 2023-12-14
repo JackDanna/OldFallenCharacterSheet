@@ -28,7 +28,7 @@ let update
         model
         |> List.mapi (fun index characterEffect ->
             if position = index then
-                CharacterEffect.update coreSkillGroupList inventoryWeight weightClassList msg characterEffect
+                CharacterEffect.update msg characterEffect
             else
                 characterEffect)
     | Insert characterEffectName ->
@@ -54,26 +54,18 @@ let update
     | RecalculateCarryWeightAndMovementSpeed ->
         model
         |> List.map (fun characterEffect ->
-            match characterEffect with
-            | CarryWeightEffectForDisplay calculatedCarryWeightEffectForDisplay ->
-                determineCarryWeightCalculationForDisplay
-                    (coreSkillGroupList: CoreSkillGroup list)
-                    (inventoryWeight: float)
-                    (weightClassList: WeightClass list)
-                    calculatedCarryWeightEffectForDisplay.carryWeightCalculation
-                |> CarryWeightEffectForDisplay
-            | _ -> characterEffect)
+            CharacterEffect.update
+                (CharacterEffect.Msg.RecalculateCarryWeight(coreSkillGroupList, inventoryWeight, weightClassList))
+                characterEffect)
         |> (fun characterEffectList ->
             characterEffectList
             |> List.map (fun characterEffect ->
-                match characterEffect with
-                | MovementSpeedEffectForDisplay movementSpeedEffectForDisplay ->
-                    determineMovementSpeedEffectForDisplay
-                        coreSkillGroupList
+                CharacterEffect.update
+                    (CharacterEffect.Msg.RecalculateMovementSpeed(
+                        coreSkillGroupList,
                         (findPercentageOfMovementSpeed characterEffectList)
-                        movementSpeedEffectForDisplay.movementSpeedCalculation
-                    |> MovementSpeedEffectForDisplay
-                | _ -> characterEffect))
+                    ))
+                    characterEffect))
 
 open Feliz
 open Feliz.Bulma
