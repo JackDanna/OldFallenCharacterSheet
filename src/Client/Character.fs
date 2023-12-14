@@ -7,7 +7,7 @@ open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.Equipment
 open FallenLib.Character
-open FallenLib.CharacterEffect
+open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightEffect
 open FallenLib.MovementSpeedEffect
 
@@ -41,7 +41,7 @@ let update
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
-    (characterEffectMap: Map<string, CharacterEffect>)
+    (characterEffectMap: Map<string, EffectForDisplay>)
     (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
     (weightClassList: WeightClass list)
     (movementSpeedCalculationMap: Map<string, MovementSpeedCalculation>)

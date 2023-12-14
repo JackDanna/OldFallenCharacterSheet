@@ -3,7 +3,7 @@ module CharacterEffect
 open FallenLib.CarryWeightEffect
 open FallenLib.CarryWeightEffectForDisplay
 open FallenLib.CoreSkillGroup
-open FallenLib.CharacterEffect
+open FallenLib.EffectForDisplay
 open FallenLib.SkillDiceModEffectForDisplay
 open FallenLib.AttributeDeterminedDiceModEffectForDisplay
 open FallenLib.MovementSpeedEffectForDisplay
@@ -15,12 +15,12 @@ type Msg =
     | RecalculateCarryWeight of (CoreSkillGroup list * float * WeightClass list)
     | RecalculateMovementSpeed of (CoreSkillGroup list * float)
 
-let update (msg: Msg) (model: CharacterEffect) : CharacterEffect =
+let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
 
     match msg, model with
-    | EffectForDisplayMsg msg, EffectForDisplay effectForDisplay ->
+    | EffectForDisplayMsg msg, TextEffectForDisplay effectForDisplay ->
         InteractiveEffectForDisplay.update msg effectForDisplay
-        |> EffectForDisplay
+        |> TextEffectForDisplay
 
     | SkillDiceModEffectForDisplayMsg msg, SkillDiceModEffectForDisplay sdmefd ->
         let newEffectForDisplay =
@@ -52,10 +52,10 @@ let update (msg: Msg) (model: CharacterEffect) : CharacterEffect =
 
 open Feliz
 
-let viewTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
+let viewTableData (model: EffectForDisplay) (dispatch: Msg -> unit) =
 
     match model with
-    | EffectForDisplay effectForDisplay ->
+    | TextEffectForDisplay effectForDisplay ->
         InteractiveEffectForDisplay.interactiveEffectForDisplayTableData
             effectForDisplay
             (EffectForDisplayMsg >> dispatch)

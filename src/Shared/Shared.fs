@@ -5,7 +5,7 @@ open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.CoreSkillGroup
-open FallenLib.CharacterEffect
+open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightEffect
 open FallenLib.MovementSpeedEffect
 
@@ -20,7 +20,7 @@ type FallenData =
       magicCombatMap: Map<string, MagicCombat>
       rangeMap: Map<string, Range>
       combatVocationalSkill: string list
-      characterEffectMap: Map<string, CharacterEffect>
+      characterEffectMap: Map<string, EffectForDisplay>
       carryWeightCalculationMap: Map<string, CarryWeightCalculation>
       weightClassList: WeightClass List
       movementSpeedCalculationMap: Map<string, MovementSpeedCalculation> }

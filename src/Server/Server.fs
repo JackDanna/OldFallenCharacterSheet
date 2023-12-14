@@ -34,7 +34,7 @@ module FallenServerData =
     open FallenLib.ItemEffect
     open FallenLib.ContainerClass
     open FallenLib.TextEffectForDisplay
-    open FallenLib.CharacterEffect
+    open FallenLib.EffectForDisplay
     open FallenLib.CarryWeightEffect
     open FallenLib.AttributeDeterminedDiceModEffect
     open FallenLib.AttributeDeterminedDiceModEffectForDisplay
@@ -319,22 +319,22 @@ module FallenServerData =
                   source = string row.["Source"] } })
 
     // CharacterEffect
-    let characterEffectData: CharacterEffect list =
+    let characterEffectData: EffectForDisplay list =
         let skillDiceModEffectForDisplayList =
             List.map skillDiceModEffectToSkillDiceModEffectForDisplay skillDiceModEffectData
 
         let attributeDeterminedDiceModEffectForDisplayList =
             List.map attributeDeterminedDiceModEffectToForDisplay attributeDeterminedDiceModEffectData
 
-        List.map EffectForDisplay characterEffectForDisplayData
+        List.map TextEffectForDisplay characterEffectForDisplayData
         @ List.map SkillDiceModEffectForDisplay skillDiceModEffectForDisplayList
           @ List.map AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectForDisplayList
 
-    let characterEffectMap: Map<string, CharacterEffect> =
+    let characterEffectMap: Map<string, EffectForDisplay> =
         characterEffectData
-        |> List.map (fun (characterEffect: CharacterEffect) ->
+        |> List.map (fun (characterEffect: EffectForDisplay) ->
             match characterEffect with
-            | EffectForDisplay efd -> efd.name, EffectForDisplay efd
+            | TextEffectForDisplay efd -> efd.name, TextEffectForDisplay efd
             | SkillDiceModEffectForDisplay sdmefd -> sdmefd.skillDiceModEffect.name, SkillDiceModEffectForDisplay sdmefd
             | CarryWeightEffectForDisplay ccwefd -> // No CalculatedCarryWeightEffects data
                 ccwefd.carryWeightCalculation.name, CarryWeightEffectForDisplay ccwefd

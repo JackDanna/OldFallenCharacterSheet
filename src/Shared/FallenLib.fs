@@ -1332,52 +1332,6 @@ module Effect =
         | AttributeDeterminedDiceModEffect addme -> [ addme ]
         | _ -> []
 
-    open TextEffectForDisplay
-    open SkillDiceModEffectForDisplay
-    open AttributeDeterminedDiceModEffectForDisplay
-    open AttributeStatAdjustmentEffectForDisplay
-    open PhysicalDefenseEffectForDisplay
-    open CarryWeightEffectForDisplay
-    open MovementSpeedEffectForDisplay
-
-    let effectFromItemToTextEffectForDisplay
-        percentOfMovementSpeed
-        coreSkillGroupList
-        inventoryWeight
-        weightClassList
-        effect
-        source
-        =
-
-        let durationAndSource =
-            { duration = "While equiped"
-              source = source }
-
-        match effect with
-        | SkillDiceModEffect sdme ->
-            { skillDiceModEffect = sdme
-              durationAndSource = durationAndSource }
-            |> skillDiceModEffectForDisplayToTextEffectForDisplay
-        | AttributeStatAdjustmentEffect asae ->
-            { attributeStatAdjustmentEffect = asae
-              durationAndSource = durationAndSource }
-            |> attributeStatAdjustmentEffectForDisplayToTextEffectForDisplay
-        | PhysicalDefenseEffect pde ->
-            { physicalDefenseEffect = pde
-              durationAndSource = durationAndSource }
-            |> physicalDefenseEffectForDisplayToTextEffectForDisplay
-        | AttributeDeterminedDiceModEffect addme ->
-            { attributeDeterminedDiceModEffect = addme
-              durationAndSource = durationAndSource }
-            |> attributeDeterminedDiceModEffectToTextEffectForDisplay
-        | CarryWeightCalculation cwc ->
-            determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList cwc
-            |> carryWeightEffectForDisplayToEffectForDisplay
-        | MovementSpeedCalculation msc ->
-            determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msc
-            |> movementSpeedEffectForDisplayToEffectForDisplay
-
-
 // Item stuff
 
 module Item =
@@ -1552,17 +1506,24 @@ module Equipment =
 
 // Character Stuff
 
-module CharacterEffect =
+module EffectForDisplay =
+
+    open Effect
 
     open TextEffectForDisplay
     open SkillDiceModEffectForDisplay
     open AttributeDeterminedDiceModEffectForDisplay
+    open AttributeStatAdjustmentEffectForDisplay
+    open PhysicalDefenseEffectForDisplay
+    open CarryWeightEffectForDisplay
+    open MovementSpeedEffectForDisplay
+
     open CarryWeightEffect
     open Equipment
     open MovementSpeedEffect
 
-    type CharacterEffect =
-        | EffectForDisplay of TextEffectForDisplay
+    type EffectForDisplay =
+        | TextEffectForDisplay of TextEffectForDisplay
         | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
         | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
@@ -1584,7 +1545,7 @@ module CharacterEffect =
                 | _ -> fullMovementSpeedPercent
             | None -> fullMovementSpeedPercent)
 
-    let characterEffectsToSkillDiceModEffects (characterEffectList: CharacterEffect list) =
+    let characterEffectsToSkillDiceModEffects (characterEffectList: EffectForDisplay list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
             match characterEffect with
@@ -1595,7 +1556,7 @@ module CharacterEffect =
         equipmentListToSkillDiceModEffects equipmentList
         @ characterEffectsToSkillDiceModEffects characterEffectList
 
-    let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: CharacterEffect list) =
+    let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: EffectForDisplay list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
             match characterEffect with
@@ -1608,6 +1569,44 @@ module CharacterEffect =
     let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =
         equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList
         @ collectCharacterAttributeDeterminedDiceModEffects characterEffectList
+
+    let effectFromItemToTextEffectForDisplay
+        percentOfMovementSpeed
+        coreSkillGroupList
+        inventoryWeight
+        weightClassList
+        effect
+        source
+        =
+
+        let durationAndSource =
+            { duration = "While equiped"
+              source = source }
+
+        match effect with
+        | SkillDiceModEffect sdme ->
+            { skillDiceModEffect = sdme
+              durationAndSource = durationAndSource }
+            |> skillDiceModEffectForDisplayToTextEffectForDisplay
+        | AttributeStatAdjustmentEffect asae ->
+            { attributeStatAdjustmentEffect = asae
+              durationAndSource = durationAndSource }
+            |> attributeStatAdjustmentEffectForDisplayToTextEffectForDisplay
+        | PhysicalDefenseEffect pde ->
+            { physicalDefenseEffect = pde
+              durationAndSource = durationAndSource }
+            |> physicalDefenseEffectForDisplayToTextEffectForDisplay
+        | AttributeDeterminedDiceModEffect addme ->
+            { attributeDeterminedDiceModEffect = addme
+              durationAndSource = durationAndSource }
+            |> attributeDeterminedDiceModEffectToTextEffectForDisplay
+        | CarryWeightCalculation cwc ->
+            determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList cwc
+            |> carryWeightEffectForDisplayToEffectForDisplay
+        | MovementSpeedCalculation msc ->
+            determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msc
+            |> movementSpeedEffectForDisplayToEffectForDisplay
+
 
 module CombatRoll =
     open Dice
@@ -1999,7 +1998,7 @@ module Character =
     open VocationGroup
     open Container
     open ZeroToThree
-    open CharacterEffect
+    open EffectForDisplay
 
     let calculateCharacterWeight equipmentList (containerList: Container list) =
         containerList
@@ -2023,7 +2022,7 @@ module Character =
           combatRollList: CombatRoll list
           containerList: Container list
           destinyPoints: ZeroToThree
-          characterEffectList: CharacterEffect list }
+          characterEffectList: EffectForDisplay list }
 
     let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentList characterEffectList =
         (collectSkillAdjustments equipmentList characterEffectList,

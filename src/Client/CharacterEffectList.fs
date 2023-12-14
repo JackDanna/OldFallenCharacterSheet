@@ -1,6 +1,6 @@
 module CharacterEffectList
 
-open FallenLib.CharacterEffect
+open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightEffect
 open FallenLib.CarryWeightEffectForDisplay
 open FallenLib.CoreSkillGroup
@@ -13,18 +13,18 @@ type Msg =
     | Remove of int
     | RecalculateCarryWeightAndMovementSpeed
 
-let init () : CharacterEffect list = []
+let init () : EffectForDisplay list = []
 
 let update
     (coreSkillGroupList: CoreSkillGroup list)
     (inventoryWeight: float)
     (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
     (weightClassList: WeightClass list)
-    (characterEffectMap: Map<string, CharacterEffect>)
+    (characterEffectMap: Map<string, EffectForDisplay>)
     (movementSpeedCalculationMap: Map<string, MovementSpeedCalculation>)
     (msg: Msg)
-    (model: CharacterEffect list)
-    : CharacterEffect list =
+    (model: EffectForDisplay list)
+    : EffectForDisplay list =
     match msg with
     | ModifyCharacterEffect (position, msg) ->
         model
@@ -72,7 +72,7 @@ let update
 open Feliz
 open Feliz.Bulma
 
-let view (characterEffectNameList: string list) (model: CharacterEffect list) (dispatch: Msg -> unit) =
+let view (characterEffectNameList: string list) (model: EffectForDisplay list) (dispatch: Msg -> unit) =
     Bulma.container [
         Bulma.label "Character Effects:"
         Bulma.table [
