@@ -736,16 +736,6 @@ module ItemTier =
 
 // Non attribute and vocation dependant Effects
 
-module EffectForDisplay =
-
-    type DurationAndSource = { duration: string; source: string }
-
-    type EffectForDisplay =
-        { name: string
-          effect: string
-          durationAndSource: DurationAndSource }
-
-    let indefiniteStringForDuration = "Indefinite"
 
 module AttributeDeterminedDiceModEffect =
     open Attribute
@@ -772,33 +762,7 @@ module AttributeDeterminedDiceModEffect =
             |> List.exists (fun attribute -> List.contains attribute governingAttributesOfSkill))
         |> List.map (fun attributeDeterminedDiceMod -> attributeDeterminedDiceMod.dicePoolMod)
 
-module AttributeDeterminedDiceModEffectForDisplay =
-    open EffectForDisplay
-    open AttributeDeterminedDiceModEffect
-
-    type AttributeDeterminedDiceModEffectForDisplay =
-        { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
-          durationAndSource: DurationAndSource }
-
-    let attributeDeterminedDiceModEffectToForDisplay
-        (addme: AttributeDeterminedDiceModEffect)
-        : AttributeDeterminedDiceModEffectForDisplay =
-        { attributeDeterminedDiceModEffect = addme
-          durationAndSource = { duration = "?"; source = "?" } }
-
-    let attributeDeterminedDiceModEffectToEffectForDisplay (addmefd: AttributeDeterminedDiceModEffectForDisplay) =
-        { name = addmefd.attributeDeterminedDiceModEffect.name
-          effect = attributeDeterminedDiceModEffectToEffectString addmefd.attributeDeterminedDiceModEffect
-          durationAndSource = addmefd.durationAndSource }
-
-    let attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source =
-        { name = addme.name
-          effect = attributeDeterminedDiceModEffectToEffectString addme
-          durationAndSource = { duration = duration; source = source } }
-
 module PhysicalDefenseEffect =
-
-    open EffectForDisplay
 
     type PhysicalDefenseEffect =
         { name: string
@@ -806,11 +770,6 @@ module PhysicalDefenseEffect =
 
     let physicalDefenseEffectToEffectString defenseClass =
         $"{defenseClass.physicalDefense} Physical Defense"
-
-    let physicalDefenseEffectToEffectForDisplay (physicalDefenseEffect: PhysicalDefenseEffect) duration source =
-        { name = physicalDefenseEffect.name
-          effect = physicalDefenseEffectToEffectString physicalDefenseEffect
-          durationAndSource = { duration = duration; source = source } }
 
 module SkillDiceModEffect =
     open Dice
@@ -828,27 +787,9 @@ module SkillDiceModEffect =
         |> List.filter (fun skillAdjustment -> skillAdjustment.skillToEffect = skillName)
         |> List.map (fun skillAdjustment -> skillAdjustment.diceMod)
 
-module SkillDiceModEffectForDisplay =
-    open SkillDiceModEffect
-    open EffectForDisplay
-
-    type SkillDiceModEffectForDisplay =
-        { skillDiceModEffect: SkillDiceModEffect
-          durationAndSource: DurationAndSource }
-
-    let skillDiceModEffectToForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
-        { skillDiceModEffect = sdme
-          durationAndSource = { duration = "?"; source = "?" } }
-
-    let skillDiceModEffectToEffectForDisplay (sdmefd: SkillDiceModEffectForDisplay) =
-        { name = sdmefd.skillDiceModEffect.name
-          effect = skillDiceModEffectToEffectString sdmefd.skillDiceModEffect
-          durationAndSource = sdmefd.durationAndSource }
-
 module AttributeStatAdjustmentEffect =
 
     open Attribute
-    open EffectForDisplay
 
     type AttributeStatAdjustmentEffect =
         { name: string
@@ -857,6 +798,25 @@ module AttributeStatAdjustmentEffect =
 
     let attributeStatAdjustmentToEffectString attributeStatAdjustment =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
+
+module TextEffectForDisplay =
+
+    type DurationAndSource = { duration: string; source: string }
+
+    type TextEffectForDisplay =
+        { name: string
+          effect: string
+          durationAndSource: DurationAndSource }
+
+    let indefiniteStringForDuration = "Indefinite"
+
+module AttributeStatAdjustmentEffectForDisplay =
+    open AttributeStatAdjustmentEffect
+    open TextEffectForDisplay
+
+    type AttributeStatAdjustmentEffectForDisplay =
+        { attributeStatAdjustmentEffect: AttributeStatAdjustmentEffect
+          durationAndSource: DurationAndSource }
 
     let attributeStatAdjustmentEffectToEffectForDisplayForItem
         (attributeStatAdjustment: AttributeStatAdjustmentEffect)
@@ -867,6 +827,70 @@ module AttributeStatAdjustmentEffect =
           effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
           durationAndSource = { duration = duration; source = source } }
 
+    let attributeStatAdjustmentEffectForDisplayToTextEffectForDisplay asdefd =
+        { name = asdefd.attributeStatAdjustmentEffect.name
+          effect = attributeStatAdjustmentToEffectString asdefd.attributeStatAdjustmentEffect
+          durationAndSource = asdefd.durationAndSource }
+
+module PhysicalDefenseEffectForDisplay =
+    open PhysicalDefenseEffect
+    open TextEffectForDisplay
+
+    type PhysicalDefenseEffectForDisplay =
+        { physicalDefenseEffect: PhysicalDefenseEffect
+          durationAndSource: DurationAndSource }
+
+    let physicalDefenseEffectToEffectForDisplay (physicalDefenseEffect: PhysicalDefenseEffect) duration source =
+        { name = physicalDefenseEffect.name
+          effect = physicalDefenseEffectToEffectString physicalDefenseEffect
+          durationAndSource = { duration = duration; source = source } }
+
+    let physicalDefenseEffectForDisplayToTextEffectForDisplay pdefd =
+        { name = pdefd.physicalDefenseEffect.name
+          effect = physicalDefenseEffectToEffectString pdefd.physicalDefenseEffect
+          durationAndSource = pdefd.durationAndSource }
+
+module AttributeDeterminedDiceModEffectForDisplay =
+    open TextEffectForDisplay
+    open AttributeDeterminedDiceModEffect
+
+    type AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
+          durationAndSource: DurationAndSource }
+
+    let attributeDeterminedDiceModEffectToForDisplay
+        (addme: AttributeDeterminedDiceModEffect)
+        : AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect = addme
+          durationAndSource = { duration = "?"; source = "?" } }
+
+    let attributeDeterminedDiceModEffectToTextEffectForDisplay (addmefd: AttributeDeterminedDiceModEffectForDisplay) =
+        { name = addmefd.attributeDeterminedDiceModEffect.name
+          effect = attributeDeterminedDiceModEffectToEffectString addmefd.attributeDeterminedDiceModEffect
+          durationAndSource = addmefd.durationAndSource }
+
+    let attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source =
+        { name = addme.name
+          effect = attributeDeterminedDiceModEffectToEffectString addme
+          durationAndSource = { duration = duration; source = source } }
+
+module SkillDiceModEffectForDisplay =
+    open SkillDiceModEffect
+    open TextEffectForDisplay
+
+    type SkillDiceModEffectForDisplay =
+        { skillDiceModEffect: SkillDiceModEffect
+          durationAndSource: DurationAndSource }
+
+    let skillDiceModEffectToSkillDiceModEffectForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
+        { skillDiceModEffect = sdme
+          durationAndSource = { duration = "?"; source = "?" } }
+
+    let skillDiceModEffectForDisplayToTextEffectForDisplay (sdmefd: SkillDiceModEffectForDisplay) =
+        { name = sdmefd.skillDiceModEffect.name
+          effect = skillDiceModEffectToEffectString sdmefd.skillDiceModEffect
+          durationAndSource = sdmefd.durationAndSource }
+
 module ItemEffect =
     open SkillDiceModEffect
     open AttributeStatAdjustmentEffect
@@ -875,6 +899,8 @@ module ItemEffect =
 
     open SkillDiceModEffectForDisplay
     open AttributeDeterminedDiceModEffectForDisplay
+    open PhysicalDefenseEffectForDisplay
+    open AttributeStatAdjustmentEffectForDisplay
 
     type ItemEffect =
         | SkillDiceModEffect of SkillDiceModEffect
@@ -904,7 +930,8 @@ module ItemEffect =
         let duration = "While equiped"
 
         match itemEffect with
-        | SkillDiceModEffect sdme -> skillDiceModEffectToEffectForDisplay (skillDiceModEffectToForDisplay sdme)
+        | SkillDiceModEffect sdme ->
+            skillDiceModEffectForDisplayToTextEffectForDisplay (skillDiceModEffectToSkillDiceModEffectForDisplay sdme)
         | AttributeStatAdjustmentEffect asae ->
             attributeStatAdjustmentEffectToEffectForDisplayForItem asae duration source
         | PhysicalDefenseEffect dc -> physicalDefenseEffectToEffectForDisplay dc duration source
@@ -1089,7 +1116,7 @@ module CarryWeightEffect =
     open Attribute
     open VocationGroup
     open Neg1To4
-    open EffectForDisplay
+    open TextEffectForDisplay
     open CoreSkillGroup
     open AttributeDeterminedDiceModEffect
 
@@ -1143,6 +1170,13 @@ module CarryWeightEffect =
                     >= weightClass.bottomPercent))
             weightClassList
 
+module CarryWeightEffectForDisplay =
+
+    open CarryWeightEffect
+    open CoreSkillGroup
+    open TextEffectForDisplay
+    open AttributeDeterminedDiceModEffect
+
     let determineCarryWeightCalculationForDisplay
         (coreSkillGroupList: CoreSkillGroup list)
         (inventoryWeight: float)
@@ -1168,7 +1202,7 @@ module MovementSpeedEffect =
     open Attribute
     open Neg1To4
     open CoreSkillGroup
-    open EffectForDisplay
+    open TextEffectForDisplay
 
     type MovementSpeedCalculation =
         { name: string
@@ -1260,19 +1294,72 @@ module MovementSpeedEffect =
 
 module Effect =
     open SkillDiceModEffect
-    open AttributeDeterminedDiceModEffect
     open AttributeStatAdjustmentEffect
     open PhysicalDefenseEffect
+    open AttributeDeterminedDiceModEffect
     open CarryWeightEffect
     open MovementSpeedEffect
 
-    type ItemEffect =
+    type Effect =
         | SkillDiceModEffect of SkillDiceModEffect
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
         | PhysicalDefenseEffect of PhysicalDefenseEffect
         | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
         | CarryWeightCalculation of CarryWeightCalculation
         | MovementSpeedCalculation of MovementSpeedCalculation
+
+    let effectToEffectName effect =
+        match effect with
+        | SkillDiceModEffect skillDiceModEffect -> skillDiceModEffect.name
+        | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
+        | PhysicalDefenseEffect defenseClass -> defenseClass.name
+        | AttributeDeterminedDiceModEffect addme -> addme.name
+        | CarryWeightCalculation cwc -> cwc.name
+        | MovementSpeedCalculation msc -> msc.name
+
+    let effectToSkillDiceModEffect (effect: Effect) =
+        match effect with
+        | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
+        | _ -> []
+
+    let effectToAttributeDeterminedDiceModEffects (effect: Effect) =
+        match effect with
+        | AttributeDeterminedDiceModEffect addme -> [ addme ]
+        | _ -> []
+
+    open TextEffectForDisplay
+    open SkillDiceModEffectForDisplay
+    open AttributeDeterminedDiceModEffectForDisplay
+    open AttributeStatAdjustmentEffectForDisplay
+    open PhysicalDefenseEffectForDisplay
+    open CarryWeightEffectForDisplay
+
+    let effectFromItemToTextEffectForDisplay coreSkillGroup inventoryWeight weightClassList effect source =
+
+        let durationAndSource =
+            { duration = "While equiped"
+              source = source }
+
+        match effect with
+        | SkillDiceModEffect sdme ->
+            { skillDiceModEffect = sdme
+              durationAndSource = durationAndSource }
+            |> skillDiceModEffectForDisplayToTextEffectForDisplay
+        | AttributeStatAdjustmentEffect asae ->
+            { attributeStatAdjustmentEffect = asae
+              durationAndSource = durationAndSource }
+            |> attributeStatAdjustmentEffectForDisplayToTextEffectForDisplay
+        | PhysicalDefenseEffect pde ->
+            { physicalDefenseEffect = pde
+              durationAndSource = durationAndSource }
+            |> physicalDefenseEffectForDisplayToTextEffectForDisplay
+        | AttributeDeterminedDiceModEffect addme ->
+            { attributeDeterminedDiceModEffect = addme
+              durationAndSource = durationAndSource }
+            |> attributeDeterminedDiceModEffectToTextEffectForDisplay
+        | CarryWeightCalculation cwc ->
+            determineCarryWeightCalculationForDisplay coreSkillGroup inventoryWeight weightClassList cwc
+            |> carryWeightEffectForDisplayToEffectForDisplay
 
 
 // Item stuff
@@ -1451,7 +1538,7 @@ module Equipment =
 
 module CharacterEffect =
 
-    open EffectForDisplay
+    open TextEffectForDisplay
     open SkillDiceModEffectForDisplay
     open AttributeDeterminedDiceModEffectForDisplay
     open CarryWeightEffect
@@ -1459,7 +1546,7 @@ module CharacterEffect =
     open MovementSpeedEffect
 
     type CharacterEffect =
-        | EffectForDisplay of EffectForDisplay
+        | EffectForDisplay of TextEffectForDisplay
         | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
         | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay

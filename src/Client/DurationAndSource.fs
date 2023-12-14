@@ -1,6 +1,6 @@
 module DurationAndSource
 
-open FallenLib.EffectForDisplay
+open FallenLib.TextEffectForDisplay
 
 type Msg =
     | DurationMsg of StringInputTableData.Msg

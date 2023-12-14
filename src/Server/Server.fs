@@ -33,7 +33,7 @@ module FallenServerData =
     open FallenLib.AttributeStatAdjustmentEffect
     open FallenLib.ItemEffect
     open FallenLib.ContainerClass
-    open FallenLib.EffectForDisplay
+    open FallenLib.TextEffectForDisplay
     open FallenLib.CharacterEffect
     open FallenLib.CarryWeightEffect
     open FallenLib.AttributeDeterminedDiceModEffect
@@ -310,7 +310,7 @@ module FallenServerData =
         |> Map.ofList
 
     // CharacterEffectForDisplay
-    let characterEffectForDisplayData: EffectForDisplay list =
+    let characterEffectForDisplayData: TextEffectForDisplay list =
         makeFallenData "CharacterEffectForDisplayData.csv" (fun row ->
             { name = string row.["Name"]
               effect = string row.["Effect"]
@@ -321,7 +321,7 @@ module FallenServerData =
     // CharacterEffect
     let characterEffectData: CharacterEffect list =
         let skillDiceModEffectForDisplayList =
-            List.map skillDiceModEffectToForDisplay skillDiceModEffectData
+            List.map skillDiceModEffectToSkillDiceModEffectForDisplay skillDiceModEffectData
 
         let attributeDeterminedDiceModEffectForDisplayList =
             List.map attributeDeterminedDiceModEffectToForDisplay attributeDeterminedDiceModEffectData

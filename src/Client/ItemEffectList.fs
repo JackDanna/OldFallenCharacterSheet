@@ -1,12 +1,12 @@
 module ItemEffectList
 
-open FallenLib.EffectForDisplay
+open FallenLib.TextEffectForDisplay
 open FallenLib.ItemEffect
 
 open Feliz
 open Feliz.Bulma
 
-let itemEffectForDisplayRow (itemEffectForDisplay: EffectForDisplay) =
+let itemEffectForDisplayRow (itemEffectForDisplay: TextEffectForDisplay) =
     [ Html.td itemEffectForDisplay.name
       Html.td itemEffectForDisplay.effect ]
     @ DurationAndSource.nonInteractiveView itemEffectForDisplay.durationAndSource

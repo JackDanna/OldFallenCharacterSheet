@@ -1,10 +1,10 @@
 module NonInteractiveEffectForDisplay
 
-open FallenLib.EffectForDisplay
+open FallenLib.TextEffectForDisplay
 
 open Feliz
 
-let view (model: EffectForDisplay) =
+let view (model: TextEffectForDisplay) =
     [ Html.td [ prop.text model.name ]
       Html.td [ prop.text model.effect ] ]
     @ DurationAndSource.nonInteractiveView model.durationAndSource

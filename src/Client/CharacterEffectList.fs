@@ -2,6 +2,7 @@ module CharacterEffectList
 
 open FallenLib.CharacterEffect
 open FallenLib.CarryWeightEffect
+open FallenLib.CarryWeightEffectForDisplay
 open FallenLib.CoreSkillGroup
 open FallenLib.MovementSpeedEffect
 

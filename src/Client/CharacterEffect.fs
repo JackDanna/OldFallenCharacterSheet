@@ -1,6 +1,7 @@
 module CharacterEffect
 
 open FallenLib.CarryWeightEffect
+open FallenLib.CarryWeightEffectForDisplay
 open FallenLib.CoreSkillGroup
 open FallenLib.CharacterEffect
 open FallenLib.SkillDiceModEffectForDisplay
@@ -23,14 +24,16 @@ let update (msg: Msg) (model: CharacterEffect) : CharacterEffect =
 
     | SkillDiceModEffectForDisplayMsg msg, SkillDiceModEffectForDisplay sdmefd ->
         let newEffectForDisplay =
-            PartiallyInteractiveEffectForDisplay.update msg (skillDiceModEffectToEffectForDisplay sdmefd)
+            PartiallyInteractiveEffectForDisplay.update msg (skillDiceModEffectForDisplayToTextEffectForDisplay sdmefd)
 
         { sdmefd with durationAndSource = newEffectForDisplay.durationAndSource }
         |> SkillDiceModEffectForDisplay
 
     | AttributeDeterminedDiceModEffectForDisplayMsg msg, AttributeDeterminedDiceModEffectForDisplay addme ->
         let newEffectForDisplay =
-            PartiallyInteractiveEffectForDisplay.update msg (attributeDeterminedDiceModEffectToEffectForDisplay addme)
+            PartiallyInteractiveEffectForDisplay.update
+                msg
+                (attributeDeterminedDiceModEffectToTextEffectForDisplay addme)
 
         { addme with durationAndSource = newEffectForDisplay.durationAndSource }
         |> AttributeDeterminedDiceModEffectForDisplay
@@ -58,11 +61,11 @@ let viewTableData (model: CharacterEffect) (dispatch: Msg -> unit) =
             (EffectForDisplayMsg >> dispatch)
     | SkillDiceModEffectForDisplay sdmefd ->
         PartiallyInteractiveEffectForDisplay.view
-            (skillDiceModEffectToEffectForDisplay sdmefd)
+            (skillDiceModEffectForDisplayToTextEffectForDisplay sdmefd)
             (SkillDiceModEffectForDisplayMsg >> dispatch)
     | AttributeDeterminedDiceModEffectForDisplay addmefd ->
         PartiallyInteractiveEffectForDisplay.view
-            (attributeDeterminedDiceModEffectToEffectForDisplay addmefd)
+            (attributeDeterminedDiceModEffectToTextEffectForDisplay addmefd)
             (AttributeDeterminedDiceModEffectForDisplayMsg
              >> dispatch)
     | CarryWeightEffectForDisplay ccwefd ->
