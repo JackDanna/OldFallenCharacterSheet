@@ -646,7 +646,7 @@ module MagicCombat =
                 && not meleeCapable
             ))
 
-// Item
+// Item Stat stuff
 
 module ConduitClass =
     open MagicSkill
@@ -733,6 +733,8 @@ module ItemTier =
           runeSlots: uint
           baseDice: DicePool
           durabilityMax: uint }
+
+// Non attribute and vocation dependant Effects
 
 module EffectForDisplay =
 
@@ -909,177 +911,7 @@ module ItemEffect =
         | AttributeDeterminedDiceModEffect addme ->
             attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source
 
-module Item =
-    open ItemTier
-    open WeaponClass
-    open WeaponResourceClass
-    open ConduitClass
-    open ContainerClass
-    open ItemEffect
-
-    type ItemClass =
-        | WeaponClass of WeaponClass
-        | ConduitClass of ConduitClass
-        | WeaponResourceClass of WeaponResourceClass
-        | ContainerClass of ContainerClass
-        | ItemEffect of ItemEffect
-
-    type Item =
-        { name: string
-          itemClasses: ItemClass list
-          itemTier: ItemTier
-          value: string
-          weight: float }
-
-    let sumItemListWeight itemList =
-        if List.isEmpty itemList then
-            0.0
-        else
-            List.sumBy (fun item -> item.weight) itemList
-
-    let itemClassesToString itemClasses =
-        List.map
-            (fun itemClass ->
-                match itemClass with
-                | WeaponClass weaponClass -> weaponClass.name
-                | ConduitClass conduitClass -> conduitClass.name
-                | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
-                | ContainerClass containerClass -> containerClass.name
-                | ItemEffect itemEffect -> itemEffectToString itemEffect)
-            itemClasses
-        |> String.concat ", "
-
-    let itemToWeaponClasses item =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | WeaponClass specifiedItemClass -> [ specifiedItemClass ]
-            | _ -> [])
-
-    let itemToConduitClasses item =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | ConduitClass specifiedItemClass -> [ specifiedItemClass ]
-            | _ -> [])
-
-    let itemToWeaponResourceClasses item =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | WeaponResourceClass specifiedItemClass -> [ specifiedItemClass ]
-            | _ -> [])
-
-    let itemToItemNameAndContainerClasses item =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | ContainerClass specifiedItemClass -> [ (item.name, specifiedItemClass) ]
-            | _ -> [])
-
-    let itemToContainerClassNames item =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | ContainerClass _ -> [ item.name ]
-            | _ -> [])
-
-    let itemToItemEffectSubTypes (itemEffectToItemEffectSubType) (item: Item) =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | ItemEffect itemEffect -> itemEffectToItemEffectSubType itemEffect
-            | _ -> [])
-
-    let itemToItemNameAndItemEffectList (item: Item) =
-        item.itemClasses
-        |> List.collect (fun itemClass ->
-            match itemClass with
-            | ItemEffect itemEffect -> [ (item.name, itemEffect) ]
-            | _ -> [])
-
-    let itemToSkillDiceModEffects =
-        itemToItemEffectSubTypes itemEffectToSkillDiceModEffects
-
-    let itemToAttributeDeterminedDiceModEffects =
-        itemToItemEffectSubTypes itemEffectToAttributeDeterminedDiceModEffects
-
-module Container =
-    open ContainerClass
-    open Item
-
-    type Container =
-        { name: string
-          containerClass: ContainerClass
-          isEquipped: bool
-          itemList: Item list }
-
-    let itemNameAndContainerClassToContainer (itemName, containerClass: ContainerClass) =
-        { name = itemName
-          containerClass = containerClass
-          isEquipped = false
-          itemList = [] }
-
-    let sumContainerListWeight (containerList: Container list) =
-        containerList
-        |> List.map (fun container -> sumItemListWeight container.itemList)
-        |> List.sum
-
-module Equipment =
-    open Item
-    open ConduitClass
-
-    type Equipment =
-        { isEquipped: bool
-          item: Item
-          quantity: uint }
-
-    let calculateEquipmentListWeight equipmentList =
-        equipmentList
-        |> List.fold
-            (fun acc (equipmentItem: Equipment) ->
-                equipmentItem.item.weight
-                * float equipmentItem.quantity
-                + acc)
-            0.0
-
-    let getEquipedItems equipmentList =
-        equipmentList
-        |> List.filter (fun equipmentItem ->
-            equipmentItem.isEquipped
-            && equipmentItem.quantity > 0u)
-        |> List.map (fun equipmentItem -> equipmentItem.item)
-
-    let doesConduitEffectMagicSkill conduitClass skillName =
-        conduitClass.effectedMagicSkills
-        |> List.exists (fun magicSkill -> magicSkill.name = skillName)
-
-    let getEquipedConduitItemsWithSkillName equipmentList skillName =
-        equipmentList
-        |> getEquipedItems
-        |> List.filter (fun (item) ->
-            item
-            |> itemToConduitClasses
-            |> List.filter (fun conduitClass -> doesConduitEffectMagicSkill conduitClass skillName)
-            |> List.isEmpty
-            |> not)
-
-    let equipmentListToSkillDiceModEffects equipmentList =
-        equipmentList
-        |> getEquipedItems
-        |> List.collect itemToSkillDiceModEffects
-
-    let equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList =
-        equipmentList
-        |> getEquipedItems
-        |> List.collect itemToAttributeDeterminedDiceModEffects
-
-    let equipmentToEquipedEffectItems equipmentList =
-        equipmentList
-        |> getEquipedItems
-        |> List.collect itemToItemNameAndItemEffectList
-
-// Character
+// Character Stats
 
 module SkillStat =
     open Neg1To4
@@ -1250,6 +1082,429 @@ module VocationGroup =
                     attributeDeterminedDiceModEffectList
 
         modifyDicePoolByDicePoolModList baseDice diceModList
+
+// Attribute and Vocation Dependant Effects
+
+module CarryWeightEffect =
+    open Attribute
+    open VocationGroup
+    open Neg1To4
+    open EffectForDisplay
+    open CoreSkillGroup
+    open AttributeDeterminedDiceModEffect
+
+    type CarryWeightCalculation =
+        { name: string
+          baseWeight: uint
+          governingAttribute: Attribute
+          weightIncreasePerAttribute: uint
+          governingSkill: string
+          weightIncreasePerSkill: uint }
+
+    type WeightClass =
+        { name: string
+          bottomPercent: float
+          topPercent: float
+          percentOfMovementSpeed: float
+          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
+
+    type CarryWeightEffectForDisplay =
+        { carryWeightCalculation: CarryWeightCalculation
+          weightClass: WeightClass
+          durationAndSource: DurationAndSource }
+
+    let calculateCarryWeight (maxCarryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
+
+        let (attributeStatList, coreSkillList) =
+            coreSkillGroupListToAttributeStatsAndSkillStats coreSkillGroupList
+
+        let attributeLevel =
+            sumAttributesLevels [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
+
+        let skillLevel =
+            findVocationalSkillLvlWithDefault maxCarryWeightCalculation.governingSkill Zero coreSkillList
+            |> neg1To4ToInt
+
+        int maxCarryWeightCalculation.baseWeight
+        + (attributeLevel
+           * int maxCarryWeightCalculation.weightIncreasePerAttribute)
+        + (skillLevel
+           * int maxCarryWeightCalculation.weightIncreasePerSkill)
+        |> float
+
+    let determineWeightClass (maxCarryWeight: float) (inventoryWeight: float) (weightClassList: WeightClass list) =
+
+        let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
+
+        List.find
+            (fun weightClass ->
+                (weightClass.topPercent >= percentOfMaxCarryWeight)
+                && (percentOfMaxCarryWeight
+                    >= weightClass.bottomPercent))
+            weightClassList
+
+    let determineCarryWeightCalculationForDisplay
+        (coreSkillGroupList: CoreSkillGroup list)
+        (inventoryWeight: float)
+        (weightClassList: WeightClass list)
+        (carryWeightCalculation: CarryWeightCalculation)
+        : CarryWeightEffectForDisplay =
+
+        let maxCarryWeight = calculateCarryWeight carryWeightCalculation coreSkillGroupList
+
+        { carryWeightCalculation = carryWeightCalculation
+          weightClass = determineWeightClass maxCarryWeight inventoryWeight weightClassList
+          durationAndSource =
+            { duration = indefiniteStringForDuration
+              source = $"{inventoryWeight}/{maxCarryWeight} lb" } }
+
+    let carryWeightEffectForDisplayToEffectForDisplay (cwefd: CarryWeightEffectForDisplay) =
+        { name = cwefd.carryWeightCalculation.name
+          effect = attributeDeterminedDiceModEffectToEffectString cwefd.weightClass.attributeDeterminedDiceModEffect
+          durationAndSource = cwefd.durationAndSource }
+
+module MovementSpeedEffect =
+
+    open Attribute
+    open Neg1To4
+    open CoreSkillGroup
+    open EffectForDisplay
+
+    type MovementSpeedCalculation =
+        { name: string
+          baseMovementSpeed: uint
+          governingAttribute: Attribute
+          feetPerAttributeLvl: uint
+          governingSkill: string
+          feetPerSkillLvl: uint }
+
+    type MovementSpeedEffectForDisplay =
+        { movementSpeedCalculation: MovementSpeedCalculation
+          movementSpeed: float
+          durationAndSource: DurationAndSource }
+
+    let calculateMovementSpeed
+        percentOfMovementSpeed
+        movementSpeedCalculation
+        (attributeLvl: Neg1To4)
+        (skillLvl: Neg1To4)
+        =
+        let attributeMod =
+            neg1To4ToInt attributeLvl
+            * int movementSpeedCalculation.feetPerAttributeLvl
+
+        let skillMod =
+            neg1To4ToInt skillLvl
+            * int movementSpeedCalculation.feetPerSkillLvl
+
+        let movementSpeed =
+            (float movementSpeedCalculation.baseMovementSpeed
+             + float attributeMod
+             + float skillMod)
+            * percentOfMovementSpeed
+
+        if movementSpeed >= 0.0 then
+            movementSpeed
+        else
+            0.0
+
+    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
+        let decimalPlaces = 0
+
+        let movementSpeed =
+            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
+
+        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
+        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
+
+    let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
+        $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
+
+    let determineMovementSpeedEffectForDisplay
+        (coreSkillGroupList: CoreSkillGroup list)
+        (percentOfMovementSpeed: float)
+        (movementSpeedCalculation: MovementSpeedCalculation)
+        : MovementSpeedEffectForDisplay =
+
+        let attributeLevel =
+            coreSkillGroupList
+            |> List.tryFind (fun coreSkillGroup ->
+                coreSkillGroup.attributeStat.attribute = movementSpeedCalculation.governingAttribute)
+            |> (fun attributeLevelOption ->
+                match attributeLevelOption with
+                | Some coreSkillGroup -> coreSkillGroup.attributeStat.lvl
+                | None -> Neg1To4.Zero)
+
+
+        let skillLevel =
+            coreSkillGroupList
+            |> List.collect (fun coreSkillGroupList -> coreSkillGroupList.coreSkillList)
+            |> List.tryFind (fun skillStat -> skillStat.name = movementSpeedCalculation.governingSkill)
+            |> (fun skillStatOption ->
+                match skillStatOption with
+                | Some skillStat -> skillStat.lvl
+                | None -> Neg1To4.Zero)
+
+        { movementSpeedCalculation = movementSpeedCalculation
+          movementSpeed =
+            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel skillLevel
+          durationAndSource =
+            { duration = indefiniteStringForDuration
+              source = movementSpeedCalculationToSourceForDisplay movementSpeedCalculation } }
+
+    let movementSpeedEffectForDisplayToEffectForDisplay (msefd: MovementSpeedEffectForDisplay) =
+
+        { name = msefd.movementSpeedCalculation.name
+          effect = $"{msefd.movementSpeed} ft"
+          durationAndSource = msefd.durationAndSource }
+
+module Effect =
+    open SkillDiceModEffect
+    open AttributeDeterminedDiceModEffect
+    open AttributeStatAdjustmentEffect
+    open PhysicalDefenseEffect
+    open CarryWeightEffect
+    open MovementSpeedEffect
+
+    type ItemEffect =
+        | SkillDiceModEffect of SkillDiceModEffect
+        | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
+        | PhysicalDefenseEffect of PhysicalDefenseEffect
+        | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
+        | CarryWeightCalculation of CarryWeightCalculation
+        | MovementSpeedCalculation of MovementSpeedCalculation
+
+
+// Item stuff
+
+module Item =
+    open ItemTier
+    open WeaponClass
+    open WeaponResourceClass
+    open ConduitClass
+    open ContainerClass
+    open ItemEffect
+
+    type ItemClass =
+        | WeaponClass of WeaponClass
+        | ConduitClass of ConduitClass
+        | WeaponResourceClass of WeaponResourceClass
+        | ContainerClass of ContainerClass
+        | ItemEffect of ItemEffect
+
+    type Item =
+        { name: string
+          itemClasses: ItemClass list
+          itemTier: ItemTier
+          value: string
+          weight: float }
+
+    let sumItemListWeight itemList =
+        if List.isEmpty itemList then
+            0.0
+        else
+            List.sumBy (fun item -> item.weight) itemList
+
+    let itemClassesToString itemClasses =
+        List.map
+            (fun itemClass ->
+                match itemClass with
+                | WeaponClass weaponClass -> weaponClass.name
+                | ConduitClass conduitClass -> conduitClass.name
+                | WeaponResourceClass weaponResourceClass -> weaponResourceClass.name
+                | ContainerClass containerClass -> containerClass.name
+                | ItemEffect itemEffect -> itemEffectToString itemEffect)
+            itemClasses
+        |> String.concat ", "
+
+    let itemToWeaponClasses item =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | WeaponClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> [])
+
+    let itemToConduitClasses item =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ConduitClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> [])
+
+    let itemToWeaponResourceClasses item =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | WeaponResourceClass specifiedItemClass -> [ specifiedItemClass ]
+            | _ -> [])
+
+    let itemToItemNameAndContainerClasses item =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ContainerClass specifiedItemClass -> [ (item.name, specifiedItemClass) ]
+            | _ -> [])
+
+    let itemToContainerClassNames item =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ContainerClass _ -> [ item.name ]
+            | _ -> [])
+
+    let itemToItemEffectSubTypes (itemEffectToItemEffectSubType) (item: Item) =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ItemEffect itemEffect -> itemEffectToItemEffectSubType itemEffect
+            | _ -> [])
+
+    let itemToItemNameAndItemEffectList (item: Item) =
+        item.itemClasses
+        |> List.collect (fun itemClass ->
+            match itemClass with
+            | ItemEffect itemEffect -> [ (item.name, itemEffect) ]
+            | _ -> [])
+
+    let itemToSkillDiceModEffects =
+        itemToItemEffectSubTypes itemEffectToSkillDiceModEffects
+
+    let itemToAttributeDeterminedDiceModEffects =
+        itemToItemEffectSubTypes itemEffectToAttributeDeterminedDiceModEffects
+
+module Container =
+    open ContainerClass
+    open Item
+
+    type Container =
+        { name: string
+          containerClass: ContainerClass
+          isEquipped: bool
+          itemList: Item list }
+
+    let itemNameAndContainerClassToContainer (itemName, containerClass: ContainerClass) =
+        { name = itemName
+          containerClass = containerClass
+          isEquipped = false
+          itemList = [] }
+
+    let sumContainerListWeight (containerList: Container list) =
+        containerList
+        |> List.map (fun container -> sumItemListWeight container.itemList)
+        |> List.sum
+
+module Equipment =
+    open Item
+    open ConduitClass
+
+    type Equipment =
+        { isEquipped: bool
+          item: Item
+          quantity: uint }
+
+    let calculateEquipmentListWeight equipmentList =
+        equipmentList
+        |> List.fold
+            (fun acc (equipmentItem: Equipment) ->
+                equipmentItem.item.weight
+                * float equipmentItem.quantity
+                + acc)
+            0.0
+
+    let getEquipedItems equipmentList =
+        equipmentList
+        |> List.filter (fun equipmentItem ->
+            equipmentItem.isEquipped
+            && equipmentItem.quantity > 0u)
+        |> List.map (fun equipmentItem -> equipmentItem.item)
+
+    let doesConduitEffectMagicSkill conduitClass skillName =
+        conduitClass.effectedMagicSkills
+        |> List.exists (fun magicSkill -> magicSkill.name = skillName)
+
+    let getEquipedConduitItemsWithSkillName equipmentList skillName =
+        equipmentList
+        |> getEquipedItems
+        |> List.filter (fun (item) ->
+            item
+            |> itemToConduitClasses
+            |> List.filter (fun conduitClass -> doesConduitEffectMagicSkill conduitClass skillName)
+            |> List.isEmpty
+            |> not)
+
+    let equipmentListToSkillDiceModEffects equipmentList =
+        equipmentList
+        |> getEquipedItems
+        |> List.collect itemToSkillDiceModEffects
+
+    let equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList =
+        equipmentList
+        |> getEquipedItems
+        |> List.collect itemToAttributeDeterminedDiceModEffects
+
+    let equipmentToEquipedEffectItems equipmentList =
+        equipmentList
+        |> getEquipedItems
+        |> List.collect itemToItemNameAndItemEffectList
+
+// Character Stuff
+
+module CharacterEffect =
+
+    open EffectForDisplay
+    open SkillDiceModEffectForDisplay
+    open AttributeDeterminedDiceModEffectForDisplay
+    open CarryWeightEffect
+    open Equipment
+    open MovementSpeedEffect
+
+    type CharacterEffect =
+        | EffectForDisplay of EffectForDisplay
+        | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
+        | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
+        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
+        | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
+
+    let findPercentageOfMovementSpeed characterEffectList =
+        let fullMovementSpeedPercent = 1.00
+
+        characterEffectList
+        |> List.tryFind (fun characterEffect ->
+            match characterEffect with
+            | CarryWeightEffectForDisplay _ -> true
+            | _ -> false)
+        |> (fun carryWeightCharacterEffectForDisplayOption ->
+            match carryWeightCharacterEffectForDisplayOption with
+            | Some carryWeightEffectForDisplay ->
+                match carryWeightEffectForDisplay with
+                | CarryWeightEffectForDisplay cwefd -> cwefd.weightClass.percentOfMovementSpeed
+                | _ -> fullMovementSpeedPercent
+            | None -> fullMovementSpeedPercent)
+
+    let characterEffectsToSkillDiceModEffects (characterEffectList: CharacterEffect list) =
+        characterEffectList
+        |> List.collect (fun characterEffect ->
+            match characterEffect with
+            | SkillDiceModEffectForDisplay sdmefd -> [ sdmefd.skillDiceModEffect ]
+            | _ -> [])
+
+    let collectSkillAdjustments equipmentList characterEffectList =
+        equipmentListToSkillDiceModEffects equipmentList
+        @ characterEffectsToSkillDiceModEffects characterEffectList
+
+    let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: CharacterEffect list) =
+        characterEffectList
+        |> List.collect (fun characterEffect ->
+            match characterEffect with
+            | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
+                [ carryWeightEffectForDisplay.weightClass.attributeDeterminedDiceModEffect ]
+            | AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectToForDisplay ->
+                [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
+            | _ -> [])
+
+    let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =
+        equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList
+        @ collectCharacterAttributeDeterminedDiceModEffects characterEffectList
 
 module CombatRoll =
     open Dice
@@ -1632,252 +1887,6 @@ module CombatRoll =
                 rangeMap
                 attributeDeterminedDiceModList
                 combatRollGoverningAttributeList)
-
-module CarryWeightEffect =
-    open Attribute
-    open VocationGroup
-    open Neg1To4
-    open EffectForDisplay
-    open CoreSkillGroup
-    open AttributeDeterminedDiceModEffect
-
-    type CarryWeightCalculation =
-        { name: string
-          baseWeight: uint
-          governingAttribute: Attribute
-          weightIncreasePerAttribute: uint
-          governingSkill: string
-          weightIncreasePerSkill: uint }
-
-    type WeightClass =
-        { name: string
-          bottomPercent: float
-          topPercent: float
-          percentOfMovementSpeed: float
-          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
-
-    type CarryWeightEffectForDisplay =
-        { carryWeightCalculation: CarryWeightCalculation
-          weightClass: WeightClass
-          durationAndSource: DurationAndSource }
-
-    let calculateCarryWeight (maxCarryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
-
-        let (attributeStatList, coreSkillList) =
-            coreSkillGroupListToAttributeStatsAndSkillStats coreSkillGroupList
-
-        let attributeLevel =
-            sumAttributesLevels [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
-
-        let skillLevel =
-            findVocationalSkillLvlWithDefault maxCarryWeightCalculation.governingSkill Zero coreSkillList
-            |> neg1To4ToInt
-
-        int maxCarryWeightCalculation.baseWeight
-        + (attributeLevel
-           * int maxCarryWeightCalculation.weightIncreasePerAttribute)
-        + (skillLevel
-           * int maxCarryWeightCalculation.weightIncreasePerSkill)
-        |> float
-
-    let determineWeightClass (maxCarryWeight: float) (inventoryWeight: float) (weightClassList: WeightClass list) =
-
-        let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
-
-        List.find
-            (fun weightClass ->
-                (weightClass.topPercent >= percentOfMaxCarryWeight)
-                && (percentOfMaxCarryWeight
-                    >= weightClass.bottomPercent))
-            weightClassList
-
-    let determineCarryWeightCalculationForDisplay
-        (coreSkillGroupList: CoreSkillGroup list)
-        (inventoryWeight: float)
-        (weightClassList: WeightClass list)
-        (carryWeightCalculation: CarryWeightCalculation)
-        : CarryWeightEffectForDisplay =
-
-        let maxCarryWeight = calculateCarryWeight carryWeightCalculation coreSkillGroupList
-
-        { carryWeightCalculation = carryWeightCalculation
-          weightClass = determineWeightClass maxCarryWeight inventoryWeight weightClassList
-          durationAndSource =
-            { duration = indefiniteStringForDuration
-              source = $"{inventoryWeight}/{maxCarryWeight} lb" } }
-
-    let carryWeightEffectForDisplayToEffectForDisplay (cwefd: CarryWeightEffectForDisplay) =
-        { name = cwefd.carryWeightCalculation.name
-          effect = attributeDeterminedDiceModEffectToEffectString cwefd.weightClass.attributeDeterminedDiceModEffect
-          durationAndSource = cwefd.durationAndSource }
-
-module MovementSpeedEffect =
-
-    open Attribute
-    open Neg1To4
-    open CoreSkillGroup
-    open EffectForDisplay
-
-    type MovementSpeedCalculation =
-        { name: string
-          baseMovementSpeed: uint
-          governingAttribute: Attribute
-          feetPerAttributeLvl: uint
-          governingSkill: string
-          feetPerSkillLvl: uint }
-
-    type MovementSpeedEffectForDisplay =
-        { movementSpeedCalculation: MovementSpeedCalculation
-          movementSpeed: float
-          durationAndSource: DurationAndSource }
-
-    let calculateMovementSpeed
-        percentOfMovementSpeed
-        movementSpeedCalculation
-        (attributeLvl: Neg1To4)
-        (skillLvl: Neg1To4)
-        =
-        let attributeMod =
-            neg1To4ToInt attributeLvl
-            * int movementSpeedCalculation.feetPerAttributeLvl
-
-        let skillMod =
-            neg1To4ToInt skillLvl
-            * int movementSpeedCalculation.feetPerSkillLvl
-
-        let movementSpeed =
-            (float movementSpeedCalculation.baseMovementSpeed
-             + float attributeMod
-             + float skillMod)
-            * percentOfMovementSpeed
-
-        if movementSpeed >= 0.0 then
-            movementSpeed
-        else
-            0.0
-
-    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
-        let decimalPlaces = 0
-
-        let movementSpeed =
-            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
-
-        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
-        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
-
-    let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
-        $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
-
-    let determineMovementSpeedEffectForDisplay
-        (coreSkillGroupList: CoreSkillGroup list)
-        (percentOfMovementSpeed: float)
-        (movementSpeedCalculation: MovementSpeedCalculation)
-        : MovementSpeedEffectForDisplay =
-
-        let attributeLevel =
-            coreSkillGroupList
-            |> List.tryFind (fun coreSkillGroup ->
-                coreSkillGroup.attributeStat.attribute = movementSpeedCalculation.governingAttribute)
-            |> (fun attributeLevelOption ->
-                match attributeLevelOption with
-                | Some coreSkillGroup -> coreSkillGroup.attributeStat.lvl
-                | None -> Neg1To4.Zero)
-
-
-        let skillLevel =
-            coreSkillGroupList
-            |> List.collect (fun coreSkillGroupList -> coreSkillGroupList.coreSkillList)
-            |> List.tryFind (fun skillStat -> skillStat.name = movementSpeedCalculation.governingSkill)
-            |> (fun skillStatOption ->
-                match skillStatOption with
-                | Some skillStat -> skillStat.lvl
-                | None -> Neg1To4.Zero)
-
-        { movementSpeedCalculation = movementSpeedCalculation
-          movementSpeed =
-            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel skillLevel
-          durationAndSource =
-            { duration = indefiniteStringForDuration
-              source = movementSpeedCalculationToSourceForDisplay movementSpeedCalculation } }
-
-    let movementSpeedEffectForDisplayToEffectForDisplay (msefd: MovementSpeedEffectForDisplay) =
-
-        { name = msefd.movementSpeedCalculation.name
-          effect = $"{msefd.movementSpeed} ft"
-          durationAndSource = msefd.durationAndSource }
-
-module Effect =
-    open SkillDiceModEffect
-    open AttributeDeterminedDiceModEffect
-    open AttributeStatAdjustmentEffect
-    open PhysicalDefenseEffect
-    open CarryWeightEffect
-    open MovementSpeedEffect
-
-    type ItemEffect =
-        | SkillDiceModEffect of SkillDiceModEffect
-        | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
-        | PhysicalDefenseEffect of PhysicalDefenseEffect
-        | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
-        | CarryWeightCalculation of CarryWeightCalculation
-        | MovementSpeedCalculation of MovementSpeedCalculation
-
-module CharacterEffect =
-
-    open EffectForDisplay
-    open SkillDiceModEffectForDisplay
-    open AttributeDeterminedDiceModEffectForDisplay
-    open CarryWeightEffect
-    open Equipment
-    open MovementSpeedEffect
-
-    type CharacterEffect =
-        | EffectForDisplay of EffectForDisplay
-        | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
-        | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
-        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
-        | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
-
-    let findPercentageOfMovementSpeed characterEffectList =
-        let fullMovementSpeedPercent = 1.00
-
-        characterEffectList
-        |> List.tryFind (fun characterEffect ->
-            match characterEffect with
-            | CarryWeightEffectForDisplay _ -> true
-            | _ -> false)
-        |> (fun carryWeightCharacterEffectForDisplayOption ->
-            match carryWeightCharacterEffectForDisplayOption with
-            | Some carryWeightEffectForDisplay ->
-                match carryWeightEffectForDisplay with
-                | CarryWeightEffectForDisplay cwefd -> cwefd.weightClass.percentOfMovementSpeed
-                | _ -> fullMovementSpeedPercent
-            | None -> fullMovementSpeedPercent)
-
-    let characterEffectsToSkillDiceModEffects (characterEffectList: CharacterEffect list) =
-        characterEffectList
-        |> List.collect (fun characterEffect ->
-            match characterEffect with
-            | SkillDiceModEffectForDisplay sdmefd -> [ sdmefd.skillDiceModEffect ]
-            | _ -> [])
-
-    let collectSkillAdjustments equipmentList characterEffectList =
-        equipmentListToSkillDiceModEffects equipmentList
-        @ characterEffectsToSkillDiceModEffects characterEffectList
-
-    let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: CharacterEffect list) =
-        characterEffectList
-        |> List.collect (fun characterEffect ->
-            match characterEffect with
-            | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
-                [ carryWeightEffectForDisplay.weightClass.attributeDeterminedDiceModEffect ]
-            | AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectToForDisplay ->
-                [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
-            | _ -> [])
-
-    let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =
-        equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList
-        @ collectCharacterAttributeDeterminedDiceModEffects characterEffectList
 
 module Character =
 
