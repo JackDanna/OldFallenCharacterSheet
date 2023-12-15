@@ -1,4 +1,4 @@
-module CharacterOrEquipmentEffectForDisplayList
+module CharacterEffectForDisplayList
 
 open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightEffect
@@ -38,6 +38,7 @@ let update
             (carryWeightCalculationMap.Item characterEffectName)
             |> determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList
             |> CarryWeightEffectForDisplay
+            |> CalculationEffectForDisplay
             |> List.singleton
             |> List.append model
         elif characterEffectMap.ContainsKey characterEffectName then
@@ -48,6 +49,7 @@ let update
             (movementSpeedCalculationMap.Item characterEffectName)
             |> determineMovementSpeedEffectForDisplay coreSkillGroupList (findPercentageOfMovementSpeed model)
             |> MovementSpeedEffectForDisplay
+            |> CalculationEffectForDisplay
             |> List.singleton
             |> List.append model
         else
@@ -55,23 +57,26 @@ let update
     | Remove position -> List.removeAt position model
     | RecalculateCarryWeightAndMovementSpeed ->
         model
-        |> List.map (fun characterEffect ->
+        |> List.map (fun effectForDisplay ->
             CharacterEffectForDisplay.update
-                (CharacterEffectForDisplay.Msg.RecalculateCarryWeight(
-                    coreSkillGroupList,
-                    inventoryWeight,
-                    weightClassList
-                ))
-                characterEffect)
-        |> (fun characterEffectList ->
-            characterEffectList
-            |> List.map (fun characterEffect ->
-                CharacterEffectForDisplay.update
-                    (CharacterEffectForDisplay.Msg.RecalculateMovementSpeed(
+                (CharacterEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
+                    CalculationEffectForDisplay.Msg.RecalculateCarryWeight(
                         coreSkillGroupList,
-                        (findPercentageOfMovementSpeed characterEffectList)
-                    ))
-                    characterEffect))
+                        inventoryWeight,
+                        weightClassList
+                    )
+                ))
+                effectForDisplay)
+        |> List.map (fun effectForDisplay ->
+            CharacterEffectForDisplay.update
+                (CharacterEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
+                    CalculationEffectForDisplay.Msg.RecalculateMovementSpeed(
+                        coreSkillGroupList,
+                        (findPercentageOfMovementSpeed model)
+                    )
+                ))
+                effectForDisplay)
+
 
 open Feliz
 open Feliz.Bulma

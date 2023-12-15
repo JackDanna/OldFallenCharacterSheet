@@ -1,19 +1,14 @@
 module CharacterEffectForDisplay
 
-open FallenLib.CarryWeightEffect
-open FallenLib.CarryWeightEffectForDisplay
-open FallenLib.CoreSkillGroup
 open FallenLib.EffectForDisplay
 open FallenLib.SkillDiceModEffectForDisplay
 open FallenLib.AttributeDeterminedDiceModEffectForDisplay
-open FallenLib.MovementSpeedEffectForDisplay
 
 type Msg =
     | TextForDisplayMsg of InteractiveEffectForDisplay.Msg
     | SkillDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
     | AttributeDeterminedDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
-    | RecalculateCarryWeight of (CoreSkillGroup list * float * WeightClass list)
-    | RecalculateMovementSpeed of (CoreSkillGroup list * float)
+    | CalculationEffectForDisplayMsg of CalculationEffectForDisplay.Msg
 
 let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
 
@@ -38,21 +33,13 @@ let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
         { addme with durationAndSource = newEffectForDisplay.durationAndSource }
         |> AttributeDeterminedDiceModEffectForDisplay
 
-    | RecalculateCarryWeight (coreSkillGroupList, inventoryWeight, weightClassList), CarryWeightEffectForDisplay cwefd ->
-        determineCarryWeightCalculationForDisplay
-            coreSkillGroupList
-            inventoryWeight
-            weightClassList
-            cwefd.carryWeightCalculation
-        |> CarryWeightEffectForDisplay
-    | RecalculateMovementSpeed (coreSkillGroupList, percentOfMovementSpeed), MovementSpeedEffectForDisplay msefd ->
-        determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msefd.movementSpeedCalculation
-        |> MovementSpeedEffectForDisplay
+    | CalculationEffectForDisplayMsg rmsg, CalculationEffectForDisplay cefd ->
+        CalculationEffectForDisplay.update rmsg cefd
+        |> CalculationEffectForDisplay
+
     | _ -> model
 
-open Feliz
-
-let viewTableData (model: EffectForDisplay) (dispatch: Msg -> unit) =
+let view (model: EffectForDisplay) (dispatch: Msg -> unit) =
 
     match model with
     | TextEffectForDisplay effectForDisplay ->
@@ -68,7 +55,4 @@ let viewTableData (model: EffectForDisplay) (dispatch: Msg -> unit) =
             (attributeDeterminedDiceModEffectToTextEffectForDisplay addmefd)
             (AttributeDeterminedDiceModEffectForDisplayMsg
              >> dispatch)
-    | CarryWeightEffectForDisplay ccwefd ->
-        NonInteractiveEffectForDisplay.view (carryWeightEffectForDisplayToEffectForDisplay ccwefd)
-    | MovementSpeedEffectForDisplay msefd ->
-        NonInteractiveEffectForDisplay.view (movementSpeedEffectForDisplayToEffectForDisplay msefd)
+    | CalculationEffectForDisplay cefd -> CalculationEffectForDisplay.view cefd
