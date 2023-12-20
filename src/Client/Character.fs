@@ -32,7 +32,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Character =
       combatRollList = []
       containerList = []
       destinyPoints = DestinyPoints.init ()
-      characterEffectList = []
+      characterEffectForDisplayList = []
+      equipmentEffectForDisplayList = []
       characterInformation = CharacterInformation.init () }
 
 let update
@@ -61,7 +62,9 @@ let update
     | SetDefault ->
 
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
-            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
+                model.equipmentEffectForDisplayList
+                model.characterEffectForDisplayList
 
         { model with
             coreSkillGroupList = defaultCoreSkillTables
@@ -89,11 +92,13 @@ let update
                 characterEffectMap
                 movementSpeedCalculationMap
                 CharacterEffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
-                model.characterEffectList
+                model.characterEffectForDisplayList
 
         // 3th, grab the new skillAdjustments from both the itms and character effects
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
-            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
+                model.equipmentEffectForDisplayList
+                model.characterEffectForDisplayList
 
         // 4th, with the new CharacterEffects, update the skill Dice pools
         let newCoreSkillTablesWithSkillAdjustments =
@@ -121,11 +126,13 @@ let update
                     (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
                     newVocationTables
 
-            characterEffectList = newCharacterEffectList }
+            characterEffectForDisplayList = newCharacterEffectList }
 
     | VocationGroupListMsg vocationTableMsg ->
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
-            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList model.characterEffectList
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
+                model.equipmentEffectForDisplayList
+                model.characterEffectForDisplayList
 
         let newVocationTables =
             VocationGroupList.update
@@ -150,8 +157,22 @@ let update
         let newEquipmentList =
             EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
 
+        let newEquipmentEffectForDisplayList =
+            newEquipmentList
+            |> equipmentListToEquipedEquipmentEffects
+            |> List.map (fun (itemName, itemEffect) ->
+                itemEffectToEffectForDisplay
+                    1.00 //findPercentageOfMovementSpeed
+                    model.coreSkillGroupList
+                    (calculateCharacterWeight newEquipmentList model.containerList)
+                    weightClassList
+                    itemEffect
+                    itemName)
+
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
-            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects newEquipmentList model.characterEffectList
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
+                newEquipmentEffectForDisplayList
+                model.characterEffectForDisplayList
 
         let newVocationGroupList =
             VocationGroupList.update
@@ -178,7 +199,7 @@ let update
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationGroupList
 
-            characterEffectList =
+            characterEffectForDisplayList =
                 CharacterEffectForDisplayList.update
                     newCoreSkillGroupList
                     (calculateCharacterWeight newEquipmentList model.containerList)
@@ -187,7 +208,7 @@ let update
                     characterEffectMap
                     movementSpeedCalculationMap
                     CharacterEffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
-                    model.characterEffectList }
+                    model.characterEffectForDisplayList }
 
     | ContainerListMsg containerListMsg ->
         let newContainerList =
@@ -202,10 +223,12 @@ let update
                 characterEffectMap
                 movementSpeedCalculationMap
                 CharacterEffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
-                model.characterEffectList
+                model.characterEffectForDisplayList
 
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
-            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
+                model.equipmentEffectForDisplayList
+                newCharacterEffectList
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
@@ -216,7 +239,7 @@ let update
 
         { model with
             containerList = newContainerList
-            characterEffectList = newCharacterEffectList
+            characterEffectForDisplayList = newCharacterEffectList
             coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
             vocationGroupList =
                 VocationGroupList.update
@@ -239,10 +262,12 @@ let update
                 characterEffectMap
                 movementSpeedCalculationMap
                 msg
-                model.characterEffectList
+                model.characterEffectForDisplayList
 
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
-            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects model.equipmentList newCharacterEffectList
+            collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
+                model.equipmentEffectForDisplayList
+                newCharacterEffectList
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
@@ -252,7 +277,7 @@ let update
                 model.coreSkillGroupList
 
         { model with
-            characterEffectList = newCharacterEffectList
+            characterEffectForDisplayList = newCharacterEffectList
             coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
             vocationGroupList =
                 VocationGroupList.update
@@ -311,13 +336,10 @@ let view
 
         CharacterEffectForDisplayList.view
             characterEffectKeyList
-            model.characterEffectList
+            model.characterEffectForDisplayList
             (CharacterEffectListMsg >> dispatch)
 
-        // ItemEffectForDisplayList.view
-        //     (model.equipmentList
-        //     |> equipmentToEquipedEffectItems
-        //     |> itemEffectToEffectForDisplay)
+        EquipmentEffectForDisplayList.view model.equipmentEffectForDisplayList
 
         EquipmentList.view allItemNameList model.equipmentList (EquipmentListMsg >> dispatch)
 

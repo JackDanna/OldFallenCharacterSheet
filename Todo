@@ -1,0 +1,15 @@
+Removed Quantity from the item Data csv
+
+Possible add item instance. This would contian a uuid, item name
+
+containers should have quantity
+
+Add magic resource
+
+Add Movement speed needs to factor in item and character effects
+
+Added character art
+
+Add Defense Level sum to Character Effects
+
+Character Effects and Equipment effects should be represented by the same UI

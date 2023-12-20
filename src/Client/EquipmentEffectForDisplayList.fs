@@ -1,4 +1,4 @@
-module ItemEffectForDisplayList
+module EquipmentEffectForDisplayList
 
 open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightEffect
@@ -19,8 +19,8 @@ let update
     | RecalculateCarryWeightAndMovementSpeed ->
         model
         |> List.map (fun effectForDisplay ->
-            ItemEffectForDisplay.update
-                (ItemEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
+            EquipmentEffectForDisplay.update
+                (EquipmentEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
                     CalculationEffectForDisplay.Msg.RecalculateCarryWeight(
                         coreSkillGroupList,
                         inventoryWeight,
@@ -29,8 +29,8 @@ let update
                 ))
                 effectForDisplay)
         |> List.map (fun effectForDisplay ->
-            ItemEffectForDisplay.update
-                (ItemEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
+            EquipmentEffectForDisplay.update
+                (EquipmentEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
                     CalculationEffectForDisplay.Msg.RecalculateMovementSpeed(
                         coreSkillGroupList,
                         (findPercentageOfMovementSpeed model)
@@ -44,7 +44,7 @@ open Feliz.Bulma
 
 let view (model: EffectForDisplay list) =
     Bulma.container [
-        Bulma.label "Character Effects:"
+        Bulma.label "Equipment Effects:"
         Bulma.table [
             table.isBordered
             prop.children [
@@ -59,7 +59,7 @@ let view (model: EffectForDisplay list) =
                 ]
                 Html.tableBody (
                     model
-                    |> List.map ItemEffectForDisplay.view
+                    |> List.map EquipmentEffectForDisplay.view
                     |> List.map Html.tr
                 )
             ]

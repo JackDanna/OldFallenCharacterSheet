@@ -1,4 +1,4 @@
-module ItemEffectForDisplay
+module EquipmentEffectForDisplay
 
 open FallenLib.EffectForDisplay
 

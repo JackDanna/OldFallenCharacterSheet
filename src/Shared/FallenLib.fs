@@ -1452,7 +1452,7 @@ module Equipment =
         |> getEquipedItems
         |> List.collect itemToAttributeDeterminedDiceModEffects
 
-    let equipmentToEquipedEffectItems equipmentList =
+    let equipmentListToEquipedEquipmentEffects equipmentList =
         equipmentList
         |> getEquipedItems
         |> List.collect itemToItemNameAndItemEffectList
@@ -1522,7 +1522,7 @@ module EffectForDisplay =
                 | _ -> fullMovementSpeedPercent
             | None -> fullMovementSpeedPercent)
 
-    let characterEffectsToSkillDiceModEffects (characterEffectList: EffectForDisplay list) =
+    let effectForDisplayListToSkillDiceModEffectList (characterEffectList: EffectForDisplay list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
             match characterEffect with
@@ -1531,9 +1531,9 @@ module EffectForDisplay =
 
     let collectSkillAdjustments equipmentList characterEffectList =
         equipmentListToSkillDiceModEffects equipmentList
-        @ characterEffectsToSkillDiceModEffects characterEffectList
+        @ effectForDisplayListToSkillDiceModEffectList characterEffectList
 
-    let collectCharacterAttributeDeterminedDiceModEffects (characterEffectList: EffectForDisplay list) =
+    let effectForDisplayListToAttributeDeterminedDiceModEffectList (characterEffectList: EffectForDisplay list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
             match characterEffect with
@@ -1548,7 +1548,7 @@ module EffectForDisplay =
 
     let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =
         equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList
-        @ collectCharacterAttributeDeterminedDiceModEffects characterEffectList
+        @ effectForDisplayListToAttributeDeterminedDiceModEffectList characterEffectList
 
     let itemEffectToEffectForDisplay
         percentOfMovementSpeed
@@ -2025,8 +2025,15 @@ module Character =
           combatRollList: CombatRoll list
           containerList: Container list
           destinyPoints: ZeroToThree
-          characterEffectList: EffectForDisplay list }
+          characterEffectForDisplayList: EffectForDisplay list
+          equipmentEffectForDisplayList: EffectForDisplay list }
 
-    let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentList characterEffectList =
-        (collectSkillAdjustments equipmentList characterEffectList,
-         collectAttributeDeterminedDiceModEffects equipmentList characterEffectList)
+    let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentEffectForDisplayList characterEffectList =
+        effectForDisplayListToSkillDiceModEffectList (
+            equipmentEffectForDisplayList
+            @ characterEffectList
+        ),
+        effectForDisplayListToAttributeDeterminedDiceModEffectList (
+            equipmentEffectForDisplayList
+            @ characterEffectList
+        )

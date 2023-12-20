@@ -32,8 +32,8 @@
     <Compile Include="CalculationEffectForDisplay.fs" />
     <Compile Include="CharacterEffectForDisplay.fs" />
     <Compile Include="CharacterEffectForDisplayList.fs" />
-    <Compile Include="ItemEffectForDisplay.fs" />
-    <Compile Include="ItemEffectForDisplayList.fs" />
+    <Compile Include="EquipmentEffectForDisplay.fs" />
+    <Compile Include="EquipmentEffectForDisplayList.fs" />
     <Compile Include="CharacterInformation.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
