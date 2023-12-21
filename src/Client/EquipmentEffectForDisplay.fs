@@ -6,8 +6,8 @@ type Msg = CalculationEffectForDisplayMsg of CalculationEffectForDisplay.Msg
 
 let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
     match msg, model with
-    | CalculationEffectForDisplayMsg rmsg, CalculationEffectForDisplay cefd ->
-        CalculationEffectForDisplay.update rmsg cefd
+    | CalculationEffectForDisplayMsg rmsg, MovementSpeedEffectForDisplay msefd ->
+        CalculationEffectForDisplay.update rmsg msefd
         |> CalculationEffectForDisplay
     | _ -> model
 
