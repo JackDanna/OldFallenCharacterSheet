@@ -174,12 +174,12 @@ let update
             coreSkillGroupList = newCoreSkillGroupList
             vocationGroupList = newVocationGroupList
             equipmentList = newEquipmentList
+            equipmentEffectForDisplayList = newEquipmentEffectForDisplayList
             combatRollList =
                 loadedCombatRollUpdate
                     newEquipmentList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
-                    newVocationGroupList
-            equipmentEffectForDisplayList = newEquipmentEffectForDisplayList }
+                    newVocationGroupList }
 
     | ContainerListMsg containerListMsg ->
         let newContainerList =
