@@ -1082,16 +1082,6 @@ module VocationGroup =
 
 // Attribute and Vocation Dependant Effects
 
-module WeightClass =
-    open AttributeDeterminedDiceModEffect
-
-    type WeightClass =
-        { name: string
-          bottomPercent: float
-          topPercent: float
-          percentOfMovementSpeed: float
-          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
-
 module CarryWeightCalculation =
     open Attribute
     open VocationGroup
