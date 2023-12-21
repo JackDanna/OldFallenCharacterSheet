@@ -1958,7 +1958,16 @@ module Character =
         | Some carryWeightStat -> carryWeightStat.weightClass.percentOfMovementSpeed
         | _ -> 1.00
 
-    let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentEffectForDisplayList characterEffectList =
+    let carryWeightStatOptionToAttributeDeterminedDiceMod (carryWeightStatOption: CarryWeightStat option) =
+        match carryWeightStatOption with
+        | Some carryWeightStat -> [ carryWeightStat.weightClass.attributeDeterminedDiceModEffect ]
+        | _ -> []
+
+    let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
+        equipmentEffectForDisplayList
+        characterEffectList
+        carryWeightStatAttributeDeterminedDiceModList
+        =
         effectForDisplayListToSkillDiceModEffectList (
             equipmentEffectForDisplayList
             @ characterEffectList
@@ -1967,3 +1976,4 @@ module Character =
             equipmentEffectForDisplayList
             @ characterEffectList
         )
+        @ carryWeightStatAttributeDeterminedDiceModList

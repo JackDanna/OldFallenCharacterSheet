@@ -68,6 +68,7 @@ let update
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
                 model.equipmentEffectForDisplayList
                 model.characterEffectForDisplayList
+                (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         { model with
             coreSkillGroupList = defaultCoreSkillTables
@@ -85,6 +86,7 @@ let update
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
                 model.equipmentEffectForDisplayList
                 model.characterEffectForDisplayList
+                (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newCoreSkillTables =
             CoreSkillGroupList.update
@@ -123,6 +125,7 @@ let update
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
                 model.equipmentEffectForDisplayList
                 model.characterEffectForDisplayList
+                (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newVocationTables =
             VocationGroupList.update
@@ -161,6 +164,7 @@ let update
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
                 newEquipmentEffectForDisplayList
                 model.characterEffectForDisplayList
+                (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newVocationGroupList =
             VocationGroupList.update
@@ -217,6 +221,7 @@ let update
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
                 model.equipmentEffectForDisplayList
                 newCharacterEffectList
+                (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
@@ -256,6 +261,7 @@ let update
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
                 model.equipmentEffectForDisplayList
                 newCharacterEffectList
+                (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newCoreSkillTablesWithSkillAdjustments =
             CoreSkillGroupList.update
