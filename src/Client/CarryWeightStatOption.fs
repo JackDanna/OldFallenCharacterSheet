@@ -37,14 +37,20 @@ let update
             None
 
     | SetString newString, Some carryWeightStat ->
-        CarryWeightStat.update
-            (CarryWeightStat.Msg.SetCarryWeightCalculation
-                { newCarryWeightCalculationName = newString
-                  coreSkillGroupList = coreSkillGroupList
-                  carryWeightCalculationMap = carryWeightCalculationMap
-                  weightClassList = weightClassList })
-            carryWeightStat
-        |> Some
+        if
+            Seq.exists
+                (fun carryWeightCalculationName -> carryWeightCalculationName = newString)
+                carryWeightCalculationMap.Keys then
+            CarryWeightStat.update
+                (CarryWeightStat.Msg.SetCarryWeightCalculation
+                    { newCarryWeightCalculationName = newString
+                      coreSkillGroupList = coreSkillGroupList
+                      carryWeightCalculationMap = carryWeightCalculationMap
+                      weightClassList = weightClassList })
+                carryWeightStat
+            |> Some
+        else
+            None
 
     | CarryWeightStatMsg msg, Some carryWeightStat -> CarryWeightStat.update msg carryWeightStat |> Some
 
@@ -95,7 +101,7 @@ let view (carryWeightCalculationNameList: string list) (model: CarryWeightStat o
                                         Html.option [
                                             prop.value carryWeightEffectName
                                         ])
-                                    carryWeightCalculationNameList
+                                    (List.append [ "None" ] carryWeightCalculationNameList)
                             )
                         ]
                     ]
