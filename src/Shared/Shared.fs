@@ -8,6 +8,7 @@ open FallenLib.CoreSkillGroup
 open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightCalculation
 open FallenLib.MovementSpeedEffect
+open FallenLib.WeightClass
 
 module Route =
     let builder typeName methodName =

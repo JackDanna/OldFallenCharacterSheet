@@ -1088,18 +1088,14 @@ module CarryWeightCalculation =
 module WeightClass =
     open AttributeDeterminedDiceModEffect
 
-    type CarryWeightEffect =
+    type WeightClass =
         { name: string
           bottomPercent: float
           topPercent: float
           percentOfMovementSpeed: float
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
-    let determineWeightClass
-        (maxCarryWeight: float)
-        (inventoryWeight: float)
-        (weightClassList: CarryWeightEffect list)
-        =
+    let determineWeightClass (maxCarryWeight: float) (inventoryWeight: float) (weightClassList: WeightClass list) =
 
         let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
 
@@ -1193,7 +1189,7 @@ module CarryWeightEffectForDisplay =
     open AttributeDeterminedDiceModEffect
 
     type CarryWeightEffectForDisplay =
-        { carryWeightEffect: CarryWeightEffect
+        { carryWeightEffect: WeightClass
           durationAndSource: DurationAndSource }
 
     let carryWeightEffectForDisplayToEffectForDisplay (cwefd: CarryWeightEffectForDisplay) : TextEffectForDisplay =
@@ -1956,7 +1952,7 @@ module CarryWeightStat =
         { carryWeightCalculation: CarryWeightCalculation
           currentWeight: float
           maxWeight: float
-          weightClass: CarryWeightEffect }
+          weightClass: WeightClass }
 
 module Character =
 
