@@ -1948,11 +1948,15 @@ module Character =
           combatRollList: CombatRoll list
           containerList: Container list
           destinyPoints: ZeroToThree
-          carryWeightCalculation: CarryWeightStat
           characterEffectForDisplayList: EffectForDisplay list
           equipmentEffectForDisplayList: EffectForDisplay list
           characterInformation: CharacterInformation
-          carryWeightStat: CarryWeightStat }
+          carryWeightStatOption: CarryWeightStat option }
+
+    let carryWeightStatOptionToPercentOfMovementSpeed (carryWeightStatOption: CarryWeightStat option) =
+        match carryWeightStatOption with
+        | Some carryWeightStat -> carryWeightStat.weightClass.percentOfMovementSpeed
+        | _ -> 1.00
 
     let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentEffectForDisplayList characterEffectList =
         effectForDisplayListToSkillDiceModEffectList (

@@ -35,7 +35,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Character =
       destinyPoints = DestinyPoints.init ()
       characterEffectForDisplayList = []
       equipmentEffectForDisplayList = []
-      characterInformation = CharacterInformation.init () }
+      characterInformation = CharacterInformation.init ()
+      carryWeightStatOption = None }
 
 let update
     (defaultCoreSkillTables: CoreSkillGroup list)
@@ -88,7 +89,7 @@ let update
             CharacterEffectForDisplayList.update
                 newCoreSkillTables
                 (calculateCharacterWeight model.equipmentList model.containerList)
-                model.carryWeightStat.weightClass.percentOfMovementSpeed
+                (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
@@ -204,7 +205,7 @@ let update
                 CharacterEffectForDisplayList.update
                     newCoreSkillGroupList
                     (calculateCharacterWeight newEquipmentList model.containerList)
-                    model.carryWeightStat.weightClass.percentOfMovementSpeed
+                    (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                     weightClassList
                     characterEffectMap
                     movementSpeedCalculationMap
@@ -219,7 +220,7 @@ let update
             CharacterEffectForDisplayList.update
                 model.coreSkillGroupList
                 (calculateCharacterWeight model.equipmentList newContainerList)
-                model.carryWeightStat.weightClass.percentOfMovementSpeed
+                (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
@@ -258,7 +259,7 @@ let update
             CharacterEffectForDisplayList.update
                 model.coreSkillGroupList
                 (calculateCharacterWeight model.equipmentList model.containerList)
-                model.carryWeightStat.weightClass.percentOfMovementSpeed
+                (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
