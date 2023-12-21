@@ -2,7 +2,7 @@ module CharacterEffectForDisplayList
 
 open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightCalculation
-open FallenLib.CarryWeightStat
+open FallenLib.WeightClass
 open FallenLib.CoreSkillGroup
 open FallenLib.MovementSpeedEffect
 open FallenLib.MovementSpeedEffectForDisplay
@@ -18,7 +18,7 @@ let init () : EffectForDisplay list = []
 let update
     (coreSkillGroupList: CoreSkillGroup list)
     (inventoryWeight: float)
-    (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
+    (percentOfMovementSpeed: float)
     (weightClassList: WeightClass list)
     (characterEffectMap: Map<string, EffectForDisplay>)
     (movementSpeedCalculationMap: Map<string, MovementSpeedCalculation>)
@@ -34,22 +34,14 @@ let update
             else
                 characterEffect)
     | Insert characterEffectName ->
-        if carryWeightCalculationMap.ContainsKey characterEffectName then
-            (carryWeightCalculationMap.Item characterEffectName)
-            |> determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList
-            |> CarryWeightEffectForDisplay
-            |> CalculationEffectForDisplay
-            |> List.singleton
-            |> List.append model
-        elif characterEffectMap.ContainsKey characterEffectName then
+        if characterEffectMap.ContainsKey characterEffectName then
             (characterEffectMap.Item characterEffectName)
             |> List.singleton
             |> List.append model
         elif movementSpeedCalculationMap.ContainsKey characterEffectName then
             (movementSpeedCalculationMap.Item characterEffectName)
-            |> determineMovementSpeedEffectForDisplay coreSkillGroupList (findPercentageOfMovementSpeed model)
+            |> determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed
             |> MovementSpeedEffectForDisplay
-            |> CalculationEffectForDisplay
             |> List.singleton
             |> List.append model
         else
@@ -72,7 +64,7 @@ let update
                 (CharacterEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
                     MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(
                         coreSkillGroupList,
-                        (findPercentageOfMovementSpeed model)
+                        percentOfMovementSpeed
                     )
                 ))
                 effectForDisplay)
