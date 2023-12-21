@@ -11,7 +11,7 @@ type Msg =
     | ModifyCharacterEffect of int * CharacterEffectForDisplay.Msg
     | Insert of string
     | Remove of int
-    | RecalculateCarryWeightAndMovementSpeed
+    | RecalculateMovementSpeed
 
 let init () : EffectForDisplay list = []
 
@@ -47,7 +47,7 @@ let update
         else
             model
     | Remove position -> List.removeAt position model
-    | RecalculateCarryWeightAndMovementSpeed ->
+    | RecalculateMovementSpeed ->
         model
         |> List.map (fun effectForDisplay ->
             CharacterEffectForDisplay.update

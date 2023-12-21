@@ -91,7 +91,7 @@ let update
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
-                CharacterEffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
+                CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
                 model.characterEffectForDisplayList
 
         // 3th, grab the new skillAdjustments from both the itms and character effects
@@ -207,7 +207,7 @@ let update
                     weightClassList
                     characterEffectMap
                     movementSpeedCalculationMap
-                    CharacterEffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
+                    CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
                     model.characterEffectForDisplayList }
 
     | ContainerListMsg containerListMsg ->
@@ -222,7 +222,7 @@ let update
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
-                CharacterEffectForDisplayList.Msg.RecalculateCarryWeightAndMovementSpeed
+                CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
                 model.characterEffectForDisplayList
 
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
