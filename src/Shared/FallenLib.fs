@@ -1278,23 +1278,6 @@ module EffectForDisplay =
         | PhysicalDefenseEffectForDisplay pdefd -> pdefd.physicalDefenseEffect.name
         | MovementSpeedEffectForDisplay msefd -> msefd.movementSpeedCalculation.name
 
-
-    // let findPercentageOfMovementSpeed (characterEffectList: EffectForDisplay list) =
-    //     let fullMovementSpeedPercent = 1.00
-
-    //     characterEffectList
-    //     |> List.tryFind (fun characterEffectForDisplay ->
-    //         match characterEffectForDisplay with
-    //         | CarryWeightEffectForDisplay _ -> true
-    //         | _ -> false)
-    //     |> (fun effectForDisplayOption ->
-    //         match effectForDisplayOption with
-    //         | Some effectForDisplay ->
-    //             match effectForDisplay with
-    //             | CarryWeightEffectForDisplay cwefd -> cwefd.carryWeightEffect.percentOfMovementSpeed
-    //             | _ -> fullMovementSpeedPercent
-    //         | None -> fullMovementSpeedPercent)
-
     let effectForDisplayListToSkillDiceModEffectList (characterEffectList: EffectForDisplay list) =
         characterEffectList
         |> List.collect (fun characterEffect ->
