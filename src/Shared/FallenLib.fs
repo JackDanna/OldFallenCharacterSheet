@@ -1183,21 +1183,6 @@ module AttributeDeterminedDiceModEffectForDisplay =
           effect = attributeDeterminedDiceModEffectToEffectString addme
           durationAndSource = { duration = duration; source = source } }
 
-module CarryWeightEffectForDisplay =
-    open WeightClass
-    open TextEffectForDisplay
-    open AttributeDeterminedDiceModEffect
-
-    type CarryWeightEffectForDisplay =
-        { carryWeightEffect: WeightClass
-          durationAndSource: DurationAndSource }
-
-    let carryWeightEffectForDisplayToEffectForDisplay (cwefd: CarryWeightEffectForDisplay) : TextEffectForDisplay =
-        { name = cwefd.carryWeightEffect.name
-          effect =
-            attributeDeterminedDiceModEffectToEffectString cwefd.carryWeightEffect.attributeDeterminedDiceModEffect
-          durationAndSource = cwefd.durationAndSource }
-
 module SkillDiceModEffectForDisplay =
     open SkillDiceModEffect
     open TextEffectForDisplay
@@ -1274,7 +1259,6 @@ module EffectForDisplay =
     open AttributeStatAdjustmentEffectForDisplay
     open PhysicalDefenseEffectForDisplay
     open MovementSpeedEffectForDisplay
-    open CarryWeightEffectForDisplay
     open MovementSpeedEffect
 
     type EffectForDisplay =
@@ -1284,7 +1268,6 @@ module EffectForDisplay =
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
         | PhysicalDefenseEffectForDisplay of PhysicalDefenseEffectForDisplay
         | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
-        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
 
     let effectForDiplayToName (effectForDisplay: EffectForDisplay) =
         match effectForDisplay with
@@ -1293,25 +1276,24 @@ module EffectForDisplay =
         | SkillDiceModEffectForDisplay sdmefd -> sdmefd.skillDiceModEffect.name
         | AttributeDeterminedDiceModEffectForDisplay addmefd -> addmefd.attributeDeterminedDiceModEffect.name
         | PhysicalDefenseEffectForDisplay pdefd -> pdefd.physicalDefenseEffect.name
-        | CarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightEffect.name
         | MovementSpeedEffectForDisplay msefd -> msefd.movementSpeedCalculation.name
 
 
-    let findPercentageOfMovementSpeed (characterEffectList: EffectForDisplay list) =
-        let fullMovementSpeedPercent = 1.00
+    // let findPercentageOfMovementSpeed (characterEffectList: EffectForDisplay list) =
+    //     let fullMovementSpeedPercent = 1.00
 
-        characterEffectList
-        |> List.tryFind (fun characterEffectForDisplay ->
-            match characterEffectForDisplay with
-            | CarryWeightEffectForDisplay _ -> true
-            | _ -> false)
-        |> (fun effectForDisplayOption ->
-            match effectForDisplayOption with
-            | Some effectForDisplay ->
-                match effectForDisplay with
-                | CarryWeightEffectForDisplay cwefd -> cwefd.carryWeightEffect.percentOfMovementSpeed
-                | _ -> fullMovementSpeedPercent
-            | None -> fullMovementSpeedPercent)
+    //     characterEffectList
+    //     |> List.tryFind (fun characterEffectForDisplay ->
+    //         match characterEffectForDisplay with
+    //         | CarryWeightEffectForDisplay _ -> true
+    //         | _ -> false)
+    //     |> (fun effectForDisplayOption ->
+    //         match effectForDisplayOption with
+    //         | Some effectForDisplay ->
+    //             match effectForDisplay with
+    //             | CarryWeightEffectForDisplay cwefd -> cwefd.carryWeightEffect.percentOfMovementSpeed
+    //             | _ -> fullMovementSpeedPercent
+    //         | None -> fullMovementSpeedPercent)
 
     let effectForDisplayListToSkillDiceModEffectList (characterEffectList: EffectForDisplay list) =
         characterEffectList
@@ -1324,8 +1306,6 @@ module EffectForDisplay =
         characterEffectList
         |> List.collect (fun effectForDisplay ->
             match effectForDisplay with
-            | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
-                [ carryWeightEffectForDisplay.carryWeightEffect.attributeDeterminedDiceModEffect ]
             | AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectToForDisplay ->
                 [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
             | _ -> [])
@@ -1372,7 +1352,6 @@ module EffectForDisplay =
         | AttributeDeterminedDiceModEffectForDisplay addme ->
             addme
             |> attributeDeterminedDiceModEffectToTextEffectForDisplay
-        | CarryWeightEffectForDisplay cwc -> carryWeightEffectForDisplayToEffectForDisplay cwc
         | MovementSpeedEffectForDisplay msc -> movementSpeedEffectForDisplayToEffectForDisplay msc
 
 // Item stuff
