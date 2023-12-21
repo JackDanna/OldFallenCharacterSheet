@@ -798,31 +798,6 @@ module AttributeStatAdjustmentEffect =
     let attributeStatAdjustmentToEffectString attributeStatAdjustment =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
-module CarryWeightEffect =
-    open AttributeDeterminedDiceModEffect
-
-    type CarryWeightEffect =
-        { name: string
-          bottomPercent: float
-          topPercent: float
-          percentOfMovementSpeed: float
-          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
-
-    let determineWeightClass
-        (maxCarryWeight: float)
-        (inventoryWeight: float)
-        (weightClassList: CarryWeightEffect list)
-        =
-
-        let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
-
-        List.find
-            (fun weightClass ->
-                (weightClass.topPercent >= percentOfMaxCarryWeight)
-                && (percentOfMaxCarryWeight
-                    >= weightClass.bottomPercent))
-            weightClassList
-
 module MovementSpeedEffect =
 
     open Attribute
@@ -878,7 +853,6 @@ module Effect =
     open AttributeStatAdjustmentEffect
     open PhysicalDefenseEffect
     open AttributeDeterminedDiceModEffect
-    open CarryWeightEffect
     open MovementSpeedEffect
 
     type Effect =
@@ -886,7 +860,6 @@ module Effect =
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
         | PhysicalDefenseEffect of PhysicalDefenseEffect
         | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
-        | CarryWeightCalculation of CarryWeightEffect
         | MovementSpeedCalculation of MovementSpeedCalculation
 
     let effectToEffectName effect =
@@ -895,7 +868,6 @@ module Effect =
         | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
         | PhysicalDefenseEffect defenseClass -> defenseClass.name
         | AttributeDeterminedDiceModEffect addme -> addme.name
-        | CarryWeightCalculation cwc -> cwc.name
         | MovementSpeedCalculation msc -> msc.name
 
     let effectToSkillDiceModEffectList (effect: Effect) =
@@ -1113,6 +1085,31 @@ module CarryWeightCalculation =
            * int carryWeightCalculation.weightIncreasePerSkill)
         |> float
 
+module WeightClass =
+    open AttributeDeterminedDiceModEffect
+
+    type CarryWeightEffect =
+        { name: string
+          bottomPercent: float
+          topPercent: float
+          percentOfMovementSpeed: float
+          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
+
+    let determineWeightClass
+        (maxCarryWeight: float)
+        (inventoryWeight: float)
+        (weightClassList: CarryWeightEffect list)
+        =
+
+        let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
+
+        List.find
+            (fun weightClass ->
+                (weightClass.topPercent >= percentOfMaxCarryWeight)
+                && (percentOfMaxCarryWeight
+                    >= weightClass.bottomPercent))
+            weightClassList
+
 // EffectForDisplay
 
 module TextEffectForDisplay =
@@ -1191,7 +1188,7 @@ module AttributeDeterminedDiceModEffectForDisplay =
           durationAndSource = { duration = duration; source = source } }
 
 module CarryWeightEffectForDisplay =
-    open CarryWeightEffect
+    open WeightClass
     open TextEffectForDisplay
     open AttributeDeterminedDiceModEffect
 
@@ -1360,10 +1357,6 @@ module EffectForDisplay =
             { attributeDeterminedDiceModEffect = addme
               durationAndSource = durationAndSource }
             |> AttributeDeterminedDiceModEffectForDisplay
-        | CarryWeightCalculation cwe ->
-            { carryWeightEffect = cwe
-              durationAndSource = durationAndSource }
-            |> CarryWeightEffectForDisplay
         | MovementSpeedCalculation msc ->
             determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msc
             |> MovementSpeedEffectForDisplay
@@ -1569,6 +1562,7 @@ module EquipmentEffectForDisplay =
     let collectAttributeDeterminedDiceModEffects equipmentList characterEffectList =
         equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList
         @ effectForDisplayListToAttributeDeterminedDiceModEffectList characterEffectList
+
 // Character Stuff
 
 module CombatRoll =
@@ -1956,7 +1950,7 @@ module CombatRoll =
 module CarryWeightStat =
 
     open CarryWeightCalculation
-    open CarryWeightEffect
+    open WeightClass
 
     type CarryWeightStat =
         { carryWeightCalculation: CarryWeightCalculation
