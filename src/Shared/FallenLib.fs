@@ -1065,21 +1065,8 @@ module VocationGroup =
 
 // Attribute and Vocation Dependant Effects
 
-module CarryWeightEffect =
-    open Attribute
-    open VocationGroup
-    open Neg1To4
-    open TextEffectForDisplay
-    open CoreSkillGroup
+module WeightClass =
     open AttributeDeterminedDiceModEffect
-
-    type CarryWeightCalculation =
-        { name: string
-          baseWeight: uint
-          governingAttribute: Attribute
-          weightIncreasePerAttribute: uint
-          governingSkill: string
-          weightIncreasePerSkill: uint }
 
     type WeightClass =
         { name: string
@@ -1088,10 +1075,21 @@ module CarryWeightEffect =
           percentOfMovementSpeed: float
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
-    type CarryWeightEffectForDisplay =
-        { carryWeightCalculation: CarryWeightCalculation
-          weightClass: WeightClass
-          durationAndSource: DurationAndSource }
+module CarryWeightEffect =
+    open Attribute
+    open VocationGroup
+    open Neg1To4
+    open TextEffectForDisplay
+    open CoreSkillGroup
+    open WeightClass
+
+    type CarryWeightCalculation =
+        { name: string
+          baseWeight: uint
+          governingAttribute: Attribute
+          weightIncreasePerAttribute: uint
+          governingSkill: string
+          weightIncreasePerSkill: uint }
 
     let calculateCarryWeight (maxCarryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
 
@@ -1129,6 +1127,12 @@ module CarryWeightEffectForDisplay =
     open CoreSkillGroup
     open TextEffectForDisplay
     open AttributeDeterminedDiceModEffect
+    open WeightClass
+
+    type CarryWeightEffectForDisplay =
+        { carryWeightCalculation: CarryWeightCalculation
+          weightClass: WeightClass
+          durationAndSource: DurationAndSource }
 
     let determineCarryWeightCalculationForDisplay
         (coreSkillGroupList: CoreSkillGroup list)
@@ -1610,7 +1614,6 @@ module EffectForDisplay =
             | CarryWeightEffectForDisplay cwc -> carryWeightEffectForDisplayToEffectForDisplay cwc
             | MovementSpeedEffectForDisplay msc -> movementSpeedEffectForDisplayToEffectForDisplay msc
 
-
 module CombatRoll =
     open Dice
     open DamageType
@@ -2026,7 +2029,9 @@ module Character =
           containerList: Container list
           destinyPoints: ZeroToThree
           characterEffectForDisplayList: EffectForDisplay list
-          equipmentEffectForDisplayList: EffectForDisplay list }
+          equipmentEffectForDisplayList: EffectForDisplay list
+          
+          carryWeightCalculation }
 
     let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentEffectForDisplayList characterEffectList =
         effectForDisplayListToSkillDiceModEffectList (
