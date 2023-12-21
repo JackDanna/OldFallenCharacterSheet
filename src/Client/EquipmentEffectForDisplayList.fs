@@ -4,36 +4,25 @@ open FallenLib.EffectForDisplay
 open FallenLib.WeightClass
 open FallenLib.CoreSkillGroup
 
-type Msg = | RecalculateCarryWeightAndMovementSpeed
+type Msg = | RecalculateMovementSpeed
 
 let init () : EffectForDisplay list = []
 
 let update
     (coreSkillGroupList: CoreSkillGroup list)
-    (inventoryWeight: float)
-    (weightClassList: WeightClass list)
+    (percentOfMovementSpeed: float)
     (msg: Msg)
     (model: EffectForDisplay list)
     : EffectForDisplay list =
     match msg with
-    | RecalculateCarryWeightAndMovementSpeed ->
+    | RecalculateMovementSpeed ->
         model
-        |> List.map (fun effectForDisplay ->
-            EquipmentEffectForDisplay.update
-                (EquipmentEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
-                    MovementSpeedEffectForDisplay.Msg.RecalculateCarryWeight(
-                        coreSkillGroupList,
-                        inventoryWeight,
-                        weightClassList
-                    )
-                ))
-                effectForDisplay)
         |> List.map (fun effectForDisplay ->
             EquipmentEffectForDisplay.update
                 (EquipmentEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
                     MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(
                         coreSkillGroupList,
-                        (findPercentageOfMovementSpeed model)
+                        percentOfMovementSpeed
                     )
                 ))
                 effectForDisplay)
