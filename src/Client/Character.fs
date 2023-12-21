@@ -164,10 +164,8 @@ let update
             |> equipmentListToEquipedEquipmentEffects
             |> List.map (fun (itemName, itemEffect) ->
                 itemEffectToEffectForDisplay
-                    1.00 //findPercentageOfMovementSpeed
+                    (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                     model.coreSkillGroupList
-                    (calculateCharacterWeight newEquipmentList model.containerList)
-                    weightClassList
                     itemEffect
                     itemName)
 
