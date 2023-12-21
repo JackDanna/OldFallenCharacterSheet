@@ -10,6 +10,7 @@ open FallenLib.Character
 open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightCalculation
 open FallenLib.MovementSpeedEffect
+open FallenLib.WeightClass
 
 type Msg =
     | CoreSkillGroupListMsg of CoreSkillGroupList.Msg
@@ -87,7 +88,7 @@ let update
             CharacterEffectForDisplayList.update
                 newCoreSkillTables
                 (calculateCharacterWeight model.equipmentList model.containerList)
-                carryWeightCalculationMap
+                model.carryWeightStat.weightClass.percentOfMovementSpeed
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
@@ -203,7 +204,7 @@ let update
                 CharacterEffectForDisplayList.update
                     newCoreSkillGroupList
                     (calculateCharacterWeight newEquipmentList model.containerList)
-                    carryWeightCalculationMap
+                    model.carryWeightStat.weightClass.percentOfMovementSpeed
                     weightClassList
                     characterEffectMap
                     movementSpeedCalculationMap
@@ -218,7 +219,7 @@ let update
             CharacterEffectForDisplayList.update
                 model.coreSkillGroupList
                 (calculateCharacterWeight model.equipmentList newContainerList)
-                carryWeightCalculationMap
+                model.carryWeightStat.weightClass.percentOfMovementSpeed
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
@@ -257,7 +258,7 @@ let update
             CharacterEffectForDisplayList.update
                 model.coreSkillGroupList
                 (calculateCharacterWeight model.equipmentList model.containerList)
-                carryWeightCalculationMap
+                model.carryWeightStat.weightClass.percentOfMovementSpeed
                 weightClassList
                 characterEffectMap
                 movementSpeedCalculationMap
