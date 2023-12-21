@@ -155,20 +155,20 @@ let update
                 model.characterEffectForDisplayList
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
-        let newVocationGroupList =
-            VocationGroupList.update
-                newSkillAdjustments
-                newAttributeDeterminedDiceModEffects
-                (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
-                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                model.vocationGroupList
-
         let newCoreSkillGroupList =
             CoreSkillGroupList.update
                 newSkillAdjustments
                 newAttributeDeterminedDiceModEffects
                 CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 model.coreSkillGroupList
+
+        let newVocationGroupList =
+            VocationGroupList.update
+                newSkillAdjustments
+                newAttributeDeterminedDiceModEffects
+                (coreSkillGroupListToAttributeStats newCoreSkillGroupList)
+                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
+                model.vocationGroupList
 
         { model with
             coreSkillGroupList = newCoreSkillGroupList
@@ -179,17 +179,7 @@ let update
                     newEquipmentList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
                     newVocationGroupList
-
-            characterEffectForDisplayList =
-                CharacterEffectForDisplayList.update
-                    newCoreSkillGroupList
-                    (calculateCharacterWeight newEquipmentList model.containerList)
-                    (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
-                    weightClassList
-                    characterEffectMap
-                    movementSpeedCalculationMap
-                    CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
-                    model.characterEffectForDisplayList }
+            equipmentEffectForDisplayList = newEquipmentEffectForDisplayList }
 
     | ContainerListMsg containerListMsg ->
         let newContainerList =
