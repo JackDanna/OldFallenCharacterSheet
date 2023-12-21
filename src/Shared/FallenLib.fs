@@ -1080,8 +1080,6 @@ module VocationGroup =
 
         modifyDicePoolByDicePoolModList baseDice diceModList
 
-// Attribute and Vocation Dependant Effects
-
 module CarryWeightCalculation =
     open Attribute
     open VocationGroup
