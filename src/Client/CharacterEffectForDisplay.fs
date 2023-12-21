@@ -33,9 +33,9 @@ let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
         { addme with durationAndSource = newEffectForDisplay.durationAndSource }
         |> AttributeDeterminedDiceModEffectForDisplay
 
-    | CalculationEffectForDisplayMsg rmsg, CalculationEffectForDisplay cefd ->
+    | CalculationEffectForDisplayMsg rmsg, MovementSpeedEffectForDisplay cefd ->
         MovementSpeedEffectForDisplay.update rmsg cefd
-        |> CalculationEffectForDisplay
+        |> MovementSpeedEffectForDisplay
 
     | _ -> model
 
@@ -55,4 +55,4 @@ let view (model: EffectForDisplay) (dispatch: Msg -> unit) =
             (attributeDeterminedDiceModEffectToTextEffectForDisplay addmefd)
             (AttributeDeterminedDiceModEffectForDisplayMsg
              >> dispatch)
-    | CalculationEffectForDisplay cefd -> MovementSpeedEffectForDisplay.view cefd
+    | MovementSpeedEffectForDisplay cefd -> MovementSpeedEffectForDisplay.view cefd
