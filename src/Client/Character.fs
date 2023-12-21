@@ -179,7 +179,25 @@ let update
                 loadedCombatRollUpdate
                     newEquipmentList
                     (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
-                    newVocationGroupList }
+                    newVocationGroupList
+            characterEffectForDisplayList =
+                CharacterEffectForDisplayList.update
+                    newCoreSkillGroupList
+                    (calculateCharacterWeight newEquipmentList model.containerList)
+                    (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
+                    weightClassList
+                    characterEffectMap
+                    movementSpeedCalculationMap
+                    CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
+                    model.characterEffectForDisplayList
+            carryWeightStatOption =
+                CarryWeightStatOption.update
+                    (calculateCharacterWeight newEquipmentList model.containerList)
+                    newCoreSkillGroupList
+                    carryWeightCalculationMap
+                    weightClassList
+                    CarryWeightStatOption.Msg.Recalculate
+                    model.carryWeightStatOption }
 
     | ContainerListMsg containerListMsg ->
         let newContainerList =
