@@ -2,13 +2,13 @@ module EquipmentEffectForDisplay
 
 open FallenLib.EffectForDisplay
 
-type Msg = CalculationEffectForDisplayMsg of CalculationEffectForDisplay.Msg
+type Msg = CalculationEffectForDisplayMsg of MovementSpeedEffectForDisplay.Msg
 
 let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
     match msg, model with
     | CalculationEffectForDisplayMsg rmsg, MovementSpeedEffectForDisplay msefd ->
-        CalculationEffectForDisplay.update rmsg msefd
-        |> CalculationEffectForDisplay
+        MovementSpeedEffectForDisplay.update rmsg msefd
+        |> MovementSpeedEffectForDisplay
     | _ -> model
 
 let view (model: EffectForDisplay) =

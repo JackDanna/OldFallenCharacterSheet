@@ -1,4 +1,4 @@
-module CalculationEffectForDisplay
+module MovementSpeedEffectForDisplay
 
 open FallenLib.WeightClass
 open FallenLib.CoreSkillGroup

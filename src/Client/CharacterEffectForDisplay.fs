@@ -8,7 +8,7 @@ type Msg =
     | TextForDisplayMsg of InteractiveEffectForDisplay.Msg
     | SkillDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
     | AttributeDeterminedDiceModEffectForDisplayMsg of PartiallyInteractiveEffectForDisplay.Msg
-    | CalculationEffectForDisplayMsg of CalculationEffectForDisplay.Msg
+    | CalculationEffectForDisplayMsg of MovementSpeedEffectForDisplay.Msg
 
 let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
 
@@ -34,7 +34,7 @@ let update (msg: Msg) (model: EffectForDisplay) : EffectForDisplay =
         |> AttributeDeterminedDiceModEffectForDisplay
 
     | CalculationEffectForDisplayMsg rmsg, CalculationEffectForDisplay cefd ->
-        CalculationEffectForDisplay.update rmsg cefd
+        MovementSpeedEffectForDisplay.update rmsg cefd
         |> CalculationEffectForDisplay
 
     | _ -> model
@@ -55,4 +55,4 @@ let view (model: EffectForDisplay) (dispatch: Msg -> unit) =
             (attributeDeterminedDiceModEffectToTextEffectForDisplay addmefd)
             (AttributeDeterminedDiceModEffectForDisplayMsg
              >> dispatch)
-    | CalculationEffectForDisplay cefd -> CalculationEffectForDisplay.view cefd
+    | CalculationEffectForDisplay cefd -> MovementSpeedEffectForDisplay.view cefd

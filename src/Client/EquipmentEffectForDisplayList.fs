@@ -21,7 +21,7 @@ let update
         |> List.map (fun effectForDisplay ->
             EquipmentEffectForDisplay.update
                 (EquipmentEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
-                    CalculationEffectForDisplay.Msg.RecalculateCarryWeight(
+                    MovementSpeedEffectForDisplay.Msg.RecalculateCarryWeight(
                         coreSkillGroupList,
                         inventoryWeight,
                         weightClassList
@@ -31,7 +31,7 @@ let update
         |> List.map (fun effectForDisplay ->
             EquipmentEffectForDisplay.update
                 (EquipmentEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
-                    CalculationEffectForDisplay.Msg.RecalculateMovementSpeed(
+                    MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(
                         coreSkillGroupList,
                         (findPercentageOfMovementSpeed model)
                     )
