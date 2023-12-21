@@ -35,6 +35,8 @@
     <Compile Include="EquipmentEffectForDisplay.fs" />
     <Compile Include="EquipmentEffectForDisplayList.fs" />
     <Compile Include="CharacterInformation.fs" />
+    <Compile Include="CarryWeightStat.fs" />
+    <Compile Include="CarryWeightStatOption.fs" />
     <Compile Include="Character.fs" />
     <None Include="paket.references" />
     <Compile Include="Index.fs" />
