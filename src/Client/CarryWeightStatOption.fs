@@ -4,6 +4,7 @@ open FallenLib.CarryWeightStat
 open FallenLib.CarryWeightCalculation
 open FallenLib.CoreSkillGroup
 open FallenLib.WeightClass
+open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
     | CarryWeightStatMsg of CarryWeightStat.Msg
@@ -71,6 +72,7 @@ let view (carryWeightCalculationNameList: string list) (model: CarryWeightStat o
                         (fun (thString: string) -> Html.th thString)
                         [ "Carry Weight Calculation"
                           "Weight Class"
+                          "Effect"
                           "Current Weight"
                           "Max Weight" ]
                     |> Html.tr
@@ -80,6 +82,8 @@ let view (carryWeightCalculationNameList: string list) (model: CarryWeightStat o
                     | Some carryWeightStat ->
                         [ carryWeightStat.carryWeightCalculation.name
                           carryWeightStat.weightClass.name
+                          (attributeDeterminedDiceModEffectToEffectString
+                              carryWeightStat.weightClass.attributeDeterminedDiceModEffect)
                           carryWeightStat.currentWeight |> string
                           carryWeightStat.maxWeight |> string ]
                         |> List.map Html.td
