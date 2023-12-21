@@ -646,7 +646,7 @@ module MagicCombat =
                 && not meleeCapable
             ))
 
-// Item Stat stuff
+// Item Stats
 
 module ConduitClass =
     open MagicSkill
@@ -1270,7 +1270,6 @@ module MovementSpeedEffectForDisplay =
         { name = msefd.movementSpeedCalculation.name
           effect = $"{msefd.movementSpeed} ft"
           durationAndSource = msefd.durationAndSource }
-
 
 module EffectForDisplay =
 
