@@ -874,6 +874,41 @@ module MovementSpeedEffect =
     let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
         $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
 
+module Effect =
+    open SkillDiceModEffect
+    open AttributeStatAdjustmentEffect
+    open PhysicalDefenseEffect
+    open AttributeDeterminedDiceModEffect
+    open CarryWeightEffect
+    open MovementSpeedEffect
+
+    type Effect =
+        | SkillDiceModEffect of SkillDiceModEffect
+        | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
+        | PhysicalDefenseEffect of PhysicalDefenseEffect
+        | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
+        | CarryWeightCalculation of CarryWeightEffect
+        | MovementSpeedCalculation of MovementSpeedCalculation
+
+    let effectToEffectName effect =
+        match effect with
+        | SkillDiceModEffect skillDiceModEffect -> skillDiceModEffect.name
+        | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
+        | PhysicalDefenseEffect defenseClass -> defenseClass.name
+        | AttributeDeterminedDiceModEffect addme -> addme.name
+        | CarryWeightCalculation cwc -> cwc.name
+        | MovementSpeedCalculation msc -> msc.name
+
+    let effectToSkillDiceModEffectList (effect: Effect) =
+        match effect with
+        | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
+        | _ -> []
+
+    let effectToAttributeDeterminedDiceModEffectList (effect: Effect) =
+        match effect with
+        | AttributeDeterminedDiceModEffect addme -> [ addme ]
+        | _ -> []
+
 // Character Stats
 
 module SkillStat =
@@ -1257,41 +1292,6 @@ module MovementSpeedEffectForDisplay =
         { name = msefd.movementSpeedCalculation.name
           effect = $"{msefd.movementSpeed} ft"
           durationAndSource = msefd.durationAndSource }
-
-module Effect =
-    open SkillDiceModEffect
-    open AttributeStatAdjustmentEffect
-    open PhysicalDefenseEffect
-    open AttributeDeterminedDiceModEffect
-    open CarryWeightEffect
-    open MovementSpeedEffect
-
-    type Effect =
-        | SkillDiceModEffect of SkillDiceModEffect
-        | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
-        | PhysicalDefenseEffect of PhysicalDefenseEffect
-        | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
-        | CarryWeightCalculation of CarryWeightEffect
-        | MovementSpeedCalculation of MovementSpeedCalculation
-
-    let effectToEffectName effect =
-        match effect with
-        | SkillDiceModEffect skillDiceModEffect -> skillDiceModEffect.name
-        | AttributeStatAdjustmentEffect attributeStatAdjustment -> attributeStatAdjustment.name
-        | PhysicalDefenseEffect defenseClass -> defenseClass.name
-        | AttributeDeterminedDiceModEffect addme -> addme.name
-        | CarryWeightCalculation cwc -> cwc.name
-        | MovementSpeedCalculation msc -> msc.name
-
-    let effectToSkillDiceModEffectList (effect: Effect) =
-        match effect with
-        | SkillDiceModEffect skillAdjustment -> [ skillAdjustment ]
-        | _ -> []
-
-    let effectToAttributeDeterminedDiceModEffectList (effect: Effect) =
-        match effect with
-        | AttributeDeterminedDiceModEffect addme -> [ addme ]
-        | _ -> []
 
 // Item stuff
 
