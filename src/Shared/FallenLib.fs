@@ -799,97 +799,80 @@ module AttributeStatAdjustmentEffect =
     let attributeStatAdjustmentToEffectString attributeStatAdjustment =
         $"{attributeStatAdjustment.adjustment} {attributeStatAdjustment.attribute}"
 
-module TextEffectForDisplay =
-
-    type DurationAndSource = { duration: string; source: string }
-
-    type TextEffectForDisplay =
-        { name: string
-          effect: string
-          durationAndSource: DurationAndSource }
-
-    let indefiniteStringForDuration = "Indefinite"
-
-module AttributeStatAdjustmentEffectForDisplay =
-    open AttributeStatAdjustmentEffect
-    open TextEffectForDisplay
-
-    type AttributeStatAdjustmentEffectForDisplay =
-        { attributeStatAdjustmentEffect: AttributeStatAdjustmentEffect
-          durationAndSource: DurationAndSource }
-
-    let attributeStatAdjustmentEffectToEffectForDisplayForItem
-        (attributeStatAdjustment: AttributeStatAdjustmentEffect)
-        duration
-        source
-        =
-        { name = attributeStatAdjustment.name
-          effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
-          durationAndSource = { duration = duration; source = source } }
-
-    let attributeStatAdjustmentEffectForDisplayToTextEffectForDisplay asdefd =
-        { name = asdefd.attributeStatAdjustmentEffect.name
-          effect = attributeStatAdjustmentToEffectString asdefd.attributeStatAdjustmentEffect
-          durationAndSource = asdefd.durationAndSource }
-
-module PhysicalDefenseEffectForDisplay =
-    open PhysicalDefenseEffect
-    open TextEffectForDisplay
-
-    type PhysicalDefenseEffectForDisplay =
-        { physicalDefenseEffect: PhysicalDefenseEffect
-          durationAndSource: DurationAndSource }
-
-    let physicalDefenseEffectToEffectForDisplay (physicalDefenseEffect: PhysicalDefenseEffect) duration source =
-        { name = physicalDefenseEffect.name
-          effect = physicalDefenseEffectToEffectString physicalDefenseEffect
-          durationAndSource = { duration = duration; source = source } }
-
-    let physicalDefenseEffectForDisplayToTextEffectForDisplay pdefd =
-        { name = pdefd.physicalDefenseEffect.name
-          effect = physicalDefenseEffectToEffectString pdefd.physicalDefenseEffect
-          durationAndSource = pdefd.durationAndSource }
-
-module AttributeDeterminedDiceModEffectForDisplay =
-    open TextEffectForDisplay
+module CarryWeightEffect =
     open AttributeDeterminedDiceModEffect
 
-    type AttributeDeterminedDiceModEffectForDisplay =
-        { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
-          durationAndSource: DurationAndSource }
+    type CarryWeightEffect =
+        { name: string
+          bottomPercent: float
+          topPercent: float
+          percentOfMovementSpeed: float
+          attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
-    let attributeDeterminedDiceModEffectToForDisplay
-        (addme: AttributeDeterminedDiceModEffect)
-        : AttributeDeterminedDiceModEffectForDisplay =
-        { attributeDeterminedDiceModEffect = addme
-          durationAndSource = { duration = "?"; source = "?" } }
+    let determineWeightClass
+        (maxCarryWeight: float)
+        (inventoryWeight: float)
+        (weightClassList: CarryWeightEffect list)
+        =
 
-    let attributeDeterminedDiceModEffectToTextEffectForDisplay (addmefd: AttributeDeterminedDiceModEffectForDisplay) =
-        { name = addmefd.attributeDeterminedDiceModEffect.name
-          effect = attributeDeterminedDiceModEffectToEffectString addmefd.attributeDeterminedDiceModEffect
-          durationAndSource = addmefd.durationAndSource }
+        let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
 
-    let attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source =
-        { name = addme.name
-          effect = attributeDeterminedDiceModEffectToEffectString addme
-          durationAndSource = { duration = duration; source = source } }
+        List.find
+            (fun weightClass ->
+                (weightClass.topPercent >= percentOfMaxCarryWeight)
+                && (percentOfMaxCarryWeight
+                    >= weightClass.bottomPercent))
+            weightClassList
 
-module SkillDiceModEffectForDisplay =
-    open SkillDiceModEffect
-    open TextEffectForDisplay
+module MovementSpeedEffect =
 
-    type SkillDiceModEffectForDisplay =
-        { skillDiceModEffect: SkillDiceModEffect
-          durationAndSource: DurationAndSource }
+    open Attribute
+    open Neg1To4
 
-    let skillDiceModEffectToSkillDiceModEffectForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
-        { skillDiceModEffect = sdme
-          durationAndSource = { duration = "?"; source = "?" } }
+    type MovementSpeedCalculation =
+        { name: string
+          baseMovementSpeed: uint
+          governingAttribute: Attribute
+          feetPerAttributeLvl: uint
+          governingSkill: string
+          feetPerSkillLvl: uint }
 
-    let skillDiceModEffectForDisplayToTextEffectForDisplay (sdmefd: SkillDiceModEffectForDisplay) =
-        { name = sdmefd.skillDiceModEffect.name
-          effect = skillDiceModEffectToEffectString sdmefd.skillDiceModEffect
-          durationAndSource = sdmefd.durationAndSource }
+    let calculateMovementSpeed
+        percentOfMovementSpeed
+        movementSpeedCalculation
+        (attributeLvl: Neg1To4)
+        (skillLvl: Neg1To4)
+        =
+        let attributeMod =
+            neg1To4ToInt attributeLvl
+            * int movementSpeedCalculation.feetPerAttributeLvl
+
+        let skillMod =
+            neg1To4ToInt skillLvl
+            * int movementSpeedCalculation.feetPerSkillLvl
+
+        let movementSpeed =
+            (float movementSpeedCalculation.baseMovementSpeed
+             + float attributeMod
+             + float skillMod)
+            * percentOfMovementSpeed
+
+        if movementSpeed >= 0.0 then
+            movementSpeed
+        else
+            0.0
+
+    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
+        let decimalPlaces = 0
+
+        let movementSpeed =
+            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
+
+        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
+        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
+
+    let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
+        $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
 
 // Character Stats
 
@@ -1075,13 +1058,11 @@ module WeightClass =
           percentOfMovementSpeed: float
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
-module CarryWeightEffect =
+module CarryWeightCalculation =
     open Attribute
     open VocationGroup
     open Neg1To4
-    open TextEffectForDisplay
     open CoreSkillGroup
-    open WeightClass
 
     type CarryWeightCalculation =
         { name: string
@@ -1091,130 +1072,153 @@ module CarryWeightEffect =
           governingSkill: string
           weightIncreasePerSkill: uint }
 
-    let calculateCarryWeight (maxCarryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
+    let calculateCarryWeight (carryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
 
         let (attributeStatList, coreSkillList) =
             coreSkillGroupListToAttributeStatsAndSkillStats coreSkillGroupList
 
         let attributeLevel =
-            sumAttributesLevels [ maxCarryWeightCalculation.governingAttribute ] attributeStatList
+            sumAttributesLevels [ carryWeightCalculation.governingAttribute ] attributeStatList
 
         let skillLevel =
-            findVocationalSkillLvlWithDefault maxCarryWeightCalculation.governingSkill Zero coreSkillList
+            findVocationalSkillLvlWithDefault carryWeightCalculation.governingSkill Zero coreSkillList
             |> neg1To4ToInt
 
-        int maxCarryWeightCalculation.baseWeight
+        int carryWeightCalculation.baseWeight
         + (attributeLevel
-           * int maxCarryWeightCalculation.weightIncreasePerAttribute)
+           * int carryWeightCalculation.weightIncreasePerAttribute)
         + (skillLevel
-           * int maxCarryWeightCalculation.weightIncreasePerSkill)
+           * int carryWeightCalculation.weightIncreasePerSkill)
         |> float
 
-    let determineWeightClass (maxCarryWeight: float) (inventoryWeight: float) (weightClassList: WeightClass list) =
+module CarryWeightStat =
 
-        let percentOfMaxCarryWeight = inventoryWeight / maxCarryWeight
-
-        List.find
-            (fun weightClass ->
-                (weightClass.topPercent >= percentOfMaxCarryWeight)
-                && (percentOfMaxCarryWeight
-                    >= weightClass.bottomPercent))
-            weightClassList
-
-module CarryWeightEffectForDisplay =
-
+    open CarryWeightCalculation
     open CarryWeightEffect
-    open CoreSkillGroup
+
+    type CarryWeightStat =
+        { carryWeightCalculation: CarryWeightCalculation
+          currentWeight: float
+          maxWeight: float
+          weightClass: CarryWeightEffect }
+
+module TextEffectForDisplay =
+
+    type DurationAndSource = { duration: string; source: string }
+
+    type TextEffectForDisplay =
+        { name: string
+          effect: string
+          durationAndSource: DurationAndSource }
+
+    let indefiniteStringForDuration = "Indefinite"
+
+module AttributeStatAdjustmentEffectForDisplay =
+    open AttributeStatAdjustmentEffect
+    open TextEffectForDisplay
+
+    type AttributeStatAdjustmentEffectForDisplay =
+        { attributeStatAdjustmentEffect: AttributeStatAdjustmentEffect
+          durationAndSource: DurationAndSource }
+
+    let attributeStatAdjustmentEffectToEffectForDisplayForItem
+        (attributeStatAdjustment: AttributeStatAdjustmentEffect)
+        duration
+        source
+        =
+        { name = attributeStatAdjustment.name
+          effect = attributeStatAdjustmentToEffectString attributeStatAdjustment
+          durationAndSource = { duration = duration; source = source } }
+
+    let attributeStatAdjustmentEffectForDisplayToTextEffectForDisplay asdefd =
+        { name = asdefd.attributeStatAdjustmentEffect.name
+          effect = attributeStatAdjustmentToEffectString asdefd.attributeStatAdjustmentEffect
+          durationAndSource = asdefd.durationAndSource }
+
+module PhysicalDefenseEffectForDisplay =
+    open PhysicalDefenseEffect
+    open TextEffectForDisplay
+
+    type PhysicalDefenseEffectForDisplay =
+        { physicalDefenseEffect: PhysicalDefenseEffect
+          durationAndSource: DurationAndSource }
+
+    let physicalDefenseEffectToEffectForDisplay (physicalDefenseEffect: PhysicalDefenseEffect) duration source =
+        { name = physicalDefenseEffect.name
+          effect = physicalDefenseEffectToEffectString physicalDefenseEffect
+          durationAndSource = { duration = duration; source = source } }
+
+    let physicalDefenseEffectForDisplayToTextEffectForDisplay pdefd =
+        { name = pdefd.physicalDefenseEffect.name
+          effect = physicalDefenseEffectToEffectString pdefd.physicalDefenseEffect
+          durationAndSource = pdefd.durationAndSource }
+
+module AttributeDeterminedDiceModEffectForDisplay =
     open TextEffectForDisplay
     open AttributeDeterminedDiceModEffect
-    open WeightClass
+
+    type AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect
+          durationAndSource: DurationAndSource }
+
+    let attributeDeterminedDiceModEffectToForDisplay
+        (addme: AttributeDeterminedDiceModEffect)
+        : AttributeDeterminedDiceModEffectForDisplay =
+        { attributeDeterminedDiceModEffect = addme
+          durationAndSource = { duration = "?"; source = "?" } }
+
+    let attributeDeterminedDiceModEffectToTextEffectForDisplay (addmefd: AttributeDeterminedDiceModEffectForDisplay) =
+        { name = addmefd.attributeDeterminedDiceModEffect.name
+          effect = attributeDeterminedDiceModEffectToEffectString addmefd.attributeDeterminedDiceModEffect
+          durationAndSource = addmefd.durationAndSource }
+
+    let attributeDeterminedDiceModEffectToItemEffectForDisplay addme duration source =
+        { name = addme.name
+          effect = attributeDeterminedDiceModEffectToEffectString addme
+          durationAndSource = { duration = duration; source = source } }
+
+module CarryWeightEffectForDisplay =
+    open CarryWeightEffect
+    open TextEffectForDisplay
+    open AttributeDeterminedDiceModEffect
 
     type CarryWeightEffectForDisplay =
-        { carryWeightCalculation: CarryWeightCalculation
-          weightClass: WeightClass
+        { carryWeightEffect: CarryWeightEffect
           durationAndSource: DurationAndSource }
 
-    let determineCarryWeightCalculationForDisplay
-        (coreSkillGroupList: CoreSkillGroup list)
-        (inventoryWeight: float)
-        (weightClassList: WeightClass list)
-        (carryWeightCalculation: CarryWeightCalculation)
-        : CarryWeightEffectForDisplay =
-
-        let maxCarryWeight = calculateCarryWeight carryWeightCalculation coreSkillGroupList
-
-        { carryWeightCalculation = carryWeightCalculation
-          weightClass = determineWeightClass maxCarryWeight inventoryWeight weightClassList
-          durationAndSource =
-            { duration = indefiniteStringForDuration
-              source = $"{inventoryWeight}/{maxCarryWeight} lb" } }
-
-    let carryWeightEffectForDisplayToEffectForDisplay (cwefd: CarryWeightEffectForDisplay) =
-        { name = cwefd.carryWeightCalculation.name
-          effect = attributeDeterminedDiceModEffectToEffectString cwefd.weightClass.attributeDeterminedDiceModEffect
+    let carryWeightEffectForDisplayToEffectForDisplay (cwefd: CarryWeightEffectForDisplay) : TextEffectForDisplay =
+        { name = cwefd.carryWeightEffect.name
+          effect =
+            attributeDeterminedDiceModEffectToEffectString cwefd.carryWeightEffect.attributeDeterminedDiceModEffect
           durationAndSource = cwefd.durationAndSource }
 
-module MovementSpeedEffect =
-
-    open Attribute
-    open Neg1To4
+module SkillDiceModEffectForDisplay =
+    open SkillDiceModEffect
     open TextEffectForDisplay
 
-    type MovementSpeedCalculation =
-        { name: string
-          baseMovementSpeed: uint
-          governingAttribute: Attribute
-          feetPerAttributeLvl: uint
-          governingSkill: string
-          feetPerSkillLvl: uint }
-
-    type MovementSpeedEffectForDisplay =
-        { movementSpeedCalculation: MovementSpeedCalculation
-          movementSpeed: float
+    type SkillDiceModEffectForDisplay =
+        { skillDiceModEffect: SkillDiceModEffect
           durationAndSource: DurationAndSource }
 
-    let calculateMovementSpeed
-        percentOfMovementSpeed
-        movementSpeedCalculation
-        (attributeLvl: Neg1To4)
-        (skillLvl: Neg1To4)
-        =
-        let attributeMod =
-            neg1To4ToInt attributeLvl
-            * int movementSpeedCalculation.feetPerAttributeLvl
+    let skillDiceModEffectToSkillDiceModEffectForDisplay (sdme: SkillDiceModEffect) : SkillDiceModEffectForDisplay =
+        { skillDiceModEffect = sdme
+          durationAndSource = { duration = "?"; source = "?" } }
 
-        let skillMod =
-            neg1To4ToInt skillLvl
-            * int movementSpeedCalculation.feetPerSkillLvl
-
-        let movementSpeed =
-            (float movementSpeedCalculation.baseMovementSpeed
-             + float attributeMod
-             + float skillMod)
-            * percentOfMovementSpeed
-
-        if movementSpeed >= 0.0 then
-            movementSpeed
-        else
-            0.0
-
-    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
-        let decimalPlaces = 0
-
-        let movementSpeed =
-            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
-
-        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
-        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
-
-    let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
-        $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
+    let skillDiceModEffectForDisplayToTextEffectForDisplay (sdmefd: SkillDiceModEffectForDisplay) =
+        { name = sdmefd.skillDiceModEffect.name
+          effect = skillDiceModEffectToEffectString sdmefd.skillDiceModEffect
+          durationAndSource = sdmefd.durationAndSource }
 
 module MovementSpeedEffectForDisplay =
 
     open MovementSpeedEffect
     open CoreSkillGroup
     open TextEffectForDisplay
+
+    type MovementSpeedEffectForDisplay =
+        { movementSpeedCalculation: MovementSpeedCalculation
+          movementSpeed: float
+          durationAndSource: DurationAndSource }
 
     let determineMovementSpeedEffectForDisplay
         (coreSkillGroupList: CoreSkillGroup list)
@@ -1267,7 +1271,7 @@ module Effect =
         | AttributeStatAdjustmentEffect of AttributeStatAdjustmentEffect
         | PhysicalDefenseEffect of PhysicalDefenseEffect
         | AttributeDeterminedDiceModEffect of AttributeDeterminedDiceModEffect
-        | CarryWeightCalculation of CarryWeightCalculation
+        | CarryWeightCalculation of CarryWeightEffect
         | MovementSpeedCalculation of MovementSpeedCalculation
 
     let effectToEffectName effect =
@@ -1472,16 +1476,11 @@ module EffectForDisplay =
     open AttributeDeterminedDiceModEffectForDisplay
     open AttributeStatAdjustmentEffectForDisplay
     open PhysicalDefenseEffectForDisplay
-    open CarryWeightEffectForDisplay
     open MovementSpeedEffectForDisplay
+    open CarryWeightEffectForDisplay
 
-    open CarryWeightEffect
     open Equipment
     open MovementSpeedEffect
-
-    type CalculationEffectForDisplay =
-        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
-        | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
 
     type EffectForDisplay =
         | TextEffectForDisplay of TextEffectForDisplay
@@ -1489,8 +1488,8 @@ module EffectForDisplay =
         | SkillDiceModEffectForDisplay of SkillDiceModEffectForDisplay
         | AttributeDeterminedDiceModEffectForDisplay of AttributeDeterminedDiceModEffectForDisplay
         | PhysicalDefenseEffectForDisplay of PhysicalDefenseEffectForDisplay
-        | CalculationEffectForDisplay of CalculationEffectForDisplay
-
+        | MovementSpeedEffectForDisplay of MovementSpeedEffectForDisplay
+        | CarryWeightEffectForDisplay of CarryWeightEffectForDisplay
 
     let effectForDiplayToName (effectForDisplay: EffectForDisplay) =
         match effectForDisplay with
@@ -1499,30 +1498,23 @@ module EffectForDisplay =
         | SkillDiceModEffectForDisplay sdmefd -> sdmefd.skillDiceModEffect.name
         | AttributeDeterminedDiceModEffectForDisplay addmefd -> addmefd.attributeDeterminedDiceModEffect.name
         | PhysicalDefenseEffectForDisplay pdefd -> pdefd.physicalDefenseEffect.name
-        | CalculationEffectForDisplay cwfd ->
-            match cwfd with
-            | CarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightCalculation.name
-            | MovementSpeedEffectForDisplay msefd -> msefd.movementSpeedCalculation.name
+        | CarryWeightEffectForDisplay ccwefd -> ccwefd.carryWeightEffect.name
+        | MovementSpeedEffectForDisplay msefd -> msefd.movementSpeedCalculation.name
+
 
     let findPercentageOfMovementSpeed (characterEffectList: EffectForDisplay list) =
         let fullMovementSpeedPercent = 1.00
 
         characterEffectList
-        |> List.tryFind (fun characterEffect ->
-            match characterEffect with
-            | CalculationEffectForDisplay cefd ->
-                match cefd with
-                | CarryWeightEffectForDisplay _ -> true
-                | _ -> false
+        |> List.tryFind (fun characterEffectForDisplay ->
+            match characterEffectForDisplay with
+            | CarryWeightEffectForDisplay _ -> true
             | _ -> false)
-        |> (fun wrappedCarryWeightCharacterEffectForDisplayOption ->
-            match wrappedCarryWeightCharacterEffectForDisplayOption with
+        |> (fun effectForDisplayOption ->
+            match effectForDisplayOption with
             | Some effectForDisplay ->
                 match effectForDisplay with
-                | CalculationEffectForDisplay cefd ->
-                    match cefd with
-                    | CarryWeightEffectForDisplay cwefd -> cwefd.weightClass.percentOfMovementSpeed
-                    | _ -> fullMovementSpeedPercent
+                | CarryWeightEffectForDisplay cwefd -> cwefd.carryWeightEffect.percentOfMovementSpeed
                 | _ -> fullMovementSpeedPercent
             | None -> fullMovementSpeedPercent)
 
@@ -1539,13 +1531,10 @@ module EffectForDisplay =
 
     let effectForDisplayListToAttributeDeterminedDiceModEffectList (characterEffectList: EffectForDisplay list) =
         characterEffectList
-        |> List.collect (fun characterEffect ->
-            match characterEffect with
-            | CalculationEffectForDisplay cefd ->
-                match cefd with
-                | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
-                    [ carryWeightEffectForDisplay.weightClass.attributeDeterminedDiceModEffect ]
-                | _ -> []
+        |> List.collect (fun effectForDisplay ->
+            match effectForDisplay with
+            | CarryWeightEffectForDisplay carryWeightEffectForDisplay ->
+                [ carryWeightEffectForDisplay.carryWeightEffect.attributeDeterminedDiceModEffect ]
             | AttributeDeterminedDiceModEffectForDisplay attributeDeterminedDiceModEffectToForDisplay ->
                 [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
             | _ -> [])
@@ -1584,15 +1573,13 @@ module EffectForDisplay =
             { attributeDeterminedDiceModEffect = addme
               durationAndSource = durationAndSource }
             |> AttributeDeterminedDiceModEffectForDisplay
-        | CarryWeightCalculation cwc ->
-            determineCarryWeightCalculationForDisplay coreSkillGroupList inventoryWeight weightClassList cwc
+        | CarryWeightCalculation cwe ->
+            { carryWeightEffect = cwe
+              durationAndSource = durationAndSource }
             |> CarryWeightEffectForDisplay
-            |> CalculationEffectForDisplay
         | MovementSpeedCalculation msc ->
             determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msc
             |> MovementSpeedEffectForDisplay
-            |> CalculationEffectForDisplay
-
 
     let effectForDisplayToTextEffectForDisplay effectForDisplay =
         match effectForDisplay with
@@ -1609,10 +1596,8 @@ module EffectForDisplay =
         | AttributeDeterminedDiceModEffectForDisplay addme ->
             addme
             |> attributeDeterminedDiceModEffectToTextEffectForDisplay
-        | CalculationEffectForDisplay cefd ->
-            match cefd with
-            | CarryWeightEffectForDisplay cwc -> carryWeightEffectForDisplayToEffectForDisplay cwc
-            | MovementSpeedEffectForDisplay msc -> movementSpeedEffectForDisplayToEffectForDisplay msc
+        | CarryWeightEffectForDisplay cwc -> carryWeightEffectForDisplayToEffectForDisplay cwc
+        | MovementSpeedEffectForDisplay msc -> movementSpeedEffectForDisplayToEffectForDisplay msc
 
 module CombatRoll =
     open Dice
@@ -2005,6 +1990,7 @@ module Character =
     open Container
     open ZeroToThree
     open EffectForDisplay
+    open CarryWeightStat
 
     let calculateCharacterWeight equipmentList (containerList: Container list) =
         containerList
@@ -2021,17 +2007,17 @@ module Character =
 
     type Character =
         { name: string
-          characterInformation: CharacterInformation
           coreSkillGroupList: CoreSkillGroup list
           vocationGroupList: VocationGroup list
           equipmentList: Equipment list
           combatRollList: CombatRoll list
           containerList: Container list
           destinyPoints: ZeroToThree
+          carryWeightCalculation: CarryWeightStat
           characterEffectForDisplayList: EffectForDisplay list
           equipmentEffectForDisplayList: EffectForDisplay list
-          
-          carryWeightCalculation }
+          characterInformation: CharacterInformation
+          carryWeightStat: CarryWeightStat }
 
     let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects equipmentEffectForDisplayList characterEffectList =
         effectForDisplayListToSkillDiceModEffectList (

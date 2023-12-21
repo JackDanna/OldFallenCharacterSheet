@@ -35,7 +35,7 @@ module FallenServerData =
     open FallenLib.ContainerClass
     open FallenLib.TextEffectForDisplay
     open FallenLib.EffectForDisplay
-    open FallenLib.CarryWeightEffect
+    open FallenLib.CarryWeightCalculation
     open FallenLib.AttributeDeterminedDiceModEffect
     open FallenLib.AttributeDeterminedDiceModEffectForDisplay
 

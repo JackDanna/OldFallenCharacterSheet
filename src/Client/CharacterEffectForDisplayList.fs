@@ -1,8 +1,8 @@
 module CharacterEffectForDisplayList
 
 open FallenLib.EffectForDisplay
-open FallenLib.CarryWeightEffect
-open FallenLib.CarryWeightEffectForDisplay
+open FallenLib.CarryWeightCalculation
+open FallenLib.CarryWeightStat
 open FallenLib.CoreSkillGroup
 open FallenLib.MovementSpeedEffect
 open FallenLib.MovementSpeedEffectForDisplay

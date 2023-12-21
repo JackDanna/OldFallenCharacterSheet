@@ -1,7 +1,7 @@
 module CalculationEffectForDisplay
 
-open FallenLib.CarryWeightEffect
-open FallenLib.CarryWeightEffectForDisplay
+open FallenLib.CarryWeightCalculation
+open FallenLib.CarryWeightStat
 open FallenLib.CoreSkillGroup
 open FallenLib.EffectForDisplay
 open FallenLib.MovementSpeedEffectForDisplay

@@ -6,7 +6,7 @@ open FallenLib.MagicCombat
 open FallenLib.Range
 open FallenLib.CoreSkillGroup
 open FallenLib.EffectForDisplay
-open FallenLib.CarryWeightEffect
+open FallenLib.CarryWeightCalculation
 open FallenLib.MovementSpeedEffect
 
 module Route =

@@ -1,7 +1,7 @@
 module EquipmentEffectForDisplayList
 
 open FallenLib.EffectForDisplay
-open FallenLib.CarryWeightEffect
+open FallenLib.CarryWeightCalculation
 open FallenLib.CoreSkillGroup
 
 type Msg = | RecalculateCarryWeightAndMovementSpeed

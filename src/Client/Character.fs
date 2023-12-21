@@ -8,7 +8,7 @@ open FallenLib.Range
 open FallenLib.Equipment
 open FallenLib.Character
 open FallenLib.EffectForDisplay
-open FallenLib.CarryWeightEffect
+open FallenLib.CarryWeightCalculation
 open FallenLib.MovementSpeedEffect
 
 type Msg =
