@@ -109,6 +109,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
 
             Bulma.heroBody [
                 Character.view
+                    (Seq.toList model.fallenData.carryWeightCalculationMap.Keys)
                     ((List.ofSeq model.fallenData.effectForDisplayMap.Keys)
                      @ (List.ofSeq model.fallenData.carryWeightCalculationMap.Keys)
                        @ (List.ofSeq model.fallenData.movementSpeedCalculationMap.Keys))

@@ -21,6 +21,7 @@ type Msg =
     | DestinyPointsMsg of DestinyPoints.Msg
     | CharacterEffectListMsg of CharacterEffectForDisplayList.Msg
     | CharacterInformationMsg of CharacterInformation.Msg
+    | CarryWeightStatOptionMsg of CarryWeightStatOption.Msg
     | SetDefault
 
 let init (coreSkillGroups: CoreSkillGroup list) : Character =
@@ -289,10 +290,22 @@ let update
     | CharacterInformationMsg msg ->
         { model with characterInformation = CharacterInformation.update msg model.characterInformation }
 
+    | CarryWeightStatOptionMsg msg ->
+        { model with
+            carryWeightStatOption =
+                CarryWeightStatOption.update
+                    (calculateCharacterWeight model.equipmentList model.containerList)
+                    model.coreSkillGroupList
+                    carryWeightCalculationMap
+                    weightClassList
+                    msg
+                    model.carryWeightStatOption }
+
 open Feliz
 open Feliz.Bulma
 
 let view
+    (carryWeightCalculationNameList: string list)
     (characterEffectKeyList: string list)
     (combatVocationalSkill)
     (allItemList: Item list)
@@ -338,6 +351,11 @@ let view
             characterEffectKeyList
             model.characterEffectForDisplayList
             (CharacterEffectListMsg >> dispatch)
+
+        CarryWeightStatOption.view
+            carryWeightCalculationNameList
+            model.carryWeightStatOption
+            (CarryWeightStatOptionMsg >> dispatch)
 
         EquipmentEffectForDisplayList.view model.equipmentEffectForDisplayList
 

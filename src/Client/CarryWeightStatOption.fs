@@ -84,16 +84,16 @@ let view (carryWeightCalculationNameList: string list) (model: CarryWeightStat o
                 Html.tfoot [
                     Html.div [
                         Bulma.input.text [
-                            prop.list "re"
+                            prop.list "carryWeightEffectNameList"
                             prop.onTextChange (fun input -> dispatch (SetString input))
                         ]
                         Html.datalist [
-                            prop.id "re"
+                            prop.id "carryWeightEffectNameList"
                             prop.children (
                                 List.map
-                                    (fun (characterEffect: string) ->
+                                    (fun (carryWeightEffectName: string) ->
                                         Html.option [
-                                            prop.value characterEffect
+                                            prop.value carryWeightEffectName
                                         ])
                                     carryWeightCalculationNameList
                             )
