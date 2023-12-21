@@ -108,7 +108,15 @@ let update
                 loadedCombatRollUpdate
                     model.equipmentList
                     (coreSkillGroupListToAttributeStats newCoreSkillTables)
-                    newVocationTables }
+                    newVocationTables
+            carryWeightStatOption =
+                CarryWeightStatOption.update
+                    (calculateCharacterWeight model.equipmentList model.containerList)
+                    newCoreSkillTables
+                    carryWeightCalculationMap
+                    weightClassList
+                    CarryWeightStatOption.Msg.Recalculate
+                    model.carryWeightStatOption }
 
     | VocationGroupListMsg vocationTableMsg ->
         let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =

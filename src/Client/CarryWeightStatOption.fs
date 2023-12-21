@@ -9,6 +9,7 @@ open FallenLib.AttributeDeterminedDiceModEffect
 type Msg =
     | CarryWeightStatMsg of CarryWeightStat.Msg
     | SetString of string
+    | Recalculate
 
 let update
     (inventoryWeight: float)
@@ -20,6 +21,14 @@ let update
     : CarryWeightStat option =
 
     match msg, model with
+    | Recalculate, Some carryWeightStat ->
+        CarryWeightStat.update
+            (CarryWeightStat.Msg.RecalculateCarryWeightStat
+                { coreSkillGroupList = coreSkillGroupList
+                  carryWeightCalculationMap = carryWeightCalculationMap
+                  weightClassList = weightClassList })
+            carryWeightStat
+        |> Some
     | SetString newString, None ->
         if
             Seq.exists
