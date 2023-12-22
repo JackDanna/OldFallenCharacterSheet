@@ -5,6 +5,6 @@ Serious Injury (Lvl 3),"STR,RFX,INT",-3
 Fatal Injury (Lvl 4),"STR,RFX,INT",-4
 Death Blow Injury (Lvl 5),"STR,RFX,INT",-5
 Light Weight,"STR,RFX",-0
-Med. Weight,"STR,RFX",-1
+Medium Weight,"STR,RFX",-1
 Heavy Weight,"STR,RFX",-2
 Overencumberd,"STR,RFX",-4

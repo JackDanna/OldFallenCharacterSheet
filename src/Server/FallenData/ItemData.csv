@@ -13,16 +13,16 @@ Handaxe,1,Small Hafted Blade,Mundane,12/12,2,10 bc
 Shoddy Sickle,1,Small Hafted Blade,Shoddy,9/9,2,3 bc
 Sickle,1,Small Hafted Blade,Mundane,12/12,2,5 bc
 Light Hammer,1,Small Hafted Blunt,Mundane,12/12,2,1 bc
-Arming Sword,1,"Med. Thrusting Sword, Med. Slashing Sword",Mundane,12/12,2,2 bc
-Rapier,1,Med. Thrusting Sword,Mundane,12/12,2,12 bc
-Scimitar,1,Med. Slashing Sword,Mundane,12/12,2,25 bc
-Shoddy Scimitar,1,Med. Slashing Sword,Shoddy,9/9,2,15 bc
-Battleaxe,1,Med. Hafted Axe,Mundane,12/12,4,10 bc
-Flail,1,Med. Hafted Blunt,Mundane,12/12,3,10 bc
-Shoddy Morning Star,1,Med. Hafted Blunt,Shoddy,9/9,4,10 bc
-Morning Star,1,Med. Hafted Blunt,Mundane,12/12,4,15 bc
-Mace,1,Med. Hafted Blunt,Mundane,12/12,3,5 bc
-Warhammer/pick,1,"Med. Hafted Blunt, Med. Hafted Point",Mundane,12/12,4,9 bc
+Arming Sword,1,"Medium Thrusting Sword, Medium Slashing Sword",Mundane,12/12,2,2 bc
+Rapier,1,Medium Thrusting Sword,Mundane,12/12,2,12 bc
+Scimitar,1,Medium Slashing Sword,Mundane,12/12,2,25 bc
+Shoddy Scimitar,1,Medium Slashing Sword,Shoddy,9/9,2,15 bc
+Battleaxe,1,Medium Hafted Axe,Mundane,12/12,4,10 bc
+Flail,1,Medium Hafted Blunt,Mundane,12/12,3,10 bc
+Shoddy Morning Star,1,Medium Hafted Blunt,Shoddy,9/9,4,10 bc
+Morning Star,1,Medium Hafted Blunt,Mundane,12/12,4,15 bc
+Mace,1,Medium Hafted Blunt,Mundane,12/12,3,5 bc
+Warhammer/pick,1,"Medium Hafted Blunt, Medium Hafted Point",Mundane,12/12,4,9 bc
 Longsword,1,"Large Thrusting Sword, Large Slashing Sword",Mundane,12/12,3,15 bc
 Glaive,1,Large Hafted Blade,Mundane,12/12,6,20 bc
 Greataxe,1,Large Hafted Blade,Mundane,12/12,7,30 bc
@@ -53,7 +53,7 @@ Heavy Crossbow,1,Heavy Crossbow,Mundane,12/12,11,50 bc
 Longbow,1,Heavy Bow,Mundane,12/12,4,50 bc
 Sling,1,Sling,Mundane,12/12,0.5,20 cc
 Quarterstaff,1,Large Hafted Blunt,Mundane,12/12,4,20 cc
-Club,1,Med. Hafted Blunt,Mundane,12/12,2,10 cc
+Club,1,Medium Hafted Blunt,Mundane,12/12,2,10 cc
 Great Club,1,Large Hafted Blunt,Mundane,12/12,10,20 cc
 Whip,1,Whip,Mundane,12/12,3,2 bc
 Plumbata/Dart,1,Thrown Small Point,Mundane,12/12,5,5 cc
@@ -61,34 +61,34 @@ Blowgun,1,Blowgun,Mundane,12/12,1,10 bc
 Asher’s Arms Swordbreaker,1,"Small Thrusting Point, Small Slashing Blade, Thrown Small Blade",Fine,18/18,1,?
 Talon - Practice,1,"Small Thrusting Point, Small Slashing Blade, Thrown Small Blade",Quality,15/15,1.5,?
 Fang - Practice,1,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Quality,15/15,1,?
-Sirius’s Sword,1,"Med. Thrusting Sword, Med. Slashing Sword",Fine,18/18,2,?
-Monkey Staff,1,Med. Hafted Blunt,Excellent,21/21,4,?
-Hew,1,Med. Hafted Axe,Excellent,21/21,4,?
+Sirius’s Sword,1,"Medium Thrusting Sword, Medium Slashing Sword",Fine,18/18,2,?
+Monkey Staff,1,Medium Hafted Blunt,Excellent,21/21,4,?
+Hew,1,Medium Hafted Axe,Excellent,21/21,4,?
 Char,1,"Thrusting Greatsword, Slashing Greatsword",Mundane,12/12,6,?
-Epilogue,1,"Med. Thrusting Sword, Med. Slashing Sword",Excellent,21/21,2,?
-Echo,1,"Med. Thrusting Sword, Med. Slashing Sword",Superior,24/24,2,?
+Epilogue,1,"Medium Thrusting Sword, Medium Slashing Sword",Excellent,21/21,2,?
+Echo,1,"Medium Thrusting Sword, Medium Slashing Sword",Superior,24/24,2,?
 Asclepius,1,"Short Spear, Whip",Mastercraft,33/33,3,?
-Soot and Ash,1,"Med. Thrusting Sword, Med. Slashing Sword, Small Thrusting Point, Small Slashing Blade",Epic,39/39,0.2,?
+Soot and Ash,1,"Medium Thrusting Sword, Medium Slashing Sword, Small Thrusting Point, Small Slashing Blade",Epic,39/39,0.2,?
 The Spear of Destiny,1,"Reach Hafted Blade, Longspear",Artifact,48/48,14,?
 Dancing Moonlight,1,"Large Thrusting Sword, Large Slashing Sword, Thrusting Greatsword, Slashing Greatsword, Default Conduit",Mythic,45/45,3,?
 Adversary - Damaged,1,Radiance Conduit,Fine,18/18,1,?
 Sharp Cap,1,Small Slashing Blade,Shoddy,9/9,0.5,2 bc
-Fine Arming Sword,1,"Med. Thrusting Sword, Med. Slashing Sword",Fine,18/18,2,?
+Fine Arming Sword,1,"Medium Thrusting Sword, Medium Slashing Sword",Fine,18/18,2,?
 Net,1,Medium Sword,Mundane,12/12,3,1 bc
 Bodkin Knife,1,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Mundane,12/12,1,2 bc
-Quality Warhammer/pick,1,"Med. Hafted Blunt, Med. Hafted Point",Quality,15/15,4,?
+Quality Warhammer/pick,1,"Medium Hafted Blunt, Medium Hafted Point",Quality,15/15,4,?
 Quality War Axe,1,Large Hafted Blade,Quality,15/15,5,5 bc
 War Axe,1,Large Hafted Blade,Mundane,12/12,5,5 bc
 Asher’s Arms Bollock Dagger,1,"Small Thrusting Point, Small Slashing Blade, Thrown Small Point",Superior,24/24,1,10 bc
-Spencer's Arms Arming Sword,1,"Med. Thrusting Sword, Med. Slashing Sword",Superior,24/24,2,20 bc
-Dragon Torch,1,"Med. Torch, Blazecraft Conduit",Artifact,48/48,3,9999 bc
-Shovel,1,Med. Hafted Blunt,Shoddy,9/9,5,2 bc
+Spencer's Arms Arming Sword,1,"Medium Thrusting Sword, Medium Slashing Sword",Superior,24/24,2,20 bc
+Dragon Torch,1,"Medium Torch, Blazecraft Conduit",Artifact,48/48,3,9999 bc
+Shovel,1,Medium Hafted Blunt,Shoddy,9/9,5,2 bc
 Excellent Shortbow,1,Light Bow,Excellent,21/21,2,25 bc
-Quality Rapier,1,Med. Thrusting Sword,Mundane,12/12,2,14 bc
+Quality Rapier,1,Medium Thrusting Sword,Mundane,12/12,2,14 bc
 Quality Swordbreaker,1,Small Slashing Blade,Mundane,12/12,1,28 bc
 Torch,1,Torch,Shoddy,9/9,1,1 cc
 Shiv,1,"Small Thrusting Point, Thrown Small Point",Shoddy,9/9,1,70 cc
-Shoddy Club,1,Med. Hafted Blunt,Shoddy,9/9,2,10 cc
+Shoddy Club,1,Medium Hafted Blunt,Shoddy,9/9,2,10 cc
 ,,,,,,
 Claws (Large),1,Claws (Large),Mundane,,0,None
 Claws,1,Claws,Mundane,,0,None
