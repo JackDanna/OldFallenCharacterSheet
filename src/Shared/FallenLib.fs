@@ -1434,6 +1434,11 @@ module Item =
     let itemToAttributeDeterminedDiceModEffects =
         itemToItemEffectSubTypes effectToAttributeDeterminedDiceModEffectList
 
+module ItemStack =
+    open Item
+
+    type ItemStack = { item: Item; quantity: uint }
+
 module Container =
     open ContainerClass
     open Item
