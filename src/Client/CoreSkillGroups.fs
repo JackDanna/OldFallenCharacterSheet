@@ -5,7 +5,7 @@ open FallenLib.CoreSkillGroup
 open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
-    | Modify of int * CoreSkillGroup.Msg
+    | Modify of int * OldSkillGroup.Msg
     | RecalculateCoreSkillGroups
 
 let init () : CoreSkillGroup list = []
@@ -21,7 +21,7 @@ let update
         List.mapi
             (fun i coreSkilTableModel ->
                 if i = position then
-                    CoreSkillGroup.update
+                    OldSkillGroup.update
                         skillDiceModEffectList
                         attributeDeterminedDiceModEffectList
                         coreSkillTableMsg
@@ -32,10 +32,10 @@ let update
     | RecalculateCoreSkillGroups ->
         List.map
             (fun coreSkillGroup ->
-                CoreSkillGroup.update
+                OldSkillGroup.update
                     skillDiceModEffectList
                     attributeDeterminedDiceModEffectList
-                    CoreSkillGroup.Msg.RecalculateCoreSkillGroup
+                    OldSkillGroup.Msg.RecalculateCoreSkillGroup
                     coreSkillGroup)
             model
 
@@ -53,7 +53,7 @@ let view (model: CoreSkillGroup list) (dispatch: Msg -> unit) =
                 model
                 |> List.mapi (fun position coreSkillTable ->
                     Bulma.column [
-                        CoreSkillGroup.view coreSkillTable (fun msg -> dispatch (Modify(position, msg)))
+                        OldSkillGroup.view coreSkillTable (fun msg -> dispatch (Modify(position, msg)))
                     ])
                 |> Bulma.columns
             ]

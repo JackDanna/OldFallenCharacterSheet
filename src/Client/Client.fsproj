@@ -10,7 +10,8 @@
     <Compile Include="Skill.fs" />
     <Compile Include="CoreSkill.fs" />
     <Compile Include="OldCoreSkill.fs" />
-    <Compile Include="CoreSkillGroup.fs" />
+    <Compile Include="CoreSkillList.fs" />
+    <Compile Include="OldCoreSkillGroup.fs" />
     <Compile Include="CoreSkillGroups.fs" />
     <None Include="index.html" />
     <Compile Include="DestinyPoints.fs" />
