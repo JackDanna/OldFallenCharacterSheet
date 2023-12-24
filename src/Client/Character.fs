@@ -16,6 +16,7 @@ open FallenLib.CoreSkill
 open FallenLib.CoreSkillDicePool
 
 type Msg =
+    | CoreSkillListMsg of CoreSkillList.Msg
     | VocationGroupListMsg of VocationGroupList.Msg
     | SetName of string
     | EquipmentListMsg of EquipmentList.Msg
@@ -84,6 +85,46 @@ let update
                     defaultAttributeList
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
+    | CoreSkillListMsg msg ->
+        let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
+
+        let newCarryWeightStatOption =
+            CarryWeightStatOption.update
+                (calculateCharacterWeight model.equipmentList model.containerList)
+                model.attributeList
+                model.coreSkillList
+                carryWeightCalculationMap
+                weightClassList
+                CarryWeightStatOption.Msg.Recalculate
+                model.carryWeightStatOption
+
+        { model with
+            coreSkillList = newCoreSkillList
+            carryWeightStatOption = newCarryWeightStatOption
+            coreSkillDicePoolList =
+                calculateCoreSkillDicePoolList
+                    skillAdjustments
+                    attributeDeterminedDiceModEffects
+                    model.attributeList
+                    newCoreSkillList
+            characterEffectForDisplayList =
+                CharacterEffectForDisplayList.update
+                    model.attributeList
+                    newCoreSkillList
+                    (calculateCharacterWeight model.equipmentList model.containerList)
+                    (carryWeightStatOptionToPercentOfMovementSpeed newCarryWeightStatOption)
+                    weightClassList
+                    characterEffectMap
+                    movementSpeedCalculationMap
+                    CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
+                    model.characterEffectForDisplayList
+            equipmentEffectForDisplayList =
+                EquipmentEffectForDisplayList.update
+                    model.attributeList
+                    newCoreSkillList
+                    (carryWeightStatOptionToPercentOfMovementSpeed newCarryWeightStatOption)
+                    EquipmentEffectForDisplayList.Msg.RecalculateMovementSpeed
+                    model.equipmentEffectForDisplayList }
 
     | VocationGroupListMsg vocationTableMsg ->
 
@@ -293,6 +334,8 @@ let view
             ]
         ]
         |> Bulma.content
+
+        CoreSkillList.view model.coreSkillList (CoreSkillListMsg >> dispatch)
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
 

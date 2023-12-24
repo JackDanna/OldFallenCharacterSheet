@@ -1,7 +1,5 @@
 module CoreSkillList
 
-open FallenLib.CoreSkill
-
 type Msg = ModifyCoreSkillAtPostion of int * CoreSkill.Msg
 
 let init () = []
