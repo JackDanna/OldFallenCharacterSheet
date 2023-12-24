@@ -1,4 +1,4 @@
-module CoreSkillGroupList
+module OldCoreSkillGroupList
 
 open FallenLib.SkillDiceModEffect
 open FallenLib.CoreSkillGroup

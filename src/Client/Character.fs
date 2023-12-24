@@ -13,7 +13,7 @@ open FallenLib.MovementSpeedEffect
 open FallenLib.WeightClass
 
 type Msg =
-    | CoreSkillGroupListMsg of CoreSkillGroupList.Msg
+    | CoreSkillGroupListMsg of OldCoreSkillGroupList.Msg
     | VocationGroupListMsg of VocationGroupList.Msg
     | SetName of string
     | EquipmentListMsg of EquipmentList.Msg
@@ -83,7 +83,7 @@ let update
     | CoreSkillGroupListMsg coreSkillTableMsg ->
 
         let newCoreSkillTables =
-            CoreSkillGroupList.update
+            OldCoreSkillGroupList.update
                 skillAdjustments
                 attributeDeterminedDiceModEffects
                 coreSkillTableMsg
@@ -156,10 +156,10 @@ let update
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newCoreSkillGroupList =
-            CoreSkillGroupList.update
+            OldCoreSkillGroupList.update
                 newSkillAdjustments
                 newAttributeDeterminedDiceModEffects
-                CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
+                OldCoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 model.coreSkillGroupList
 
         let newVocationGroupList =
@@ -221,10 +221,10 @@ let update
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newCoreSkillTablesWithSkillAdjustments =
-            CoreSkillGroupList.update
+            OldCoreSkillGroupList.update
                 newSkillAdjustments
                 newAttributeDeterminedDiceModEffects
-                CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
+                OldCoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 model.coreSkillGroupList
 
         { model with
@@ -261,10 +261,10 @@ let update
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
         let newCoreSkillTablesWithSkillAdjustments =
-            CoreSkillGroupList.update
+            OldCoreSkillGroupList.update
                 newSkillAdjustments
                 newAttributeDeterminedDiceModEffects
-                CoreSkillGroupList.Msg.RecalculateCoreSkillGroups
+                OldCoreSkillGroupList.Msg.RecalculateCoreSkillGroups
                 model.coreSkillGroupList
 
         { model with
@@ -331,7 +331,7 @@ let view
         ]
         |> Bulma.content
 
-        CoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
+        OldCoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
 
