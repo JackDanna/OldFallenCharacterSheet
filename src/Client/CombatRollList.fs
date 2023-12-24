@@ -16,10 +16,10 @@ let update
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
-    (combatRollGoverningAttributeList: Attribute list)
+    (combatRollGoverningAttributeList: AttributeName list)
     (attributeDeterminedDiceModList: AttributeDeterminedDiceModEffect list)
     (equipmentList: Equipment list)
-    (attributeStatList: AttributeStat list)
+    (attributeStatList: Attribute list)
     (vocationGroupList: VocationGroup list)
     : CombatRoll list =
 

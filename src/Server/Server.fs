@@ -116,7 +116,7 @@ module FallenServerData =
         makeFallenData "AttributeAndCoreSkillData.csv" (fun row ->
 
             let attributeStat =
-                { attribute = Attribute row.["desc"]
+                { attribute = AttributeName row.["desc"]
                   lvl = Zero }
 
             let skillStatList: SkillStat list =
@@ -144,7 +144,7 @@ module FallenServerData =
 
     let attributeMap = stringListToTypeMap attributeData
 
-    let mapAndStringToAttributes (attributeMap: Map<string, Attribute>) (input) =
+    let mapAndStringToAttributes (attributeMap: Map<string, AttributeName>) (input) =
         String.filter ((<>) ' ') input
         |> (fun s -> s.Split(',', System.StringSplitOptions.RemoveEmptyEntries))
         |> List.ofArray
@@ -262,7 +262,7 @@ module FallenServerData =
     let attributeStatAdjustmentEffectData =
         makeFallenData "AttributeStatAdjustmentEffect.csv" (fun row ->
             { name = string row.["Name"]
-              attribute = Attribute row.["Attribute"]
+              attribute = AttributeName row.["Attribute"]
               adjustment = int row.["Adjustment"] })
 
     let attributeStatAdjustmentEffectMap =
@@ -314,7 +314,7 @@ module FallenServerData =
         makeFallenData "CarryWeightCalculationData.csv" (fun row ->
             { name = string row.["name"]
               baseWeight = uint row.["baseWeight"]
-              governingAttribute = Attribute row.["governingAttribute"]
+              governingAttribute = AttributeName row.["governingAttribute"]
               weightIncreasePerAttribute = uint row.["weightIncreasePerAttribute"]
               governingSkill = string row.["governingSkill"]
               weightIncreasePerSkill = uint row.["weightIncreasePerSkill"] })

@@ -12,7 +12,7 @@ type Msg =
     | ToggleGoverningAttribute of int
     | SetAttributeStatsAndCalculateDicePools
 
-let init (attributeStatList: AttributeStat List) : Vocation =
+let init (attributeStatList: Attribute List) : Vocation =
     let lvl = ZeroToFour.init ()
     let governingAttribues = attributesToGoverningAttributesInit attributeStatList
 
@@ -24,7 +24,7 @@ let init (attributeStatList: AttributeStat List) : Vocation =
 let update
     (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-    (attributeStatList: AttributeStat List)
+    (attributeStatList: Attribute List)
     (msg: Msg)
     (model: Vocation)
     : Vocation =

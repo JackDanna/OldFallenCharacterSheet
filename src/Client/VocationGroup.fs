@@ -12,7 +12,7 @@ type Msg =
     | Modify of int * VocationalSkill.Msg
     | SetAttributeStatsAndCalculateDicePools
 
-let init (attributeStatList: AttributeStat List) : VocationGroup =
+let init (attributeStatList: Attribute List) : VocationGroup =
     let vocation = Vocation.init attributeStatList
 
     { vocation = vocation
@@ -21,7 +21,7 @@ let init (attributeStatList: AttributeStat List) : VocationGroup =
 let update
     (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-    (attributeStatList: AttributeStat List)
+    (attributeStatList: Attribute List)
     (msg: Msg)
     (model: VocationGroup)
     : VocationGroup =

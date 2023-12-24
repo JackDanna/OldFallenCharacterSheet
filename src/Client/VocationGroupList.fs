@@ -11,7 +11,7 @@ type Msg =
     | Insert
     | Remove of int
 
-let init (attributeStatList: AttributeStat List) : VocationGroup list =
+let init (attributeStatList: Attribute List) : VocationGroup list =
 
     [ VocationGroup.init attributeStatList
       VocationGroup.init attributeStatList ]
@@ -19,7 +19,7 @@ let init (attributeStatList: AttributeStat List) : VocationGroup list =
 let update
     (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-    (attributeStatList: AttributeStat List)
+    (attributeStatList: Attribute List)
     (msg: Msg)
     (model: VocationGroup list)
     : VocationGroup list =

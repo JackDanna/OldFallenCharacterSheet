@@ -14,7 +14,7 @@ type Msg =
 let init
     (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-    (attributeStat: AttributeStat)
+    (attributeStat: Attribute)
     =
     let lvl = Neg1To4.init ()
 
@@ -33,7 +33,7 @@ let init
 let update
     (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-    (attributeStat: AttributeStat)
+    (attributeStat: Attribute)
     (msg: Msg)
     (model: SkillStat)
     : SkillStat =
