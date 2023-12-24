@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Neg1To4.fs" />
-    <Compile Include="AttributeStat.fs" />
+    <Compile Include="Attribute.fs" />
     <Compile Include="Skill.fs" />
     <Compile Include="CoreSkill.fs" />
     <Compile Include="CoreSkillGroup.fs" />
