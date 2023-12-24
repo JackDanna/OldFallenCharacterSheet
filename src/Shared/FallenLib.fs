@@ -357,9 +357,11 @@ module Attribute =
     open Neg1To4
     open Dice
 
-    type Attribute = string
+    type AttributeName = string
 
-    type AttributeStat = { attribute: Attribute; lvl: Neg1To4 }
+    type Attribute =
+        { attribute: AttributeName
+          lvl: Neg1To4 }
 
     let sumAttributesLevels attributeList attributeStatList =
         attributeStatList
@@ -373,6 +375,29 @@ module Attribute =
     let sumAttributesD6DiceMods attributeList attributeStatList =
         sumAttributesLevels attributeList attributeStatList
         |> intToD6DicePoolMod
+
+module Skill =
+    open Neg1To4
+
+    type SkillName = string
+
+    type Skill = { name: SkillName; level: Neg1To4 }
+
+module CoreSkill =
+    open Skill
+    open Attribute
+
+    type CoreSkill =
+        { skill: Skill
+          attribute: AttributeName }
+
+module VocationalSkill =
+    open Skill
+    open Attribute
+
+    type VocationalSkill =
+        { skill: Skill
+          attributes: AttributeName list }
 
 module BattleMapUOM =
     let feetPerBattleMapUOM = 5u
@@ -742,7 +767,7 @@ module AttributeDeterminedDiceModEffect =
 
     type AttributeDeterminedDiceModEffect =
         { name: string
-          attributesToEffect: Attribute list
+          attributesToEffect: AttributeName list
           dicePoolMod: DicePoolMod }
 
     let attributeDeterminedDiceModEffectToEffectString attributeDeterminedDiceModEffect =
@@ -792,7 +817,7 @@ module AttributeStatAdjustmentEffect =
 
     type AttributeStatAdjustmentEffect =
         { name: string
-          attribute: Attribute
+          attribute: AttributeName
           adjustment: int }
 
     let attributeStatAdjustmentToEffectString attributeStatAdjustment =
@@ -806,7 +831,7 @@ module MovementSpeedEffect =
     type MovementSpeedCalculation =
         { name: string
           baseMovementSpeed: uint
-          governingAttribute: Attribute
+          governingAttribute: AttributeName
           feetPerAttributeLvl: uint
           governingSkill: string
           feetPerSkillLvl: uint }
@@ -899,13 +924,13 @@ module CoreSkillGroup =
     open AttributeDeterminedDiceModEffect
 
     type CoreSkillGroup =
-        { attributeStat: AttributeStat
+        { attributeStat: Attribute
           coreSkillList: SkillStat list }
 
     let coreSkillToDicePool
         baseDice
         lvl
-        (attributeStat: AttributeStat)
+        (attributeStat: Attribute)
         skillAdjustmentDiceModList
         (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
         =
@@ -939,7 +964,7 @@ module Vocation =
 
     type GoverningAttribute =
         { isGoverning: bool
-          attributeStat: AttributeStat }
+          attributeStat: Attribute }
 
     let collectGovernedAttributes governingAttributes =
         List.collect
@@ -971,7 +996,7 @@ module Vocation =
 
     let attributesToGoverningAttributesInit attributes =
         List.map
-            (fun (attributeStat: AttributeStat) ->
+            (fun (attributeStat: Attribute) ->
                 { attributeStat = attributeStat
                   isGoverning = false })
             attributes
@@ -1061,7 +1086,7 @@ module CarryWeightCalculation =
     type CarryWeightCalculation =
         { name: string
           baseWeight: uint
-          governingAttribute: Attribute
+          governingAttribute: AttributeName
           weightIncreasePerAttribute: uint
           governingSkill: string
           weightIncreasePerSkill: uint }
@@ -1568,7 +1593,7 @@ module CombatRoll =
         attributeDeterminedDiceModArray
         attributeStats
         skillStatLvl
-        (combatRollGoverningAttributes: Attribute list)
+        (combatRollGoverningAttributes: AttributeName list)
         resource
         descSuffix
         wieldingDiceMods
@@ -1632,10 +1657,10 @@ module CombatRoll =
 
     let createWeaponCombatRolls
         equipmentList
-        (attributeStats: AttributeStat list)
+        (attributeStats: Attribute list)
         (vocationGroupList: VocationGroup list)
         attributeDeterminedDiceModArray
-        (combatRollGoverningAttributes: Attribute list)
+        (combatRollGoverningAttributes: AttributeName list)
         : list<CombatRoll> =
 
         equipmentList
@@ -1697,13 +1722,13 @@ module CombatRoll =
 
     let createMagicCombatRoll
         (magicResource: MagicResourceForCombatCalculation)
-        (attributeStats: AttributeStat list)
+        (attributeStats: Attribute list)
         (skillStat: SkillStat)
         (magicSkill: MagicSkill)
         (magicCombatType: MagicCombat)
         (rangeMap: Map<string, Range>)
         (attributeDeterminedDiceModArray: list<AttributeDeterminedDiceModEffect>)
-        (combatRollGoverningAttributes: Attribute list)
+        (combatRollGoverningAttributes: AttributeName list)
         : CombatRoll =
 
         let (resourceName, resourceDice) =
@@ -1742,7 +1767,7 @@ module CombatRoll =
         conduitItemDesc
         conduitTierBaseDice
         attributeDeterminedDiceModArray
-        (combatRollGoverningAttributes: Attribute list)
+        (combatRollGoverningAttributes: AttributeName list)
         descSuffix
         wieldingDiceMods
         : CombatRoll =
@@ -1817,14 +1842,14 @@ module CombatRoll =
                 |> List.append handedVariations
 
     let createMagicCombatRolls
-        (attributeStats: AttributeStat list)
+        (attributeStats: Attribute list)
         (vocationGroups: VocationGroup list)
         (magicSkillMap: Map<string, MagicSkill>)
         (magicCombatMap: Map<string, MagicCombat>)
         (equipment: Equipment list)
         rangeMap
         attributeDeterminedDiceModArray
-        (combatRollGoverningAttributes: Attribute list)
+        (combatRollGoverningAttributes: AttributeName list)
         : list<CombatRoll> =
 
         let magicMapKeys = magicSkillMap.Keys |> List.ofSeq
@@ -1886,10 +1911,10 @@ module CombatRoll =
         (magicSkillMap: Map<string, MagicSkill>)
         (magicCombatMap: Map<string, MagicCombat>)
         (rangeMap: Map<string, Range>)
-        (combatRollGoverningAttributeList: Attribute list)
+        (combatRollGoverningAttributeList: AttributeName list)
         (attributeDeterminedDiceModList: AttributeDeterminedDiceModEffect list)
         (equipmentList: Equipment list)
-        (attributeStatList: AttributeStat list)
+        (attributeStatList: Attribute list)
         (vocationGroupList: VocationGroup list)
         : CombatRoll list =
 
