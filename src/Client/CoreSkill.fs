@@ -6,7 +6,7 @@ type Msg = SkillMsg of Skill.Msg
 
 let init () =
     { skill = Skill.init ()
-      attribute = "" }
+      governingAttribute = "" }
 
 let update msg model =
     match msg with

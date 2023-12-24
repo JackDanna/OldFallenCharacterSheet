@@ -2,7 +2,8 @@ module CharacterEffectForDisplayList
 
 open FallenLib.EffectForDisplay
 open FallenLib.WeightClass
-open FallenLib.CoreSkillGroup
+open FallenLib.CoreSkill
+open FallenLib.Attribute
 open FallenLib.MovementSpeedEffect
 open FallenLib.MovementSpeedEffectForDisplay
 
@@ -15,7 +16,8 @@ type Msg =
 let init () : EffectForDisplay list = []
 
 let update
-    (coreSkillGroupList: CoreSkillGroup list)
+    (attributeList: Attribute list)
+    (coreSkillList: CoreSkill list)
     (inventoryWeight: float)
     (percentOfMovementSpeed: float)
     (weightClassList: WeightClass list)
@@ -39,7 +41,7 @@ let update
             |> List.append model
         elif movementSpeedCalculationMap.ContainsKey characterEffectName then
             (movementSpeedCalculationMap.Item characterEffectName)
-            |> determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed
+            |> determineMovementSpeedEffectForDisplay attributeList coreSkillList percentOfMovementSpeed
             |> MovementSpeedEffectForDisplay
             |> List.singleton
             |> List.append model
@@ -52,7 +54,8 @@ let update
             CharacterEffectForDisplay.update
                 (CharacterEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
                     MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(
-                        coreSkillGroupList,
+                        attributeList,
+                        coreSkillList,
                         percentOfMovementSpeed
                     )
                 ))

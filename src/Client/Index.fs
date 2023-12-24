@@ -22,7 +22,8 @@ let fallenDataApi =
 
 let init () : Model * Cmd<Msg> =
     { fallenData =
-        { defaultCoreSkillGroupList = []
+        { defaultCoreSkillList = []
+          defaultAttributeList = []
           allItemList = []
           magicSkillMap = Map.empty
           magicCombatMap = Map.empty
@@ -32,7 +33,7 @@ let init () : Model * Cmd<Msg> =
           carryWeightCalculationMap = Map.empty
           weightClassList = []
           movementSpeedCalculationMap = Map.empty }
-      character = Character.init (List.Empty) },
+      character = Character.init [] [] },
 
     Cmd.OfAsync.perform fallenDataApi.getInitData () GotInitData
 
@@ -43,7 +44,8 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         { model with
             character =
                 Character.update
-                    model.fallenData.defaultCoreSkillGroupList
+                    model.fallenData.defaultAttributeList
+                    model.fallenData.defaultCoreSkillList
                     model.fallenData.allItemList
                     model.fallenData.magicSkillMap
                     model.fallenData.magicCombatMap
@@ -61,7 +63,8 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
             fallenData = newFallenData
             character =
                 Character.update
-                    newFallenData.defaultCoreSkillGroupList
+                    newFallenData.defaultAttributeList
+                    newFallenData.defaultCoreSkillList
                     newFallenData.allItemList
                     newFallenData.magicSkillMap
                     newFallenData.magicCombatMap

@@ -11,9 +11,11 @@ open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightCalculation
 open FallenLib.MovementSpeedEffect
 open FallenLib.WeightClass
+open FallenLib.Attribute
+open FallenLib.CoreSkill
+open FallenLib.CoreSkillDicePool
 
 type Msg =
-    | CoreSkillGroupListMsg of OldCoreSkillGroupList.Msg
     | VocationGroupListMsg of VocationGroupList.Msg
     | SetName of string
     | EquipmentListMsg of EquipmentList.Msg
@@ -24,12 +26,13 @@ type Msg =
     | CarryWeightStatOptionMsg of CarryWeightStatOption.Msg
     | SetDefault
 
-let init (coreSkillGroups: CoreSkillGroup list) : Character =
-    let attributeStatList = coreSkillGroupListToAttributeStats coreSkillGroups
+let init (attributeList: Attribute list) (coreSkillList: CoreSkill list) : Character =
 
     { name = ""
-      coreSkillGroupList = coreSkillGroups
-      vocationGroupList = VocationGroupList.init attributeStatList
+      attributeList = attributeList
+      coreSkillList = coreSkillList
+      coreSkillDicePoolList = []
+      vocationGroupList = VocationGroupList.init attributeList
       equipmentList = EquipmentList.init ()
       combatRollList = []
       containerList = []
@@ -40,7 +43,8 @@ let init (coreSkillGroups: CoreSkillGroup list) : Character =
       carryWeightStatOption = None }
 
 let update
-    (defaultCoreSkillTables: CoreSkillGroup list)
+    (defaultAttributeList: Attribute list)
+    (defaultCoreSkillList: CoreSkill list)
     (allItemList: Item list)
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
@@ -58,7 +62,7 @@ let update
             magicSkillMap
             magicCombatMap
             rangeMap
-            (coreSkillGroupListToAttributes defaultCoreSkillTables)
+            (attributesToAttributeNames defaultAttributeList)
             []
 
     let (skillAdjustments, attributeDeterminedDiceModEffects) =
@@ -71,48 +75,15 @@ let update
     | SetDefault ->
 
         { model with
-            coreSkillGroupList = defaultCoreSkillTables
+            attributeList = defaultAttributeList
+            coreSkillList = defaultCoreSkillList
             vocationGroupList =
                 VocationGroupList.update
                     skillAdjustments
                     attributeDeterminedDiceModEffects
-                    (coreSkillGroupListToAttributeStats defaultCoreSkillTables)
+                    defaultAttributeList
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
-
-    | CoreSkillGroupListMsg coreSkillTableMsg ->
-
-        let newCoreSkillTables =
-            OldCoreSkillGroupList.update
-                skillAdjustments
-                attributeDeterminedDiceModEffects
-                coreSkillTableMsg
-                model.coreSkillGroupList
-
-        let newVocationTables =
-            VocationGroupList.update
-                skillAdjustments
-                attributeDeterminedDiceModEffects
-                (coreSkillGroupListToAttributeStats newCoreSkillTables)
-                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                model.vocationGroupList
-
-        { model with
-            coreSkillGroupList = newCoreSkillTables
-            vocationGroupList = newVocationTables
-            combatRollList =
-                loadedCombatRollUpdate
-                    model.equipmentList
-                    (coreSkillGroupListToAttributeStats newCoreSkillTables)
-                    newVocationTables
-            carryWeightStatOption =
-                CarryWeightStatOption.update
-                    (calculateCharacterWeight model.equipmentList model.containerList)
-                    newCoreSkillTables
-                    carryWeightCalculationMap
-                    weightClassList
-                    CarryWeightStatOption.Msg.Recalculate
-                    model.carryWeightStatOption }
 
     | VocationGroupListMsg vocationTableMsg ->
 
@@ -120,17 +91,13 @@ let update
             VocationGroupList.update
                 skillAdjustments
                 attributeDeterminedDiceModEffects
-                (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
+                model.attributeList
                 vocationTableMsg
                 model.vocationGroupList
 
         { model with
             vocationGroupList = newVocationTables
-            combatRollList =
-                loadedCombatRollUpdate
-                    model.equipmentList
-                    (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
-                    newVocationTables }
+            combatRollList = loadedCombatRollUpdate model.equipmentList model.attributeList newVocationTables }
 
     | SetName newName -> { model with name = newName }
 
@@ -145,44 +112,40 @@ let update
             |> List.map (fun (itemName, itemEffect) ->
                 itemEffectToEffectForDisplay
                     (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
-                    model.coreSkillGroupList
+                    model.attributeList
+                    model.coreSkillList
                     itemEffect
                     itemName)
 
-        let (newSkillAdjustments, newAttributeDeterminedDiceModEffects) =
+        let (newSkillDiceModEffects, newAttributeDeterminedDiceModEffects) =
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
                 newEquipmentEffectForDisplayList
                 model.characterEffectForDisplayList
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
-        let newCoreSkillGroupList =
-            OldCoreSkillGroupList.update
-                newSkillAdjustments
-                newAttributeDeterminedDiceModEffects
-                OldCoreSkillGroupList.Msg.RecalculateCoreSkillGroups
-                model.coreSkillGroupList
-
         let newVocationGroupList =
             VocationGroupList.update
-                newSkillAdjustments
+                newSkillDiceModEffects
                 newAttributeDeterminedDiceModEffects
-                (coreSkillGroupListToAttributeStats newCoreSkillGroupList)
+                model.attributeList
                 VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                 model.vocationGroupList
 
         { model with
-            coreSkillGroupList = newCoreSkillGroupList
             vocationGroupList = newVocationGroupList
             equipmentList = newEquipmentList
             equipmentEffectForDisplayList = newEquipmentEffectForDisplayList
-            combatRollList =
-                loadedCombatRollUpdate
-                    newEquipmentList
-                    (coreSkillGroupListToAttributeStats model.coreSkillGroupList)
-                    newVocationGroupList
+            combatRollList = loadedCombatRollUpdate newEquipmentList model.attributeList newVocationGroupList
+            coreSkillDicePoolList =
+                calculateCoreSkillDicePoolList
+                    newSkillDiceModEffects
+                    newAttributeDeterminedDiceModEffects
+                    model.attributeList
+                    model.coreSkillList
             characterEffectForDisplayList =
                 CharacterEffectForDisplayList.update
-                    newCoreSkillGroupList
+                    model.attributeList
+                    model.coreSkillList
                     (calculateCharacterWeight newEquipmentList model.containerList)
                     (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                     weightClassList
@@ -193,7 +156,8 @@ let update
             carryWeightStatOption =
                 CarryWeightStatOption.update
                     (calculateCharacterWeight newEquipmentList model.containerList)
-                    newCoreSkillGroupList
+                    model.attributeList
+                    model.coreSkillList
                     carryWeightCalculationMap
                     weightClassList
                     CarryWeightStatOption.Msg.Recalculate
@@ -205,7 +169,8 @@ let update
 
         let newCharacterEffectList =
             CharacterEffectForDisplayList.update
-                model.coreSkillGroupList
+                model.attributeList
+                model.coreSkillList
                 (calculateCharacterWeight model.equipmentList newContainerList)
                 (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                 weightClassList
@@ -220,24 +185,22 @@ let update
                 newCharacterEffectList
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
-        let newCoreSkillTablesWithSkillAdjustments =
-            OldCoreSkillGroupList.update
-                newSkillAdjustments
-                newAttributeDeterminedDiceModEffects
-                OldCoreSkillGroupList.Msg.RecalculateCoreSkillGroups
-                model.coreSkillGroupList
-
         { model with
             containerList = newContainerList
             characterEffectForDisplayList = newCharacterEffectList
-            coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
             vocationGroupList =
                 VocationGroupList.update
                     newSkillAdjustments
                     newAttributeDeterminedDiceModEffects
-                    (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
+                    model.attributeList
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationGroupList }
+                    model.vocationGroupList
+            coreSkillDicePoolList =
+                calculateCoreSkillDicePoolList
+                    newSkillAdjustments
+                    newAttributeDeterminedDiceModEffects
+                    model.attributeList
+                    model.coreSkillList }
 
     | DestinyPointsMsg destinyPointsMsg ->
         { model with destinyPoints = DestinyPoints.update destinyPointsMsg model.destinyPoints }
@@ -245,7 +208,8 @@ let update
     | CharacterEffectListMsg msg ->
         let newCharacterEffectList =
             CharacterEffectForDisplayList.update
-                model.coreSkillGroupList
+                model.attributeList
+                model.coreSkillList
                 (calculateCharacterWeight model.equipmentList model.containerList)
                 (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
                 weightClassList
@@ -260,23 +224,21 @@ let update
                 newCharacterEffectList
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
-        let newCoreSkillTablesWithSkillAdjustments =
-            OldCoreSkillGroupList.update
-                newSkillAdjustments
-                newAttributeDeterminedDiceModEffects
-                OldCoreSkillGroupList.Msg.RecalculateCoreSkillGroups
-                model.coreSkillGroupList
-
         { model with
             characterEffectForDisplayList = newCharacterEffectList
-            coreSkillGroupList = newCoreSkillTablesWithSkillAdjustments
             vocationGroupList =
                 VocationGroupList.update
                     newSkillAdjustments
                     newAttributeDeterminedDiceModEffects
-                    (coreSkillGroupListToAttributeStats newCoreSkillTablesWithSkillAdjustments)
+                    model.attributeList
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationGroupList }
+                    model.vocationGroupList
+            coreSkillDicePoolList =
+                calculateCoreSkillDicePoolList
+                    newSkillAdjustments
+                    newAttributeDeterminedDiceModEffects
+                    model.attributeList
+                    model.coreSkillList }
     | CharacterInformationMsg msg ->
         { model with characterInformation = CharacterInformation.update msg model.characterInformation }
 
@@ -285,7 +247,8 @@ let update
             carryWeightStatOption =
                 CarryWeightStatOption.update
                     (calculateCharacterWeight model.equipmentList model.containerList)
-                    model.coreSkillGroupList
+                    model.attributeList
+                    model.coreSkillList
                     carryWeightCalculationMap
                     weightClassList
                     msg
@@ -330,8 +293,6 @@ let view
             ]
         ]
         |> Bulma.content
-
-        OldCoreSkillGroupList.view model.coreSkillGroupList (CoreSkillGroupListMsg >> dispatch)
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
 

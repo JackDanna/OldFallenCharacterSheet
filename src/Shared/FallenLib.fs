@@ -361,6 +361,9 @@ module Attribute =
 
     type Attribute = { name: AttributeName; level: Neg1To4 }
 
+    let attributesToAttributeNames attributes =
+        List.map (fun (attribute: Attribute) -> attribute.name) attributes
+
     let sumAttributesLevels attributeNameList attributeList =
         attributeList
         |> List.map (fun attributeStat ->
@@ -381,13 +384,23 @@ module Skill =
 
     type Skill = { name: SkillName; level: Neg1To4 }
 
+    let findSkillLvlWithDefault skillName (defaultLvl: Neg1To4) (skillList: Skill list) =
+        skillList
+        |> List.filter (fun skill -> skill.name = skillName)
+        |> (fun (list: Skill list) ->
+            if list.Length = 0 then
+                defaultLvl
+            else
+                List.maxBy (fun (skill: Skill) -> skill.level) list
+                |> (fun skillList -> skillList.level))
+
 module CoreSkill =
     open Skill
     open Attribute
 
     type CoreSkill =
         { skill: Skill
-          attribute: AttributeName }
+          governingAttribute: AttributeName }
 
 module VocationalSkill =
     open Skill
@@ -395,7 +408,7 @@ module VocationalSkill =
 
     type VocationalSkill =
         { skill: Skill
-          attributes: AttributeName list }
+          governingAttributes: AttributeName list }
 
 module BattleMapUOM =
     let feetPerBattleMapUOM = 5u
@@ -914,6 +927,48 @@ module SkillStat =
           lvl: Neg1To4
           dicePool: DicePool }
 
+module CoreSkillDicePool =
+    open AttributeDeterminedDiceModEffect
+    open SkillDiceModEffect
+    open Attribute
+    open CoreSkill
+    open Dice
+
+    let calculateCoreSkillDicePool
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (coreSkill: CoreSkill)
+        : DicePool =
+
+        let attribute =
+            attributeList
+            |> List.find (fun (attribute: Attribute) -> attribute.name = coreSkill.governingAttribute)
+
+        modifyDicePoolByDicePoolModList
+            baseDicePool
+            ([ coreSkill.skill.level |> neg1To4ToD6DicePoolMod
+               attribute.level |> neg1To4ToD6DicePoolMod ]
+             @ (skillDiceModEffectList
+                |> collectSkillAdjustmentDiceMods coreSkill.skill.name)
+               @ (attributeDeterminedDiceModEffectList
+                  |> collectAttributeDeterminedDiceMod [ attribute.name ]))
+
+    let calculateCoreSkillDicePoolList
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (coreSkillList: CoreSkill list)
+        : DicePool List =
+
+        coreSkillList
+        |> List.map (fun coreSkill ->
+            calculateCoreSkillDicePool
+                skillDiceModEffectList
+                attributeDeterminedDiceModEffectList
+                attributeList
+                coreSkill)
+
 module CoreSkillGroup =
 
     open Attribute
@@ -1079,7 +1134,8 @@ module CarryWeightCalculation =
     open Attribute
     open VocationGroup
     open Neg1To4
-    open CoreSkillGroup
+    open Skill
+    open CoreSkill
 
     type CarryWeightCalculation =
         { name: string
@@ -1089,16 +1145,20 @@ module CarryWeightCalculation =
           governingSkill: string
           weightIncreasePerSkill: uint }
 
-    let calculateCarryWeight (carryWeightCalculation: CarryWeightCalculation) coreSkillGroupList =
-
-        let (attributeStatList, coreSkillList) =
-            coreSkillGroupListToAttributeStatsAndSkillStats coreSkillGroupList
+    let calculateCarryWeight
+        (carryWeightCalculation: CarryWeightCalculation)
+        attributeList
+        (coreSkillList: CoreSkill list)
+        =
 
         let attributeLevel =
-            sumAttributesLevels [ carryWeightCalculation.governingAttribute ] attributeStatList
+            sumAttributesLevels [ carryWeightCalculation.governingAttribute ] attributeList
 
         let skillLevel =
-            findVocationalSkillLvlWithDefault carryWeightCalculation.governingSkill Zero coreSkillList
+            findSkillLvlWithDefault
+                carryWeightCalculation.governingSkill
+                Zero
+                (List.map (fun coreSkill -> coreSkill.skill) coreSkillList)
             |> neg1To4ToInt
 
         int carryWeightCalculation.baseWeight
@@ -1226,8 +1286,9 @@ module SkillDiceModEffectForDisplay =
 module MovementSpeedEffectForDisplay =
 
     open MovementSpeedEffect
-    open CoreSkillGroup
     open TextEffectForDisplay
+    open Attribute
+    open CoreSkill
 
     type MovementSpeedEffectForDisplay =
         { movementSpeedCalculation: MovementSpeedCalculation
@@ -1235,33 +1296,32 @@ module MovementSpeedEffectForDisplay =
           durationAndSource: DurationAndSource }
 
     let determineMovementSpeedEffectForDisplay
-        (coreSkillGroupList: CoreSkillGroup list)
+        (attributeList: Attribute list)
+        (coreSkillList: CoreSkill list)
         (percentOfMovementSpeed: float)
         (movementSpeedCalculation: MovementSpeedCalculation)
         : MovementSpeedEffectForDisplay =
 
         let attributeLevel =
-            coreSkillGroupList
-            |> List.tryFind (fun coreSkillGroup ->
-                coreSkillGroup.attributeStat.name = movementSpeedCalculation.governingAttribute)
+            attributeList
+            |> List.tryFind (fun attribute -> attribute.name = movementSpeedCalculation.governingAttribute)
             |> (fun attributeLevelOption ->
                 match attributeLevelOption with
-                | Some coreSkillGroup -> coreSkillGroup.attributeStat.level
+                | Some attribute -> attribute.level
                 | None -> Neg1To4.Zero)
 
 
-        let skillLevel =
-            coreSkillGroupList
-            |> List.collect (fun coreSkillGroupList -> coreSkillGroupList.coreSkillList)
-            |> List.tryFind (fun skillStat -> skillStat.name = movementSpeedCalculation.governingSkill)
-            |> (fun skillStatOption ->
-                match skillStatOption with
-                | Some skillStat -> skillStat.lvl
+        let coreSkillLevel =
+            coreSkillList
+            |> List.tryFind (fun coreSkill -> coreSkill.skill.name = movementSpeedCalculation.governingSkill)
+            |> (fun coreSkillOption ->
+                match coreSkillOption with
+                | Some coreSkill -> coreSkill.skill.level
                 | None -> Neg1To4.Zero)
 
         { movementSpeedCalculation = movementSpeedCalculation
           movementSpeed =
-            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel skillLevel
+            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel coreSkillLevel
           durationAndSource =
             { duration = indefiniteStringForDuration
               source = movementSpeedCalculationToSourceForDisplay movementSpeedCalculation } }
@@ -1316,7 +1376,7 @@ module EffectForDisplay =
                 [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
             | _ -> [])
 
-    let itemEffectToEffectForDisplay percentOfMovementSpeed coreSkillGroupList effect source =
+    let itemEffectToEffectForDisplay percentOfMovementSpeed attributeList coreSkillList effect source =
 
         let durationAndSource =
             { duration = "While equiped"
@@ -1340,7 +1400,7 @@ module EffectForDisplay =
               durationAndSource = durationAndSource }
             |> AttributeDeterminedDiceModEffectForDisplay
         | MovementSpeedCalculation msc ->
-            determineMovementSpeedEffectForDisplay coreSkillGroupList percentOfMovementSpeed msc
+            determineMovementSpeedEffectForDisplay attributeList coreSkillList percentOfMovementSpeed msc
             |> MovementSpeedEffectForDisplay
 
     let effectForDisplayToTextEffectForDisplay effectForDisplay =
@@ -1946,7 +2006,6 @@ module CarryWeightStat =
 
 module Character =
 
-    open CoreSkillGroup
     open CombatRoll
     open Equipment
     open VocationGroup
@@ -1954,6 +2013,9 @@ module Character =
     open ZeroToThree
     open EffectForDisplay
     open CarryWeightStat
+    open Attribute
+    open CoreSkill
+    open Dice
 
     let calculateCharacterWeight equipmentList (containerList: Container list) =
         containerList
@@ -1970,7 +2032,9 @@ module Character =
 
     type Character =
         { name: string
-          coreSkillGroupList: CoreSkillGroup list
+          attributeList: Attribute list
+          coreSkillList: CoreSkill list
+          coreSkillDicePoolList: DicePool list
           vocationGroupList: VocationGroup list
           equipmentList: Equipment list
           combatRollList: CombatRoll list

@@ -1,0 +1,7 @@
+module coreSkillDicePoolList
+
+open FallenLib.Dice
+open FallenLib.SkillDiceModEffect
+open FallenLib.Attribute
+open FallenLib.AttributeDeterminedDiceModEffect
+open FallenLib.CoreSkill

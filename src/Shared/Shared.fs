@@ -9,13 +9,16 @@ open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightCalculation
 open FallenLib.MovementSpeedEffect
 open FallenLib.WeightClass
+open FallenLib.Attribute
+open FallenLib.CoreSkill
 
 module Route =
     let builder typeName methodName =
         sprintf "/api/%s/%s" typeName methodName
 
 type FallenData =
-    { defaultCoreSkillGroupList: CoreSkillGroup list
+    { defaultAttributeList: Attribute List
+      defaultCoreSkillList: CoreSkill List
       allItemList: Item list
       magicSkillMap: Map<string, MagicSkill>
       magicCombatMap: Map<string, MagicCombat>

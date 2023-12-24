@@ -39,6 +39,8 @@ module FallenServerData =
     open FallenLib.AttributeDeterminedDiceModEffect
     open FallenLib.AttributeDeterminedDiceModEffectForDisplay
     open FallenLib.WeightClass
+    open FallenLib.CoreSkill
+    open FallenLib.Skill
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -112,37 +114,21 @@ module FallenServerData =
         | _ -> Some <| resourceClassMap.Item string
 
     // AttributeAndCoreSkill
-    let coreSkillGroupData: CoreSkillGroup list =
-        makeFallenData "AttributeAndCoreSkillData.csv" (fun row ->
+    let attributeData: Attribute list =
+        makeFallenData "AttributeData.csv" (fun row ->
+            { name = AttributeName row.["desc"]
+              level = Zero })
 
-            let attributeStat =
-                { name = AttributeName row.["desc"]
+    let coreSkillData: CoreSkill list =
+        makeFallenData "CoreSkillData.csv" (fun row ->
+            { skill =
+                { name = SkillName row.["name"]
                   level = Zero }
+              governingAttribute = AttributeName row.["governingAttribute"] })
 
-            let skillStatList: SkillStat list =
-                List.collect
-                    (fun (coreSkillString: string) ->
-                        match coreSkillString with
-                        | "None" -> []
-                        | _ ->
-                            let lvl = Zero
+    let attributeNameData = attributesToAttributeNames attributeData
 
-                            { name = coreSkillString
-                              lvl = lvl
-                              dicePool = coreSkillToDicePool baseDicePool lvl attributeStat [] [] }
-                            |> List.singleton)
-                    [ (string row.["Core Skill 1"])
-                      (string row.["Core Skill 2"])
-                      (string row.["Core Skill 3"])
-                      (string row.["Core Skill 4"])
-                      (string row.["Core Skill 5"]) ]
-
-            { attributeStat = attributeStat
-              coreSkillList = skillStatList })
-
-    let attributeData = coreSkillGroupListToAttributes coreSkillGroupData
-
-    let attributeMap = stringListToTypeMap attributeData
+    let attributeMap = stringListToTypeMap attributeNameData
 
     let mapAndStringToAttributes (attributeMap: Map<string, AttributeName>) (input) =
         String.filter ((<>) ' ') input
@@ -447,7 +433,8 @@ let fallenDataApi: IFallenDataApi =
         fun () ->
             async {
                 return
-                    { defaultCoreSkillGroupList = FallenServerData.coreSkillGroupData
+                    { defaultCoreSkillList = FallenServerData.coreSkillData
+                      defaultAttributeList = FallenServerData.attributeData
                       allItemList = FallenServerData.itemData
                       magicSkillMap = FallenServerData.magicSkillMap
                       magicCombatMap = FallenServerData.magicCombatMap

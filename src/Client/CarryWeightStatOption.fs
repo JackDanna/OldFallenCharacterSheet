@@ -2,7 +2,8 @@ module CarryWeightStatOption
 
 open FallenLib.CarryWeightStat
 open FallenLib.CarryWeightCalculation
-open FallenLib.CoreSkillGroup
+open FallenLib.Attribute
+open FallenLib.CoreSkill
 open FallenLib.WeightClass
 open FallenLib.AttributeDeterminedDiceModEffect
 
@@ -13,7 +14,8 @@ type Msg =
 
 let update
     (inventoryWeight: float)
-    (coreSkillGroupList: CoreSkillGroup list)
+    (attributeList: Attribute list)
+    (coreSkillList: CoreSkill list)
     (carryWeightCalculationMap: Map<string, CarryWeightCalculation>)
     (weightClassList: WeightClass list)
     (msg: Msg)
@@ -24,7 +26,8 @@ let update
     | Recalculate, Some carryWeightStat ->
         CarryWeightStat.update
             (CarryWeightStat.Msg.RecalculateCarryWeightStat
-                { coreSkillGroupList = coreSkillGroupList
+                { attributeList = attributeList
+                  coreSkillList = coreSkillList
                   carryWeightCalculationMap = carryWeightCalculationMap
                   weightClassList = weightClassList })
             carryWeightStat
@@ -36,7 +39,9 @@ let update
                 carryWeightCalculationMap.Keys then
 
             let carryWeightCalculation = carryWeightCalculationMap.Item newString
-            let maxCarryWeight = calculateCarryWeight carryWeightCalculation coreSkillGroupList
+
+            let maxCarryWeight =
+                calculateCarryWeight carryWeightCalculation attributeList coreSkillList
 
             { currentWeight = inventoryWeight
               carryWeightCalculation = carryWeightCalculation
@@ -54,7 +59,8 @@ let update
             CarryWeightStat.update
                 (CarryWeightStat.Msg.SetCarryWeightCalculation
                     { newCarryWeightCalculationName = newString
-                      coreSkillGroupList = coreSkillGroupList
+                      attributeList = attributeList
+                      coreSkillList = coreSkillList
                       carryWeightCalculationMap = carryWeightCalculationMap
                       weightClassList = weightClassList })
                 carryWeightStat

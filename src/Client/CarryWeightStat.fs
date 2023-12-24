@@ -4,15 +4,19 @@ open FallenLib.CarryWeightStat
 open FallenLib.CarryWeightCalculation
 open FallenLib.CoreSkillGroup
 open FallenLib.WeightClass
+open FallenLib.CoreSkill
+open FallenLib.Attribute
 
 type RecalculateCarryWeightStat =
-    { coreSkillGroupList: CoreSkillGroup list
+    { attributeList: Attribute list
+      coreSkillList: CoreSkill list
       carryWeightCalculationMap: Map<string, CarryWeightCalculation>
       weightClassList: WeightClass list }
 
 type SetCarryWeightCalculationData =
     { newCarryWeightCalculationName: string
-      coreSkillGroupList: CoreSkillGroup list
+      attributeList: Attribute list
+      coreSkillList: CoreSkill list
       carryWeightCalculationMap: Map<string, CarryWeightCalculation>
       weightClassList: WeightClass list }
 
@@ -29,7 +33,7 @@ let update (msg: Msg) (model: CarryWeightStat) : CarryWeightStat =
     match msg with
     | RecalculateCarryWeightStat data ->
         let newMaxCarryWeight =
-            calculateCarryWeight model.carryWeightCalculation data.coreSkillGroupList
+            calculateCarryWeight model.carryWeightCalculation data.attributeList data.coreSkillList
 
         { model with
             maxWeight = newMaxCarryWeight
@@ -40,7 +44,7 @@ let update (msg: Msg) (model: CarryWeightStat) : CarryWeightStat =
             data.carryWeightCalculationMap.Item data.newCarryWeightCalculationName
 
         let newMaxCarryWeight =
-            calculateCarryWeight newCarryWeightCalculation data.coreSkillGroupList
+            calculateCarryWeight newCarryWeightCalculation data.attributeList data.coreSkillList
 
         { model with
             carryWeightCalculation = newCarryWeightCalculation
