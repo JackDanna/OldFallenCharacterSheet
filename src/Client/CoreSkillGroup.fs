@@ -5,7 +5,7 @@ open FallenLib.SkillDiceModEffect
 open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
-    | AttributeMsg of AttributeStat.Msg
+    | AttributeMsg of Attribute.Msg
     | ModifyCoreSkill of int * CoreSkill.Msg
     | RecalculateCoreSkillGroup
 
@@ -13,7 +13,7 @@ let init
     (skillDiceModEffectList: SkillDiceModEffect list)
     (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
     : CoreSkillGroup =
-    let attributeStat = AttributeStat.init ()
+    let attributeStat = Attribute.init ()
 
     { attributeStat = attributeStat
       coreSkillList = [ CoreSkill.init skillDiceModEffectList attributeDeterminedDiceModEffectList attributeStat ] }
@@ -26,7 +26,7 @@ let update
     : CoreSkillGroup =
     match msg with
     | AttributeMsg attributeRowMsg ->
-        let newAttributeStat = AttributeStat.update attributeRowMsg model.attributeStat
+        let newAttributeStat = Attribute.update attributeRowMsg model.attributeStat
 
         { model with
             attributeStat = newAttributeStat
@@ -72,7 +72,7 @@ open Feliz.Bulma
 
 let view (model: CoreSkillGroup) (dispatch: Msg -> unit) =
     Bulma.box [
-        AttributeStat.view model.attributeStat (AttributeMsg >> dispatch)
+        Attribute.view model.attributeStat (AttributeMsg >> dispatch)
         Html.ul (
             List.mapi
                 (fun position skill -> CoreSkill.view skill (fun msg -> dispatch (ModifyCoreSkill(position, msg))))
