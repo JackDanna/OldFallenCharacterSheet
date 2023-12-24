@@ -117,7 +117,7 @@ module FallenServerData =
 
             let attributeStat =
                 { attribute = AttributeName row.["desc"]
-                  lvl = Zero }
+                  level = Zero }
 
             let skillStatList: SkillStat list =
                 List.collect

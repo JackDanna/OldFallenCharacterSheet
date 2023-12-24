@@ -361,13 +361,13 @@ module Attribute =
 
     type Attribute =
         { attribute: AttributeName
-          lvl: Neg1To4 }
+          level: Neg1To4 }
 
-    let sumAttributesLevels attributeList attributeStatList =
-        attributeStatList
+    let sumAttributesLevels attributeNameList attributeList =
+        attributeList
         |> List.map (fun attributeStat ->
-            if List.contains attributeStat.attribute attributeList then
-                neg1To4ToInt attributeStat.lvl
+            if List.contains attributeStat.attribute attributeNameList then
+                neg1To4ToInt attributeStat.level
             else
                 0)
         |> List.sum
@@ -938,7 +938,7 @@ module CoreSkillGroup =
         let dicePoolMods =
             skillAdjustmentDiceModList
             @ [ neg1To4ToD6DicePoolMod lvl
-                neg1To4ToD6DicePoolMod attributeStat.lvl ]
+                neg1To4ToD6DicePoolMod attributeStat.level ]
               @ collectAttributeDeterminedDiceMod [ attributeStat.attribute ] attributeDeterminedDiceModEffectList
 
         modifyDicePoolByDicePoolModList baseDice dicePoolMods
@@ -984,7 +984,7 @@ module Vocation =
     let governingAttributesToDicePoolMod governingAttributes =
         governingAttributes
         |> List.filter (fun governingAttribute -> governingAttribute.isGoverning)
-        |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolMod governingAttribute.attributeStat.lvl)
+        |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolMod governingAttribute.attributeStat.level)
 
     let vocationToDicePool baseDice level governingAttributes skillAdjustmentDiceModList =
         let diceModList =
@@ -1248,7 +1248,7 @@ module MovementSpeedEffectForDisplay =
                 coreSkillGroup.attributeStat.attribute = movementSpeedCalculation.governingAttribute)
             |> (fun attributeLevelOption ->
                 match attributeLevelOption with
-                | Some coreSkillGroup -> coreSkillGroup.attributeStat.lvl
+                | Some coreSkillGroup -> coreSkillGroup.attributeStat.level
                 | None -> Neg1To4.Zero)
 
 
