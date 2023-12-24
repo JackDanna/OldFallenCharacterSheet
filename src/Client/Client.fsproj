@@ -9,6 +9,7 @@
     <Compile Include="Attribute.fs" />
     <Compile Include="Skill.fs" />
     <Compile Include="CoreSkill.fs" />
+    <Compile Include="OldCoreSkill.fs" />
     <Compile Include="CoreSkillGroup.fs" />
     <Compile Include="CoreSkillGroups.fs" />
     <None Include="index.html" />

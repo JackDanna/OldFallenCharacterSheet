@@ -6,7 +6,7 @@ open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
     | AttributeMsg of Attribute.Msg
-    | ModifyCoreSkill of int * CoreSkill.Msg
+    | ModifyCoreSkill of int * OldCoreSkill.Msg
     | RecalculateCoreSkillGroup
 
 let init
@@ -16,7 +16,7 @@ let init
     let attributeStat = Attribute.init ()
 
     { attributeStat = attributeStat
-      coreSkillList = [ CoreSkill.init skillDiceModEffectList attributeDeterminedDiceModEffectList attributeStat ] }
+      coreSkillList = [ OldCoreSkill.init skillDiceModEffectList attributeDeterminedDiceModEffectList attributeStat ] }
 
 let update
     (skillDiceModEffectList: SkillDiceModEffect list)
@@ -33,11 +33,11 @@ let update
             coreSkillList =
                 List.map
                     (fun coreSkill ->
-                        CoreSkill.update
+                        OldCoreSkill.update
                             skillDiceModEffectList
                             attributeDeterminedDiceModEffectList
                             newAttributeStat
-                            CoreSkill.CalculateDicePool
+                            OldCoreSkill.CalculateDicePool
                             coreSkill)
                     model.coreSkillList }
 
@@ -47,7 +47,7 @@ let update
                 model.coreSkillList
                 |> List.mapi (fun i skillRowModel ->
                     if position = i then
-                        CoreSkill.update
+                        OldCoreSkill.update
                             skillDiceModEffectList
                             attributeDeterminedDiceModEffectList
                             model.attributeStat
@@ -60,11 +60,11 @@ let update
             coreSkillList =
                 model.coreSkillList
                 |> List.map (fun coreSkill ->
-                    CoreSkill.update
+                    OldCoreSkill.update
                         skillDiceModEffectList
                         attributeDeterminedDiceModEffectList
                         model.attributeStat
-                        CoreSkill.CalculateDicePool
+                        OldCoreSkill.CalculateDicePool
                         coreSkill) }
 
 open Feliz
@@ -75,7 +75,7 @@ let view (model: CoreSkillGroup) (dispatch: Msg -> unit) =
         Attribute.view model.attributeStat (AttributeMsg >> dispatch)
         Html.ul (
             List.mapi
-                (fun position skill -> CoreSkill.view skill (fun msg -> dispatch (ModifyCoreSkill(position, msg))))
+                (fun position skill -> OldCoreSkill.view skill (fun msg -> dispatch (ModifyCoreSkill(position, msg))))
                 model.coreSkillList
         )
     ]
