@@ -116,7 +116,7 @@ module FallenServerData =
         makeFallenData "AttributeAndCoreSkillData.csv" (fun row ->
 
             let attributeStat =
-                { attribute = AttributeName row.["desc"]
+                { name = AttributeName row.["desc"]
                   level = Zero }
 
             let skillStatList: SkillStat list =

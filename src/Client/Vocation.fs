@@ -94,7 +94,7 @@ let governingAttributeItems (model: Vocation) (dispatch: Msg -> unit) =
                             ]
                         ]
                         Bulma.column [
-                            prop.text governingAttribute.attributeStat.attribute
+                            prop.text governingAttribute.attributeStat.name
                         ]
                     ]
                 ]

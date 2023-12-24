@@ -359,14 +359,12 @@ module Attribute =
 
     type AttributeName = string
 
-    type Attribute =
-        { attribute: AttributeName
-          level: Neg1To4 }
+    type Attribute = { name: AttributeName; level: Neg1To4 }
 
     let sumAttributesLevels attributeNameList attributeList =
         attributeList
         |> List.map (fun attributeStat ->
-            if List.contains attributeStat.attribute attributeNameList then
+            if List.contains attributeStat.name attributeNameList then
                 neg1To4ToInt attributeStat.level
             else
                 0)
@@ -939,7 +937,7 @@ module CoreSkillGroup =
             skillAdjustmentDiceModList
             @ [ neg1To4ToD6DicePoolMod lvl
                 neg1To4ToD6DicePoolMod attributeStat.level ]
-              @ collectAttributeDeterminedDiceMod [ attributeStat.attribute ] attributeDeterminedDiceModEffectList
+              @ collectAttributeDeterminedDiceMod [ attributeStat.name ] attributeDeterminedDiceModEffectList
 
         modifyDicePoolByDicePoolModList baseDice dicePoolMods
 
@@ -948,7 +946,7 @@ module CoreSkillGroup =
 
     let coreSkillGroupListToAttributes coreSkillGroupData =
         coreSkillGroupListToAttributeStats coreSkillGroupData
-        |> List.map (fun attributeStat -> attributeStat.attribute)
+        |> List.map (fun attributeStat -> attributeStat.name)
 
     let coreSkillGroupListToSkillStats (coreSkillGroupList: CoreSkillGroup list) =
         coreSkillGroupList
@@ -970,7 +968,7 @@ module Vocation =
         List.collect
             (fun governingAttribute ->
                 if governingAttribute.isGoverning then
-                    [ governingAttribute.attributeStat.attribute ]
+                    [ governingAttribute.attributeStat.name ]
                 else
                     [])
             governingAttributes
@@ -1009,7 +1007,7 @@ module Vocation =
               isGoverning =
                 List.collect
                     (fun (oldGoverningAttribute: GoverningAttribute) ->
-                        if (oldGoverningAttribute.attributeStat.attribute = attributeStat.attribute)
+                        if (oldGoverningAttribute.attributeStat.name = attributeStat.name)
                            && oldGoverningAttribute.isGoverning then
                             [ oldGoverningAttribute.isGoverning ]
                         else
@@ -1245,7 +1243,7 @@ module MovementSpeedEffectForDisplay =
         let attributeLevel =
             coreSkillGroupList
             |> List.tryFind (fun coreSkillGroup ->
-                coreSkillGroup.attributeStat.attribute = movementSpeedCalculation.governingAttribute)
+                coreSkillGroup.attributeStat.name = movementSpeedCalculation.governingAttribute)
             |> (fun attributeLevelOption ->
                 match attributeLevelOption with
                 | Some coreSkillGroup -> coreSkillGroup.attributeStat.level
