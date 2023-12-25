@@ -26,8 +26,6 @@ module FallenServerData =
     open FallenLib.ItemTier
     open FallenLib.Item
     open FallenLib.MovementSpeedEffect
-    open FallenLib.CoreSkillGroup
-    open FallenLib.SkillStat
     open FallenLib.SkillDiceModEffect
     open FallenLib.SkillDiceModEffectForDisplay
     open FallenLib.AttributeStatAdjustmentEffect

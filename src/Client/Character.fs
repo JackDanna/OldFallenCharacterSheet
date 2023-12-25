@@ -1,6 +1,5 @@
 module Character
 
-open FallenLib.CoreSkillGroup
 open FallenLib.Item
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat

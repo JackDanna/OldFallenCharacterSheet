@@ -2,7 +2,6 @@ module CarryWeightStat
 
 open FallenLib.CarryWeightStat
 open FallenLib.CarryWeightCalculation
-open FallenLib.CoreSkillGroup
 open FallenLib.WeightClass
 open FallenLib.CoreSkill
 open FallenLib.Attribute

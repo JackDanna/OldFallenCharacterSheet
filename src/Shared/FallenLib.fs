@@ -998,47 +998,6 @@ module CoreSkillDicePool =
                 attributeList
                 coreSkill)
 
-module CoreSkillGroup =
-
-    open Attribute
-    open SkillStat
-    open Dice
-    open AttributeDeterminedDiceModEffect
-
-    type CoreSkillGroup =
-        { attributeStat: Attribute
-          coreSkillList: SkillStat list }
-
-    let coreSkillToDicePool
-        baseDice
-        lvl
-        (attributeStat: Attribute)
-        skillAdjustmentDiceModList
-        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-        =
-
-        let dicePoolMods =
-            skillAdjustmentDiceModList
-            @ [ neg1To4ToD6DicePoolMod lvl
-                neg1To4ToD6DicePoolMod attributeStat.level ]
-              @ collectAttributeDeterminedDiceMod [ attributeStat.name ] attributeDeterminedDiceModEffectList
-
-        modifyDicePoolByDicePoolModList baseDice dicePoolMods
-
-    let coreSkillGroupListToAttributeStats (coreSkillGroups: CoreSkillGroup list) =
-        List.map (fun coreSkillGroup -> coreSkillGroup.attributeStat) coreSkillGroups
-
-    let coreSkillGroupListToAttributes coreSkillGroupData =
-        coreSkillGroupListToAttributeStats coreSkillGroupData
-        |> List.map (fun attributeStat -> attributeStat.name)
-
-    let coreSkillGroupListToSkillStats (coreSkillGroupList: CoreSkillGroup list) =
-        coreSkillGroupList
-        |> List.collect (fun coreSkillGroup -> coreSkillGroup.coreSkillList)
-
-    let coreSkillGroupListToAttributeStatsAndSkillStats (coreSkillGroupList: CoreSkillGroup list) =
-        coreSkillGroupListToAttributeStats coreSkillGroupList, coreSkillGroupListToSkillStats coreSkillGroupList
-
 module Vocation =
     open ZeroToFour
     open Attribute
