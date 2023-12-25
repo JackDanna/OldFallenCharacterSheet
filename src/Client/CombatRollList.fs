@@ -7,7 +7,7 @@ open FallenLib.DamageType
 open FallenLib.CalculatedAOE
 open FallenLib.Equipment
 open FallenLib.Attribute
-open FallenLib.VocationGroup
+open FallenLib.Vocation
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 open FallenLib.AttributeDeterminedDiceModEffect
@@ -20,7 +20,7 @@ let update
     (attributeDeterminedDiceModList: AttributeDeterminedDiceModEffect list)
     (equipmentList: Equipment list)
     (attributeStatList: Attribute list)
-    (vocationGroupList: VocationGroup list)
+    (vocationGroupList: Vocation list)
     : CombatRoll list =
 
     createCombatRolls

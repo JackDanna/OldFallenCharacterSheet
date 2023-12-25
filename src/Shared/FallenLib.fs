@@ -383,6 +383,11 @@ module Attribute =
         sumAttributesLevels attributeList attributeStatList
         |> intToD6DicePoolMod
 
+    let governingAttributesToDicePoolMod (attributes: Attribute list) (governingAttributes: AttributeName list) =
+        attributes
+        |> List.filter (fun attribute -> (List.contains attribute.name governingAttributes))
+        |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolMod governingAttribute.level)
+
 module Skill =
     open Neg1To4
 
@@ -947,15 +952,6 @@ module Effect =
 
 // Character Stats
 
-module SkillStat =
-    open Neg1To4
-    open Dice
-
-    type SkillStat =
-        { name: string
-          lvl: Neg1To4
-          dicePool: DicePool }
-
 module CoreSkillDicePool =
     open AttributeDeterminedDiceModEffect
     open SkillDiceModEffect
@@ -998,99 +994,144 @@ module CoreSkillDicePool =
                 attributeList
                 coreSkill)
 
+module VocationalSkillDicePool =
+    open SkillDiceModEffect
+    open AttributeDeterminedDiceModEffect
+    open Attribute
+    open Dice
+    open VocationalSkill
+
+    let calculateVocationalSkillDicePool
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (vocationalSkill: VocationalSkill)
+        : DicePool =
+
+        modifyDicePoolByDicePoolModList
+            baseDicePool
+            ([ vocationalSkill.skill.level
+               |> neg1To4ToD6DicePoolMod ]
+             @ (vocationalSkill.governingAttributes
+                |> governingAttributesToDicePoolMod attributeList)
+               @ (skillDiceModEffectList
+                  |> collectSkillAdjustmentDiceMods vocationalSkill.skill.name)
+                 @ (attributeDeterminedDiceModEffectList
+                    |> collectAttributeDeterminedDiceMod vocationalSkill.governingAttributes))
+
 module Vocation =
     open ZeroToFour
     open Attribute
     open Dice
+    open VocationalSkill
+    open VocationalSkillDicePool
 
-    type GoverningAttribute =
-        { isGoverning: bool
-          attributeStat: Attribute }
-
-    let collectGovernedAttributes governingAttributes =
-        List.collect
-            (fun governingAttribute ->
-                if governingAttribute.isGoverning then
-                    [ governingAttribute.attributeStat.name ]
-                else
-                    [])
-            governingAttributes
+    open SkillDiceModEffect
+    open AttributeDeterminedDiceModEffect
 
     type Vocation =
         { name: string
           level: ZeroToFour
-          governingAttributes: GoverningAttribute list
-          dicePool: DicePool }
+          governingAttributes: AttributeName list
+          vocationalSkills: VocationalSkill list }
 
-    let governingAttributesToDicePoolMod governingAttributes =
-        governingAttributes
-        |> List.filter (fun governingAttribute -> governingAttribute.isGoverning)
-        |> List.map (fun governingAttribute -> neg1To4ToD6DicePoolMod governingAttribute.attributeStat.level)
+    type VocationDicePool =
+        { dicePool: DicePool
+          vocationalSkillDicePools: DicePool list }
 
-    let vocationToDicePool baseDice level governingAttributes skillAdjustmentDiceModList =
-        let diceModList =
-            (governingAttributesToDicePoolMod governingAttributes)
-            @ [ zeroToFourToDicePoolMod level ]
-              @ skillAdjustmentDiceModList
+    type StringifiedVocationDicePool =
+        { dicePoolString: string
+          vocationalSkillDicePoolStrings: string list }
 
-        modifyDicePoolByDicePoolModList baseDice diceModList
+    let vocationToDicePool
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (vocation: Vocation)
+        =
 
-    let attributesToGoverningAttributesInit attributes =
-        List.map
-            (fun (attributeStat: Attribute) ->
-                { attributeStat = attributeStat
-                  isGoverning = false })
-            attributes
+        modifyDicePoolByDicePoolModList
+            baseDicePool
+            ((governingAttributesToDicePoolMod attributeList vocation.governingAttributes)
+             @ (vocation.level
+                |> zeroToFourToDicePoolMod
+                |> List.singleton)
+               @ (skillDiceModEffectList
+                  |> collectSkillAdjustmentDiceMods vocation.name)
+                 @ (attributeDeterminedDiceModEffectList
+                    |> collectAttributeDeterminedDiceMod vocation.governingAttributes))
 
-    let attributesToGoverningAttributes attributeStats oldGoverningAttributes =
+    let vocationToVocationDicePool
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (vocation: Vocation)
+        =
 
-        attributeStats
-        |> List.map (fun attributeStat ->
-            { attributeStat = attributeStat
-              isGoverning =
-                List.collect
-                    (fun (oldGoverningAttribute: GoverningAttribute) ->
-                        if (oldGoverningAttribute.attributeStat.name = attributeStat.name)
-                           && oldGoverningAttribute.isGoverning then
-                            [ oldGoverningAttribute.isGoverning ]
-                        else
-                            [])
-                    oldGoverningAttributes
-                |> List.isEmpty
-                |> not })
+        { dicePool =
+            vocationToDicePool skillDiceModEffectList attributeDeterminedDiceModEffectList attributeList vocation
+          vocationalSkillDicePools =
+            List.map
+                (fun vocationalSkill ->
+                    calculateVocationalSkillDicePool
+                        skillDiceModEffectList
+                        attributeDeterminedDiceModEffectList
+                        attributeList
+                        vocationalSkill)
+                vocation.vocationalSkills }
+
+    let vocationDicePoolToStringifiedVocationDicePool
+        (vocationDicePool: VocationDicePool)
+        : StringifiedVocationDicePool =
+        { dicePoolString = dicePoolToString vocationDicePool.dicePool
+          vocationalSkillDicePoolStrings = List.map dicePoolToString vocationDicePool.vocationalSkillDicePools }
+
+    let vocationDicePoolListToStringigiedVocationDicePoolList vocationDicePoolList =
+        List.map vocationDicePoolToStringifiedVocationDicePool vocationDicePoolList
+
+    let vocationToStringifiedVocationDicePool
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (vocation: Vocation)
+        =
+
+        vocation
+        |> vocationToVocationDicePool skillDiceModEffectList attributeDeterminedDiceModEffectList attributeList
+        |> vocationDicePoolToStringifiedVocationDicePool
+
 
 module VocationGroup =
 
     open Neg1To4
     open ZeroToFour
-    open SkillStat
     open Vocation
-    open Dice
-    open AttributeDeterminedDiceModEffect
+    open VocationalSkill
 
-    type VocationGroup =
-        { vocation: Vocation
-          vocationalSkills: SkillStat list }
+    let findVocationalSkillLvlGivenVocationalSkills
+        skillName
+        (defaultLvl: Neg1To4)
+        (vocationalSkillList: VocationalSkill list)
+        =
 
-    let findVocationalSkillLvlWithDefault skillName (defaultLvl: Neg1To4) (skillStatList: SkillStat list) =
-        skillStatList
-        |> List.filter (fun skill -> skill.name = skillName)
-        |> (fun (list: SkillStat list) ->
-            if list.Length = 0 then
+        vocationalSkillList
+        |> List.filter (fun vocationalSkill -> vocationalSkill.skill.name = skillName)
+        |> (fun vocationalSkillList ->
+            if vocationalSkillList.Length = 0 then
                 defaultLvl
             else
-                List.maxBy (fun (skill: SkillStat) -> skill.lvl) list
-                |> (fun skillList -> skillList.lvl))
+                List.maxBy (fun vocationalSkill -> vocationalSkill.skill.level) vocationalSkillList
+                |> (fun vocationalSkill -> vocationalSkill.skill.level))
 
-    let findVocationalSkillLvl
-        (vocationGroupList: VocationGroup list)
+    let findVocationalSkillLvlGivenVocations
+        (vocationList: Vocation list)
         (vocationalSkillName: string)
         (defaultLvl: Neg1To4)
         : Neg1To4 =
 
-        vocationGroupList
+        vocationList
         |> List.collect (fun vocation -> vocation.vocationalSkills)
-        |> findVocationalSkillLvlWithDefault vocationalSkillName defaultLvl
+        |> findVocationalSkillLvlGivenVocationalSkills vocationalSkillName defaultLvl
 
     let zeroToFourToNegOneToFour zeroToFour =
         match zeroToFour with
@@ -1100,23 +1141,7 @@ module VocationGroup =
         | Three -> Neg1To4.Three
         | Four -> Neg1To4.Four
 
-    let vocationalSkillToDicePool
-        baseDice
-        level
-        governingAttributes
-        skillAdjustmentDiceModList
-        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-        =
 
-        let diceModList =
-            (governingAttributesToDicePoolMod governingAttributes)
-            @ [ neg1To4ToD6DicePoolMod level ]
-              @ skillAdjustmentDiceModList
-                @ collectAttributeDeterminedDiceMod
-                    (collectGovernedAttributes governingAttributes)
-                    attributeDeterminedDiceModEffectList
-
-        modifyDicePoolByDicePoolModList baseDice diceModList
 
 module CarryWeightCalculation =
     open Attribute
@@ -1595,12 +1620,13 @@ module CombatRoll =
     open Item
     open WeaponClass
 
-    open SkillStat
     open MagicResourceForCombatCalculation
     open MagicSkill
     open MagicCombat
     open ConduitClass
     open AttributeDeterminedDiceModEffect
+    open Vocation
+    open VocationalSkill
 
     type CombatRoll =
         { name: string
@@ -1684,7 +1710,7 @@ module CombatRoll =
     let createWeaponCombatRolls
         equipmentList
         (attributeStats: Attribute list)
-        (vocationGroupList: VocationGroup list)
+        (vocationList: Vocation list)
         attributeDeterminedDiceModArray
         (combatRollGoverningAttributes: AttributeName list)
         : list<CombatRoll> =
@@ -1703,7 +1729,7 @@ module CombatRoll =
                         weaponItem.itemTier.baseDice
                         attributeDeterminedDiceModArray
                         attributeStats
-                        (findVocationalSkillLvl vocationGroupList weaponClass.name Zero)
+                        (findVocationalSkillLvlGivenVocations vocationList weaponClass.name Zero)
                         combatRollGoverningAttributes
 
                 let preloadedCreateHandVariationsCombatRolls =
@@ -1749,7 +1775,7 @@ module CombatRoll =
     let createMagicCombatRoll
         (magicResource: MagicResourceForCombatCalculation)
         (attributeStats: Attribute list)
-        (skillStat: SkillStat)
+        (vocationalSkill: VocationalSkill)
         (magicSkill: MagicSkill)
         (magicCombatType: MagicCombat)
         (rangeMap: Map<string, Range>)
@@ -1761,12 +1787,13 @@ module CombatRoll =
             magicResourceForCombatToResourceDescAndD6DicePoolMod magicResource
 
         let range =
-            determineMagicRange rangeMap magicCombatType.name (neg1To4ToInt skillStat.lvl)
+            determineMagicRange rangeMap magicCombatType.name (neg1To4ToInt vocationalSkill.skill.level)
 
         let diceMods =
             collectAttributeDeterminedDiceMod combatRollGoverningAttributes attributeDeterminedDiceModArray
             |> List.append [ sumAttributesD6DiceMods combatRollGoverningAttributes attributeStats
-                             neg1To4ToInt skillStat.lvl |> intToD6DicePoolMod
+                             neg1To4ToInt vocationalSkill.skill.level
+                             |> intToD6DicePoolMod
                              magicCombatType.dicePoolMod
                              resourceDice ]
 
@@ -1869,7 +1896,7 @@ module CombatRoll =
 
     let createMagicCombatRolls
         (attributeStats: Attribute list)
-        (vocationGroups: VocationGroup list)
+        (vocation: Vocation list)
         (magicSkillMap: Map<string, MagicSkill>)
         (magicCombatMap: Map<string, MagicCombat>)
         (equipment: Equipment list)
@@ -1880,19 +1907,23 @@ module CombatRoll =
 
         let magicMapKeys = magicSkillMap.Keys |> List.ofSeq
 
-        vocationGroups
+        vocation
         |> List.collect (fun vocationGroup ->
             vocationGroup.vocationalSkills
-            |> List.filter (fun skillStat -> List.contains skillStat.name magicMapKeys)
-            |> List.collect (fun skillStat ->
+            |> List.filter (fun vocationalSkill -> List.contains vocationalSkill.skill.name magicMapKeys)
+            |> List.collect (fun vocationalSkill ->
                 // Indexes into tho the magicMap for the type of Magic
-                let magicSkill = magicSkillMap.Item skillStat.name
+                let magicSkill = magicSkillMap.Item vocationalSkill.skill.name
 
                 // Maps across the magicCombat types that the magic is capable of
-                determineMagicCombatTypes magicSkill.isMeleeCapable skillStat.lvl (Seq.toList magicCombatMap.Values)
+                determineMagicCombatTypes
+                    magicSkill.isMeleeCapable
+                    vocationalSkill.skill.level
+                    (Seq.toList magicCombatMap.Values)
                 |> List.collect (fun magicCombatType ->
 
-                    let equipedConduits = getEquipedConduitItemsWithSkillName equipment skillStat.name
+                    let equipedConduits =
+                        getEquipedConduitItemsWithSkillName equipment vocationalSkill.skill.name
 
                     let magicResource: MagicResourceForCombatCalculation =
                         { magicResouceClass = magicSkill.resourceClass
@@ -1908,7 +1939,7 @@ module CombatRoll =
                                             rangeMap
                                             magicResource
                                             attributeStats
-                                            skillStat.lvl
+                                            vocationalSkill.skill.level
                                             magicSkill
                                             magicCombatType
                                             conduitClass
@@ -1925,7 +1956,7 @@ module CombatRoll =
                         createMagicCombatRoll
                             magicResource
                             attributeStats
-                            skillStat
+                            vocationalSkill
                             magicSkill
                             magicCombatType
                             rangeMap
@@ -1941,19 +1972,19 @@ module CombatRoll =
         (attributeDeterminedDiceModList: AttributeDeterminedDiceModEffect list)
         (equipmentList: Equipment list)
         (attributeStatList: Attribute list)
-        (vocationGroupList: VocationGroup list)
+        (vocationList: Vocation list)
         : CombatRoll list =
 
         List.append
             (createWeaponCombatRolls
                 equipmentList
                 attributeStatList
-                vocationGroupList
+                vocationList
                 attributeDeterminedDiceModList
                 combatRollGoverningAttributeList)
             (createMagicCombatRolls
                 attributeStatList
-                vocationGroupList
+                vocationList
                 magicSkillMap
                 magicCombatMap
                 equipmentList
@@ -1976,7 +2007,7 @@ module Character =
 
     open CombatRoll
     open Equipment
-    open VocationGroup
+    open Vocation
     open Container
     open ZeroToThree
     open EffectForDisplay
@@ -2003,7 +2034,8 @@ module Character =
           attributeList: Attribute list
           coreSkillList: CoreSkill list
           coreSkillDicePoolList: DicePool list
-          vocationGroupList: VocationGroup list
+          vocationList: Vocation list
+          vocationDicePoolList: VocationDicePool list
           equipmentList: Equipment list
           combatRollList: CombatRoll list
           containerList: Container list

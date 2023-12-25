@@ -2,134 +2,147 @@ module Vocation
 
 open FallenLib.Vocation
 open FallenLib.Attribute
-open FallenLib.Dice
-open FallenLib.SkillDiceModEffect
-open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg =
     | SetName of string
     | ZeroToFourStat of ZeroToFour.Msg
-    | ToggleGoverningAttribute of int
-    | SetAttributeStatsAndCalculateDicePools
+    | ToggleGoverningAttribute of AttributeName
+    | Insert
+    | Remove
+    | Modify of int * VocationalSkill.Msg
 
-let init (attributeStatList: Attribute List) : Vocation =
+let init () : Vocation =
     let lvl = ZeroToFour.init ()
-    let governingAttribues = attributesToGoverningAttributesInit attributeStatList
 
     { name = ""
       level = lvl
-      governingAttributes = governingAttribues
-      dicePool = vocationToDicePool baseDicePool lvl governingAttribues [] }
+      governingAttributes = []
+      vocationalSkills = [] }
 
-let update
-    (skillDiceModEffectList: SkillDiceModEffect list)
-    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-    (attributeStatList: Attribute List)
-    (msg: Msg)
-    (model: Vocation)
-    : Vocation =
+let update (attributeList: Attribute List) (msg: Msg) (model: Vocation) : Vocation =
     match msg with
     | SetName newName -> { model with name = newName }
 
     | ZeroToFourStat neg1ToStatMsg ->
 
-        let newLevel = ZeroToFour.update neg1ToStatMsg model.level
+        { model with level = ZeroToFour.update neg1ToStatMsg model.level }
 
-        { model with
-            level = newLevel
-            dicePool =
-                vocationToDicePool
-                    baseDicePool
-                    newLevel
+    | ToggleGoverningAttribute attributeName ->
+        // If the attributeName is already one of the governing attributes, remove it
+        if List.contains attributeName model.governingAttributes then
+            { model with
+                governingAttributes =
                     model.governingAttributes
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList) }
+                    |> List.filter (fun currentAttributeName -> attributeName <> currentAttributeName) }
+        // Else, if the attributeName isn't already one of the governing attributes, add it
+        else
+            { model with governingAttributes = List.append [ attributeName ] model.governingAttributes }
 
-    | ToggleGoverningAttribute position ->
-        let toggledGoverningAttributes =
-            model.governingAttributes
-            |> List.mapi (fun i governingAttribute ->
-                if position = i then
-                    { governingAttribute with isGoverning = not governingAttribute.isGoverning }
-                else
-                    governingAttribute)
+    | Insert -> { model with vocationalSkills = List.append model.vocationalSkills [ VocationalSkill.init () ] }
 
-        let newGoverningAttributes =
-            attributesToGoverningAttributes attributeStatList toggledGoverningAttributes
-
+    | Remove ->
         { model with
-            governingAttributes = newGoverningAttributes
-            dicePool =
-                vocationToDicePool
-                    baseDicePool
-                    model.level
-                    newGoverningAttributes
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList) }
+            vocationalSkills =
+                model.vocationalSkills
+                |> List.rev
+                |> List.tail
+                |> List.rev }
 
-    | SetAttributeStatsAndCalculateDicePools ->
-        let newGoverningAttributes =
-            attributesToGoverningAttributes attributeStatList model.governingAttributes
-
+    | Modify (position, msg) ->
         { model with
-            governingAttributes = newGoverningAttributes
-            dicePool =
-                vocationToDicePool
-                    baseDicePool
-                    model.level
-                    newGoverningAttributes
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList) }
+            vocationalSkills =
+                model.vocationalSkills
+                |> List.mapi (fun index vocationalSkill ->
+                    if position = index then
+                        VocationalSkill.update model.level msg vocationalSkill
+                    else
+                        vocationalSkill) }
 
 open Feliz
 open Feliz.Bulma
 
-let governingAttributeItems (model: Vocation) (dispatch: Msg -> unit) =
-    List.mapi
-        (fun i governingAttribute ->
-            Bulma.dropdownItem.a [
-                prop.onClick (fun _ -> dispatch (ToggleGoverningAttribute i))
-                prop.children [
-                    Bulma.columns [
-                        Bulma.column [
-                            Bulma.input.checkbox [
-                                prop.isChecked governingAttribute.isGoverning
+let governingAttributeItems (allAttributeNames: AttributeName list) (model: Vocation) (dispatch: Msg -> unit) =
+    Bulma.dropdown [
+        dropdown.isHoverable
+        prop.children [
+            Bulma.dropdownTrigger [
+                Bulma.button.button [
+                    Html.span "Gov. Att."
+                ]
+            ]
+            Bulma.dropdownMenu [
+
+                List.map
+                    (fun attributeName ->
+                        Bulma.dropdownItem.a [
+                            prop.onClick (fun _ -> dispatch (ToggleGoverningAttribute attributeName))
+                            prop.children [
+                                Bulma.columns [
+                                    Bulma.column [
+                                        Bulma.input.checkbox [
+                                            prop.isChecked (List.contains attributeName model.governingAttributes)
+                                        ]
+                                    ]
+                                    Bulma.column [ prop.text attributeName ]
+                                ]
                             ]
-                        ]
-                        Bulma.column [
-                            prop.text governingAttribute.attributeStat.name
-                        ]
-                    ]
-                ]
-            ])
-        model.governingAttributes
-
-let view (model: Vocation) (dispatch: Msg -> unit) =
-
-    Bulma.columns [
-        Bulma.column [
-            Bulma.input.text [
-                prop.value model.name
-                prop.onTextChange (fun value -> dispatch (SetName value))
+                        ])
+                    allAttributeNames
+                |> Bulma.dropdownContent
             ]
         ]
-        Bulma.column [
-            Bulma.dropdown [
-                dropdown.isHoverable
-                prop.children [
-                    Bulma.dropdownTrigger [
-                        Bulma.button.button [
-                            Html.span "Gov. Att."
-                        ]
-                    ]
-                    Bulma.dropdownMenu [
-                        governingAttributeItems model dispatch
-                        |> Bulma.dropdownContent
-                    ]
+    ]
+
+
+let view
+    (combatVocationalSkills: string list)
+    (allAttributeNames: AttributeName list)
+    (stringifiedVocationDicePool: StringifiedVocationDicePool)
+    (model: Vocation)
+    (dispatch: Msg -> unit)
+    =
+
+
+
+    Bulma.box [
+
+        Bulma.columns [
+            Bulma.column [
+                Bulma.input.text [
+                    prop.value model.name
+                    prop.onTextChange (fun value -> dispatch (SetName value))
                 ]
             ]
+            Bulma.column [
+                governingAttributeItems allAttributeNames model dispatch
+            ]
+            Bulma.column [
+                prop.text stringifiedVocationDicePool.dicePoolString
+            ]
+            Bulma.column [
+                ZeroToFour.view model.level (ZeroToFourStat >> dispatch)
+            ]
         ]
-        Bulma.column [
-            prop.text (dicePoolToString model.dicePool)
-        ]
-        Bulma.column [
-            ZeroToFour.view model.level (ZeroToFourStat >> dispatch)
-        ]
+
+        Html.ul (
+            List.append
+                (List.mapi2
+                    (fun position skillRow vocationalSkillDicePoolString ->
+                        VocationalSkill.view
+                            combatVocationalSkills
+                            model.level
+                            vocationalSkillDicePoolString
+                            skillRow
+                            (fun msg -> Modify(position, msg) |> dispatch))
+                    model.vocationalSkills
+                    stringifiedVocationDicePool.vocationalSkillDicePoolStrings)
+                [ Html.button [
+                      prop.onClick (fun _ -> dispatch Insert)
+                      prop.text "+"
+                  ]
+                  Html.button [
+                      prop.onClick (fun _ -> dispatch Remove)
+                      prop.text "-"
+                  ] ]
+        )
     ]

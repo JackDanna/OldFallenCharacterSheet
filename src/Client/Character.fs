@@ -14,11 +14,12 @@ open FallenLib.Attribute
 open FallenLib.CoreSkill
 open FallenLib.CoreSkillDicePool
 open FallenLib.Dice
+open FallenLib.Vocation
 
 type Msg =
     | AttributeListMsg of AttributeList.Msg
     | CoreSkillListMsg of CoreSkillList.Msg
-    | VocationGroupListMsg of VocationGroupList.Msg
+    | VocationGroupListMsg of VocationList.Msg
     | SetName of string
     | EquipmentListMsg of EquipmentList.Msg
     | ContainerListMsg of ContainerList.Msg
@@ -34,7 +35,8 @@ let init (attributeList: Attribute list) (coreSkillList: CoreSkill list) : Chara
       attributeList = attributeList
       coreSkillList = coreSkillList
       coreSkillDicePoolList = []
-      vocationGroupList = VocationGroupList.init attributeList
+      vocationList = VocationList.init ()
+      vocationDicePoolList = []
       equipmentList = EquipmentList.init ()
       combatRollList = []
       containerList = []
@@ -85,13 +87,6 @@ let update
         { model with
             attributeList = defaultAttributeList
             coreSkillList = defaultCoreSkillList
-            vocationGroupList =
-                VocationGroupList.update
-                    skillAdjustments
-                    attributeDeterminedDiceModEffects
-                    defaultAttributeList
-                    VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationGroupList
             coreSkillDicePoolList =
                 calculateCoreSkillDicePoolList
                     skillAdjustments
@@ -148,15 +143,10 @@ let update
     | VocationGroupListMsg vocationTableMsg ->
 
         let newVocationTables =
-            VocationGroupList.update
-                skillAdjustments
-                attributeDeterminedDiceModEffects
-                model.attributeList
-                vocationTableMsg
-                model.vocationGroupList
+            VocationList.update model.attributeList vocationTableMsg model.vocationList
 
         { model with
-            vocationGroupList = newVocationTables
+            vocationList = newVocationTables
             combatRollList = loadedCombatRollUpdate model.equipmentList model.attributeList newVocationTables }
 
     | SetName newName -> { model with name = newName }
@@ -178,19 +168,10 @@ let update
                 model.characterEffectForDisplayList
                 (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
-        let newVocationGroupList =
-            VocationGroupList.update
-                newSkillDiceModEffects
-                newAttributeDeterminedDiceModEffects
-                model.attributeList
-                VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                model.vocationGroupList
-
         { model with
-            vocationGroupList = newVocationGroupList
             equipmentList = newEquipmentList
             equipmentEffectForDisplayList = newEquipmentEffectForDisplayList
-            combatRollList = loadedCombatRollUpdate newEquipmentList model.attributeList newVocationGroupList
+            combatRollList = loadedCombatRollUpdate newEquipmentList model.attributeList model.vocationList
             coreSkillDicePoolList =
                 calculateCoreSkillDicePoolList
                     newSkillDiceModEffects
@@ -238,13 +219,6 @@ let update
         { model with
             containerList = newContainerList
             characterEffectForDisplayList = newCharacterEffectList
-            vocationGroupList =
-                VocationGroupList.update
-                    newSkillAdjustments
-                    newAttributeDeterminedDiceModEffects
-                    model.attributeList
-                    VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationGroupList
             coreSkillDicePoolList =
                 calculateCoreSkillDicePoolList
                     newSkillAdjustments
@@ -272,13 +246,6 @@ let update
 
         { model with
             characterEffectForDisplayList = newCharacterEffectList
-            vocationGroupList =
-                VocationGroupList.update
-                    newSkillAdjustments
-                    newAttributeDeterminedDiceModEffects
-                    model.attributeList
-                    VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationGroupList
             coreSkillDicePoolList =
                 calculateCoreSkillDicePoolList
                     newSkillAdjustments
@@ -347,7 +314,12 @@ let view
 
         |> AttributeList.view model.attributeList (AttributeListMsg >> dispatch)
 
-        VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
+        VocationList.view
+            combatVocationalSkill
+            (vocationDicePoolListToStringigiedVocationDicePoolList model.vocationDicePoolList)
+            (attributesToAttributeNames model.attributeList)
+            model.vocationList
+            (VocationGroupListMsg >> dispatch)
 
         DestinyPoints.view model.destinyPoints (DestinyPointsMsg >> dispatch)
 

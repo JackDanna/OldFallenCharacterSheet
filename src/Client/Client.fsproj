@@ -13,11 +13,10 @@
     <None Include="index.html" />
     <Compile Include="DestinyPoints.fs" />
     <Compile Include="ZeroToFour.fs" />
-    <Compile Include="Vocation.fs" />
     <Compile Include="VocationalSkillStat.fs" />
     <Compile Include="VocationalSkill.fs" />
-    <Compile Include="VocationGroup.fs" />
-    <Compile Include="VocationGroupList.fs" />
+    <Compile Include="Vocation.fs" />
+    <Compile Include="VocationList.fs" />
     <Compile Include="Item.fs" />
     <Compile Include="Equipment.fs" />
     <Compile Include="EquipmentList.fs" />

@@ -1,73 +1,48 @@
 module VocationalSkill
 
-open FallenLib.VocationGroup
-open FallenLib.Vocation
-open FallenLib.Dice
-open FallenLib.SkillStat
 open FallenLib.ZeroToFour
-open FallenLib.SkillDiceModEffect
-open FallenLib.AttributeDeterminedDiceModEffect
+open FallenLib.VocationalSkill
 
 type Msg =
     | SetName of string
     | VocationalSkillStatMsg of VocationalSkillStat.Msg
-    | CalculateDicePool
 
-let init (governingAttribute: GoverningAttribute list) : SkillStat =
-    let lvl = Neg1To4.init ()
-
-    { name = ""
-      lvl = lvl
-      dicePool = vocationalSkillToDicePool baseDicePool lvl governingAttribute [] [] }
+let init () =
+    { skill = { name = ""; level = Neg1To4.init () }
+      governingAttributes = [] }
 
 
-let update
-    (skillDiceModEffectList: SkillDiceModEffect list)
-    (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
-    (levelCap: ZeroToFour)
-    (governingAttributeList: GoverningAttribute list)
-    (msg: Msg)
-    (model: SkillStat)
-    : SkillStat =
+let update (levelCap: ZeroToFour) (msg: Msg) (model: VocationalSkill) : VocationalSkill =
     match msg with
-    | SetName newName -> { model with name = newName }
+    | SetName newName ->
+        { model with
+            skill =
+                { name = newName
+                  level = model.skill.level } }
     | VocationalSkillStatMsg vocationalSkillStatMsg ->
-        let lvl = VocationalSkillStat.update levelCap vocationalSkillStatMsg model.lvl
 
         { model with
-            lvl = lvl
-            dicePool =
-                vocationalSkillToDicePool
-                    baseDicePool
-                    lvl
-                    governingAttributeList
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList)
-                    attributeDeterminedDiceModEffectList }
-    | CalculateDicePool ->
-        let newLvl =
-            VocationalSkillStat.update levelCap VocationalSkillStat.Msg.CheckIfLevelCapExceeded model.lvl
-
-        { model with
-            lvl = newLvl
-            dicePool =
-                vocationalSkillToDicePool
-                    baseDicePool
-                    newLvl
-                    governingAttributeList
-                    (collectSkillAdjustmentDiceMods model.name skillDiceModEffectList)
-                    attributeDeterminedDiceModEffectList }
+            skill =
+                { level = VocationalSkillStat.update levelCap vocationalSkillStatMsg model.skill.level
+                  name = model.skill.name } }
 
 open Feliz
 open Feliz.Bulma
 
-let view (combatVocationalSkills: string list) (levelCap: ZeroToFour) (model: SkillStat) (dispatch: Msg -> unit) =
+let view
+    (combatVocationalSkills: string list)
+    (levelCap: ZeroToFour)
+    (vocationalSkillDicePoolString: string)
+    (model: VocationalSkill)
+    (dispatch: Msg -> unit)
+    =
     Bulma.columns [
         Bulma.column [
             Bulma.dropdown [
                 Bulma.dropdownTrigger [
                     Bulma.input.text [
                         prop.list "combatVocationalSkills"
-                        prop.defaultValue model.name
+                        prop.defaultValue model.skill.name
                         prop.onTextChange (fun value -> dispatch (SetName value))
                     ]
                     Html.datalist [
@@ -94,9 +69,9 @@ let view (combatVocationalSkills: string list) (levelCap: ZeroToFour) (model: Sk
             ]
         ]
         Bulma.column [
-            prop.text (dicePoolToString model.dicePool)
+            prop.text vocationalSkillDicePoolString
         ]
         Bulma.column [
-            VocationalSkillStat.view levelCap model.lvl (VocationalSkillStatMsg >> dispatch)
+            VocationalSkillStat.view levelCap model.skill.level (VocationalSkillStatMsg >> dispatch)
         ]
     ]
