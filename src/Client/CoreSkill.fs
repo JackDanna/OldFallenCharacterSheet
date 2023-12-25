@@ -2,6 +2,7 @@ module CoreSkill
 
 open FallenLib.CoreSkill
 open FallenLib.Neg1To4
+open FallenLib.Skill
 
 type Msg = Neg1To4Msg of Neg1To4.Msg
 
@@ -9,9 +10,13 @@ let init () =
     { skill = { name = ""; level = Zero }
       governingAttribute = "" }
 
-let update msg model =
+let update msg (model: CoreSkill) =
     match msg with
-    | Neg1To4Msg msg -> { model with skill.level = Neg1To4.update msg model.skill.level }
+    | Neg1To4Msg msg ->
+        { model with
+            skill =
+                { level = Neg1To4.update msg model.skill.level
+                  name = model.skill.name } }
 
 open Feliz
 open Feliz.Bulma

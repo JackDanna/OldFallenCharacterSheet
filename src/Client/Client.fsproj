@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="Neg1To4.fs" />
     <Compile Include="Attribute.fs" />
+    <Compile Include="Skill.fs" />
     <Compile Include="CoreSkill.fs" />
     <Compile Include="CoreSkillList.fs" />
     <Compile Include="AttributeList.fs" />
