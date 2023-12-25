@@ -28,7 +28,7 @@ open Feliz.Bulma
 
 let view
     (combatVocationalSkills: string list)
-    (stringifiedVocationDicePool: StringifiedVocationDicePool list)
+    (stringifiedVocationDicePoolList: StringifiedVocationDicePool list)
     (allAttributeNames: AttributeName list)
     (model: Vocation list)
     (dispatch: Msg -> unit)
@@ -46,21 +46,23 @@ let view
         Bulma.columns [
             columns.isCentered
             prop.children [
-                model
-                |> List.mapi (fun position vocationTable ->
-                    Bulma.column [
-                        Vocation.view
-                            combatVocationalSkills
-                            allAttributeNames
-                            stringifiedVocationDicePool[position]
-                            vocationTable
-                            (fun msg -> dispatch (Modify(position, msg)))
+                List.mapi2
+                    (fun position vocationTable stringifiedVocationDicePool ->
+                        Bulma.column [
+                            Vocation.view
+                                combatVocationalSkills
+                                allAttributeNames
+                                stringifiedVocationDicePool
+                                vocationTable
+                                (fun msg -> dispatch (Modify(position, msg)))
 
-                        Bulma.button.button [
-                            prop.onClick (fun _ -> dispatch (Remove position))
-                            prop.text "-"
-                        ]
-                    ])
+                            Bulma.button.button [
+                                prop.onClick (fun _ -> dispatch (Remove position))
+                                prop.text "-"
+                            ]
+                        ])
+                    model
+                    stringifiedVocationDicePoolList
                 |> Bulma.columns
             ]
         ]
