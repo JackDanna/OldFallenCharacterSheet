@@ -91,7 +91,13 @@ let update
                     attributeDeterminedDiceModEffects
                     defaultAttributeList
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
-                    model.vocationGroupList }
+                    model.vocationGroupList
+            coreSkillDicePoolList =
+                calculateCoreSkillDicePoolList
+                    skillAdjustments
+                    attributeDeterminedDiceModEffects
+                    defaultAttributeList
+                    defaultCoreSkillList }
 
     | AttributeListMsg msg ->
         let newAttributeList = AttributeList.update msg model.attributeList
