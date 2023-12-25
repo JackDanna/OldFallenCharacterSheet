@@ -276,7 +276,6 @@ module FallenServerData =
             { name = row.["name"]
               bottomPercent = float row.["bottomPercent"]
               topPercent = float row.["topPercent"]
-              percentOfMovementSpeed = float row.["percentOfMovementSpeed"]
               attributeDeterminedDiceModEffect =
                 attributeDeterminedDiceModEffectMap.Item row.["attributeDeterminedDiceModEffect"] })
 

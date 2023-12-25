@@ -1,17 +1,14 @@
 module EquipmentEffectForDisplayList
 
+open FallenLib.MovementSpeedEffect
 open FallenLib.EffectForDisplay
-open FallenLib.Attribute
-open FallenLib.CoreSkill
 
 type Msg = | RecalculateMovementSpeed
 
 let init () : EffectForDisplay list = []
 
 let update
-    (attributeList: Attribute list)
-    (coreSkillList: CoreSkill list)
-    (percentOfMovementSpeed: float)
+    (coreSkillAndAttributeData: CoreSkillAndAttributeData)
     (msg: Msg)
     (model: EffectForDisplay list)
     : EffectForDisplay list =
@@ -21,11 +18,7 @@ let update
         |> List.map (fun effectForDisplay ->
             EquipmentEffectForDisplay.update
                 (EquipmentEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
-                    MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(
-                        attributeList,
-                        coreSkillList,
-                        percentOfMovementSpeed
-                    )
+                    MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(coreSkillAndAttributeData)
                 ))
                 effectForDisplay)
 

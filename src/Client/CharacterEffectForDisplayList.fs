@@ -16,11 +16,7 @@ type Msg =
 let init () : EffectForDisplay list = []
 
 let update
-    (attributeList: Attribute list)
-    (coreSkillList: CoreSkill list)
-    (inventoryWeight: float)
-    (percentOfMovementSpeed: float)
-    (weightClassList: WeightClass list)
+    (coreSkillAndAttributeData: CoreSkillAndAttributeData)
     (characterEffectMap: Map<string, EffectForDisplay>)
     (movementSpeedCalculationMap: Map<string, MovementSpeedCalculation>)
     (msg: Msg)
@@ -41,7 +37,7 @@ let update
             |> List.append model
         elif movementSpeedCalculationMap.ContainsKey characterEffectName then
             (movementSpeedCalculationMap.Item characterEffectName)
-            |> determineMovementSpeedEffectForDisplay attributeList coreSkillList percentOfMovementSpeed
+            |> determineMovementSpeedEffectForDisplay coreSkillAndAttributeData
             |> MovementSpeedEffectForDisplay
             |> List.singleton
             |> List.append model
@@ -53,11 +49,7 @@ let update
         |> List.map (fun effectForDisplay ->
             CharacterEffectForDisplay.update
                 (CharacterEffectForDisplay.Msg.CalculationEffectForDisplayMsg(
-                    MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(
-                        attributeList,
-                        coreSkillList,
-                        percentOfMovementSpeed
-                    )
+                    MovementSpeedEffectForDisplay.Msg.RecalculateMovementSpeed(coreSkillAndAttributeData)
                 ))
                 effectForDisplay)
 

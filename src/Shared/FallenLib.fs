@@ -178,6 +178,7 @@ module Dice =
         | AddDice of DicePool
         | RemoveDice of DicePoolPenalty
 
+
     let emptyDicePool =
         { d4 = 0u
           d6 = 0u
@@ -271,6 +272,11 @@ module Dice =
             dicePool
 
         d4 + d6 + d8 + d10 + d12 + d20
+
+    let dicePoolModToInt dicePoolMod =
+        match dicePoolMod with
+        | AddDice dicePool -> dicePoolToNumDice dicePool |> int
+        | RemoveDice dicePoolPenalty -> int dicePoolPenalty * -1
 
     let modifyDicePoolByDicePoolModList dicePool dicePoolMods =
 
@@ -838,6 +844,10 @@ module MovementSpeedEffect =
 
     open Attribute
     open Neg1To4
+    open CoreSkill
+    open SkillDiceModEffect
+    open AttributeDeterminedDiceModEffect
+    open Dice
 
     type MovementSpeedCalculation =
         { name: string
@@ -847,39 +857,58 @@ module MovementSpeedEffect =
           governingSkill: string
           feetPerSkillLvl: uint }
 
-    let calculateMovementSpeed
-        percentOfMovementSpeed
-        movementSpeedCalculation
-        (attributeLvl: Neg1To4)
-        (skillLvl: Neg1To4)
-        =
-        let attributeMod =
-            neg1To4ToInt attributeLvl
-            * int movementSpeedCalculation.feetPerAttributeLvl
+    type CoreSkillAndAttributeData =
+        { coreSkillList: CoreSkill list
+          attributeList: Attribute list
+          skillDiceModEffectList: SkillDiceModEffect list
+          attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list }
 
-        let skillMod =
-            neg1To4ToInt skillLvl
-            * int movementSpeedCalculation.feetPerSkillLvl
+    let calculateMovementSpeed (coreSkillAndAttributeData: CoreSkillAndAttributeData) movementSpeedCalculation =
+
+        let attributeMod =
+            coreSkillAndAttributeData.attributeList
+            |> List.tryFind (fun attribute -> attribute.name = movementSpeedCalculation.governingAttribute)
+            |> (fun attributeLevelOption ->
+                match attributeLevelOption with
+                | Some attribute ->
+                    neg1To4ToInt attribute.level
+                    * int movementSpeedCalculation.feetPerAttributeLvl
+                | None -> 0)
+
+
+        let coreSkillMod =
+            coreSkillAndAttributeData.coreSkillList
+            |> List.tryFind (fun coreSkill -> coreSkill.skill.name = movementSpeedCalculation.governingSkill)
+            |> (fun coreSkillOption ->
+                match coreSkillOption with
+                | Some coreSkill ->
+                    neg1To4ToInt coreSkill.skill.level
+                    * int movementSpeedCalculation.feetPerSkillLvl
+                | None -> 0)
+
+        let skillDiceModInt =
+            coreSkillAndAttributeData.skillDiceModEffectList
+            |> collectSkillAdjustmentDiceMods movementSpeedCalculation.governingSkill
+            |> List.map dicePoolModToInt
+            |> List.sum
+
+        let attributeDeterminedDiceModInt =
+            coreSkillAndAttributeData.attributeDeterminedDiceModEffectList
+            |> collectAttributeDeterminedDiceMod [ movementSpeedCalculation.governingAttribute ]
+            |> List.map dicePoolModToInt
+            |> List.sum
 
         let movementSpeed =
-            (float movementSpeedCalculation.baseMovementSpeed
-             + float attributeMod
-             + float skillMod)
-            * percentOfMovementSpeed
+            List.sum [ int movementSpeedCalculation.baseMovementSpeed
+                       attributeMod
+                       coreSkillMod
+                       skillDiceModInt
+                       attributeDeterminedDiceModInt ]
 
-        if movementSpeed >= 0.0 then
+        if movementSpeed >= 0 then
             movementSpeed
         else
-            0.0
-
-    let createMovementSpeedString movementSpeedCalculation reflexLvl athleticsLvl percentOfMovementSpeed =
-        let decimalPlaces = 0
-
-        let movementSpeed =
-            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation reflexLvl athleticsLvl
-
-        let scaledMovementSpeed = float movementSpeed * percentOfMovementSpeed
-        sprintf "%s ft" (scaledMovementSpeed.ToString("F" + decimalPlaces.ToString()))
+            0
 
     let movementSpeedCalculationToSourceForDisplay movementSpeedCalculation =
         $"{movementSpeedCalculation.baseMovementSpeed} ft (base), +{movementSpeedCalculation.feetPerAttributeLvl} ft (per {movementSpeedCalculation.governingAttribute}), +{movementSpeedCalculation.feetPerSkillLvl} ft (per {movementSpeedCalculation.governingSkill})"
@@ -1132,7 +1161,6 @@ module VocationGroup =
 
 module CarryWeightCalculation =
     open Attribute
-    open VocationGroup
     open Neg1To4
     open Skill
     open CoreSkill
@@ -1175,7 +1203,6 @@ module WeightClass =
         { name: string
           bottomPercent: float
           topPercent: float
-          percentOfMovementSpeed: float
           attributeDeterminedDiceModEffect: AttributeDeterminedDiceModEffect }
 
     let determineWeightClass (maxCarryWeight: float) (inventoryWeight: float) (weightClassList: WeightClass list) =
@@ -1289,6 +1316,8 @@ module MovementSpeedEffectForDisplay =
     open TextEffectForDisplay
     open Attribute
     open CoreSkill
+    open SkillDiceModEffect
+    open AttributeDeterminedDiceModEffect
 
     type MovementSpeedEffectForDisplay =
         { movementSpeedCalculation: MovementSpeedCalculation
@@ -1296,32 +1325,12 @@ module MovementSpeedEffectForDisplay =
           durationAndSource: DurationAndSource }
 
     let determineMovementSpeedEffectForDisplay
-        (attributeList: Attribute list)
-        (coreSkillList: CoreSkill list)
-        (percentOfMovementSpeed: float)
+        (coreSkillAndAttributeData: CoreSkillAndAttributeData)
         (movementSpeedCalculation: MovementSpeedCalculation)
         : MovementSpeedEffectForDisplay =
 
-        let attributeLevel =
-            attributeList
-            |> List.tryFind (fun attribute -> attribute.name = movementSpeedCalculation.governingAttribute)
-            |> (fun attributeLevelOption ->
-                match attributeLevelOption with
-                | Some attribute -> attribute.level
-                | None -> Neg1To4.Zero)
-
-
-        let coreSkillLevel =
-            coreSkillList
-            |> List.tryFind (fun coreSkill -> coreSkill.skill.name = movementSpeedCalculation.governingSkill)
-            |> (fun coreSkillOption ->
-                match coreSkillOption with
-                | Some coreSkill -> coreSkill.skill.level
-                | None -> Neg1To4.Zero)
-
         { movementSpeedCalculation = movementSpeedCalculation
-          movementSpeed =
-            calculateMovementSpeed percentOfMovementSpeed movementSpeedCalculation attributeLevel coreSkillLevel
+          movementSpeed = calculateMovementSpeed coreSkillAndAttributeData movementSpeedCalculation
           durationAndSource =
             { duration = indefiniteStringForDuration
               source = movementSpeedCalculationToSourceForDisplay movementSpeedCalculation } }
@@ -1376,7 +1385,7 @@ module EffectForDisplay =
                 [ attributeDeterminedDiceModEffectToForDisplay.attributeDeterminedDiceModEffect ]
             | _ -> [])
 
-    let itemEffectToEffectForDisplay percentOfMovementSpeed attributeList coreSkillList effect source =
+    let itemEffectToEffectForDisplay coreSkillAndAttributeData effect source =
 
         let durationAndSource =
             { duration = "While equiped"
@@ -1400,7 +1409,7 @@ module EffectForDisplay =
               durationAndSource = durationAndSource }
             |> AttributeDeterminedDiceModEffectForDisplay
         | MovementSpeedCalculation msc ->
-            determineMovementSpeedEffectForDisplay attributeList coreSkillList percentOfMovementSpeed msc
+            determineMovementSpeedEffectForDisplay coreSkillAndAttributeData msc
             |> MovementSpeedEffectForDisplay
 
     let effectForDisplayToTextEffectForDisplay effectForDisplay =
@@ -2044,11 +2053,6 @@ module Character =
           equipmentEffectForDisplayList: EffectForDisplay list
           characterInformation: CharacterInformation
           carryWeightStatOption: CarryWeightStat option }
-
-    let carryWeightStatOptionToPercentOfMovementSpeed (carryWeightStatOption: CarryWeightStat option) =
-        match carryWeightStatOption with
-        | Some carryWeightStat -> carryWeightStat.weightClass.percentOfMovementSpeed
-        | _ -> 1.00
 
     let carryWeightStatOptionToAttributeDeterminedDiceMod (carryWeightStatOption: CarryWeightStat option) =
         match carryWeightStatOption with

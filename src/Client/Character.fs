@@ -72,6 +72,12 @@ let update
             model.characterEffectForDisplayList
             (carryWeightStatOptionToAttributeDeterminedDiceMod model.carryWeightStatOption)
 
+    let coreSkillAndAttributeData =
+        { attributeList = model.attributeList
+          coreSkillList = model.coreSkillList
+          skillDiceModEffectList = skillAdjustments
+          attributeDeterminedDiceModEffectList = attributeDeterminedDiceModEffects }
+
     match msg with
     | SetDefault ->
 
@@ -85,6 +91,7 @@ let update
                     defaultAttributeList
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
+
     | CoreSkillListMsg msg ->
         let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
 
@@ -98,6 +105,12 @@ let update
                 CarryWeightStatOption.Msg.Recalculate
                 model.carryWeightStatOption
 
+        let newCoreSkillAndAttributeData =
+            { attributeList = model.attributeList
+              coreSkillList = newCoreSkillList
+              skillDiceModEffectList = skillAdjustments
+              attributeDeterminedDiceModEffectList = attributeDeterminedDiceModEffects }
+
         { model with
             coreSkillList = newCoreSkillList
             carryWeightStatOption = newCarryWeightStatOption
@@ -109,20 +122,14 @@ let update
                     newCoreSkillList
             characterEffectForDisplayList =
                 CharacterEffectForDisplayList.update
-                    model.attributeList
-                    newCoreSkillList
-                    (calculateCharacterWeight model.equipmentList model.containerList)
-                    (carryWeightStatOptionToPercentOfMovementSpeed newCarryWeightStatOption)
-                    weightClassList
+                    newCoreSkillAndAttributeData
                     characterEffectMap
                     movementSpeedCalculationMap
                     CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
                     model.characterEffectForDisplayList
             equipmentEffectForDisplayList =
                 EquipmentEffectForDisplayList.update
-                    model.attributeList
-                    newCoreSkillList
-                    (carryWeightStatOptionToPercentOfMovementSpeed newCarryWeightStatOption)
+                    newCoreSkillAndAttributeData
                     EquipmentEffectForDisplayList.Msg.RecalculateMovementSpeed
                     model.equipmentEffectForDisplayList }
 
@@ -151,12 +158,7 @@ let update
             newEquipmentList
             |> equipmentListToEquipedEquipmentEffects
             |> List.map (fun (itemName, itemEffect) ->
-                itemEffectToEffectForDisplay
-                    (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
-                    model.attributeList
-                    model.coreSkillList
-                    itemEffect
-                    itemName)
+                itemEffectToEffectForDisplay coreSkillAndAttributeData itemEffect itemName)
 
         let (newSkillDiceModEffects, newAttributeDeterminedDiceModEffects) =
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
@@ -185,11 +187,10 @@ let update
                     model.coreSkillList
             characterEffectForDisplayList =
                 CharacterEffectForDisplayList.update
-                    model.attributeList
-                    model.coreSkillList
-                    (calculateCharacterWeight newEquipmentList model.containerList)
-                    (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
-                    weightClassList
+                    { attributeList = model.attributeList
+                      coreSkillList = model.coreSkillList
+                      skillDiceModEffectList = newSkillDiceModEffects
+                      attributeDeterminedDiceModEffectList = newAttributeDeterminedDiceModEffects }
                     characterEffectMap
                     movementSpeedCalculationMap
                     CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
@@ -210,11 +211,7 @@ let update
 
         let newCharacterEffectList =
             CharacterEffectForDisplayList.update
-                model.attributeList
-                model.coreSkillList
-                (calculateCharacterWeight model.equipmentList newContainerList)
-                (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
-                weightClassList
+                coreSkillAndAttributeData
                 characterEffectMap
                 movementSpeedCalculationMap
                 CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
@@ -249,11 +246,7 @@ let update
     | CharacterEffectListMsg msg ->
         let newCharacterEffectList =
             CharacterEffectForDisplayList.update
-                model.attributeList
-                model.coreSkillList
-                (calculateCharacterWeight model.equipmentList model.containerList)
-                (carryWeightStatOptionToPercentOfMovementSpeed model.carryWeightStatOption)
-                weightClassList
+                coreSkillAndAttributeData
                 characterEffectMap
                 movementSpeedCalculationMap
                 msg
