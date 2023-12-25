@@ -1,3 +1,0 @@
-module CoreSkillList
-
-open FallenLib.

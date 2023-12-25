@@ -1,11 +1,7 @@
 module MovementSpeedEffectForDisplay
 
-open FallenLib.CoreSkill
-open FallenLib.Attribute
 open FallenLib.MovementSpeedEffect
 open FallenLib.MovementSpeedEffectForDisplay
-open FallenLib.SkillDiceModEffect
-open FallenLib.AttributeDeterminedDiceModEffect
 
 type Msg = RecalculateMovementSpeed of CoreSkillAndAttributeData
 

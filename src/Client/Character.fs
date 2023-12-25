@@ -14,8 +14,10 @@ open FallenLib.WeightClass
 open FallenLib.Attribute
 open FallenLib.CoreSkill
 open FallenLib.CoreSkillDicePool
+open FallenLib.Dice
 
 type Msg =
+    | AttributeListMsg of AttributeList.Msg
     | CoreSkillListMsg of CoreSkillList.Msg
     | VocationGroupListMsg of VocationGroupList.Msg
     | SetName of string
@@ -91,6 +93,11 @@ let update
                     defaultAttributeList
                     VocationGroupList.Msg.SetAttributeStatsAndCalculateDicePools
                     model.vocationGroupList }
+
+    | AttributeListMsg msg ->
+        let newAttributeList = AttributeList.update msg model.attributeList
+
+        { model with attributeList = newAttributeList }
 
     | CoreSkillListMsg msg ->
         let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
@@ -328,7 +335,12 @@ let view
         ]
         |> Bulma.content
 
-        CoreSkillList.view model.coreSkillList (CoreSkillListMsg >> dispatch)
+        CoreSkillList.view
+            (List.map dicePoolToString model.coreSkillDicePoolList)
+            model.coreSkillList
+            (CoreSkillListMsg >> dispatch)
+
+        |> AttributeList.view model.attributeList (AttributeListMsg >> dispatch)
 
         VocationGroupList.view combatVocationalSkill model.vocationGroupList (VocationGroupListMsg >> dispatch)
 
