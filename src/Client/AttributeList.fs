@@ -1,7 +1,6 @@
 module AttributeList
 
 open FallenLib.Attribute
-open FallenLib.CoreSkill
 
 type Msg = ModifyAttribute of int * Attribute.Msg
 
