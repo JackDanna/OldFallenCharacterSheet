@@ -2090,15 +2090,15 @@ module Character =
 
     let collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
         equipmentEffectForDisplayList
-        characterEffectList
+        characterEffectForDisplayList
         carryWeightStatAttributeDeterminedDiceModList
         =
         effectForDisplayListToSkillDiceModEffectList (
             equipmentEffectForDisplayList
-            @ characterEffectList
+            @ characterEffectForDisplayList
         ),
         effectForDisplayListToAttributeDeterminedDiceModEffectList (
             equipmentEffectForDisplayList
-            @ characterEffectList
+            @ characterEffectForDisplayList
         )
         @ carryWeightStatAttributeDeterminedDiceModList
