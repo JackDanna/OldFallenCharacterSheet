@@ -120,18 +120,18 @@ Superior Leather Cuirass and Pauldrons,1,Phy. Def. 0.5,Superior,24/24,4,3 bc
 Superior Leather Cuisses and Greaves,1,Phy. Def. 0.5,Superior,24/24,3,2 bc
 Superior Leather Vambrace,1,Phy. Def. 0.5,Superior,24/24,2,1.5 bc
 Chainmail Coif,1,Phy. Def. 0.75,Superior,24/24,4,11.2 bc
-Rusted Chainmail Shirt,1,Phy. Def. 1,Compromised,3/3,20,1 bc
-Chainmail Shirt,1,Phy. Def. 1,Mundane,12/12,20,22.4 bc
+Rusted Chainmail Shirt,1,Phy. Def. 0.75,Compromised,3/3,20,1 bc
+Chainmail Shirt,1,Phy. Def. 0.75,Mundane,12/12,20,22.4 bc
 Chainmail Leggings,1,Phy. Def. 0.75,Mundane,12/12,12,11.2 bc
 Chainmail Sleeves,1,Phy. Def. 0.75,Mundane,12/12,11,11.2 bc
 Half Helm,1,Phy. Def. 1,Mundane,12/12,5,22.5 bc
 Brigandine Cuirass and Pauldrons,1,Phy. Def. 1,Mundane,12/12,21,60 bc
 Brigandine Cuisses and Greaves,1,Phy. Def. 1,Mundane,12/12,14,40.5 bc
 Brigandine Vambrace and Gauntlets,1,"Phy. Def. 1, Hand Protection Unarmed",Mundane,12/12,12,27.75 bc
-Plate Full Helm,1,Phy. Def. 1.25,Mundane,12/12,6,225 bc
+Plate Full Helm,1,Phy. Def. 1.35,Mundane,12/12,6,225 bc
 Plate Cuirass and Pauldrons,1,Phy. Def. 1.5,Mundane,12/12,23,450 bc
-Plate Cuisses and Greaves,1,Phy. Def. 1.25,Mundane,12/12,15,300 bc
-Plate Vambrace and Gauntlets,1,"Phy. Def. 1.25, Hand Protection Unarmed",Mundane,12/12,13,150 bc
+Plate Cuisses and Greaves,1,Phy. Def. 1.35,Mundane,12/12,15,300 bc
+Plate Vambrace and Gauntlets,1,"Phy. Def. 1.35, Hand Protection Unarmed",Mundane,12/12,13,150 bc
 "Small Shield (Buckler, Targe, Parma)",1,Phy. Def. 1,Mundane,12/12,4,2 bc
 Kite Shield,1,Phy. Def. 2,Mundane,12/12,8,7 bc
 Hoplon Shield,1,Phy. Def. 2,Mundane,12/12,8,7 bc
