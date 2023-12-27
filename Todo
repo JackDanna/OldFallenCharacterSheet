@@ -1,5 +1,3 @@
-Removed Quantity from the item Data csv
-
 Possible add item instance. This would contian a uuid, item name
 
 containers should have quantity
