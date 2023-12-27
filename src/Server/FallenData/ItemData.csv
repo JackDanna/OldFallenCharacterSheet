@@ -1,4 +1,5 @@
 desc,quantity,itemClasses,itemTier,durability,weight,value
+Leather Cuisses and Greaves of Speed,1,"Phy. Def. 0.5, 4-Legged Movement Speed",Mundane,12/12,3,2 bc
 Copper Coin,1,Misc,Mundane,,0.02," 1 cc"
 Bronze Coin,1,Misc,Mundane,,0.02," 1 bc"
 Gold Coin,1,Misc,Mundane,,0.02," 1 gc"
