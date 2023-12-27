@@ -20,6 +20,4 @@ Removed percent of movement speed and just use AttributeGovernedSkillMod to redu
 
 Carry Weight may also need to factor in AttributeGovernedSkillMods, but only once it has all of them from character and equipment, basically carry weight can be effected by other mods, just not the one that it applies to skills. Else that would be recursive hell.
 
-Pull Dice pool out of skillsStat
-
 Removed equiped equipment
