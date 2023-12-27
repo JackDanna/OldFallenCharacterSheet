@@ -122,7 +122,16 @@ let update
                     characterEffectMap
                     movementSpeedCalculationMap
                     CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
-                    model.characterEffectForDisplayList }
+                    model.characterEffectForDisplayList
+            carryWeightStatOption =
+                CarryWeightStatOption.update
+                    (calculateCharacterWeight model.equipmentList model.containerList)
+                    newAttributeList
+                    model.coreSkillList
+                    carryWeightCalculationMap
+                    weightClassList
+                    (CarryWeightStatOption.Msg.Recalculate)
+                    model.carryWeightStatOption }
 
     | CoreSkillListMsg msg ->
         let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
