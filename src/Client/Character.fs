@@ -36,7 +36,7 @@ let init (attributeList: Attribute list) (coreSkillList: CoreSkill list) : Chara
     { name = ""
       attributeList = attributeList
       coreSkillList = coreSkillList
-      coreSkillDicePoolList = []
+      coreSkillDicePoolList = calculateCoreSkillDicePoolList [] [] attributeList coreSkillList
       vocationList = vocationList
       vocationDicePoolList = vocationListToVocationDicePoolList [] [] attributeList vocationList
       equipmentList = EquipmentList.init ()
