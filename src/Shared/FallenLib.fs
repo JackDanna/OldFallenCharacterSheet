@@ -1080,13 +1080,24 @@ module Vocation =
                         vocationalSkill)
                 vocation.vocationalSkills }
 
+    let vocationListToVocationDicePoolList
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (vocationList: Vocation List)
+        =
+
+        List.map
+            (vocationToVocationDicePool skillDiceModEffectList attributeDeterminedDiceModEffectList attributeList)
+            vocationList
+
     let vocationDicePoolToStringifiedVocationDicePool
         (vocationDicePool: VocationDicePool)
         : StringifiedVocationDicePool =
         { dicePoolString = dicePoolToString vocationDicePool.dicePool
           vocationalSkillDicePoolStrings = List.map dicePoolToString vocationDicePool.vocationalSkillDicePools }
 
-    let vocationDicePoolListToStringigiedVocationDicePoolList vocationDicePoolList =
+    let vocationDicePoolListToStringifiedVocationDicePoolList vocationDicePoolList =
         List.map vocationDicePoolToStringifiedVocationDicePool vocationDicePoolList
 
     let vocationToStringifiedVocationDicePool
@@ -1099,6 +1110,19 @@ module Vocation =
         vocation
         |> vocationToVocationDicePool skillDiceModEffectList attributeDeterminedDiceModEffectList attributeList
         |> vocationDicePoolToStringifiedVocationDicePool
+
+    let vocationListToStringifiedVocationDicePoolList
+        (skillDiceModEffectList: SkillDiceModEffect list)
+        (attributeDeterminedDiceModEffectList: AttributeDeterminedDiceModEffect list)
+        (attributeList: Attribute list)
+        (vocationList: Vocation list)
+        =
+        List.map
+            (vocationToStringifiedVocationDicePool
+                skillDiceModEffectList
+                attributeDeterminedDiceModEffectList
+                attributeList)
+            vocationList
 
 
 module VocationGroup =

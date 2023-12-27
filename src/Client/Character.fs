@@ -31,12 +31,14 @@ type Msg =
 
 let init (attributeList: Attribute list) (coreSkillList: CoreSkill list) : Character =
 
+    let vocationList = VocationList.init ()
+
     { name = ""
       attributeList = attributeList
       coreSkillList = coreSkillList
       coreSkillDicePoolList = []
-      vocationList = VocationList.init ()
-      vocationDicePoolList = []
+      vocationList = vocationList
+      vocationDicePoolList = vocationListToVocationDicePoolList [] [] attributeList vocationList
       equipmentList = EquipmentList.init ()
       combatRollList = []
       containerList = []
@@ -146,6 +148,12 @@ let update
 
         { model with
             vocationList = newVocationList
+            vocationDicePoolList =
+                vocationListToVocationDicePoolList
+                    skillAdjustments
+                    attributeDeterminedDiceModEffects
+                    model.attributeList
+                    newVocationList
             combatRollList = loadedCombatRollUpdate model.equipmentList model.attributeList newVocationList }
 
     | SetName newName -> { model with name = newName }
@@ -315,7 +323,7 @@ let view
 
         VocationList.view
             combatVocationalSkill
-            (vocationDicePoolListToStringigiedVocationDicePoolList model.vocationDicePoolList)
+            (vocationDicePoolListToStringifiedVocationDicePoolList model.vocationDicePoolList)
             (attributesToAttributeNames model.attributeList)
             model.vocationList
             (VocationListMsg >> dispatch)
