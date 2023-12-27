@@ -12,10 +12,9 @@ type Msg =
     | Modify of int * VocationalSkill.Msg
 
 let init () : Vocation =
-    let lvl = ZeroToFour.init ()
 
     { name = ""
-      level = lvl
+      level = ZeroToFour.init ()
       governingAttributes = []
       vocationalSkills = [] }
 

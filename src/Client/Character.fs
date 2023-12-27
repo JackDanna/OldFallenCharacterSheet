@@ -19,7 +19,7 @@ open FallenLib.Vocation
 type Msg =
     | AttributeListMsg of AttributeList.Msg
     | CoreSkillListMsg of CoreSkillList.Msg
-    | VocationGroupListMsg of VocationList.Msg
+    | VocationListMsg of VocationList.Msg
     | SetName of string
     | EquipmentListMsg of EquipmentList.Msg
     | ContainerListMsg of ContainerList.Msg
@@ -140,14 +140,13 @@ let update
                     EquipmentEffectForDisplayList.Msg.RecalculateMovementSpeed
                     model.equipmentEffectForDisplayList }
 
-    | VocationGroupListMsg vocationTableMsg ->
+    | VocationListMsg msg ->
 
-        let newVocationTables =
-            VocationList.update model.attributeList vocationTableMsg model.vocationList
+        let newVocationList = VocationList.update model.attributeList msg model.vocationList
 
         { model with
-            vocationList = newVocationTables
-            combatRollList = loadedCombatRollUpdate model.equipmentList model.attributeList newVocationTables }
+            vocationList = newVocationList
+            combatRollList = loadedCombatRollUpdate model.equipmentList model.attributeList newVocationList }
 
     | SetName newName -> { model with name = newName }
 
@@ -319,7 +318,7 @@ let view
             (vocationDicePoolListToStringigiedVocationDicePoolList model.vocationDicePoolList)
             (attributesToAttributeNames model.attributeList)
             model.vocationList
-            (VocationGroupListMsg >> dispatch)
+            (VocationListMsg >> dispatch)
 
         DestinyPoints.view model.destinyPoints (DestinyPointsMsg >> dispatch)
 
