@@ -1626,6 +1626,12 @@ module EquipmentEffectForDisplay =
         equipmentToEquipedAttributeDeterminedDiceModEffects equipmentList
         @ effectForDisplayListToAttributeDeterminedDiceModEffectList characterEffectList
 
+    let equipmentListToEffectForDisplay coreSkillAndAttributeData equipmentList =
+        equipmentList
+        |> equipmentListToEquipedEquipmentEffects
+        |> List.map (fun (itemName, itemEffect) ->
+            itemEffectToEffectForDisplay coreSkillAndAttributeData itemEffect itemName)
+
 // Character Stuff
 
 module CombatRoll =

@@ -4,7 +4,7 @@ open FallenLib.Item
 open FallenLib.MagicSkill
 open FallenLib.MagicCombat
 open FallenLib.Range
-open FallenLib.Equipment
+open FallenLib.EquipmentEffectForDisplay
 open FallenLib.Character
 open FallenLib.EffectForDisplay
 open FallenLib.CarryWeightCalculation
@@ -131,7 +131,11 @@ let update
                     carryWeightCalculationMap
                     weightClassList
                     (CarryWeightStatOption.Msg.Recalculate)
-                    model.carryWeightStatOption }
+                    model.carryWeightStatOption
+            equipmentEffectForDisplayList =
+                equipmentListToEffectForDisplay
+                    { coreSkillAndAttributeData with attributeList = newAttributeList }
+                    model.equipmentList }
 
     | CoreSkillListMsg msg ->
         let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
@@ -196,10 +200,7 @@ let update
             EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
 
         let newEquipmentEffectForDisplayList =
-            newEquipmentList
-            |> equipmentListToEquipedEquipmentEffects
-            |> List.map (fun (itemName, itemEffect) ->
-                itemEffectToEffectForDisplay coreSkillAndAttributeData itemEffect itemName)
+            equipmentListToEffectForDisplay coreSkillAndAttributeData newEquipmentList
 
         let (newSkillDiceModEffects, newAttributeDeterminedDiceModEffects) =
             collectSkillAdjustmentsAndAttributeDeterminedDiceModEffects
