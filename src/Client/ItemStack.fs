@@ -19,13 +19,14 @@ open Feliz.Bulma
 
 let itemStackRowTableData (itemNameList: string list) (model: ItemStack) (dispatch: Msg -> unit) =
     List.append
-        [ Html.td [
+        [ (Html.td [
               Bulma.input.number [
                   prop.min 0
                   prop.value (int model.quantity)
                   prop.onChange (fun (num: int) -> dispatch (SetItemStackQuantity(uint num)))
               ]
-          ] ]
+           ]) ]
+
         (Item.itemRowColumns itemNameList model.item (ItemRowMsg >> dispatch))
 
 let view (itemNameList: string list) (model: ItemStack) (dispatch: Msg -> unit) =

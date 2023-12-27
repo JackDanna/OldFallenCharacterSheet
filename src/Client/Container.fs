@@ -51,8 +51,8 @@ open Feliz
 open Feliz.Bulma
 
 let itemHeaders =
-    [ "Name"
-      "#"
+    [ "#"
+      "Name"
       "Type"
       "Tier"
       //"Dur."
