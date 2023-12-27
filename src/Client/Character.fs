@@ -106,7 +106,13 @@ let update
                     skillAdjustments
                     attributeDeterminedDiceModEffects
                     newAttributeList
-                    model.coreSkillList }
+                    model.coreSkillList
+            vocationDicePoolList =
+                vocationListToVocationDicePoolList
+                    skillAdjustments
+                    attributeDeterminedDiceModEffects
+                    newAttributeList
+                    model.vocationList }
 
     | CoreSkillListMsg msg ->
         let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
