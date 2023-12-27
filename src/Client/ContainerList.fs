@@ -1,6 +1,7 @@
 module ContainerList
 
 open FallenLib.Container
+open FallenLib.ItemStack
 open FallenLib.Item
 
 type Msg =
@@ -10,18 +11,19 @@ type Msg =
 
 let init () : Container list = []
 
-let update (allItemList: Item list) (msg: Msg) (model: Container list) : Container List =
+let update (allItemStackList: ItemStack list) (msg: Msg) (model: Container list) : Container List =
     match msg with
     | ContainerMsg (position, containerMsg) ->
         model
         |> List.mapi (fun index container ->
             if position = index then
-                Container.update allItemList containerMsg container
+                Container.update allItemStackList containerMsg container
             else
                 container)
     | Insert itemContainerName ->
-        allItemList
-        |> List.find (fun item -> item.name = itemContainerName)
+        allItemStackList
+        |> List.find (fun itemStack -> itemStack.item.name = itemContainerName)
+        |> (fun itemStack -> itemStack.item)
         |> itemToItemNameAndContainerClasses
         |> List.map itemNameAndContainerClassToContainer
         |> List.append model

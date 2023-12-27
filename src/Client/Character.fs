@@ -15,6 +15,7 @@ open FallenLib.CoreSkill
 open FallenLib.CoreSkillDicePool
 open FallenLib.Dice
 open FallenLib.Vocation
+open FallenLib.ItemStack
 
 type Msg =
     | AttributeListMsg of AttributeList.Msg
@@ -51,7 +52,7 @@ let init (attributeList: Attribute list) (coreSkillList: CoreSkill list) : Chara
 let update
     (defaultAttributeList: Attribute list)
     (defaultCoreSkillList: CoreSkill list)
-    (allItemList: Item list)
+    (allItemStackList: ItemStack list)
     (magicSkillMap: Map<string, MagicSkill>)
     (magicCombatMap: Map<string, MagicCombat>)
     (rangeMap: Map<string, Range>)
@@ -197,7 +198,7 @@ let update
     | EquipmentListMsg equipmentRowListMsg ->
 
         let newEquipmentList =
-            EquipmentList.update allItemList equipmentRowListMsg model.equipmentList
+            EquipmentList.update allItemStackList equipmentRowListMsg model.equipmentList
 
         let newEquipmentEffectForDisplayList =
             equipmentListToEffectForDisplay coreSkillAndAttributeData newEquipmentList
@@ -240,7 +241,7 @@ let update
 
     | ContainerListMsg containerListMsg ->
         let newContainerList =
-            ContainerList.update allItemList containerListMsg model.containerList
+            ContainerList.update allItemStackList containerListMsg model.containerList
 
         let newCharacterEffectList =
             CharacterEffectForDisplayList.update
@@ -314,12 +315,13 @@ let view
     (carryWeightCalculationNameList: string list)
     (characterEffectKeyList: string list)
     (combatVocationalSkill)
-    (allItemList: Item list)
+    (allItemStackList: ItemStack list)
     (model: Character)
     (dispatch: Msg -> unit)
     =
 
-    let allItemNameList = (List.map (fun (item: Item) -> item.name) allItemList)
+    let allItemStackNameList =
+        (List.map (fun (itemStack: ItemStack) -> itemStack.item.name) allItemStackList)
 
     Bulma.container [
 
@@ -375,13 +377,13 @@ let view
 
         EquipmentEffectForDisplayList.view model.equipmentEffectForDisplayList
 
-        EquipmentList.view allItemNameList model.equipmentList (EquipmentListMsg >> dispatch)
+        EquipmentList.view allItemStackNameList model.equipmentList (EquipmentListMsg >> dispatch)
 
         CombatRollTable.view model.combatRollList
 
         ContainerList.view
-            (List.collect itemToContainerClassNames allItemList)
-            allItemNameList
+            (List.collect itemToContainerClassNames (itemStackListToItemList allItemStackList))
+            allItemStackNameList
             model.containerList
             (ContainerListMsg >> dispatch)
 

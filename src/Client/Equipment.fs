@@ -1,17 +1,17 @@
 module Equipment
 
 open FallenLib.Equipment
-open FallenLib.Item
+open FallenLib.ItemStack
 
 type Msg =
     | ItemStackRowMsg of ItemStack.Msg
     | SetEquipmentIsEquiped of bool
 
-let update (itemList: Item list) (msg: Msg) (model: Equipment) : Equipment =
+let update (itemStackList: ItemStack list) (msg: Msg) (model: Equipment) : Equipment =
     match msg with
     | ItemStackRowMsg itemRowMsg ->
         { isEquipped = false
-          itemStack = ItemStack.update itemList itemRowMsg model.itemStack }
+          itemStack = ItemStack.update itemStackList itemRowMsg model.itemStack }
 
     | SetEquipmentIsEquiped newIsEquiped -> { model with isEquipped = newIsEquiped }
 

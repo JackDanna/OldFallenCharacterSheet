@@ -17,7 +17,7 @@ let init (containerClas: ContainerClass) : Container =
       itemStackList = []
       containerClass = containerClas }
 
-let update (allItemList: Item list) (msg: Msg) (model: Container) : Container =
+let update (allItemStackList: ItemStack list) (msg: Msg) (model: Container) : Container =
     match msg with
     | ToggleIsEquipped isEquipped -> { model with isEquipped = isEquipped }
     | ModifyItemStackRow (position, msg) ->
@@ -26,14 +26,12 @@ let update (allItemList: Item list) (msg: Msg) (model: Container) : Container =
                 model.itemStackList
                 |> List.mapi (fun index item ->
                     if position = index then
-                        ItemStack.update allItemList msg item
+                        ItemStack.update allItemStackList msg item
                     else
                         item) }
     | Insert itemName ->
         let itemStack: ItemStack =
-            allItemList
-            |> List.find (fun item -> item.name = itemName)
-            |> (fun item -> { item = item; quantity = 1u })
+            List.find (fun item -> item.item.name = itemName) allItemStackList
 
         let currentWeight = sumItemStackListWeight model.itemStackList
 

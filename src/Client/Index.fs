@@ -24,7 +24,7 @@ let init () : Model * Cmd<Msg> =
     { fallenData =
         { defaultCoreSkillList = []
           defaultAttributeList = []
-          allItemList = []
+          allItemStackList = []
           magicSkillMap = Map.empty
           magicCombatMap = Map.empty
           rangeMap = Map.empty
@@ -46,7 +46,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                 Character.update
                     model.fallenData.defaultAttributeList
                     model.fallenData.defaultCoreSkillList
-                    model.fallenData.allItemList
+                    model.fallenData.allItemStackList
                     model.fallenData.magicSkillMap
                     model.fallenData.magicCombatMap
                     model.fallenData.rangeMap
@@ -65,7 +65,7 @@ let update (msg: Msg) (model: Model) : Model * Cmd<Msg> =
                 Character.update
                     newFallenData.defaultAttributeList
                     newFallenData.defaultCoreSkillList
-                    newFallenData.allItemList
+                    newFallenData.allItemStackList
                     newFallenData.magicSkillMap
                     newFallenData.magicCombatMap
                     newFallenData.rangeMap
@@ -117,7 +117,7 @@ let view (model: Model) (dispatch: Msg -> unit) =
                      @ (List.ofSeq model.fallenData.carryWeightCalculationMap.Keys)
                        @ (List.ofSeq model.fallenData.movementSpeedCalculationMap.Keys))
                     model.fallenData.combatVocationalSkill
-                    model.fallenData.allItemList
+                    model.fallenData.allItemStackList
                     model.character
                     (CharacterMsg >> dispatch)
             ]

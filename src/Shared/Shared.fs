@@ -10,6 +10,7 @@ open FallenLib.MovementSpeedEffect
 open FallenLib.WeightClass
 open FallenLib.Attribute
 open FallenLib.CoreSkill
+open FallenLib.ItemStack
 
 module Route =
     let builder typeName methodName =
@@ -18,7 +19,7 @@ module Route =
 type FallenData =
     { defaultAttributeList: Attribute List
       defaultCoreSkillList: CoreSkill List
-      allItemList: Item list
+      allItemStackList: ItemStack list
       magicSkillMap: Map<string, MagicSkill>
       magicCombatMap: Map<string, MagicCombat>
       rangeMap: Map<string, Range>

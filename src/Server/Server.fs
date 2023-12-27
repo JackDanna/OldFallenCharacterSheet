@@ -39,6 +39,7 @@ module FallenServerData =
     open FallenLib.WeightClass
     open FallenLib.CoreSkill
     open FallenLib.Skill
+    open FallenLib.ItemStack
 
     let makeFallenDataPath fileName =
         __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
@@ -409,14 +410,16 @@ module FallenServerData =
                 |> List.singleton
             | _ -> [])
 
-    let itemData =
+    let itemStackData =
         makeFallenData "ItemData.csv" (fun row ->
-            { name = string row.["desc"]
-              itemClasses =
-                stringToItemClassList weaponClassMap conduitClassMap weaponResourceClassMap row.["itemClasses"]
-              itemTier = itemTierMap.Item row.["itemTier"]
-              value = string row.["value"]
-              weight = float row.["weight"] })
+            { quantity = uint row.["quantity"]
+              item =
+                { name = string row.["desc"]
+                  itemClasses =
+                    stringToItemClassList weaponClassMap conduitClassMap weaponResourceClassMap row.["itemClasses"]
+                  itemTier = itemTierMap.Item row.["itemTier"]
+                  value = string row.["value"]
+                  weight = float row.["weight"] } })
 
     // CombatVocationSkills
 
@@ -432,7 +435,7 @@ let fallenDataApi: IFallenDataApi =
                 return
                     { defaultCoreSkillList = FallenServerData.coreSkillData
                       defaultAttributeList = FallenServerData.attributeData
-                      allItemList = FallenServerData.itemData
+                      allItemStackList = FallenServerData.itemStackData
                       magicSkillMap = FallenServerData.magicSkillMap
                       magicCombatMap = FallenServerData.magicCombatMap
                       rangeMap = FallenServerData.rangeMap

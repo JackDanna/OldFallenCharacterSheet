@@ -1539,6 +1539,9 @@ module ItemStack =
 
     type ItemStack = { item: Item; quantity: uint }
 
+    let itemStackListToItemList itemStackList =
+        List.map (fun itemStack -> itemStack.item) itemStackList
+
     let sumItemStackListWeight (itemStackList: ItemStack list) =
         itemStackList
         |> List.map (fun itemStack -> itemStack.item.weight * (float itemStack.quantity))

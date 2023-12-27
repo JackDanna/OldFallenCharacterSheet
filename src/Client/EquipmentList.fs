@@ -1,6 +1,6 @@
 module EquipmentList
 
-open FallenLib.Item
+open FallenLib.ItemStack
 open FallenLib.Equipment
 
 type Msg =
@@ -10,21 +10,19 @@ type Msg =
 
 let init () : Equipment list = []
 
-let update (allItemList: Item list) (msg: Msg) (model: Equipment list) : Equipment list =
+let update (allItemStackList: ItemStack list) (msg: Msg) (model: Equipment list) : Equipment list =
     match msg with
     | ModifyEquipmentRow (position, equipmentMsg) ->
         List.mapi
             (fun index equipment ->
                 if position = index then
-                    Equipment.update allItemList equipmentMsg equipment
+                    Equipment.update allItemStackList equipmentMsg equipment
                 else
                     equipment)
             model
     | Insert itemName ->
         { isEquipped = false
-          itemStack =
-            { quantity = 1u
-              item = (List.find (fun item -> item.name = itemName) allItemList) } }
+          itemStack = (List.find (fun itemStack -> itemStack.item.name = itemName) allItemStackList) }
         |> List.singleton
         |> List.append model
     | Remove position -> List.removeAt position model
