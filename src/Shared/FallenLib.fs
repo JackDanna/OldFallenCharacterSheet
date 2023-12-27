@@ -1539,42 +1539,47 @@ module ItemStack =
 
     type ItemStack = { item: Item; quantity: uint }
 
+    let sumItemStackListWeight (itemStackList: ItemStack list) =
+        itemStackList
+        |> List.map (fun itemStack -> itemStack.item.weight * (float itemStack.quantity))
+        |> List.sum
+
 module Container =
     open ContainerClass
-    open Item
+    open ItemStack
 
     type Container =
         { name: string
           containerClass: ContainerClass
           isEquipped: bool
-          itemList: Item list }
+          itemStackList: ItemStack list }
 
     let itemNameAndContainerClassToContainer (itemName, containerClass: ContainerClass) =
         { name = itemName
           containerClass = containerClass
           isEquipped = false
-          itemList = [] }
+          itemStackList = [] }
 
     let sumContainerListWeight (containerList: Container list) =
         containerList
-        |> List.map (fun container -> sumItemListWeight container.itemList)
+        |> List.map (fun container -> sumItemStackListWeight container.itemStackList)
         |> List.sum
 
 module Equipment =
     open Item
+    open ItemStack
     open ConduitClass
 
     type Equipment =
         { isEquipped: bool
-          item: Item
-          quantity: uint }
+          itemStack: ItemStack }
 
     let calculateEquipmentListWeight equipmentList =
         equipmentList
         |> List.fold
-            (fun acc (equipmentItem: Equipment) ->
-                equipmentItem.item.weight
-                * float equipmentItem.quantity
+            (fun acc (equipment: Equipment) ->
+                equipment.itemStack.item.weight
+                * float equipment.itemStack.quantity
                 + acc)
             0.0
 
@@ -1582,8 +1587,8 @@ module Equipment =
         equipmentList
         |> List.filter (fun equipmentItem ->
             equipmentItem.isEquipped
-            && equipmentItem.quantity > 0u)
-        |> List.map (fun equipmentItem -> equipmentItem.item)
+            && equipmentItem.itemStack.quantity > 0u)
+        |> List.map (fun equipmentItem -> equipmentItem.itemStack.item)
 
     let doesConduitEffectMagicSkill conduitClass skillName =
         conduitClass.effectedMagicSkills

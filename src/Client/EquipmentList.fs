@@ -22,8 +22,9 @@ let update (allItemList: Item list) (msg: Msg) (model: Equipment list) : Equipme
             model
     | Insert itemName ->
         { isEquipped = false
-          quantity = 1u
-          item = (List.find (fun item -> item.name = itemName) allItemList) }
+          itemStack =
+            { quantity = 1u
+              item = (List.find (fun item -> item.name = itemName) allItemList) } }
         |> List.singleton
         |> List.append model
     | Remove position -> List.removeAt position model

@@ -18,6 +18,7 @@
     <Compile Include="Vocation.fs" />
     <Compile Include="VocationList.fs" />
     <Compile Include="Item.fs" />
+    <Compile Include="ItemStack.fs" />
     <Compile Include="Equipment.fs" />
     <Compile Include="EquipmentList.fs" />
     <Compile Include="CombatRollList.fs" />

@@ -1,59 +1,65 @@
 module Container
 
-open FallenLib.Item
+open FallenLib.ItemStack
 open FallenLib.Container
 open FallenLib.ContainerClass
+open FallenLib.Item
 
 type Msg =
     | ToggleIsEquipped of bool
-    | ModifyItemRow of int * Item.Msg
+    | ModifyItemStackRow of int * ItemStack.Msg
     | Insert of string
     | Remove of int
 
 let init (containerClas: ContainerClass) : Container =
     { name = ""
       isEquipped = false
-      itemList = []
+      itemStackList = []
       containerClass = containerClas }
 
 let update (allItemList: Item list) (msg: Msg) (model: Container) : Container =
     match msg with
     | ToggleIsEquipped isEquipped -> { model with isEquipped = isEquipped }
-    | ModifyItemRow (position, itemMsg) ->
+    | ModifyItemStackRow (position, msg) ->
         { model with
-            itemList =
-                model.itemList
+            itemStackList =
+                model.itemStackList
                 |> List.mapi (fun index item ->
                     if position = index then
-                        Item.update allItemList itemMsg item
+                        ItemStack.update allItemList msg item
                     else
                         item) }
     | Insert itemName ->
-        let item: Item = List.find (fun item -> item.name = itemName) allItemList
-        let currentWeight = sumItemListWeight model.itemList
+        let itemStack: ItemStack =
+            allItemList
+            |> List.find (fun item -> item.name = itemName)
+            |> (fun item -> { item = item; quantity = 1u })
 
-        if item.weight + currentWeight > model.containerClass.weightCapacity then
+        let currentWeight = sumItemStackListWeight model.itemStackList
+
+        if itemStack.item.weight + currentWeight > model.containerClass.weightCapacity then
             model
         else
             { model with
-                itemList =
-                    item
+                itemStackList =
+                    itemStack
                     |> List.singleton
-                    |> List.append model.itemList }
-    | Remove position -> { model with itemList = List.removeAt position model.itemList }
+                    |> List.append model.itemStackList }
+    | Remove position -> { model with itemStackList = List.removeAt position model.itemStackList }
 
 open Feliz
 open Feliz.Bulma
 
 let itemHeaders =
     [ "Name"
+      "#"
       "Type"
       "Tier"
       //"Dur."
       "LB"
       "Value" ]
 
-let itemList (itemNameList: string list) (model: Item list) (dispatch: Msg -> unit) =
+let itemStackList (itemNameList: string list) (model: ItemStack list) (dispatch: Msg -> unit) =
     Bulma.table [
         table.isBordered
         prop.children [
@@ -64,9 +70,10 @@ let itemList (itemNameList: string list) (model: Item list) (dispatch: Msg -> un
             ]
             Html.tableBody (
                 List.mapi
-                    (fun position (item: Item) ->
+                    (fun position (itemStack: ItemStack) ->
                         let equipmentRowTableData =
-                            (Item.itemRowColumns itemNameList item (fun msg -> dispatch (ModifyItemRow(position, msg))))
+                            (ItemStack.itemStackRowTableData itemNameList itemStack (fun msg ->
+                                dispatch (ModifyItemStackRow(position, msg))))
 
                         let deleteEquipmentRowButton =
                             Html.td [
@@ -105,7 +112,8 @@ let view (itemNameList: string list) (model: Container) (dispatch: Msg -> unit) 
             prop.onCheckedChange (fun isChecked -> dispatch (ToggleIsEquipped isChecked))
         ]
         Html.div [
-            prop.text $"Container Capacity: {sumItemListWeight model.itemList}/{model.containerClass.weightCapacity} lb"
+            prop.text
+                $"Container Capacity: {sumItemStackListWeight model.itemStackList}/{model.containerClass.weightCapacity} lb"
         ]
-        itemList itemNameList model.itemList (dispatch)
+        itemStackList itemNameList model.itemStackList (dispatch)
     ]

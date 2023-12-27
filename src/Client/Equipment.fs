@@ -4,20 +4,16 @@ open FallenLib.Equipment
 open FallenLib.Item
 
 type Msg =
-    | ItemRowMsg of Item.Msg
+    | ItemStackRowMsg of ItemStack.Msg
     | SetEquipmentIsEquiped of bool
-    | SetEquipmentQuantity of uint
 
 let update (itemList: Item list) (msg: Msg) (model: Equipment) : Equipment =
     match msg with
-    | ItemRowMsg itemRowMsg ->
+    | ItemStackRowMsg itemRowMsg ->
         { isEquipped = false
-          item = Item.update itemList itemRowMsg model.item
-          quantity = 1u }
+          itemStack = ItemStack.update itemList itemRowMsg model.itemStack }
 
     | SetEquipmentIsEquiped newIsEquiped -> { model with isEquipped = newIsEquiped }
-
-    | SetEquipmentQuantity newQuantity -> { model with quantity = newQuantity }
 
 open Feliz
 open Feliz.Bulma
@@ -29,15 +25,8 @@ let equipmentRowTableData (itemNameList: string list) (model: Equipment) (dispat
                   prop.isChecked model.isEquipped
                   prop.onCheckedChange (fun isChecked -> dispatch (SetEquipmentIsEquiped(isChecked)))
               ]
-          ]
-          Html.td [
-              Bulma.input.number [
-                  prop.min 0
-                  prop.value (int model.quantity)
-                  prop.onChange (fun (num: int) -> dispatch (SetEquipmentQuantity(uint num)))
-              ]
           ] ]
-        (Item.itemRowColumns itemNameList model.item (ItemRowMsg >> dispatch))
+        (ItemStack.itemStackRowTableData itemNameList model.itemStack (ItemStackRowMsg >> dispatch))
 
 let view (itemNameList: string list) (model: Equipment) (dispatch: Msg -> unit) =
     equipmentRowTableData itemNameList model dispatch
