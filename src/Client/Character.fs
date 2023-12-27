@@ -112,7 +112,17 @@ let update
                     skillAdjustments
                     attributeDeterminedDiceModEffects
                     newAttributeList
-                    model.vocationList }
+                    model.vocationList
+            characterEffectForDisplayList =
+                CharacterEffectForDisplayList.update
+                    { attributeList = newAttributeList
+                      coreSkillList = model.coreSkillList
+                      skillDiceModEffectList = skillAdjustments
+                      attributeDeterminedDiceModEffectList = attributeDeterminedDiceModEffects }
+                    characterEffectMap
+                    movementSpeedCalculationMap
+                    CharacterEffectForDisplayList.Msg.RecalculateMovementSpeed
+                    model.characterEffectForDisplayList }
 
     | CoreSkillListMsg msg ->
         let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
