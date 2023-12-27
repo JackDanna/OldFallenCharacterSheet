@@ -99,7 +99,14 @@ let update
     | AttributeListMsg msg ->
         let newAttributeList = AttributeList.update msg model.attributeList
 
-        { model with attributeList = newAttributeList }
+        { model with
+            attributeList = newAttributeList
+            coreSkillDicePoolList =
+                calculateCoreSkillDicePoolList
+                    skillAdjustments
+                    attributeDeterminedDiceModEffects
+                    newAttributeList
+                    model.coreSkillList }
 
     | CoreSkillListMsg msg ->
         let newCoreSkillList = CoreSkillList.update msg model.coreSkillList
