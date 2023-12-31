@@ -336,7 +336,7 @@ Saddle - Exotic,1,Misc,Mundane,,40,60 bc
 Saddle - Military,1,Misc,Mundane,,30,20 bc
 Saddle - Pack,1,Misc,Mundane,,15,5 bc
 Saddle - Riding,1,Misc,Mundane,,25,10 bc
-Saddlebags,1,Misc,Mundane,,8,4 bc
+Saddlebags,1,50 lb container,Mundane,,8,4 bc
 "Amulet/Necklace, Exquisite",1,Misc,Mundane,,0.2,5 bc
 "Amulet/Necklace, Mundane",1,Misc,Mundane,,0.2,50 cc
 "Earrings, Exquisite",1,Misc,Mundane,,0.1,4 bc
