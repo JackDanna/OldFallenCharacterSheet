@@ -46,7 +46,7 @@ Torch,+0d6,+0d6,+1d6,2,Melee,"Fire, Bludgeon",Rapid,None,None,"{STR,RFX,INT}"
 Large Claws,+2d6,None,+1d6,2,Melee,"Slash, Bludgeon",Rapid,None,None,"{STR,RFX,INT}"
 Large Bite,+2d6,+2d6,None,4,Melee,"Pierce, Bludgeon",Focused,None,None,"{STR,RFX,INT}"
 Large Stomp,+1d6,+1d6,None,5,Melee,Bludgeon,Rapid,None,None,"{STR,RFX,INT}"
-Large Horns,+2d6,+2d6,None,3,Melee,Pierce,Rapid,None,None,
+Large Horns,+2d6,+1d6,None,3,Melee,Pierce,Rapid,None,None,
 Claws,+1d6,None,+1d6,0,Melee,Slash,Rapid,None,None,"{STR,RFX,INT}"
 Bite,+1d6,+1d6,None,2,Melee,"Pierce, Bludgeon",Focused,None,None,"{STR,RFX,INT}"
 Stomp,+0d6,+0d6,None,4,Melee,Bludgeon,Rapid,None,None,"{STR,RFX,INT}"
