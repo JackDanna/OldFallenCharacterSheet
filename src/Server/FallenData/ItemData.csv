@@ -92,13 +92,13 @@ Torch,1,Torch,Shoddy,9/9,1,1 cc
 Shiv,1,"Small Thrusting Point, Thrown Small Point",Shoddy,9/9,1,70 cc
 Shoddy Club,1,Medium Hafted Blunt,Shoddy,9/9,2,10 cc
 ,,,,,,
-Claws (Large),1,Claws (Large),Mundane,,0,None
+Large Claws,1,Large Claws,Mundane,,0,None
 Claws,1,Claws,Mundane,,0,None
-Bite (Large),1,Claws (Large),Mundane,,0,None
+Large Bite,1,Large Claws,Mundane,,0,None
 Bite,1,Bite,Mundane,,0,None
-Stomp (Large),1,Stomp (Large),Mundane,,0,None
-Stomp (Medium),1,Stomp (Medium),Mundane,,0,None
-Horns (Medium),1,Horns (Medium),Mundane,,0,None
+Large Stomp,1,Large Stomp,Mundane,,0,None
+Stomp,1,Stomp,Mundane,,0,None
+Horns,1,Horns,Mundane,,0,None
 ,,,,,,
 Natural Armor Level 1,1,Phy. Def. 1,Mundane,,0,None
 Natural Armor Level 2,1,Phy. Def. 2,Mundane,,0,None
