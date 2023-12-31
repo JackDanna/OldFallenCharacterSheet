@@ -8,7 +8,7 @@ Electrocraft,Electric,0,TRUE,Ichor
 Terracraft,"Slash, Bludgeon, Hew, Pierce",0,TRUE,Ichor
 Galecraft,"Slash, Bludgeon, Shockwave",0,TRUE,Ichor
 Cryocraft,Cold,0,TRUE,Ichor
-Naturecraft,"Slash, Bludgeon, Hew, Pierce, Poison",0,TRUE,Ichor
+Naturecraft,"Slash, Bludgeon, Hew, Pierce",0,TRUE,Ichor
 Toxincraft,Poison,0,TRUE,Ichor
 Soulcraft,Spiritual,0,TRUE,Ichor
 Shadowcraft,Necrotic,0,TRUE,Ichor
