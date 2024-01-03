@@ -1,4 +1,4 @@
-Possible add item instance. This would contian a uuid, item name
+Possible add item instance. This would contain a uuid, item name
 
 Add magic resource
 
@@ -13,3 +13,7 @@ Attribute Determined DIce mods are actually Skill governed by attribute mods
 Removed percent of movement speed and just use AttributeGovernedSkillMod to reduce the amount of speed
 
 Carry Weight may also need to factor in AttributeGovernedSkillMods, but only once it has all of them from character and equipment, basically carry weight can be effected by other mods, just not the one that it applies to skills. Else that would be recursive hell.
+
+Change imperceptive to apply for specific disability
+
+Use spell checker ove fallenData
