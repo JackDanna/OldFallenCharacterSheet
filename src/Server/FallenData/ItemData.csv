@@ -1,4 +1,9 @@
 desc,quantity,itemClasses,itemTier,durability,weight,value
+Smithing Stone Fragment,1,Misc,Mundane,,0.1,10 bc
+Smithing Stone Shard,1,Misc,Superior,,0.2,50 bc
+Large Smithing Stone Shard,1,Misc,Mastercraft,,1,100 bc
+Smithing Stone Chunk,1,Misc,Legendary,,5,250 bc
+Smithing Stone Slab,1,Misc,Artifact,,40,?
 Ogre's Spiked Club,1,"Reach Hafted Blunt, Reach Hafted Point",Mundane,12/12,14,41 cc
 Leather Cuisses and Greaves of Speed,1,"Phy. Def. 0.5, 4-Legged Movement Speed",Mundane,12/12,3,2 bc
 Copper Coin,1,Misc,Mundane,,0.02," 1 cc"
