@@ -109,35 +109,37 @@ Horns,1,Horns,Mundane,,0,None
 Natural Armor Level 1,1,Phy. Def. 1,Mundane,,0,None
 Natural Armor Level 2,1,Phy. Def. 2,Mundane,,0,None
 ,,,,,,
-Gambeson Coat,1,Phy. Def. 1,Mundane,12/12,5,2 bc
-Gambeson Leggings,1,Phy. Def. 0.5,Mundane,12/12,3,1 bc
-Superior Gambeson Coat,1,Phy. Def. 1,Superior,24/24,5,2 bc
-Superior Gambeson Leggings,1,Phy. Def. 0.5,Superior,24/24,3,1 bc
-Shoddy Leather Helmet,1,Phy. Def. 0.5,Shoddy,9/9,2,0.5 bc
-Shoddy Leather Cuirass and Pauldrons,1,Phy. Def. 0.5,Shoddy,9/9,4,3 bc
-Shoddy Leather Cuisses and Greaves,1,Phy. Def. 0.5,Shoddy,9/9,3,2 bc
-Shoddy Leather Vambrace,1,Phy. Def. 0.5,Shoddy,9/9,2,1.5 bc
-Leather Helmet,1,Phy. Def. 0.5,Mundane,12/12,2,0.5 bc
-Leather Cuirass and Pauldrons,1,Phy. Def. 0.5,Mundane,12/12,4,3 bc
-Leather Cuisses and Greaves,1,Phy. Def. 0.5,Mundane,12/12,3,2 bc
-Leather Vambrace,1,Phy. Def. 0.5,Mundane,12/12,2,1.5 bc
-Superior Leather Helmet,1,Phy. Def. 0.5,Superior,24/24,2,0.5 bc
-Superior Leather Cuirass and Pauldrons,1,Phy. Def. 0.5,Superior,24/24,4,3 bc
-Superior Leather Cuisses and Greaves,1,Phy. Def. 0.5,Superior,24/24,3,2 bc
-Superior Leather Vambrace,1,Phy. Def. 0.5,Superior,24/24,2,1.5 bc
-Chainmail Coif,1,Phy. Def. 0.75,Superior,24/24,4,11.2 bc
-Rusted Chainmail Shirt,1,Phy. Def. 0.75,Compromised,3/3,20,1 bc
-Chainmail Shirt,1,Phy. Def. 0.75,Mundane,12/12,20,22.4 bc
-Chainmail Leggings,1,Phy. Def. 0.75,Mundane,12/12,12,11.2 bc
-Chainmail Sleeves,1,Phy. Def. 0.75,Mundane,12/12,11,11.2 bc
-Half Helm,1,Phy. Def. 1,Mundane,12/12,5,22.5 bc
-Brigandine Cuirass and Pauldrons,1,Phy. Def. 1,Mundane,12/12,21,60 bc
-Brigandine Cuisses and Greaves,1,Phy. Def. 1,Mundane,12/12,14,40.5 bc
-Brigandine Vambrace and Gauntlets,1,"Phy. Def. 1, Hand Protection Unarmed",Mundane,12/12,12,27.75 bc
-Plate Full Helm,1,Phy. Def. 1.35,Mundane,12/12,6,225 bc
-Plate Cuirass and Pauldrons,1,Phy. Def. 1.5,Mundane,12/12,23,450 bc
-Plate Cuisses and Greaves,1,Phy. Def. 1.35,Mundane,12/12,15,300 bc
-Plate Vambrace and Gauntlets,1,"Phy. Def. 1.35, Hand Protection Unarmed",Mundane,12/12,13,150 bc
+Gambeson Coat,1,Phy. Def. 0.625,Mundane,12/12,5,3.13 bc
+Gambeson Leggings,1,Phy. Def. 0.375,Mundane,12/12,3,1.87 bc
+Superior Gambeson Coat,1,Phy. Def. 0.625,Superior,24/24,5,? bc
+Superior Gambeson Leggings,1,Phy. Def. 0.375,Superior,24/24,3,? bc
+,,,,,,
+Shoddy Leather Helmet,1,Phy. Def. 0.37,Shoddy,9/9,2,? bc
+Shoddy Leather Cuirass and Pauldrons,1,Phy. Def. 0.72,Shoddy,9/9,4,? bc
+Shoddy Leather Cuisses and Greaves,1,Phy. Def. 0.54,Shoddy,9/9,3,? bc
+Shoddy Leather Vambrace,1,Phy. Def. 0.37,Shoddy,9/9,2,? bc
+,,,,,,
+Leather Helmet,1,Phy. Def. 0.37,Mundane,12/12,2,1.82 bc
+Leather Cuirass and Pauldrons,1,Phy. Def. 0.72,Mundane,12/12,4,3.63 bc
+Leather Cuisses and Greaves,1,Phy. Def. 0.54,Mundane,12/12,3,2.73 bc
+Leather Vambrace,1,Phy. Def. 0.37,Mundane,12/12,2,1.82 bc
+Superior Leather Helmet,1,Phy. Def. 0.37,Superior,24/24,2,0.5 bc
+Superior Leather Cuirass and Pauldrons,1,Phy. Def. 0.72,Superior,24/24,4,3 bc
+Superior Leather Cuisses and Greaves,1,Phy. Def. 0.54,Superior,24/24,3,2 bc
+Superior Leather Vambrace,1,Phy. Def. 0.37,Superior,24/24,2,1.5 bc
+Chainmail Coif,1,Phy. Def. 0.25,Superior,24/24,4,6.38 bc
+Rusted Chainmail Shirt,1,Phy. Def. 1.28,Compromised,3/3,20,?
+Chainmail Shirt,1,Phy. Def. 1.28,Mundane,12/12,20,31.92 bc
+Chainmail Leggings,1,Phy. Def. 0.7,Mundane,12/12,12,19.15 bc
+Chainmail Sleeves,1,Phy. Def. 0.77,Mundane,12/12,11,17.55 bc
+Half Helm,1,Phy. Def. 0.38,Mundane,12/12,5,18.75 bc
+Brigandine Cuirass and Pauldrons,1,Phy. Def. 1.62,Mundane,12/12,21,78.75 bc
+Brigandine Cuisses and Greaves,1,Phy. Def. 1.08,Mundane,12/12,14,52.5 bc
+Brigandine Vambrace and Gauntlets,1,"Phy. Def. 0.92, Hand Protection Unarmed",Mundane,12/12,12,45 bc
+Plate Full Helm,1,Phy. Def. 0.53,Mundane,12/12,6,157 bc
+Plate Cuirass and Pauldrons,1,Phy. Def. 2.02,Mundane,12/12,23,603 bc
+Plate Cuisses and Greaves,1,Phy. Def. 1.31,Mundane,12/12,15,394 bc
+Plate Vambrace and Gauntlets,1,"Phy. Def. 1.14, Hand Protection Unarmed",Mundane,12/12,13,341 bc
 Buckler Shield,1,Phy. Def. 1,Mundane,12/12,4,2 bc
 Targe Shield,1,Phy. Def. 1,Mundane,12/12,4,2 bc
 Parma Shield,1,Phy. Def. 1,Mundane,12/12,4,2 bc
