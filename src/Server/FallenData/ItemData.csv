@@ -109,8 +109,34 @@ Horns,1,Horns,Mundane,,0,None
 Natural Armor Level 1,1,Phy. Def. 1,Mundane,,0,None
 Natural Armor Level 2,1,Phy. Def. 2,Mundane,,0,None
 ,,,,,,
+Gambeson Armor,1,Phy. Def. 1.00,Mundane,12/12,8,5 bc
 Gambeson Coat,1,Phy. Def. 0.625,Mundane,12/12,5,3.13 bc
 Gambeson Leggings,1,Phy. Def. 0.375,Mundane,12/12,3,1.87 bc
+,,,,,,
+Leather Armor,1,Phy. Def. 2,Quality,15/15,12,10 bc
+Leather Helmet,1,Phy. Def. 0.34,Quality,15/15,2,1.82 bc
+Leather Cuirass and Pauldrons,1,Phy. Def. 1.0,Quality,15/15,6,3.63 bc
+Leather Cuisses and Greaves,1,Phy. Def. 0.33,Quality,15/15,2,2.73 bc
+Leather Vambrace,1,Phy. Def. 0.33,Quality,15/15,2,1.82 bc
+,,,,,,
+Chainmail Armor,1,Phy. Def. 3,Excellent,21/21,47,75 bp
+Chainmail Coif,1,Phy. Def. 0.38,Excellent,21/21,6,9.57 bc
+Chainmail Short-sleeved Hauberk,1,Phy. Def. 1.15,Excellent,21/21,18,28.72 bc
+Chainmail Sleeves/Mittens,1,"Phy. Def. 0.77, Hand Protection Unarmed",Excellent,21/21,12,19.16 bc
+Chainmail Chausses,1,Phy. Def. 0.7,Excellent,21/21,11,17.55 bc
+,,,,,,
+Brigandine Armor,1,Phy. Def. 4,Exquisite,27/27,52,200 bc
+Half Helm,1,Phy. Def. 0.39,Exquisite,27/27,5,19.23 bc
+Brigandine Cuirass and Pauldrons,1,Phy. Def. 1.69,Exquisite,27/27,22,84.62 bc
+Brigandine Cuisses and Greaves,1,Phy. Def. 1.00,Exquisite,27/27,13,50 bc
+Brigandine Vambrace and Gauntlets,1,"Phy. Def. 0.92, Hand Protection Unarmed",Exquisite,27/27,12,46.15 bc
+,,,,,,
+Plate Armor,1,Phy. Def. 5,Mastercraft,33/33,57,1495 bc
+Plate Full Helm,1,Phy. Def. 0.53,Mastercraft,33/33,6,157.37 bc
+Plate Cuirass and Pauldrons,1,Phy. Def. 2.01,Mastercraft,33/33,23,603.24 bc
+Plate Cuisses and Greaves,1,Phy. Def. 1.23,Mastercraft,33/33,14,367.19 bc
+Plate Vambrace and Gauntlets,1,"Phy. Def. 1.23, Hand Protection Unarmed",Mastercraft,33/33,14,367.19 bc
+,,,,,,
 Superior Gambeson Coat,1,Phy. Def. 0.625,Superior,24/24,5,? bc
 Superior Gambeson Leggings,1,Phy. Def. 0.375,Superior,24/24,3,? bc
 ,,,,,,
@@ -118,30 +144,6 @@ Shoddy Leather Helmet,1,Phy. Def. 0.37,Shoddy,9/9,2,? bc
 Shoddy Leather Cuirass and Pauldrons,1,Phy. Def. 0.72,Shoddy,9/9,4,? bc
 Shoddy Leather Cuisses and Greaves,1,Phy. Def. 0.54,Shoddy,9/9,3,? bc
 Shoddy Leather Vambrace,1,Phy. Def. 0.37,Shoddy,9/9,2,? bc
-,,,,,,
-Leather Armor,1,Phy. Def. 2,Mundane,12/12,12,10 bc
-Leather Helmet,1,Phy. Def. 0.34,Mundane,12/12,2,1.82 bc
-Leather Cuirass and Pauldrons,1,Phy. Def. 1.0,Mundane,12/12,6,3.63 bc
-Leather Cuisses and Greaves,1,Phy. Def. 0.33,Mundane,12/12,2,2.73 bc
-Leather Vambrace,1,Phy. Def. 0.33,Mundane,12/12,2,1.82 bc
-,,,,,,
-Chainmail Armor,1,Phy. Def. 3,Mundane,12/12,47,75 bp
-Chainmail Coif,1,Phy. Def. 0.38,Mundane,12/12,6,9.57 bc
-Chainmail Short-sleeved Hauberk,1,Phy. Def. 1.15,Mundane,12/12,18,28.72 bc
-Chainmail Sleeves/Mittens,1,"Phy. Def. 0.77, Hand Protection Unarmed",Mundane,12/12,12,19.16 bc
-Chainmail Chausses,1,Phy. Def. 0.7,Mundane,12/12,11,17.55 bc
-,,,,,,
-Brigandine Armor,1,Phy. Def. 4,Mundane,12/12,52,200 bc
-Half Helm,1,Phy. Def. 0.39,Mundane,12/12,5,19.23 bc
-Brigandine Cuirass and Pauldrons,1,Phy. Def. 1.69,Mundane,12/12,22,84.62 bc
-Brigandine Cuisses and Greaves,1,Phy. Def. 1.00,Mundane,12/12,13,50 bc
-Brigandine Vambrace and Gauntlets,1,"Phy. Def. 0.92, Hand Protection Unarmed",Mundane,12/12,12,46.15 bc
-,,,,,,
-Plate Armor,1,Phy. Def. 5,Mastercraft,33/33,57,1495 bc
-Plate Full Helm,1,Phy. Def. 0.53,Mastercraft,33/33,6,157.37 bc
-Plate Cuirass and Pauldrons,1,Phy. Def. 2.01,Mastercraft,33/33,23,603.25 bc
-Plate Cuisses and Greaves,1,Phy. Def. 1.23,Mastercraft,33/33,14,367.19 bc
-Plate Vambrace and Gauntlets,1,"Phy. Def. 1.23, Hand Protection Unarmed",Mastercraft,33/33,14,367.19 bc
 ,,,,,,
 Rusted Chainmail Shirt,1,Phy. Def. 1.28,Compromised,3/3,20,?
 ,,,,,,
