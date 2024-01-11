@@ -42,7 +42,9 @@ module FallenServerData =
     open FallenLib.ItemStack
 
     let makeFallenDataPath fileName =
-        __SOURCE_DIRECTORY__ + "/FallenData/" + fileName
+        __SOURCE_DIRECTORY__
+        + "../../FallenData/"
+        + fileName
 
     let makeFallenData fileName mappingFunc =
         CsvFile
